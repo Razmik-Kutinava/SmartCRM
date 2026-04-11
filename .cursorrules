@@ -1,0 +1,89 @@
+# SmartCRM — Cursor Rules
+
+## Контекст проекта
+
+SmartCRM — мультиагентная CRM-система. Один оператор управляет 5 AI-агентами через голосовой интерфейс. Заменяет отдел продаж.
+
+Читай docs/PRD.md для понимания продукта.
+Читай docs/ARCHITECTURE.md для понимания системы.
+
+---
+
+## Стек
+
+- **Backend:** Python 3.11+, FastAPI, asyncio, SQLAlchemy (async), PostgreSQL, Redis
+- **Агенты:** LangGraph (параллельные графы)
+- **LLM:** Groq API → Ollama/Qwen fallback
+- **Роутер:** Hermes (Ollama, всегда локально)
+- **Голос:** Groq Whisper (STT)
+- **RAG:** Chroma + Brave/Tavily/Serper
+- **Frontend:** SvelteKit + Tailwind CSS + Vite
+- **Инфра:** Docker + Nginx
+
+---
+
+## Правила кода
+
+### Python
+- Всегда `async def` и `await` — синхронный код запрещён в handlers
+- Типизация обязательна: `def foo(x: str) -> dict:`
+- Pydantic для всех входящих данных
+- SQLAlchemy async ORM — никаких raw SQL от LLM
+- LLM не выполняет произвольный код — только строгие intent handlers
+- Обработка fallback: Groq недоступен → Ollama
+
+### Svelte
+- Язык интерфейса — **русский**
+- Компоненты в `PascalCase.svelte`
+- WebSocket для голосового пайплайна — через `src/lib/websocket.js`
+- Tailwind для стилей — никаких inline styles
+
+### Общие
+- Комментарии на русском языке
+- Никаких TODO без описания задачи
+- Логи на русском для читаемости
+
+---
+
+## Структура агентов
+
+Каждый агент (`backend/agents/*.py`) должен:
+1. Иметь системный промпт уровня PhD эксперта на русском языке
+2. Принимать `AgentState` из LangGraph
+3. Возвращать обновлённый `AgentState`
+4. Иметь чёткий список инструментов (tools)
+5. Быть зарегистрирован в `orchestrator.py`
+
+---
+
+## LLM вызовы
+
+```python
+# Всегда через core/llm.py — не напрямую
+from core.llm import llm_client
+
+response = await llm_client.chat(messages, model="auto")
+# "auto" = Groq если доступен, иначе Ollama
+```
+
+---
+
+## Голосовой пайплайн
+
+```
+Аудио → voice/whisper.py → текст
+текст → core/hermes.py → intent JSON
+intent → agents/orchestrator.py → LangGraph
+```
+
+Не менять этот порядок без обновления docs/ARCHITECTURE.md.
+
+---
+
+## Запрещено
+
+- Синхронные блокирующие вызовы в async функциях
+- Прямые SQL запросы от LLM
+- Произвольное выполнение кода от LLM
+- Хардкод API ключей (только через .env)
+- Английский язык в UI компонентах

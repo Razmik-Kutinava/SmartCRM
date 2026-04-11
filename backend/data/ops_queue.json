@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "id": "auto-feedback",
+      "severity": "medium",
+      "title": "Низкая доля положительной обратной связи",
+      "detail": "👎 3 против 👍 2. Разберите плохие трейсы и обновите промпт Hermes.",
+      "kind": "review",
+      "status": "done",
+      "created_ts": 1775727961.4567869,
+      "trace_ids": [],
+      "resolve_note": ""
+    }
+  ]
+}

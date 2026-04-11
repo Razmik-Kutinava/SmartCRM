@@ -1,0 +1,33 @@
+{"id": "eval-001", "text": "кароч закинь в базу ромашку ооо, звонил тип с номера +7 916 111-22-33", "expected_intent": "create_lead", "expected_slots": {"company": "ромашка", "phone": "79161112233"}, "tags": ["lead", "messy"]}
+{"id": "eval-002", "text": "новый лид: ООО «Север», контакт Мария Петрова, почта m.petrova@sever.ru", "expected_intent": "create_lead", "expected_slots": {"company": "север", "contact": "мария петрова", "email": "m.petrova@sever.ru"}, "tags": ["lead"]}
+{"id": "eval-003", "text": "поменяй у лида АКМЕ стадию на переговоры", "expected_intent": "update_lead", "expected_slots": {"company": "акме", "field": "стадия", "value": "переговоры"}, "tags": ["lead"]}
+{"id": "eval-004", "text": "удали лид про компанию «Вектор экспорт»", "expected_intent": "delete_lead", "expected_slots": {"company": "вектор экспорт"}, "tags": ["lead"]}
+{"id": "eval-005", "text": "покажи горячих лидов за эту неделю", "expected_intent": "list_leads", "expected_slots": {"filter": "hot"}, "tags": ["lead"]}
+{"id": "eval-006", "text": "дай список всех лидов где в названии строй", "expected_intent": "list_leads", "expected_slots": {"query": "строй"}, "tags": ["lead"]}
+{"id": "eval-007", "text": "создай задачу: завтра в 10 позвонить клиенту из лида ООО Гамма", "expected_intent": "create_task", "expected_slots": {"title": "позвонить", "due": "завтра", "related_lead": "гамма"}, "tags": ["task"]}
+{"id": "eval-008", "text": "напоминалку — отправить КП до пятницы, ответственный Иван", "expected_intent": "create_task", "expected_slots": {"title": "отправить кп", "due": "пятниц", "assignee": "иван"}, "tags": ["task", "messy"]}
+{"id": "eval-009", "text": "какие задачи на сегодня", "expected_intent": "list_tasks", "expected_slots": {"filter": "today"}, "tags": ["task"]}
+{"id": "eval-010", "text": "покажи просроченные задачи", "expected_intent": "list_tasks", "expected_slots": {"filter": "overdue"}, "tags": ["task"]}
+{"id": "eval-011", "text": "задачу про звонок в РосНефть отметь выполненной", "expected_intent": "update_task", "expected_slots": {"title": "звонок", "status": "выполнен"}, "tags": ["task"]}
+{"id": "eval-012", "text": "убери задачу с названием черновик договора", "expected_intent": "delete_task", "expected_slots": {"title": "черновик договора"}, "tags": ["task"]}
+{"id": "eval-013", "text": "напиши письмо лиду из списка про тендер, тон деловой", "expected_intent": "write_email", "expected_slots": {"topic": "тендер", "tone": "деловой"}, "tags": ["other"]}
+{"id": "eval-014", "text": "скинь аналитику по воронке за месяц", "expected_intent": "run_analysis", "expected_slots": {}, "tags": ["other"]}
+{"id": "eval-015", "text": "спроси у стратега как лучше выйти на ЛПР в госзакупках", "expected_intent": "ask_strategist", "expected_slots": {"query": "лпр"}, "tags": ["other"]}
+{"id": "eval-016", "text": "найди в интернете информацию про тендер на поставку серверов 2026", "expected_intent": "search_web", "expected_slots": {"query": "тендер сервер"}, "tags": ["other"]}
+{"id": "eval-017", "text": "привет как настроение что нового", "expected_intent": "noop", "expected_slots": {}, "tags": ["noop"]}
+{"id": "eval-018", "text": "а ты кто такой вообще", "expected_intent": "noop", "expected_slots": {}, "tags": ["noop"]}
+{"id": "eval-019", "text": "добавь лид Тирера 89261234567 сумма сделки лям рублей", "expected_intent": "create_lead", "expected_slots": {"company": "тирера", "phone": "79261234567"}, "tags": ["lead", "messy"]}
+{"id": "eval-020", "text": "обнови телефон у лида СтартАп Лаб на +7 495 000-11-22", "expected_intent": "update_lead", "expected_slots": {"company": "стартап лаб", "field": "телефон", "value": "74950001122"}, "tags": ["lead"]}
+{"id": "eval-021", "text": "выпили лид с id lead-42", "expected_intent": "delete_lead", "expected_slots": {"lead_id": "lead-42"}, "tags": ["lead"]}
+{"id": "eval-022", "text": "покажи новых лидов", "expected_intent": "list_leads", "expected_slots": {"filter": "new"}, "tags": ["lead"]}
+{"id": "eval-023", "text": "список открытых задач по отделу продаж", "expected_intent": "list_tasks", "expected_slots": {"filter": "open"}, "tags": ["task"]}
+{"id": "eval-024", "text": "таск: проверить оплату счёта 44 до среды", "expected_intent": "create_task", "expected_slots": {"title": "проверить оплату", "due": "сред"}, "tags": ["task"]}
+{"id": "eval-025", "text": "перенеси дедлайн задачи «отправить акт» на следующий понедельник", "expected_intent": "update_task", "expected_slots": {"title": "отправить акт", "due": "понедельник"}, "tags": ["task"]}
+{"id": "eval-026", "text": "удали таск номер 17", "expected_intent": "delete_task", "expected_slots": {"task_id": "17"}, "tags": ["task"]}
+{"id": "eval-027", "text": "зарегай потенциального клиента Альфа-Банк корп, контакт Семён 8 903 555-44-33", "expected_intent": "create_lead", "expected_slots": {"company": "альфа-банк", "contact": "семён", "phone": "79035554433"}, "tags": ["lead", "messy"]}
+{"id": "eval-028", "text": "загугли конкурентов CRM для малого бизнеса в РФ", "expected_intent": "search_web", "expected_slots": {"query": "crm малый бизнес"}, "tags": ["other"]}
+{"id": "eval-029", "text": "дай сводку конверсии по этапам", "expected_intent": "run_analysis", "expected_slots": {}, "tags": ["other"]}
+{"id": "eval-030", "text": "стратег: стоит ли снижать цену для удержания клиента", "expected_intent": "ask_strategist", "expected_slots": {"query": "цен"}, "tags": ["other"]}
+{"id": "eval-031", "text": "в лиде ромашка исправь почту на ivan@mail.ru", "expected_intent": "update_lead", "expected_slots": {"company": "ромашка", "field": "email", "value": "ivan@mail.ru"}, "tags": ["lead"]}
+{"id": "eval-032", "text": "у ООО Ромашка поменяй телефон на +7 916 1112233", "expected_intent": "update_lead", "expected_slots": {"company": "ромашка", "field": "phone", "value": "+79161112233"}, "tags": ["lead"]}
+{"id": "eval-033", "text": "создай два лида", "expected_intent": "noop", "expected_slots": {}, "tags": ["noop"]}

@@ -1,0 +1,61 @@
+{
+  "snapshots": [
+    {
+      "id": "4dbaf6be-cf5",
+      "ts": 1775717971.3361125,
+      "source": "manual",
+      "label": null,
+      "stats": {
+        "total": 0,
+        "by_intent": {},
+        "avg_ms": 0,
+        "good": 0,
+        "bad": 0,
+        "errors": 0,
+        "groq_pct": 0,
+        "ollama_pct": 0
+      }
+    },
+    {
+      "id": "740dff94-3ae",
+      "ts": 1775727191.7536988,
+      "source": "manual",
+      "label": "test v1",
+      "stats": {
+        "total": 0,
+        "by_intent": {},
+        "avg_ms": 0,
+        "good": 0,
+        "bad": 0,
+        "errors": 0,
+        "groq_pct": 0,
+        "ollama_pct": 0
+      },
+      "prompt_chars": 3397,
+      "prompt_source": "builtin",
+      "prompt_preview": "You are a CRM command router. Extract intent from Russian text.\nReturn ONLY valid JSON, nothing else.\n\nИнтенты (лиды): c"
+    },
+    {
+      "id": "115deb14-74a",
+      "ts": 1775729051.842686,
+      "source": "manual",
+      "label": null,
+      "stats": {
+        "total": 2,
+        "by_intent": {
+          "list_leads": 1,
+          "create_lead": 1
+        },
+        "avg_ms": 658,
+        "good": 0,
+        "bad": 2,
+        "errors": 0,
+        "groq_pct": 100,
+        "ollama_pct": 0
+      },
+      "prompt_chars": 3397,
+      "prompt_source": "builtin",
+      "prompt_preview": "You are a CRM command router. Extract intent from Russian text.\nReturn ONLY valid JSON, nothing else.\n\nИнтенты (лиды): c"
+    }
+  ]
+}

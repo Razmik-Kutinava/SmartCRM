@@ -1,0 +1,1 @@
+// HTTP клиент для FastAPI
