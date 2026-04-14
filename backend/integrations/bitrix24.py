@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 
 import httpx
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models.lead import Lead
@@ -114,6 +114,28 @@ async def bitrix_call(method: str, params: Optional[dict[str, Any]] = None) -> d
     async with httpx.AsyncClient(timeout=120.0) as client:
         r = await client.post(url, json=payload)
     return _handle_bitrix_http(method, r)
+
+
+async def fetch_bitrix_lead_total(date_from: str) -> Optional[int]:
+    """
+    Одна страница crm.lead.list — в ответе Bitrix24 часто есть total по текущему filter.
+    Лёгкий select ID, чтобы не тащить лишние поля.
+    """
+    data = await bitrix_call(
+        "crm.lead.list",
+        {
+            "filter": {">=DATE_CREATE": date_from},
+            "select": ["ID"],
+            "start": 0,
+        },
+    )
+    t = data.get("total")
+    if t is None:
+        return None
+    try:
+        return int(t)
+    except (TypeError, ValueError):
+        return None
 
 
 def _first_multi(val: Any) -> str:
@@ -325,14 +347,22 @@ def row_to_lead_fields(
     }
 
 
+async def _count_local_bitrix_leads(db: AsyncSession) -> int:
+    r = await db.execute(
+        select(func.count()).select_from(Lead).where(Lead.bitrix_lead_id.isnot(None))
+    )
+    return int(r.scalar() or 0)
+
+
 async def import_leads_from_bitrix(
     db: AsyncSession,
     *,
     date_from: str = _DEFAULT_DATE_FROM,
-    max_items: int = 10000,
+    max_items: int = 0,
 ) -> dict[str, Any]:
     """
     Постранично тянет crm.lead.list с DATE_CREATE >= date_from, upsert по bitrix_lead_id.
+    max_items <= 0 — без верхней границы, пока есть next.
     """
     status_names = await _load_status_names()
     source_names = await _load_source_names()
@@ -341,13 +371,17 @@ async def import_leads_from_bitrix(
     updated = 0
     skipped = 0
     errors: list[str] = []
+    bitrix_total: Optional[int] = None
+    stopped_by_limit = False
+
+    unlimited = max_items <= 0
 
     # Существующие bitrix ids
     res = await db.execute(select(Lead.bitrix_lead_id).where(Lead.bitrix_lead_id.isnot(None)))
     existing_ids = {row[0] for row in res.fetchall() if row[0] is not None}
 
     total_processed = 0
-    while total_processed < max_items:
+    while True:
         user_ids: set[int] = set()
         try:
             data = await bitrix_call(
@@ -366,6 +400,12 @@ async def import_leads_from_bitrix(
             logger.exception("crm.lead.list failed at start=%s", start)
             break
 
+        if bitrix_total is None and data.get("total") is not None:
+            try:
+                bitrix_total = int(data["total"])
+            except (TypeError, ValueError):
+                bitrix_total = None
+
         rows = data.get("result") or []
         if not rows:
             break
@@ -380,9 +420,11 @@ async def import_leads_from_bitrix(
 
         user_names = await _load_user_names(user_ids)
         user_ids.clear()
+        stop_import = False
 
         for row in rows:
-            if total_processed >= max_items:
+            if not unlimited and total_processed >= max_items:
+                stop_import = True
                 break
             total_processed += 1
             try:
@@ -417,16 +459,38 @@ async def import_leads_from_bitrix(
 
         await db.commit()
 
+        if stop_import:
+            stopped_by_limit = True
+            break
+
         if "next" in data and data["next"] is not None:
             start = int(data["next"])
         else:
             break
+
+    local_bitrix_leads_count = await _count_local_bitrix_leads(db)
+    sync_note = None
+    if bitrix_total is not None:
+        behind = bitrix_total - total_processed
+        if behind > 0 and not stopped_by_limit:
+            sync_note = f"В Битриксе по фильтру всего {bitrix_total}; обработано строк {total_processed}."
+        elif behind > 0 and stopped_by_limit:
+            sync_note = (
+                f"Остановка по лимиту max_items={max_items}: в Битриксе по фильтру ~{bitrix_total} лидов, "
+                f"обработано {total_processed}."
+            )
 
     return {
         "imported": imported,
         "updated": updated,
         "skipped": skipped,
         "total_processed": total_processed,
+        "bitrix_total": bitrix_total,
+        "local_bitrix_leads_count": local_bitrix_leads_count,
+        "max_items": max_items,
+        "unlimited": unlimited,
+        "stopped_by_limit": stopped_by_limit,
+        "sync_note": sync_note,
         "errors": errors[:20],
         "error_count": len(errors),
     }

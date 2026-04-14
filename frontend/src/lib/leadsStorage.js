@@ -133,9 +133,35 @@ export async function apiDeleteLead(id) {
 	if (!r.ok) throw new Error(`DELETE ${url} → ${r.status}`);
 }
 
-/** Импорт лидов из Битрикс24 (на бэкенде нужен BITRIX24_WEBHOOK_URL). */
+/** Сводка: total в Битриксе по фильтру + сколько лидов у нас с bitrix_lead_id */
+export async function fetchBitrixImportStats(date_from = '2023-01-01') {
+	const url = `${API()}/bitrix-import-stats?date_from=${encodeURIComponent(date_from)}`;
+	const r = await fetch(url);
+	const text = await r.text().catch(() => '');
+	let body;
+	try {
+		body = text ? JSON.parse(text) : {};
+	} catch {
+		body = { detail: text };
+	}
+	if (!r.ok) {
+		const d = body?.detail;
+		const msg =
+			typeof d === 'string'
+				? d
+				: Array.isArray(d)
+					? d.map((x) => x.msg || x).join('; ')
+					: d
+						? JSON.stringify(d)
+						: text || `HTTP ${r.status}`;
+		throw new Error(msg);
+	}
+	return body;
+}
+
+/** Импорт лидов из Битрикс24 (на бэкенде нужен BITRIX24_WEBHOOK_URL). max_items=0 — без лимита. */
 export async function apiImportBitrix(options = {}) {
-	const { date_from = '2023-01-01', max_items = 10000 } = options;
+	const { date_from = '2023-01-01', max_items = 0 } = options;
 	const url = `${API()}/import-bitrix`;
 	const r = await fetch(url, {
 		method: 'POST',

@@ -6,6 +6,7 @@
 		apiUpdateLead,
 		apiDeleteLead,
 		apiImportBitrix,
+		fetchBitrixImportStats,
 		readLeadsCache,
 		writeLeadsCache,
 	} from '$lib/leadsStorage.js';
@@ -20,6 +21,8 @@
 	let editingLead = $state(null); // лид в режиме редактирования
 	let apiError = $state(false); // флаг недоступности API
 	let bitrixImporting = $state(false);
+	/** @type {{ bitrix_total: number | null, local_bitrix_leads_count: number, date_from?: string } | null} */
+	let bitrixStats = $state(null);
 
 	const stages = ['all', 'Новый', 'Квалифицирован', 'КП отправлено', 'Переговоры', 'Выигран', 'Проигран'];
 
@@ -35,6 +38,11 @@
 		} catch (e) {
 			console.error('[leads] fetchLeads ошибка:', e);
 			apiError = true;
+		}
+		try {
+			bitrixStats = await fetchBitrixImportStats('2023-01-01');
+		} catch {
+			bitrixStats = null;
 		}
 
 		// Подписываемся на глобальный голосовой ввод — обрабатываем intent-события
@@ -71,14 +79,21 @@
 		if (bitrixImporting) return;
 		bitrixImporting = true;
 		try {
-			const res = await apiImportBitrix({ date_from: '2023-01-01', max_items: 10000 });
+			const res = await apiImportBitrix({ date_from: '2023-01-01', max_items: 0 });
 			const fresh = await fetchLeads();
 			leads = fresh;
 			writeLeadsCache(leads);
-			notify(
-				`Битрикс24: +${res.imported} новых, обновлено ${res.updated} (всего обработано ${res.total_processed})`,
-				'info'
-			);
+			try {
+				bitrixStats = await fetchBitrixImportStats('2023-01-01');
+			} catch {
+				bitrixStats = null;
+			}
+			const bx = res.bitrix_total != null ? String(res.bitrix_total) : '?';
+			const loc = res.local_bitrix_leads_count != null ? String(res.local_bitrix_leads_count) : '?';
+			const line1 = `Битрикс (фильтр с 2023): ${bx} лидов | у нас с Bitrix ID: ${loc}`;
+			const line2 = `Импорт: +${res.imported} новых, обновлено ${res.updated}, обработано ${res.total_processed}${res.unlimited ? ' (без лимита)' : ''}`;
+			notify(`${line1} — ${line2}`, 'info');
+			if (res.sync_note) notify(res.sync_note, 'info');
 			if (res.error_count > 0) {
 				notify(`Предупреждения импорта: ${res.error_count} (см. лог бэкенда)`, 'error');
 			}
@@ -430,6 +445,12 @@
 	<div>
 		<h1 class="text-lg font-semibold text-white">Лиды</h1>
 		<p class="text-xs text-gray-500">{filtered.length} из {leads.length}</p>
+		{#if bitrixStats}
+			<p class="text-[11px] text-gray-600 mt-0.5" title={bitrixStats.hint || ''}>
+				Битрикс (≥2023): <span class="text-gray-400">{bitrixStats.bitrix_total ?? '—'}</span>
+				· У нас Bitrix-ID: <span class="text-gray-400">{bitrixStats.local_bitrix_leads_count ?? '—'}</span>
+			</p>
+		{/if}
 	</div>
 	<div class="flex items-center gap-2">
 		<button

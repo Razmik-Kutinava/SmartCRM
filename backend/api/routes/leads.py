@@ -8,9 +8,9 @@ REST API для лидов:
 """
 import logging
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel, Field
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import get_db
@@ -45,7 +45,11 @@ class BitrixImportBody(BaseModel):
     """Импорт лидов из Битрикс24 (входящий вебхук, переменная BITRIX24_WEBHOOK_URL)."""
 
     date_from: str = "2023-01-01"
-    max_items: int = 10000
+    max_items: int = Field(
+        default=0,
+        ge=0,
+        description="0 = без верхнего лимита (идём по next пока не кончится); иначе макс. число обработанных лидов",
+    )
 
 
 class LeadPatch(BaseModel):
@@ -74,6 +78,32 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Lead).order_by(Lead.created_at.desc()))
     leads = result.scalars().all()
     return [l.to_dict() for l in leads]
+
+
+@router.get("/bitrix-import-stats")
+async def bitrix_import_stats(
+    date_from: str = Query("2023-01-01", description="Тот же фильтер DATE_CREATE >= date_from, что и у импорта"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Один запрос к crm.lead.list (первая страница) — поле total из Битрикса + число лидов у нас с bitrix_lead_id."""
+    try:
+        from integrations.bitrix24 import BitrixWebhookError, fetch_bitrix_lead_total
+    except ImportError as e:
+        raise HTTPException(500, detail=f"Модуль интеграции: {e}") from e
+    try:
+        bitrix_total = await fetch_bitrix_lead_total(date_from.strip())
+    except BitrixWebhookError as e:
+        raise HTTPException(403, detail=str(e)) from e
+    n_local = await db.execute(
+        select(func.count()).select_from(Lead).where(Lead.bitrix_lead_id.isnot(None))
+    )
+    local_bitrix_leads_count = int(n_local.scalar() or 0)
+    return {
+        "date_from": date_from.strip(),
+        "bitrix_total": bitrix_total,
+        "local_bitrix_leads_count": local_bitrix_leads_count,
+        "hint": "bitrix_total — сколько лидов в Битриксе по фильтру; local — сколько записей в нашей БД с bitrix_lead_id (все периоды).",
+    }
 
 
 @router.post("/import-bitrix")
