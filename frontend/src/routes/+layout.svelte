@@ -15,6 +15,7 @@
 		{ href: '/email', label: 'Email', icon: '✉️' },
 		{ href: '/agents', label: 'Агенты', icon: '⬣' },
 		{ href: '/rag', label: 'База знаний', icon: '⬤' },
+		{ href: '/leadgen', label: 'Лидогенерация', icon: '◆' },
 		{ href: '/search', label: 'Поиск', icon: '◎' },
 		{ href: '/analytics', label: 'Аналитика', icon: '◈' },
 		{ href: '/ops', label: 'Ops / Качество', icon: '◉' },
@@ -54,6 +55,7 @@
 	function pageContext() {
 		const path = $page.url.pathname;
 		if (path.startsWith('/leads'))    return 'Страница: Лиды';
+		if (path.startsWith('/leadgen'))   return 'Страница: Лидогенерация';
 		if (path.startsWith('/search'))   return 'Страница: Поиск';
 		if (path.startsWith('/email'))    return 'Страница: Email';
 		if (path.startsWith('/rag'))      return 'Страница: База знаний';
@@ -117,6 +119,10 @@
 		// При поиске — переходим на поиск
 		if (intent === 'search_web' && !$page.url.pathname.startsWith('/search')) {
 			goto('/search');
+		}
+		// При лидогенерации — переходим на лидогенерацию
+		if (['generate_lead','find_leads_portrait','cluster_company'].includes(intent) && !$page.url.pathname.startsWith('/leadgen')) {
+			goto('/leadgen');
 		}
 	}
 

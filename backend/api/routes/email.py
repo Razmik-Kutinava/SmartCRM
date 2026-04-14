@@ -145,7 +145,7 @@ async def connect_email_account(body: EmailAccountCreate, db: AsyncSession = Dep
 
 @router.get("/threads")
 async def list_email_threads(account_id: Optional[int] = None, lead_id: Optional[int] = None, db: AsyncSession = Depends(get_db)):
-    q = select(EmailThread).order_by(EmailThread.last_message_at.desc().nullslast())
+    q = select(EmailThread).order_by(EmailThread.last_message_at.desc().nulls_last())
     if account_id is not None:
         q = q.where(EmailThread.account_id == account_id)
     if lead_id is not None:
@@ -409,9 +409,24 @@ async def bind_email_to_lead(body: EmailLeadBindBody, db: AsyncSession = Depends
         "lead": lead.to_dict()
     }
 
+@router.get("/threads/{thread_id}/messages")
+async def list_thread_messages(thread_id: int, db: AsyncSession = Depends(get_db)):
+    """Вернуть все сообщения треда в хронологическом порядке."""
+    result = await db.execute(
+        select(EmailMessage)
+        .where(EmailMessage.thread_id == thread_id)
+        .order_by(EmailMessage.sent_at.asc().nulls_last())
+    )
+    return [msg.to_dict() for msg in result.scalars().all()]
+
+
+class ArchiveEmailBody(BaseModel):
+    email_id: int
+
+
 @router.post("/archive")
-async def archive_email(email_id: int, db: AsyncSession = Depends(get_db)):
-    email = await db.get(EmailMessage, email_id)
+async def archive_email(body: ArchiveEmailBody, db: AsyncSession = Depends(get_db)):
+    email = await db.get(EmailMessage, body.email_id)
     if not email:
         raise HTTPException(status_code=404, detail="Email not found")
     email.is_archived = True

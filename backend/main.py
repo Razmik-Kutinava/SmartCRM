@@ -53,6 +53,10 @@ from api.routes.training_datasets import router as training_datasets_router
 from api.routes.rag import router as rag_router
 from api.routes.search import router as search_router
 from api.routes.email import router as email_router
+from api.routes.agent_email import router as agent_email_router
+from api.routes.leadgen import router as leadgen_router
+from api.routes.news import router as news_router
+from api.routes.usage import router as usage_router
 app.include_router(voice_router)
 app.include_router(leads_router)
 app.include_router(tasks_router)
@@ -62,6 +66,10 @@ app.include_router(training_datasets_router)
 app.include_router(rag_router)
 app.include_router(search_router)
 app.include_router(email_router)
+app.include_router(agent_email_router)
+app.include_router(leadgen_router)
+app.include_router(news_router)
+app.include_router(usage_router)
 
 
 @app.get("/health")

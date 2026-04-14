@@ -3,7 +3,7 @@ import { onMount } from 'svelte';
 import { createCampaign } from '$lib/emailStorage.js';
 import { goto } from '$app/navigation';
 
-export let params;
+let { params } = $props();
 let leadId = params.leadId;
 let subject = $state('');
 let body = $state('');
@@ -39,7 +39,7 @@ async function sendCampaign() {
   <div class="space-y-4">
     <input bind:value={subject} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-3 text-sm text-white" placeholder="Тема письма" />
     <textarea bind:value={body} class="w-full h-32 rounded-xl bg-gray-950 border border-gray-800 px-4 py-3 text-sm text-white" placeholder="Текст письма" />
-    <button on:click={sendCampaign} disabled={loading} class="w-full rounded-2xl bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-500 transition-colors disabled:bg-gray-600">
+    <button onclick={sendCampaign} disabled={loading} class="w-full rounded-2xl bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-500 transition-colors disabled:bg-gray-600">
       {loading ? 'Отправка...' : 'Отправить кампанию'}
     </button>
     {#if error}

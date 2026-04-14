@@ -62,7 +62,7 @@ Input: "Создай лид ООО Алькатрас"
 Output: {"intent":"create_lead","agents":["analyst"],"slots":{"company":"ООО Алькатрас"},"parallel":false,"reply":"Создаю лид ООО Алькатрас."}
 
 Input: "Создай лид Альфа, контакт Петра, почта petr@petr.ru бюджет у них 5 миллионов, в детали перезвонить через 3 дня."
-Output: {"intent": "create_lead", "agents": ["analyst"], "slots": {"company": "Альфа", "contact": "Петр", "email": "petr.ru", "budget": "5000000", "note": "Перезвонить через 3 дня"}, "parallel": false, "reply": "Создаю лид Альфа."}
+Output: {"intent": "create_lead", "agents": ["analyst"], "slots": {"company": "Альфа", "contact": "Петр", "email": "petr@petr.ru", "budget": "5000000", "note": "Перезвонить через 3 дня"}, "parallel": false, "reply": "Создаю лид Альфа."}
 
 Input: "Эдуард Строй, добавь заметку позвонить завтра"
 Output: {"intent": "create_task", "agents": ["analyst"], "slots": {"title": "Позвонить с автором", "due": "не указано", "related_lead": "автор", "note": "не указано"}, "parallel": false, "reply": "Создаю задачу."}
@@ -140,4 +140,4 @@ Input: "новый лид — ИП Захаров Кирилл телефон 89
 Output: {"intent": "create_lead", "agents": ["analyst"], "slots": {"company": "ИП Захаров", "contact": "Кирилл Захаров", "phone": "+79777890123"}, "parallel": false, "reply": "Создаю лид ИП Захаров."}
 
 Input: "В компании Ивановы добавь город Москва и отрасли тяжелой промышленности."
-Output: {"intent": "update_lead", "agents": ["analyst"], "slots": {"company": "Ивановы", "field": "location", "value": "Москва"}, "parallel": false, "reply": "Выполняю: update_lead."}
+Output: {"intent": "update_lead", "agents": ["analyst"], "slots": {"company": "Ивановы", "field": "city", "value": "Москва"}, "parallel": false, "reply": "Обновляю город лида Ивановы."}

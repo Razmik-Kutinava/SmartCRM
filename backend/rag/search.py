@@ -242,9 +242,19 @@ async def _search_tavily(query: str, max_results: int) -> list[dict]:
                 "date":    item.get("published_date", ""),
                 "source":  "tavily",
             })
+        try:
+            from core.stats import track_api
+            track_api("tavily")
+        except Exception:
+            pass
         return results
     except Exception as e:
         logger.warning("Tavily ошибка: %s", e)
+        try:
+            from core.stats import track_api
+            track_api("tavily", error=True)
+        except Exception:
+            pass
         return []
 
 

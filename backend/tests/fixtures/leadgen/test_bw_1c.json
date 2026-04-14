@@ -1,0 +1,2412 @@
+{
+  "domain": "1c.ru",
+  "first": 951782400000,
+  "last": 1775952000000,
+  "groups": [
+    {
+      "name": "cms",
+      "live": 26,
+      "dead": 52,
+      "latest": 1775952000000,
+      "oldest": 1458432000000,
+      "categories": [
+        {
+          "live": 12,
+          "dead": 26,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Hosted Solution"
+        },
+        {
+          "live": 25,
+          "dead": 48,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Simple Website Builder"
+        },
+        {
+          "live": 25,
+          "dead": 48,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "eCommerce Enabled"
+        },
+        {
+          "live": 25,
+          "dead": 45,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Content Management"
+        },
+        {
+          "live": 12,
+          "dead": 23,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Local Business Solutions"
+        },
+        {
+          "live": 25,
+          "dead": 45,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Marketing Platform"
+        },
+        {
+          "live": 13,
+          "dead": 23,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Enterprise"
+        },
+        {
+          "live": 13,
+          "dead": 22,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Community CMS"
+        },
+        {
+          "live": 13,
+          "dead": 22,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Digital Experience Platform"
+        },
+        {
+          "live": 13,
+          "dead": 22,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Integrated Business Management"
+        },
+        {
+          "live": 13,
+          "dead": 23,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Intranet Solutions"
+        },
+        {
+          "live": 13,
+          "dead": 22,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Multisite Management"
+        },
+        {
+          "live": 13,
+          "dead": 22,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Portal Management"
+        },
+        {
+          "live": 13,
+          "dead": 22,
+          "latest": 1775952000000,
+          "oldest": 1458432000000,
+          "name": "Workflow Automation"
+        },
+        {
+          "live": 1,
+          "dead": 2,
+          "latest": 1760918400000,
+          "oldest": 1514851200000,
+          "name": "Open Source"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1742428800000,
+          "oldest": 1614643200000,
+          "name": "Landing Page"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1742428800000,
+          "oldest": 1614643200000,
+          "name": "Low Code No Code Platform"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1742428800000,
+          "oldest": 1614643200000,
+          "name": "Visual Editor"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1742428800000,
+          "oldest": 1735344000000,
+          "name": "Internal Tools Platform"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1742428800000,
+          "oldest": 1735344000000,
+          "name": "Knowledge Management"
+        }
+      ]
+    },
+    {
+      "name": "analytics",
+      "live": 8,
+      "dead": 51,
+      "latest": 1775952000000,
+      "oldest": 951782400000,
+      "categories": [
+        {
+          "live": 3,
+          "dead": 13,
+          "latest": 1775952000000,
+          "oldest": 951782400000,
+          "name": "Visitor Count Tracking"
+        },
+        {
+          "live": 3,
+          "dead": 22,
+          "latest": 1775952000000,
+          "oldest": 951782400000,
+          "name": "Audience Measurement"
+        },
+        {
+          "live": 1,
+          "dead": 4,
+          "latest": 1775260800000,
+          "oldest": 1199318400000,
+          "name": "Mobile"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1742428800000,
+          "oldest": 1483920000000,
+          "name": "Product Analytics"
+        },
+        {
+          "live": 0,
+          "dead": 5,
+          "latest": 1742428800000,
+          "oldest": 1191196800000,
+          "name": "User Behavior Analytics"
+        },
+        {
+          "live": 3,
+          "dead": 22,
+          "latest": 1775952000000,
+          "oldest": 1199318400000,
+          "name": "Advertiser Tracking"
+        },
+        {
+          "live": 2,
+          "dead": 19,
+          "latest": 1775952000000,
+          "oldest": 1263427200000,
+          "name": "Conversion Tracking"
+        },
+        {
+          "live": 0,
+          "dead": 17,
+          "latest": 1759104000000,
+          "oldest": 1468886400000,
+          "name": "Retargeting / Remarketing"
+        },
+        {
+          "live": 0,
+          "dead": 15,
+          "latest": 1758931200000,
+          "oldest": 1509753600000,
+          "name": "Social Management"
+        },
+        {
+          "live": 2,
+          "dead": 15,
+          "latest": 1775952000000,
+          "oldest": 1191196800000,
+          "name": "Conversion Optimization"
+        },
+        {
+          "live": 2,
+          "dead": 3,
+          "latest": 1775952000000,
+          "oldest": 1191196800000,
+          "name": "Site Optimization"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775260800000,
+          "oldest": 1199318400000,
+          "name": "Application Performance"
+        },
+        {
+          "live": 1,
+          "dead": 3,
+          "latest": 1775260800000,
+          "oldest": 1199318400000,
+          "name": "A/B Testing"
+        },
+        {
+          "live": 1,
+          "dead": 4,
+          "latest": 1775260800000,
+          "oldest": 1199318400000,
+          "name": "Personalization"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1468972800000,
+          "oldest": 1468886400000,
+          "name": "Cart Abandonment"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1701561600000,
+          "oldest": 1468886400000,
+          "name": "Marketing Automation"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1580947200000,
+          "oldest": 1468886400000,
+          "name": "Product Recommendations"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1468972800000,
+          "oldest": 1468886400000,
+          "name": "Data Management Platform"
+        },
+        {
+          "live": 0,
+          "dead": 4,
+          "latest": 1635811200000,
+          "oldest": 1468886400000,
+          "name": "eCommerce Optimization"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1635811200000,
+          "oldest": 1468886400000,
+          "name": "Checkout Optimization"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1701561600000,
+          "oldest": 1468886400000,
+          "name": "Pop-up Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1701561600000,
+          "oldest": 1468886400000,
+          "name": "Email Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1468972800000,
+          "oldest": 1468886400000,
+          "name": "Customer Acquisition"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1635811200000,
+          "oldest": 1468886400000,
+          "name": "Customer Engagement"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1580947200000,
+          "oldest": 1468886400000,
+          "name": "eCommerce Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1468972800000,
+          "oldest": 1468886400000,
+          "name": "Exit Intent Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1468972800000,
+          "oldest": 1468886400000,
+          "name": "On-site Engagement"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1468972800000,
+          "oldest": 1468886400000,
+          "name": "Programmatic Advertising"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1468972800000,
+          "oldest": 1468886400000,
+          "name": "Upsell and Cross-sell"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1191196800000,
+          "oldest": 1191196800000,
+          "name": "Heatmap Analytics"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1191196800000,
+          "oldest": 1191196800000,
+          "name": "Session Replay"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1191196800000,
+          "oldest": 1191196800000,
+          "name": "Web Analytics"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1191196800000,
+          "oldest": 1191196800000,
+          "name": "Real User Monitoring"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1191196800000,
+          "oldest": 1191196800000,
+          "name": "Data Visualization"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1678838400000,
+          "oldest": 1191196800000,
+          "name": "UI/UX Testing"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775260800000,
+          "oldest": 1677715200000,
+          "name": "Tag Management"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "CRM"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Lead Generation"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Customer Communication Platform"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Communication Automation"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Omnichannel Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "SMS Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Web Push Notifications"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Mobile Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Digital Marketing Suite"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Conversational AI"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Form Builder"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Landing Page Builder"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Live Chat"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1701561600000,
+          "oldest": 1528416000000,
+          "name": "Website Builder"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1678838400000,
+          "oldest": 1566691200000,
+          "name": "Experimentation Platform"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1678838400000,
+          "oldest": 1566691200000,
+          "name": "Customer Segmentation"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1580947200000,
+          "oldest": 1568332800000,
+          "name": "Retail Intelligence"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1580947200000,
+          "oldest": 1568332800000,
+          "name": "Predictive Analytics"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1580947200000,
+          "oldest": 1568332800000,
+          "name": "AI"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1580947200000,
+          "oldest": 1568332800000,
+          "name": "Customer Data Platform"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1635811200000,
+          "oldest": 1568332800000,
+          "name": "Customer Retention"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1580947200000,
+          "oldest": 1568332800000,
+          "name": "Growth Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "Customer Success"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "Customer Service Software"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "Customer Lifecycle Management"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "Churn Prediction"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "eCommerce Platform"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "International Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "Fraud Prevention"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "DTC Ecommerce Solutions"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "Returns Management"
+        }
+      ]
+    },
+    {
+      "name": "widgets",
+      "live": 191,
+      "dead": 267,
+      "latest": 1775952000000,
+      "oldest": 1369180800000,
+      "categories": [
+        {
+          "live": 2,
+          "dead": 31,
+          "latest": 1775260800000,
+          "oldest": 1397865600000,
+          "name": "Live Chat"
+        },
+        {
+          "live": 0,
+          "dead": 4,
+          "latest": 1569974400000,
+          "oldest": 1397865600000,
+          "name": "Lead Conversion"
+        },
+        {
+          "live": 8,
+          "dead": 60,
+          "latest": 1775865600000,
+          "oldest": 1369180800000,
+          "name": "Social Sharing"
+        },
+        {
+          "live": 8,
+          "dead": 27,
+          "latest": 1775865600000,
+          "oldest": 1469664000000,
+          "name": "Collaborative Workspace"
+        },
+        {
+          "live": 8,
+          "dead": 23,
+          "latest": 1775865600000,
+          "oldest": 1469664000000,
+          "name": "Project Management"
+        },
+        {
+          "live": 8,
+          "dead": 23,
+          "latest": 1775865600000,
+          "oldest": 1469664000000,
+          "name": "Internal Communications"
+        },
+        {
+          "live": 8,
+          "dead": 23,
+          "latest": 1775865600000,
+          "oldest": 1469664000000,
+          "name": "CRM"
+        },
+        {
+          "live": 8,
+          "dead": 23,
+          "latest": 1775865600000,
+          "oldest": 1469664000000,
+          "name": "Workflow Automation"
+        },
+        {
+          "live": 9,
+          "dead": 25,
+          "latest": 1775865600000,
+          "oldest": 1469664000000,
+          "name": "Messaging Platform"
+        },
+        {
+          "live": 8,
+          "dead": 23,
+          "latest": 1775865600000,
+          "oldest": 1469664000000,
+          "name": "Business Management Software"
+        },
+        {
+          "live": 5,
+          "dead": 14,
+          "latest": 1775260800000,
+          "oldest": 1529193600000,
+          "name": "CAPTCHA"
+        },
+        {
+          "live": 4,
+          "dead": 12,
+          "latest": 1775260800000,
+          "oldest": 1529193600000,
+          "name": "Bot Detection"
+        },
+        {
+          "live": 4,
+          "dead": 12,
+          "latest": 1775260800000,
+          "oldest": 1529193600000,
+          "name": "Spam Protection"
+        },
+        {
+          "live": 3,
+          "dead": 12,
+          "latest": 1775260800000,
+          "oldest": 1529193600000,
+          "name": "Fraud Prevention"
+        },
+        {
+          "live": 1,
+          "dead": 10,
+          "latest": 1775260800000,
+          "oldest": 1572912000000,
+          "name": "Customer Service Platform"
+        },
+        {
+          "live": 2,
+          "dead": 25,
+          "latest": 1775260800000,
+          "oldest": 1572912000000,
+          "name": "Sales Chat"
+        },
+        {
+          "live": 0,
+          "dead": 9,
+          "latest": 1689292800000,
+          "oldest": 1572912000000,
+          "name": "Real-time Engagement"
+        },
+        {
+          "live": 0,
+          "dead": 12,
+          "latest": 1758758400000,
+          "oldest": 1468368000000,
+          "name": "Lead Engagement"
+        },
+        {
+          "live": 0,
+          "dead": 10,
+          "latest": 1689292800000,
+          "oldest": 1568332800000,
+          "name": "Customer Engagement Platform"
+        },
+        {
+          "live": 1,
+          "dead": 7,
+          "latest": 1762214400000,
+          "oldest": 1369180800000,
+          "name": "Content Embedding"
+        },
+        {
+          "live": 1,
+          "dead": 2,
+          "latest": 1762214400000,
+          "oldest": 1462406400000,
+          "name": "Data Display Widgets"
+        },
+        {
+          "live": 1,
+          "dead": 11,
+          "latest": 1775692800000,
+          "oldest": 1596412800000,
+          "name": "Login"
+        },
+        {
+          "live": 1,
+          "dead": 11,
+          "latest": 1775692800000,
+          "oldest": 1596412800000,
+          "name": "Authentication System"
+        },
+        {
+          "live": 1,
+          "dead": 11,
+          "latest": 1775692800000,
+          "oldest": 1596412800000,
+          "name": "Identity and Access Management"
+        },
+        {
+          "live": 2,
+          "dead": 5,
+          "latest": 1775692800000,
+          "oldest": 1596412800000,
+          "name": "Cybersecurity"
+        },
+        {
+          "live": 2,
+          "dead": 17,
+          "latest": 1775260800000,
+          "oldest": 1580947200000,
+          "name": "Omnichannel Communication"
+        },
+        {
+          "live": 11,
+          "dead": 31,
+          "latest": 1775952000000,
+          "oldest": 1388534400000,
+          "name": "Fonts"
+        },
+        {
+          "live": 0,
+          "dead": 17,
+          "latest": 1758758400000,
+          "oldest": 1369180800000,
+          "name": "Social Media Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 17,
+          "latest": 1742428800000,
+          "oldest": 1369180800000,
+          "name": "Social Proof"
+        },
+        {
+          "live": 2,
+          "dead": 10,
+          "latest": 1775520000000,
+          "oldest": 1369180800000,
+          "name": "Web Badge"
+        },
+        {
+          "live": 0,
+          "dead": 4,
+          "latest": 1687392000000,
+          "oldest": 1587772800000,
+          "name": "Social Feed Display"
+        },
+        {
+          "live": 0,
+          "dead": 8,
+          "latest": 1757894400000,
+          "oldest": 1580947200000,
+          "name": "Photo & Video Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1587772800000,
+          "oldest": 1587772800000,
+          "name": "Content Aggregation"
+        },
+        {
+          "live": 0,
+          "dead": 5,
+          "latest": 1758758400000,
+          "oldest": 1468368000000,
+          "name": "Content Curation"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1587772800000,
+          "oldest": 1587772800000,
+          "name": "Social Media Management"
+        },
+        {
+          "live": 0,
+          "dead": 6,
+          "latest": 1643414400000,
+          "oldest": 1461715200000,
+          "name": "Content Modification"
+        },
+        {
+          "live": 1,
+          "dead": 4,
+          "latest": 1773273600000,
+          "oldest": 1461715200000,
+          "name": "Content Optimization"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1586476800000,
+          "oldest": 1461715200000,
+          "name": "Digital Publishing"
+        },
+        {
+          "live": 1,
+          "dead": 6,
+          "latest": 1760918400000,
+          "oldest": 1468368000000,
+          "name": "Embeddable Widgets"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1601856000000,
+          "oldest": 1600646400000,
+          "name": "Video Conferencing"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1601856000000,
+          "oldest": 1600646400000,
+          "name": "Real-time Communication API"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1601856000000,
+          "oldest": 1600646400000,
+          "name": "CPaaS"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1601856000000,
+          "oldest": 1600646400000,
+          "name": "Business Telephony"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1601856000000,
+          "oldest": 1600646400000,
+          "name": "Client Communication Platform"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1614556800000,
+          "oldest": 1614556800000,
+          "name": "Translation"
+        },
+        {
+          "live": 2,
+          "dead": 1,
+          "latest": 1775779200000,
+          "oldest": 1614556800000,
+          "name": "Digital Experience Optimization"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1614556800000,
+          "oldest": 1614556800000,
+          "name": "Localization Software"
+        },
+        {
+          "live": 1,
+          "dead": 1,
+          "latest": 1775952000000,
+          "oldest": 1388534400000,
+          "name": "Graphic Design Tool"
+        },
+        {
+          "live": 1,
+          "dead": 3,
+          "latest": 1775952000000,
+          "oldest": 1388534400000,
+          "name": "UX/UI Design Tool"
+        },
+        {
+          "live": 1,
+          "dead": 6,
+          "latest": 1775952000000,
+          "oldest": 1388534400000,
+          "name": "Content Creation"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1652486400000,
+          "oldest": 1600300800000,
+          "name": "Remote Support"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1652486400000,
+          "oldest": 1600300800000,
+          "name": "Remote Access Software"
+        },
+        {
+          "live": 1,
+          "dead": 1,
+          "latest": 1775260800000,
+          "oldest": 1580947200000,
+          "name": "Help Desk Software"
+        },
+        {
+          "live": 2,
+          "dead": 0,
+          "latest": 1775779200000,
+          "oldest": 1579651200000,
+          "name": "Data Collection"
+        },
+        {
+          "live": 1,
+          "dead": 1,
+          "latest": 1775779200000,
+          "oldest": 1528416000000,
+          "name": "Web Performance Monitoring"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775260800000,
+          "oldest": 1677628800000,
+          "name": "Tag Management"
+        },
+        {
+          "live": 2,
+          "dead": 4,
+          "latest": 1775779200000,
+          "oldest": 1468368000000,
+          "name": "Marketing Automation"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775260800000,
+          "oldest": 1677628800000,
+          "name": "Data Management Platform"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1760313600000,
+          "oldest": 1677715200000,
+          "name": "Privacy Compliance"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1760313600000,
+          "oldest": 1677715200000,
+          "name": "Data Protection"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1760313600000,
+          "oldest": 1677715200000,
+          "name": "Compliance Software"
+        },
+        {
+          "live": 1,
+          "dead": 3,
+          "latest": 1760313600000,
+          "oldest": 1580947200000,
+          "name": "API Management"
+        },
+        {
+          "live": 0,
+          "dead": 5,
+          "latest": 1758758400000,
+          "oldest": 1468368000000,
+          "name": "Bookmarking"
+        },
+        {
+          "live": 0,
+          "dead": 5,
+          "latest": 1758758400000,
+          "oldest": 1468368000000,
+          "name": "Website Widget Suite"
+        },
+        {
+          "live": 0,
+          "dead": 4,
+          "latest": 1743120000000,
+          "oldest": 1580947200000,
+          "name": "WordPress Plugins"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1743120000000,
+          "oldest": 1580947200000,
+          "name": "Website Builder Plugins"
+        },
+        {
+          "live": 0,
+          "dead": 4,
+          "latest": 1743120000000,
+          "oldest": 1580947200000,
+          "name": "Page Builder Addons"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1712534400000,
+          "oldest": 1528416000000,
+          "name": "Website Performance"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775779200000,
+          "oldest": 1579651200000,
+          "name": "Call Tracking"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775779200000,
+          "oldest": 1579651200000,
+          "name": "Business Intelligence"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1773273600000,
+          "oldest": 1566691200000,
+          "name": "Site Search"
+        },
+        {
+          "live": 1,
+          "dead": 3,
+          "latest": 1773273600000,
+          "oldest": 1462406400000,
+          "name": "SEO Management"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1773273600000,
+          "oldest": 1566691200000,
+          "name": "Search API"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1773273600000,
+          "oldest": 1566691200000,
+          "name": "Semantic Search"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1757894400000,
+          "oldest": 1580947200000,
+          "name": "Image Provider"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1757894400000,
+          "oldest": 1580947200000,
+          "name": "Digital Asset Management"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1743120000000,
+          "oldest": 1462406400000,
+          "name": "eCommerce"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1743120000000,
+          "oldest": 1462406400000,
+          "name": "Product Feed Management"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1643414400000,
+          "oldest": 1580947200000,
+          "name": "Content Management System"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1643414400000,
+          "oldest": 1580947200000,
+          "name": "Page Builder"
+        },
+        {
+          "live": 3,
+          "dead": 1,
+          "latest": 1775692800000,
+          "oldest": 1580601600000,
+          "name": "Digital Accessibility"
+        },
+        {
+          "live": 3,
+          "dead": 1,
+          "latest": 1775692800000,
+          "oldest": 1580601600000,
+          "name": "Web Accessibility"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1587772800000,
+          "oldest": 1553644800000,
+          "name": "Feedback Forms and Surveys"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1572825600000,
+          "oldest": 1553644800000,
+          "name": "Survey Platform"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1572825600000,
+          "oldest": 1553644800000,
+          "name": "Form Management"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1572825600000,
+          "oldest": 1553644800000,
+          "name": "Form Builder"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1738800000000,
+          "oldest": 1553644800000,
+          "name": "User-Generated Content Platform"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1738800000000,
+          "oldest": 1553644800000,
+          "name": "Video Engagement Platform"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1660435200000,
+          "oldest": 1568332800000,
+          "name": "Push Notifications"
+        },
+        {
+          "live": 1,
+          "dead": 2,
+          "latest": 1760918400000,
+          "oldest": 1568332800000,
+          "name": "Mobile"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1712534400000,
+          "oldest": 1568332800000,
+          "name": "Audience Management"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1712534400000,
+          "oldest": 1568332800000,
+          "name": "Personalization Platform"
+        },
+        {
+          "live": 1,
+          "dead": 1,
+          "latest": 1775260800000,
+          "oldest": 1580947200000,
+          "name": "Business Messaging Platform"
+        },
+        {
+          "live": 1,
+          "dead": 1,
+          "latest": 1775260800000,
+          "oldest": 1580947200000,
+          "name": "Business SMS"
+        },
+        {
+          "live": 1,
+          "dead": 1,
+          "latest": 1775260800000,
+          "oldest": 1580947200000,
+          "name": "WhatsApp Marketing"
+        },
+        {
+          "live": 0,
+          "dead": 7,
+          "latest": 1742428800000,
+          "oldest": 1580947200000,
+          "name": "Social Networking Platform"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1587772800000,
+          "oldest": 1587772800000,
+          "name": "Address Validation"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1587772800000,
+          "oldest": 1587772800000,
+          "name": "Data Validation"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1587772800000,
+          "oldest": 1587772800000,
+          "name": "Lead Verification"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1614384000000,
+          "oldest": 1614384000000,
+          "name": "Bookings"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1614384000000,
+          "oldest": 1614384000000,
+          "name": "Ticketing System"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1614384000000,
+          "oldest": 1614384000000,
+          "name": "Event Management"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1614384000000,
+          "oldest": 1614384000000,
+          "name": "Event Calendar"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1614384000000,
+          "oldest": 1614384000000,
+          "name": "Event Booking Software"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1614384000000,
+          "oldest": 1614384000000,
+          "name": "Online Ticket Booking"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1614384000000,
+          "oldest": 1614384000000,
+          "name": "Event Management Platform"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1657843200000,
+          "oldest": 1588291200000,
+          "name": "Social Marketing Platform"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1657843200000,
+          "oldest": 1588291200000,
+          "name": "Social Promotions"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1682553600000,
+          "oldest": 1682467200000,
+          "name": "3D Imaging"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1682553600000,
+          "oldest": 1682467200000,
+          "name": "Augmented Reality Content"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1682553600000,
+          "oldest": 1682467200000,
+          "name": "Virtual Reality Content"
+        },
+        {
+          "live": 1,
+          "dead": 1,
+          "latest": 1760918400000,
+          "oldest": 1648512000000,
+          "name": "User Onboarding"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775088000000,
+          "oldest": 1773187200000,
+          "name": "Website Security"
+        }
+      ]
+    },
+    {
+      "name": "ads",
+      "live": 6,
+      "dead": 79,
+      "latest": 1775692800000,
+      "oldest": 1397865600000,
+      "categories": [
+        {
+          "live": 5,
+          "dead": 6,
+          "latest": 1775692800000,
+          "oldest": 1397865600000,
+          "name": "Ad Server"
+        },
+        {
+          "live": 3,
+          "dead": 20,
+          "latest": 1775692800000,
+          "oldest": 1421280000000,
+          "name": "Ad Network"
+        },
+        {
+          "live": 1,
+          "dead": 10,
+          "latest": 1775088000000,
+          "oldest": 1458432000000,
+          "name": "Audience Targeting"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775088000000,
+          "oldest": 1458432000000,
+          "name": "Search"
+        },
+        {
+          "live": 0,
+          "dead": 60,
+          "latest": 1712534400000,
+          "oldest": 1639440000000,
+          "name": "ads txt"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1712534400000,
+          "oldest": 1639440000000,
+          "name": "Digital Video Ads"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1712534400000,
+          "oldest": 1639440000000,
+          "name": "Mobile"
+        },
+        {
+          "live": 1,
+          "dead": 3,
+          "latest": 1760313600000,
+          "oldest": 1421280000000,
+          "name": "Ad Exchange"
+        },
+        {
+          "live": 0,
+          "dead": 11,
+          "latest": 1742428800000,
+          "oldest": 1468368000000,
+          "name": "Data Management Platform"
+        },
+        {
+          "live": 0,
+          "dead": 10,
+          "latest": 1742428800000,
+          "oldest": 1469664000000,
+          "name": "Retargeting / Remarketing"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1760313600000,
+          "oldest": 1421280000000,
+          "name": "Ad Analytics"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1760313600000,
+          "oldest": 1421280000000,
+          "name": "Demand-side Platform"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1660608000000,
+          "oldest": 1623801600000,
+          "name": "Cookie Alternative"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1635811200000,
+          "oldest": 1635811200000,
+          "name": "Multi-Channel"
+        }
+      ]
+    },
+    {
+      "name": "javascript",
+      "live": 125,
+      "dead": 387,
+      "latest": 1775952000000,
+      "oldest": 1317600000000,
+      "categories": [
+        {
+          "live": 33,
+          "dead": 76,
+          "latest": 1775952000000,
+          "oldest": 1317600000000,
+          "name": "UI"
+        },
+        {
+          "live": 33,
+          "dead": 70,
+          "latest": 1775952000000,
+          "oldest": 1317600000000,
+          "name": "jQuery Plugin"
+        },
+        {
+          "live": 8,
+          "dead": 24,
+          "latest": 1775779200000,
+          "oldest": 1458518400000,
+          "name": "Resource Loader"
+        },
+        {
+          "live": 6,
+          "dead": 3,
+          "latest": 1775692800000,
+          "oldest": 1458518400000,
+          "name": "Image Gallery"
+        },
+        {
+          "live": 17,
+          "dead": 62,
+          "latest": 1775952000000,
+          "oldest": 1317600000000,
+          "name": "JavaScript Library"
+        },
+        {
+          "live": 0,
+          "dead": 12,
+          "latest": 1759104000000,
+          "oldest": 1580947200000,
+          "name": "Browser Integration"
+        },
+        {
+          "live": 6,
+          "dead": 10,
+          "latest": 1775779200000,
+          "oldest": 1594944000000,
+          "name": "Offline Storage"
+        },
+        {
+          "live": 2,
+          "dead": 10,
+          "latest": 1775174400000,
+          "oldest": 1594944000000,
+          "name": "Data Management"
+        },
+        {
+          "live": 18,
+          "dead": 24,
+          "latest": 1775865600000,
+          "oldest": 1397952000000,
+          "name": "Compatibility"
+        },
+        {
+          "live": 11,
+          "dead": 23,
+          "latest": 1775779200000,
+          "oldest": 1397952000000,
+          "name": "Polyfill"
+        },
+        {
+          "live": 1,
+          "dead": 6,
+          "latest": 1760313600000,
+          "oldest": 1568332800000,
+          "name": "Form Styling"
+        },
+        {
+          "live": 5,
+          "dead": 15,
+          "latest": 1775174400000,
+          "oldest": 1369180800000,
+          "name": "Form Controls"
+        },
+        {
+          "live": 1,
+          "dead": 9,
+          "latest": 1775865600000,
+          "oldest": 1580947200000,
+          "name": "Social Media Integration"
+        },
+        {
+          "live": 0,
+          "dead": 12,
+          "latest": 1758844800000,
+          "oldest": 1568332800000,
+          "name": "API Client"
+        },
+        {
+          "live": 15,
+          "dead": 43,
+          "latest": 1775865600000,
+          "oldest": 1504224000000,
+          "name": "Framework"
+        },
+        {
+          "live": 1,
+          "dead": 3,
+          "latest": 1775952000000,
+          "oldest": 1317600000000,
+          "name": "DOM Manipulation"
+        },
+        {
+          "live": 1,
+          "dead": 7,
+          "latest": 1775520000000,
+          "oldest": 1535500800000,
+          "name": "Browser Feature Detection"
+        },
+        {
+          "live": 0,
+          "dead": 4,
+          "latest": 1712534400000,
+          "oldest": 1535500800000,
+          "name": "Device Information"
+        },
+        {
+          "live": 4,
+          "dead": 16,
+          "latest": 1775865600000,
+          "oldest": 1568332800000,
+          "name": "JavaScript Enhancements"
+        },
+        {
+          "live": 11,
+          "dead": 15,
+          "latest": 1775952000000,
+          "oldest": 1461715200000,
+          "name": "Slider"
+        },
+        {
+          "live": 5,
+          "dead": 8,
+          "latest": 1775952000000,
+          "oldest": 1317600000000,
+          "name": "Animation"
+        },
+        {
+          "live": 2,
+          "dead": 3,
+          "latest": 1775952000000,
+          "oldest": 1317600000000,
+          "name": "Event Handling"
+        },
+        {
+          "live": 1,
+          "dead": 3,
+          "latest": 1775952000000,
+          "oldest": 1317600000000,
+          "name": "Ajax Library"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1774483200000,
+          "oldest": 1505692800000,
+          "name": "Autocomplete"
+        },
+        {
+          "live": 6,
+          "dead": 29,
+          "latest": 1775433600000,
+          "oldest": 1505692800000,
+          "name": "UI Component Library"
+        },
+        {
+          "live": 1,
+          "dead": 1,
+          "latest": 1775260800000,
+          "oldest": 1505692800000,
+          "name": "Mobile UI Framework"
+        },
+        {
+          "live": 6,
+          "dead": 16,
+          "latest": 1775347200000,
+          "oldest": 1504224000000,
+          "name": "Responsive Design Utility"
+        },
+        {
+          "live": 1,
+          "dead": 3,
+          "latest": 1775088000000,
+          "oldest": 1580947200000,
+          "name": "Gesture Recognition"
+        },
+        {
+          "live": 5,
+          "dead": 7,
+          "latest": 1775865600000,
+          "oldest": 1580947200000,
+          "name": "Performance Optimization"
+        },
+        {
+          "live": 4,
+          "dead": 4,
+          "latest": 1775865600000,
+          "oldest": 1714694400000,
+          "name": "Module System"
+        },
+        {
+          "live": 6,
+          "dead": 9,
+          "latest": 1775865600000,
+          "oldest": 1462406400000,
+          "name": "Modal Dialog"
+        },
+        {
+          "live": 5,
+          "dead": 23,
+          "latest": 1775865600000,
+          "oldest": 1568332800000,
+          "name": "Module Loader"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1655769600000,
+          "oldest": 1655769600000,
+          "name": "Security"
+        },
+        {
+          "live": 1,
+          "dead": 3,
+          "latest": 1762214400000,
+          "oldest": 1462752000000,
+          "name": "Mobile Development"
+        },
+        {
+          "live": 4,
+          "dead": 3,
+          "latest": 1775779200000,
+          "oldest": 1580947200000,
+          "name": "Realtime Communication"
+        },
+        {
+          "live": 6,
+          "dead": 12,
+          "latest": 1775952000000,
+          "oldest": 1461715200000,
+          "name": "Scrolling Utility"
+        },
+        {
+          "live": 5,
+          "dead": 17,
+          "latest": 1775865600000,
+          "oldest": 1580947200000,
+          "name": "Utility Library"
+        },
+        {
+          "live": 2,
+          "dead": 24,
+          "latest": 1775433600000,
+          "oldest": 1588291200000,
+          "name": "State Management"
+        },
+        {
+          "live": 1,
+          "dead": 23,
+          "latest": 1775433600000,
+          "oldest": 1588291200000,
+          "name": "Reactive Programming"
+        },
+        {
+          "live": 3,
+          "dead": 9,
+          "latest": 1775865600000,
+          "oldest": 1588291200000,
+          "name": "Date Utility"
+        },
+        {
+          "live": 2,
+          "dead": 3,
+          "latest": 1775174400000,
+          "oldest": 1504224000000,
+          "name": "Data Format"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1580947200000,
+          "oldest": 1545955200000,
+          "name": "Navigation"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1743120000000,
+          "oldest": 1496188800000,
+          "name": "Charting"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1743120000000,
+          "oldest": 1496188800000,
+          "name": "Data Visualization"
+        },
+        {
+          "live": 2,
+          "dead": 1,
+          "latest": 1773273600000,
+          "oldest": 1566691200000,
+          "name": "Vector Graphics"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1580947200000,
+          "oldest": 1580947200000,
+          "name": "Media Playback"
+        },
+        {
+          "live": 4,
+          "dead": 2,
+          "latest": 1775865600000,
+          "oldest": 1580947200000,
+          "name": "Multimedia Embedding"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1687392000000,
+          "oldest": 1590969600000,
+          "name": "Styling Utility"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1619395200000,
+          "oldest": 1594944000000,
+          "name": "Layout"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1594944000000,
+          "oldest": 1514851200000,
+          "name": "Table Manipulation"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1594944000000,
+          "oldest": 1514851200000,
+          "name": "Sorting Utility"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1594944000000,
+          "oldest": 1514851200000,
+          "name": "Filtering Utility"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1635811200000,
+          "oldest": 1590969600000,
+          "name": "Design System"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1758844800000,
+          "oldest": 1568332800000,
+          "name": "MVC Framework"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1758844800000,
+          "oldest": 1568332800000,
+          "name": "Image Manipulation"
+        },
+        {
+          "live": 0,
+          "dead": 6,
+          "latest": 1742428800000,
+          "oldest": 1580947200000,
+          "name": "Cloud Service Integration"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775260800000,
+          "oldest": 1580947200000,
+          "name": "Lazy Loading"
+        },
+        {
+          "live": 1,
+          "dead": 2,
+          "latest": 1760918400000,
+          "oldest": 1596844800000,
+          "name": "Templating Engine"
+        },
+        {
+          "live": 1,
+          "dead": 1,
+          "latest": 1769385600000,
+          "oldest": 1614297600000,
+          "name": "Document Processing"
+        },
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1742428800000,
+          "oldest": 1635811200000,
+          "name": "Language Transpiler"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775865600000,
+          "oldest": 1617148800000,
+          "name": "Canvas Graphics"
+        },
+        {
+          "live": 0,
+          "dead": 5,
+          "latest": 1758153600000,
+          "oldest": 1718496000000,
+          "name": "Asynchronous Programming"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1742428800000,
+          "oldest": 1718496000000,
+          "name": "Developer Tool"
+        }
+      ]
+    },
+    {
+      "name": "framework",
+      "live": 37,
+      "dead": 116,
+      "latest": 1775952000000,
+      "oldest": 1294358400000,
+      "categories": [
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775952000000,
+          "oldest": 1659744000000,
+          "name": "Website Performance Optimization"
+        },
+        {
+          "live": 10,
+          "dead": 27,
+          "latest": 1775779200000,
+          "oldest": 1569542400000,
+          "name": "Schema"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1703376000000,
+          "oldest": 1612224000000,
+          "name": "Backend As A Service"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1703376000000,
+          "oldest": 1612224000000,
+          "name": "Realtime Communication"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1703376000000,
+          "oldest": 1612224000000,
+          "name": "Application Development Platform"
+        },
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1703376000000,
+          "oldest": 1612224000000,
+          "name": "Mobile Experience Platform"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1635811200000,
+          "oldest": 1614643200000,
+          "name": "WordPress Theme"
+        }
+      ]
+    },
+    {
+      "name": "cdn",
+      "live": 10,
+      "dead": 68,
+      "latest": 1775952000000,
+      "oldest": 1458518400000,
+      "categories": []
+    },
+    {
+      "name": "CDN",
+      "live": 1,
+      "dead": 23,
+      "latest": 1775865600000,
+      "oldest": 1397865600000,
+      "categories": []
+    },
+    {
+      "name": "shop",
+      "live": 1,
+      "dead": 6,
+      "latest": 1775174400000,
+      "oldest": 1529366400000,
+      "categories": [
+        {
+          "live": 1,
+          "dead": 6,
+          "latest": 1775174400000,
+          "oldest": 1529366400000,
+          "name": "Non Platform"
+        }
+      ]
+    },
+    {
+      "name": "robots",
+      "live": 7,
+      "dead": 31,
+      "latest": 1775865600000,
+      "oldest": 1593561600000,
+      "categories": [
+        {
+          "live": 0,
+          "dead": 2,
+          "latest": 1743897600000,
+          "oldest": 1691884800000,
+          "name": "AI Bot"
+        }
+      ]
+    },
+    {
+      "name": "ssl",
+      "live": 8,
+      "dead": 35,
+      "latest": 1775952000000,
+      "oldest": 1397952000000,
+      "categories": [
+        {
+          "live": 3,
+          "dead": 31,
+          "latest": 1775865600000,
+          "oldest": 1485216000000,
+          "name": "Root Authority"
+        }
+      ]
+    },
+    {
+      "name": "payment",
+      "live": 0,
+      "dead": 11,
+      "latest": 1757548800000,
+      "oldest": 1388534400000,
+      "categories": [
+        {
+          "live": 0,
+          "dead": 3,
+          "latest": 1704067200000,
+          "oldest": 1388534400000,
+          "name": "Currency"
+        },
+        {
+          "live": 0,
+          "dead": 5,
+          "latest": 1757548800000,
+          "oldest": 1588291200000,
+          "name": "Payment Acceptance"
+        }
+      ]
+    },
+    {
+      "name": "link",
+      "live": 7,
+      "dead": 46,
+      "latest": 1775952000000,
+      "oldest": 1369180800000,
+      "categories": []
+    },
+    {
+      "name": "language",
+      "live": 3,
+      "dead": 4,
+      "latest": 1775952000000,
+      "oldest": 1397865600000,
+      "categories": []
+    },
+    {
+      "name": "media",
+      "live": 1,
+      "dead": 26,
+      "latest": 1775088000000,
+      "oldest": 1369180800000,
+      "categories": [
+        {
+          "live": 1,
+          "dead": 7,
+          "latest": 1775088000000,
+          "oldest": 1369180800000,
+          "name": "Video Players"
+        },
+        {
+          "live": 0,
+          "dead": 15,
+          "latest": 1759104000000,
+          "oldest": 1462752000000,
+          "name": "Live Stream / Webcast"
+        },
+        {
+          "live": 0,
+          "dead": 14,
+          "latest": 1759104000000,
+          "oldest": 1462752000000,
+          "name": "Online Video Platform"
+        },
+        {
+          "live": 0,
+          "dead": 14,
+          "latest": 1759104000000,
+          "oldest": 1462752000000,
+          "name": "Social Video Platform"
+        }
+      ]
+    },
+    {
+      "name": "hosting",
+      "live": 3,
+      "dead": 31,
+      "latest": 1775865600000,
+      "oldest": 1479772800000,
+      "categories": [
+        {
+          "live": 1,
+          "dead": 19,
+          "latest": 1770336000000,
+          "oldest": 1580947200000,
+          "name": "Russian hosting"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1714435200000,
+          "oldest": 1713225600000,
+          "name": "Cloud Hosting"
+        },
+        {
+          "live": 0,
+          "dead": 1,
+          "latest": 1714435200000,
+          "oldest": 1713225600000,
+          "name": "Cloud PaaS"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775865600000,
+          "oldest": 1512950400000,
+          "name": "Server Location"
+        }
+      ]
+    },
+    {
+      "name": "ns",
+      "live": 2,
+      "dead": 16,
+      "latest": 1775692800000,
+      "oldest": 1550966400000,
+      "categories": []
+    },
+    {
+      "name": "Web Server",
+      "live": 5,
+      "dead": 64,
+      "latest": 1775779200000,
+      "oldest": 1397865600000,
+      "categories": []
+    },
+    {
+      "name": "mobile",
+      "live": 18,
+      "dead": 32,
+      "latest": 1775952000000,
+      "oldest": 1388534400000,
+      "categories": []
+    },
+    {
+      "name": "Web Master",
+      "live": 1,
+      "dead": 1,
+      "latest": 1775952000000,
+      "oldest": 1499040000000,
+      "categories": []
+    },
+    {
+      "name": "mx",
+      "live": 4,
+      "dead": 0,
+      "latest": 1775779200000,
+      "oldest": 1503273600000,
+      "categories": [
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775779200000,
+          "oldest": 1503273600000,
+          "name": "Secure Email"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Campaign Management"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Marketing Platform"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Email Delivery Service"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Transactional Email"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "API Services"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Customer Engagement"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "eCommerce Marketing"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Email Deliverability"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Lead Generation"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Marketing Automation"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Mass Notification"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Newsletter Software"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1529280000000,
+          "name": "Personalized Communication"
+        },
+        {
+          "live": 1,
+          "dead": 0,
+          "latest": 1775692800000,
+          "oldest": 1588032000000,
+          "name": "DMARC"
+        }
+      ]
+    },
+    {
+      "name": "feeds",
+      "live": 1,
+      "dead": 1,
+      "latest": 1761004800000,
+      "oldest": 1129161600000,
+      "categories": []
+    },
+    {
+      "name": "Server",
+      "live": 2,
+      "dead": 22,
+      "latest": 1775347200000,
+      "oldest": 1458518400000,
+      "categories": []
+    },
+    {
+      "name": "mapping",
+      "live": 1,
+      "dead": 4,
+      "latest": 1775779200000,
+      "oldest": 1462406400000,
+      "categories": [
+        {
+          "live": 1,
+          "dead": 4,
+          "latest": 1775779200000,
+          "oldest": 1462406400000,
+          "name": "Maps"
+        }
+      ]
+    },
+    {
+      "name": "copyright",
+      "live": 1,
+      "dead": 7,
+      "latest": 1775692800000,
+      "oldest": 1580947200000,
+      "categories": []
+    }
+  ]
+}

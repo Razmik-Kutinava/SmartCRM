@@ -1,0 +1,39 @@
+{
+  "inn": "7736207543",
+  "kpp": "770401001",
+  "ogrn": "1027700229193",
+  "name": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ЯНДЕКС\"",
+  "name_short": "ООО \"ЯНДЕКС\"",
+  "okved": "62.01",
+  "okved_name": "Разработка компьютерного программного обеспечения",
+  "status": "ACTIVE",
+  "registration_date": "2000-09-14",
+  "liquidation_date": null,
+  "address": "119021, г. Москва, ул. Льва Толстого, д. 16",
+  "city": "Москва",
+  "director": "",
+  "director_post": "",
+  "founders": [],
+  "employees_count": null,
+  "website": "https://vk.com/yandex",
+  "branch_count": 0,
+  "management_type": "hired_director",
+  "revenue": null,
+  "income": null,
+  "expense": null,
+  "debt": null,
+  "finance_year": null,
+  "dadata_emails": [],
+  "dadata_phones": [
+    "+78002509639",
+    "+74957397000"
+  ],
+  "smb_category": null,
+  "licenses": [
+    "Фармацевтическая деятельность"
+  ],
+  "has_disqualified_leader": false,
+  "is_bad_supplier": false,
+  "is_mass_address": true,
+  "_source": "checko"
+}

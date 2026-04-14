@@ -327,19 +327,19 @@
 			<p class="text-xs text-gray-500">Найди всё о конкретной компании — новости, финансы, технологии, контакты</p>
 			<div class="grid sm:grid-cols-2 gap-4">
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Название компании *</label>
+					<div class="block text-xs text-gray-500 mb-1">Название компании *</div>
 					<input bind:value={cs_company} placeholder="ООО РетейлМаркет"
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" />
 				</div>
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Отрасль</label>
+					<div class="block text-xs text-gray-500 mb-1">Отрасль</div>
 					<input bind:value={cs_industry} placeholder="ритейл, IT, строительство..."
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" />
 				</div>
 			</div>
 			<div class="flex items-center gap-4">
 				<div class="flex-1">
-					<label class="block text-xs text-gray-500 mb-1">Агент (тип запросов)</label>
+					<div class="block text-xs text-gray-500 mb-1">Агент (тип запросов)</div>
 					<select bind:value={cs_agent}
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white">
 						{#each AGENTS as a}<option value={a.id}>{a.label}</option>{/each}
@@ -448,7 +448,7 @@
 		<div class="bg-gray-900 border border-gray-800 rounded-xl p-5 space-y-4">
 			<p class="text-xs text-gray-500">Задай любой вопрос — поиск по всем провайдерам, AI-ответ с источниками</p>
 			<div>
-				<label class="block text-xs text-gray-500 mb-1">Запрос *</label>
+				<div class="block text-xs text-gray-500 mb-1">Запрос *</div>
 				<textarea bind:value={fq_query} rows="3" placeholder="Какие CRM-системы чаще всего используют в ритейле России?"
 					class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
 			</div>
@@ -498,24 +498,24 @@
 		<div class="bg-gray-900 border border-gray-800 rounded-xl p-5 space-y-4">
 			<p class="text-xs text-gray-500">Опиши идеального клиента — AI найдёт подходящие компании и оценит их</p>
 			<div>
-				<label class="block text-xs text-gray-500 mb-1">Описание ICP (идеального клиента) *</label>
+				<div class="block text-xs text-gray-500 mb-1">Описание ICP (идеального клиента) *</div>
 				<textarea bind:value={pr_icp} rows="3"
 					placeholder="Торговые компании с оборотом от 100 млн руб, 20-200 сотрудников, отдел продаж 5+ человек, без CRM или с устаревшей системой"
 					class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
 			</div>
 			<div class="grid sm:grid-cols-3 gap-3">
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Отрасль</label>
+					<div class="block text-xs text-gray-500 mb-1">Отрасль</div>
 					<input bind:value={pr_industry} placeholder="ритейл, производство..."
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white" />
 				</div>
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Город</label>
+					<div class="block text-xs text-gray-500 mb-1">Город</div>
 					<input bind:value={pr_city} placeholder="Москва, СПб..."
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white" />
 				</div>
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Количество</label>
+					<div class="block text-xs text-gray-500 mb-1">Количество</div>
 					<input type="number" bind:value={pr_count} min="3" max="20"
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white" />
 				</div>
@@ -580,12 +580,12 @@
 			<p class="text-xs text-gray-500">Введи компанию — AI найдёт телефоны, email, сайт, выручку, ЛПР и другие данные</p>
 			<div class="grid sm:grid-cols-2 gap-4">
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Название компании *</label>
+					<div class="block text-xs text-gray-500 mb-1">Название компании *</div>
 					<input bind:value={en_company} placeholder="ООО РетейлМаркет"
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" />
 				</div>
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Отрасль</label>
+					<div class="block text-xs text-gray-500 mb-1">Отрасль</div>
 					<input bind:value={en_industry} placeholder="ритейл, IT..."
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white" />
 				</div>
@@ -646,13 +646,13 @@
 		<div class="bg-gray-900 border border-gray-800 rounded-xl p-5 space-y-4">
 			<p class="text-xs text-gray-500">Найди статьи и документы → посмотри как разобьются на чанки → загрузи в базу знаний агента</p>
 			<div>
-				<label class="block text-xs text-gray-500 mb-1">Запрос *</label>
+				<div class="block text-xs text-gray-500 mb-1">Запрос *</div>
 				<textarea bind:value={rg_query} rows="2" placeholder="лучшие практики B2B продаж в SaaS"
 					class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
 			</div>
 			<div class="grid sm:grid-cols-2 gap-3">
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Тип контента</label>
+					<div class="block text-xs text-gray-500 mb-1">Тип контента</div>
 					<select bind:value={rg_type}
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white">
 						<option value="any">Любой</option>
@@ -662,7 +662,7 @@
 					</select>
 				</div>
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Агент-получатель</label>
+					<div class="block text-xs text-gray-500 mb-1">Агент-получатель</div>
 					<select bind:value={rg_agent}
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white">
 						{#each RAG_AGENTS as a}<option value={a.id}>{a.label}</option>{/each}
@@ -711,7 +711,10 @@
 					<div
 						class="bg-gray-900 border rounded-xl p-4 cursor-pointer transition-colors
 							{rg_approved.has(i) ? 'border-indigo-600 bg-indigo-950/20' : 'border-gray-800 hover:border-gray-700'}"
+						role="button"
+						tabindex="0"
 						onclick={() => toggleApprove(i)}
+						onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), toggleApprove(i))}
 					>
 						<div class="flex items-start gap-3">
 							<div class="mt-0.5 shrink-0">
@@ -833,21 +836,21 @@
 		<div class="bg-gray-900 border border-gray-800 rounded-xl p-5 space-y-4">
 			<p class="text-xs text-gray-500">Дай агенту задачу — он сам сформулирует запросы, найдёт данные и подготовит аналитику</p>
 			<div>
-				<label class="block text-xs text-gray-500 mb-1">Задача *</label>
+				<div class="block text-xs text-gray-500 mb-1">Задача *</div>
 				<textarea bind:value={at_task} rows="3"
 					placeholder="Найди топ-5 конкурентов Сбербанка в сфере B2B кредитования и сравни их условия для малого бизнеса"
 					class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
 			</div>
 			<div class="grid sm:grid-cols-2 gap-4">
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Агент</label>
+					<div class="block text-xs text-gray-500 mb-1">Агент</div>
 					<select bind:value={at_agent}
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white">
 						{#each AGENTS as a}<option value={a.id}>{a.label}</option>{/each}
 					</select>
 				</div>
 				<div>
-					<label class="block text-xs text-gray-500 mb-1">Дополнительный контекст</label>
+					<div class="block text-xs text-gray-500 mb-1">Дополнительный контекст</div>
 					<input bind:value={at_context} placeholder="регион Москва, сектор SMB..."
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white" />
 				</div>

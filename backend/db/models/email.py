@@ -95,6 +95,7 @@ class EmailMessage(Base):
     cc: Mapped[str] = mapped_column(String(1000), default="")
     direction: Mapped[str] = mapped_column(String(50), default="inbound")
     category: Mapped[str] = mapped_column(String(100), default="general")
+    is_archived: Mapped[bool] = mapped_column(Boolean, default=False)
     snippet: Mapped[str] = mapped_column(String(500), default="")
     body: Mapped[str] = mapped_column(Text, default="")
     raw_headers: Mapped[str] = mapped_column(Text, default="")
@@ -119,6 +120,7 @@ class EmailMessage(Base):
             "cc": self.cc,
             "direction": self.direction,
             "category": self.category,
+            "isArchived": self.is_archived,
             "snippet": self.snippet,
             "body": self.body,
             "sentAt": self.sent_at.isoformat() if self.sent_at else None,

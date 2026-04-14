@@ -11,11 +11,13 @@
 		{ href: '/ops',          label: 'Обзор',      exact: true },
 		{ href: '/ops/intents',  label: '🎯 Интенты' },
 		{ href: '/ops/voice',    label: '🎙 Голос' },
-		{ href: '/ops/agents',   label: '🤖 Агенты' },
+		{ href: '/ops/agents',       label: '🤖 Агенты'     },
+		{ href: '/ops/email-agents', label: '📧 Агенты почты' },
 		{ href: '/ops/search',   label: '🔍 Поиск' },
 		{ href: '/ops/queue',    label: 'Очередь' },
 		{ href: '/ops/stats',    label: 'Статистика' },
 		{ href: '/ops/insights', label: 'Инсайты' },
+		{ href: '/ops/api-limits', label: '🔑 API Лимиты' },
 	];
 
 	function isActive(href, exact) {

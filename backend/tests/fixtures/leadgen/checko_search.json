@@ -1,0 +1,9 @@
+{
+  "data": {},
+  "meta": {
+    "status": "error",
+    "today_request_count": 5,
+    "message": "Не указаны или неверно указаны параметры запроса",
+    "balance": 0.0
+  }
+}

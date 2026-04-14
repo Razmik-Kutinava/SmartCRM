@@ -16,9 +16,11 @@ logger = logging.getLogger(__name__)
 # Интенты, при которых запускается полная агентная цепочка
 _AGENT_INTENTS = frozenset({
     "create_lead", "update_lead", "delete_lead", "list_leads", "analyze_lead",
-    # Новые интенты — голосовые запросы к отдельным агентам и анализ
+    # Голосовые запросы к отдельным агентам и анализ
     "run_analysis", "ask_economist", "ask_marketer", "ask_tech", "ask_strategist",
     "search_web", "write_email",
+    # Лидогенерация
+    "generate_lead", "find_leads_portrait", "cluster_company",
 })
 
 # Интенты, при которых достаточно только аналитика (без стратега)
@@ -35,6 +37,10 @@ _INTENT_TO_AGENTS: dict[str, list[str]] = {
     "search_web":      ["analyst"],
     "write_email":     ["marketer"],
     "run_analysis":    ["analyst", "economist", "marketer", "tech_specialist"],
+    # Лидогенерация — роутим в специальный хэндлер
+    "generate_lead":       ["analyst", "tech_specialist", "marketer", "strategist"],
+    "find_leads_portrait": ["analyst"],
+    "cluster_company":     ["analyst"],
 }
 
 
@@ -128,6 +134,10 @@ async def _run_voice_query(state: AgentState, intent: str) -> AgentState:
     question = slots.get("question") or slots.get("query") or state.get("transcript", "")
     company = slots.get("company", "")
     context = slots.get("context", "")
+
+    # Лидогенерация — делегируем в pipeline
+    if intent in ("generate_lead", "find_leads_portrait", "cluster_company"):
+        return await _run_leadgen(state, intent)
 
     # Для search_web — запускаем поиск и строим ответ через аналитика
     if intent == "search_web":
@@ -224,6 +234,57 @@ async def _run_voice_query(state: AgentState, intent: str) -> AgentState:
         state["errors"] = list(state.get("errors", [])) + [str(e)]
         state["final_reply"] = f"Агент {agent_id} не смог ответить: {e}"
 
+    return state
+
+
+async def _run_leadgen(state: AgentState, intent: str) -> AgentState:
+    """Голосовая/текстовая лидогенерация через pipeline."""
+    slots = state.get("slots", {})
+    try:
+        if intent == "generate_lead":
+            from leadgen.pipeline import run_pipeline
+            result = await run_pipeline(
+                inn=slots.get("inn", ""),
+                company_name=slots.get("company_name", "") or slots.get("company", ""),
+                website=slots.get("website", ""),
+                save_to_crm=slots.get("save", False),
+            )
+            score = result.get("final_score", 0)
+            company = result.get("company_name", "компания")
+            lpr = (result.get("lpr") or {}).get("name", "")
+            action = result.get("action", "research_more")
+            action_ru = {
+                "call_now": "звони сейчас",
+                "schedule_call": "планируй звонок",
+                "research_more": "нужно больше данных",
+                "monitor": "мониторь",
+            }.get(action, action)
+            reply = f"Анализ {company} завершён. Скор: {score}/100. Рекомендация: {action_ru}."
+            if lpr:
+                reply += f" ЛПР: {lpr}."
+            state["final_reply"] = reply
+            state["analyst_output"] = {"summary": reply, "leadgen_card": result}
+
+        elif intent == "find_leads_portrait":
+            from leadgen.pipeline import search_by_portrait
+            portrait = slots.get("portrait", "") or state.get("transcript", "")
+            result = await search_by_portrait(portrait, limit=5)
+            total = result.get("total", 0)
+            state["final_reply"] = f"Нашёл {total} компаний по твоему портрету. Открой вкладку Лидогенерация для просмотра."
+            state["analyst_output"] = {"summary": state["final_reply"], "portrait_results": result}
+
+        elif intent == "cluster_company":
+            from leadgen.pipeline import run_cluster
+            inn = slots.get("inn", "")
+            result = await run_cluster(inn)
+            related = result.get("total_companies", 1) - 1
+            state["final_reply"] = f"Найдено {related} связанных компаний. Открой вкладку Лидогенерация → Кластер для просмотра."
+            state["analyst_output"] = {"summary": state["final_reply"], "cluster_result": result}
+
+    except Exception as e:
+        logger.error("Leadgen orchestrator error (intent=%s): %s", intent, e)
+        state["errors"] = list(state.get("errors", [])) + [str(e)]
+        state["final_reply"] = f"Ошибка лидогенерации: {e}"
     return state
 
 

@@ -76,6 +76,15 @@ async def _groq_chat(
 
     response = await _groq_client.chat.completions.create(**kwargs)
     result = response.choices[0].message.content
+    # Трекинг токенов
+    try:
+        from core.stats import track_llm
+        usage = response.usage
+        if usage:
+            track_llm("groq", prompt_tokens=usage.prompt_tokens,
+                      completion_tokens=usage.completion_tokens)
+    except Exception:
+        pass
     logger.info(f"Groq ответил ({len(result)} символов)")
     return result
 
@@ -106,6 +115,13 @@ async def _ollama_chat(
         response.raise_for_status()
         data = response.json()
         result = data["message"]["content"]
+        try:
+            from core.stats import track_llm
+            # Ollama не возвращает точные токены — считаем символы / 4
+            est = len(result) // 4
+            track_llm("ollama", prompt_tokens=0, completion_tokens=est)
+        except Exception:
+            pass
         logger.info(f"Ollama ответил ({len(result)} символов)")
         return result
 

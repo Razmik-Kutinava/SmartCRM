@@ -34,6 +34,19 @@ export async function fetchLeadEmails(leadId) {
     return r.json();
 }
 
+export async function sendEmail(body) {
+    const r = await fetch(`${EMAIL_API()}/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    if (!r.ok) {
+        const text = await r.text().catch(() => '');
+        throw new Error(`Ошибка отправки: ${r.status} ${text}`);
+    }
+    return r.json();
+}
+
 export async function sendLeadEmail(body) {
     const r = await fetch(`${EMAIL_API()}/send`, {
         method: 'POST',
@@ -99,6 +112,12 @@ export async function fetchEmailThreads(params = {}) {
     const query = new URLSearchParams(params).toString();
     const r = await fetch(`${EMAIL_API()}/threads?${query}`);
     if (!r.ok) throw new Error('Ошибка загрузки тредов');
+    return r.json();
+}
+
+export async function fetchThreadMessages(threadId) {
+    const r = await fetch(`${EMAIL_API()}/threads/${threadId}/messages`);
+    if (!r.ok) throw new Error('Ошибка загрузки сообщений треда');
     return r.json();
 }
 

@@ -1,0 +1,355 @@
+{
+  "status": "ok",
+  "errors": [],
+  "inn": "7736207543",
+  "ogrn": "1027700229193",
+  "company_name": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ЯНДЕКС\"",
+  "company_short": "ООО \"ЯНДЕКС\"",
+  "industry": "Разработка компьютерного программного обеспечения",
+  "okved": "62.01",
+  "city": "Москва",
+  "website": "",
+  "company_status": "ACTIVE",
+  "lpr": {
+    "name": "",
+    "role": "Генеральный директор",
+    "email": "",
+    "email_confidence": null,
+    "email_valid": null,
+    "email_source": "",
+    "email_variants": [],
+    "phone": "+78002509639",
+    "dadata_phones": [
+      "+78002509639",
+      "+74957397000"
+    ],
+    "dadata_emails": []
+  },
+  "founders": [],
+  "related_companies": [
+    {
+      "inn": "7705891253",
+      "ogrn": "1097746360568",
+      "name": "ООО \"ДЕЛИВЕРИ КЛАБ\"",
+      "name_full": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ДЕЛИВЕРИ КЛАБ\"",
+      "status": "ACTIVE",
+      "reg_date": "2009-06-19",
+      "okved": "Разработка компьютерного программного обеспечения",
+      "address": "123112, г. Москва, вн. тер. г. муниципальный округ Пресненский, 1-й Красногвардейский проезд, д. 22, стр. 1",
+      "_relation": "дочерняя/аффилированная компания"
+    },
+    {
+      "inn": "6232008480",
+      "ogrn": "1116232000411",
+      "name": "ООО \"ЯНДЕКС ДЦ\"",
+      "name_full": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ЯНДЕКС ДЦ\"",
+      "status": "ACTIVE",
+      "reg_date": "2011-05-13",
+      "okved": "Деятельность, связанная с использованием вычислительной техники и информационных технологий, прочая",
+      "address": "115035, г. Москва, вн. тер. г. муниципальный округ Замоскворечье, ул. Садовническая, д. 82, стр. 2, ком. 5B68",
+      "_relation": "дочерняя/аффилированная компания"
+    },
+    {
+      "inn": "3328000568",
+      "ogrn": "1153328000154",
+      "name": "ООО \"ЯНДЕКС ДЦ ВЛАДИМИР\"",
+      "name_full": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ЯНДЕКС ДЦ ВЛАДИМИР\"",
+      "status": "ACTIVE",
+      "reg_date": "2015-01-21",
+      "okved": "Деятельность, связанная с использованием вычислительной техники и информационных технологий, прочая",
+      "address": "600902, Владимирская область, г. Владимир, ул. Поисковая (Энергетик мкр.), д. 1, корп. 2",
+      "_relation": "дочерняя/аффилированная компания"
+    },
+    {
+      "inn": "7713412899",
+      "ogrn": "1167746266819",
+      "name": "ООО \"СМБ-СЕРВИС\"",
+      "name_full": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"СМБ-СЕРВИС\"",
+      "status": "ACTIVE",
+      "reg_date": "2016-03-16",
+      "okved": "Деятельность по распространению рекламы пользователем социальной сети",
+      "address": "119021, г. Москва, ул. Льва Толстого, д. 16, помещ. 2106",
+      "_relation": "дочерняя/аффилированная компания"
+    },
+    {
+      "inn": "4027146565",
+      "ogrn": "1214000005010",
+      "name": "ООО \"ЯНДЕКС ДЦ КАЛУГА\"",
+      "name_full": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ЯНДЕКС ДЦ КАЛУГА\"",
+      "status": "ACTIVE",
+      "reg_date": "2021-06-11",
+      "okved": "Деятельность, связанная с использованием вычислительной техники и информационных технологий, прочая",
+      "address": "248926, Калужская область, г. о. город Калуга, г. Калуга, 1-й Автомобильный проезд, зд. 8",
+      "_relation": "дочерняя/аффилированная компания"
+    },
+    {
+      "inn": "9705180670",
+      "ogrn": "1227700677368",
+      "name": "ООО \"ИТ-ИНФРА\"",
+      "name_full": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ИТ-ИНФРА\"",
+      "status": "ACTIVE",
+      "reg_date": "2022-10-19",
+      "okved": "Деятельность по созданию и использованию баз данных и информационных ресурсов",
+      "address": "115035, г. Москва, вн. тер. г. муниципальный округ Замоскворечье, ул. Садовническая, д. 82, стр. 2, помещ. 5B70",
+      "_relation": "дочерняя/аффилированная компания"
+    },
+    {
+      "inn": "7709809066",
+      "ogrn": "5087746425509",
+      "name": "ООО \"АВАПС\"",
+      "name_full": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"АВАПС\"",
+      "status": "ACTIVE",
+      "reg_date": "2008-11-17",
+      "okved": "Рекламная деятельность",
+      "address": "105120, г. Москва, пер. Съезжинский, д. 8, стр. 1",
+      "_relation": "дочерняя/аффилированная компания"
+    }
+  ],
+  "management_type": "hired_director",
+  "branch_count": 0,
+  "risk_flags": {
+    "is_bad_supplier": false,
+    "has_disqualified_leader": false,
+    "is_mass_address": true
+  },
+  "financials": {
+    "revenue": 544581317000.0,
+    "income": null,
+    "expense": 498016459000.0,
+    "profit": -11681168000.0,
+    "assets": 565464722000.0,
+    "debt": 216077519000.0,
+    "finance_year": 2024,
+    "revenue_series": [
+      [
+        2022,
+        301979022000.0
+      ],
+      [
+        2023,
+        421987321000.0
+      ],
+      [
+        2024,
+        544581317000.0
+      ]
+    ],
+    "profit_series": [
+      [
+        2022,
+        50313398000.0
+      ],
+      [
+        2023,
+        -58454216000.0
+      ],
+      [
+        2024,
+        -11681168000.0
+      ]
+    ],
+    "trend": "growing",
+    "has_bankruptcy": false,
+    "bankruptcy_messages": [],
+    "arbitration_count": 0,
+    "arbitration_cases": [],
+    "enforcement_count": 0,
+    "enforcement_debt": 0.0,
+    "enforcements": [],
+    "contracts_count": 0,
+    "contracts_total_amount": 0.0,
+    "contracts": [],
+    "inspection_count": 0,
+    "inspections": [],
+    "licenses": [
+      "Фармацевтическая деятельность"
+    ]
+  },
+  "tech_stack": {
+    "count": 0,
+    "crm": [],
+    "analytics": [],
+    "maturity": "",
+    "all": []
+  },
+  "analyses": {
+    "it_maturity": {
+      "level": "basic",
+      "tech_count": 0,
+      "has_crm": false,
+      "has_analytics": false,
+      "it_hiring_signal": false,
+      "recommendation": "Базовый старт: ServiceDesk Plus, Desktop Central",
+      "score_impact": 5
+    },
+    "decision_structure": {
+      "management_type": "hired_director",
+      "decision_level": "director",
+      "lpr_role": "Генеральный директор",
+      "lpr_name": "",
+      "secondary_lpr": "IT-директор / CTO",
+      "founders_count": 0,
+      "branch_count": 0,
+      "founders": [],
+      "approach_recommendation": "Директор: акцент на снижении рисков и операционной эффективности",
+      "score_impact": 10
+    },
+    "vendor_landscape": {
+      "strategy": "complement",
+      "positioning": "Дополнить текущую инфраструктуру",
+      "competitors_found": {
+        "replace": [],
+        "integrate": [],
+        "complement": []
+      },
+      "gaps": [
+        "Нет CRM системы",
+        "Нет мониторинга инфраструктуры",
+        "Нет видимых инструментов безопасности"
+      ],
+      "current_crm": [],
+      "total_tools": 0,
+      "score_impact": 15
+    },
+    "growth_trajectory": {
+      "trajectory": "growing",
+      "revenue": 544581317000.0,
+      "profit": -11681168000.0,
+      "revenue_trend": "growing",
+      "growth_signals": [],
+      "decline_signals": [],
+      "sales_argument": "Масштабирование: нужны инструменты для роста без увеличения команды",
+      "score_impact": 20
+    },
+    "security_compliance": {
+      "compliance_level": "certified",
+      "is_regulated_industry": false,
+      "licenses_found": [
+        "Фармацевтическая деятельность"
+      ],
+      "security_tools": [],
+      "security_incidents": [],
+      "product_recommendation": "ManageEngine PAM360, Log360 (SIEM), DataSecurity Plus",
+      "score_impact": 15
+    }
+  },
+  "agent_scores": {
+    "analyst": 70,
+    "tech_specialist": 70,
+    "marketer": 70,
+    "strategist": 70
+  },
+  "agent_outputs": {
+    "analyst": {
+      "score": 70,
+      "hook": "Тестовый крючок",
+      "triggers": [],
+      "summary": "ok",
+      "reasoning": "",
+      "verdict": "safe",
+      "reliability": "high",
+      "budget_estimate": "medium",
+      "risks": [],
+      "maturity": "high",
+      "compatibility": "native",
+      "gaps": [],
+      "recommended_products": [],
+      "integration_effort": "low",
+      "pain_points": [],
+      "urgency": "month",
+      "industry_context": "",
+      "target_role": "CTO",
+      "channel": "email",
+      "strategy": "direct",
+      "script_outline": [],
+      "objections": [],
+      "personalization_notes": ""
+    },
+    "tech_specialist": {
+      "score": 70,
+      "hook": "Тестовый крючок",
+      "triggers": [],
+      "summary": "ok",
+      "reasoning": "",
+      "verdict": "safe",
+      "reliability": "high",
+      "budget_estimate": "medium",
+      "risks": [],
+      "maturity": "high",
+      "compatibility": "native",
+      "gaps": [],
+      "recommended_products": [],
+      "integration_effort": "low",
+      "pain_points": [],
+      "urgency": "month",
+      "industry_context": "",
+      "target_role": "CTO",
+      "channel": "email",
+      "strategy": "direct",
+      "script_outline": [],
+      "objections": [],
+      "personalization_notes": ""
+    },
+    "marketer": {
+      "score": 70,
+      "hook": "Тестовый крючок",
+      "triggers": [],
+      "summary": "ok",
+      "reasoning": "",
+      "verdict": "safe",
+      "reliability": "high",
+      "budget_estimate": "medium",
+      "risks": [],
+      "maturity": "high",
+      "compatibility": "native",
+      "gaps": [],
+      "recommended_products": [],
+      "integration_effort": "low",
+      "pain_points": [],
+      "urgency": "month",
+      "industry_context": "",
+      "target_role": "CTO",
+      "channel": "email",
+      "strategy": "direct",
+      "script_outline": [],
+      "objections": [],
+      "personalization_notes": ""
+    },
+    "strategist": {
+      "score": 70,
+      "hook": "Тестовый крючок",
+      "triggers": [],
+      "summary": "ok",
+      "reasoning": "",
+      "verdict": "safe",
+      "reliability": "high",
+      "budget_estimate": "medium",
+      "risks": [],
+      "maturity": "high",
+      "compatibility": "native",
+      "gaps": [],
+      "recommended_products": [],
+      "integration_effort": "low",
+      "pain_points": [],
+      "urgency": "month",
+      "industry_context": "",
+      "target_role": "CTO",
+      "channel": "email",
+      "strategy": "direct",
+      "script_outline": [],
+      "objections": [],
+      "personalization_notes": ""
+    }
+  },
+  "final_score": 82,
+  "priority": "critical",
+  "action": "call_now",
+  "triggers": [],
+  "news": [],
+  "hook": "Тестовый крючок",
+  "urgency": "month",
+  "script": "",
+  "recommended_products": [],
+  "sales_argument": "Масштабирование: нужны инструменты для роста без увеличения команды",
+  "timings_ms": 9223
+}
