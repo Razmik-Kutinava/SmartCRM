@@ -29,8 +29,10 @@ class BitrixWebhookError(RuntimeError):
 
 
 def webhook_base() -> str:
-    base = (os.getenv("BITRIX24_WEBHOOK_URL") or "").strip().rstrip("/")
-    return base
+    raw = (os.getenv("BITRIX24_WEBHOOK_URL") or "").strip()
+    if len(raw) >= 2 and raw[0] in "\"'" and raw[0] == raw[-1]:
+        raw = raw[1:-1].strip()
+    return raw.rstrip("/")
 
 
 def _handle_bitrix_http(method: str, r: httpx.Response) -> dict[str, Any]:
@@ -75,8 +77,11 @@ def _handle_bitrix_http(method: str, r: httpx.Response) -> dict[str, Any]:
 
         if code in ("NO_AUTH_FOUND", "INVALID_CREDENTIALS", "expired_token"):
             raise BitrixWebhookError(
-                "Неверный или отозванный секрет вебхука (NO_AUTH_FOUND / INVALID_CREDENTIALS). "
-                "Создайте новый входящий вебхук в Битрикс24 и обновите BITRIX24_WEBHOOK_URL в .env."
+                "Битрикс24: INVALID_CREDENTIALS — секрет в URL не совпадает с вебхуком. "
+                "Скопируйте полный URL ещё раз из карточки вебхука (строка «Вебхук для вызова rest api», "
+                "со слэшем в конце, без текста `.json` в пути) в файл .env в корне проекта SmartCRM: "
+                "BITRIX24_WEBHOOK_URL=https://.../rest/USER/секрет/ "
+                "Перезапустите uvicorn. Если только что меняли права — Битрикс мог выдать новый секрет."
             ) from None
 
         if r.status_code == 401:

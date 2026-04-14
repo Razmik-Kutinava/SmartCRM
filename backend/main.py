@@ -4,11 +4,18 @@ SmartCRM — FastAPI entry point
 import logging
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-load_dotenv()
+# При `cd backend && uvicorn` cwd не корень репо — явно подхватываем SmartCRM/.env
+_BACKEND_DIR = Path(__file__).resolve().parent
+_REPO_ROOT = _BACKEND_DIR.parent
+load_dotenv(_BACKEND_DIR / ".env")
+load_dotenv(_REPO_ROOT / ".env", override=True)
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -16,6 +23,11 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("SmartCRM запускается...")
+    _bx = (os.getenv("BITRIX24_WEBHOOK_URL") or "").strip()
+    logger.info(
+        "BITRIX24_WEBHOOK_URL: %s",
+        "задан (импорт лидов из Битрикс24)" if _bx else "не задан — добавьте в .env в корне репозитория",
+    )
     from db.session import init_db
     try:
         await init_db()
