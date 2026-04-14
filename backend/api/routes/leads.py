@@ -86,7 +86,7 @@ async def import_leads_bitrix(
     создаёт записи или обновляет по bitrix_lead_id.
     """
     try:
-        from integrations.bitrix24 import import_leads_from_bitrix
+        from integrations.bitrix24 import BitrixWebhookError, import_leads_from_bitrix
     except ImportError as e:
         raise HTTPException(500, detail=f"Модуль интеграции: {e}") from e
     try:
@@ -95,6 +95,8 @@ async def import_leads_bitrix(
             date_from=body.date_from.strip(),
             max_items=body.max_items,
         )
+    except BitrixWebhookError as e:
+        raise HTTPException(403, detail=str(e)) from e
     except RuntimeError as e:
         raise HTTPException(503, detail=str(e)) from e
     except Exception as e:

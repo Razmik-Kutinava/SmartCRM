@@ -23,26 +23,92 @@ logger = logging.getLogger(__name__)
 _DEFAULT_DATE_FROM = "2023-01-01"
 _PAGE = 50
 
-# Минимум полей для карточки и маппинга; Битрикс отдаёт остальные при select ["*","UF_*"] — берём шире
+
+class BitrixWebhookError(RuntimeError):
+    """Ошибка URL/секрета вебхука или отсутствие нужных прав (scope) в Битрикс24."""
+
+
 def webhook_base() -> str:
     base = (os.getenv("BITRIX24_WEBHOOK_URL") or "").strip().rstrip("/")
     return base
 
 
+def _handle_bitrix_http(method: str, r: httpx.Response) -> dict[str, Any]:
+    """Разбирает ответ Битрикс24: ошибки часто приходят в JSON при HTTP 401, не только 200."""
+    text = r.text or ""
+    try:
+        data = r.json()
+    except Exception:
+        snippet = text[:400].replace("\n", " ")
+        if r.status_code == 401:
+            raise BitrixWebhookError(
+                f"Битрикс24 отклонил запрос {method} (HTTP 401). "
+                "Проверьте BITRIX24_WEBHOOK_URL, что вебхук не отозван и что у него есть права CRM."
+            ) from None
+        raise BitrixWebhookError(
+            f"Битрикс24 {method}: ответ не JSON (HTTP {r.status_code}): {snippet}"
+        ) from None
+
+    if not isinstance(data, dict):
+        raise BitrixWebhookError(f"Битрикс24 {method}: неожиданный формат ответа")
+
+    err = data.get("error")
+    desc = (data.get("error_description") or "").strip()
+    combined = f"{err} {desc}".lower()
+
+    if r.status_code >= 400 or err:
+        code = str(err or "")
+
+        if (
+            r.status_code == 401
+            and (
+                code == "insufficient_scope"
+                or "insufficient_scope" in combined
+                or "requires higher privileges" in combined
+            )
+        ):
+            raise BitrixWebhookError(
+                "У вебхука нет прав на CRM (insufficient_scope). В Битрикс24: разработчикам → вебхуки "
+                "→ ваш входящий вебхук → настройка прав: включите «CRM (crm)» и «Пользователи (user)», "
+                "сохраните, скопируйте новый URL в .env как BITRIX24_WEBHOOK_URL и перезапустите бэкенд."
+            ) from None
+
+        if code in ("NO_AUTH_FOUND", "INVALID_CREDENTIALS", "expired_token"):
+            raise BitrixWebhookError(
+                "Неверный или отозванный секрет вебхука (NO_AUTH_FOUND / INVALID_CREDENTIALS). "
+                "Создайте новый входящий вебхук в Битрикс24 и обновите BITRIX24_WEBHOOK_URL в .env."
+            ) from None
+
+        if r.status_code == 401:
+            raise BitrixWebhookError(
+                f"Битрикс24 отклонил {method} (HTTP 401): {desc or code or text[:200]}"
+            ) from None
+
+        if err:
+            raise BitrixWebhookError(f"Битрикс24 {method}: {desc or code}") from None
+
+        raise BitrixWebhookError(f"Битрикс24 {method}: HTTP {r.status_code} — {desc or text[:200]}") from None
+
+    if data.get("error"):
+        raise BitrixWebhookError(
+            f"Битрикс24 {method}: {data.get('error_description') or data.get('error')}"
+        )
+
+    return data
+
+
 async def bitrix_call(method: str, params: Optional[dict[str, Any]] = None) -> dict[str, Any]:
     base = webhook_base()
     if not base:
-        raise RuntimeError("BITRIX24_WEBHOOK_URL не задан в окружении")
+        raise BitrixWebhookError(
+            "В .env не задан BITRIX24_WEBHOOK_URL. Укажите базовый URL вебхука со слэшем в конце, "
+            "например: https://ваш-портал/rest/112/секрет/"
+        )
     url = f"{base}/{method}"
     payload = params or {}
     async with httpx.AsyncClient(timeout=120.0) as client:
         r = await client.post(url, json=payload)
-        r.raise_for_status()
-        data = r.json()
-    if "error" in data and data["error"]:
-        err = data.get("error_description") or data["error"]
-        raise RuntimeError(f"Bitrix24 {method}: {err}")
-    return data
+    return _handle_bitrix_http(method, r)
 
 
 def _first_multi(val: Any) -> str:
@@ -142,6 +208,8 @@ async def _load_source_names() -> dict[str, str]:
             sid = row.get("STATUS_ID")
             if sid:
                 names[str(sid)] = (row.get("NAME") or sid)[:100]
+    except BitrixWebhookError:
+        raise
     except Exception as e:
         logger.warning("crm.status.list SOURCE: %s", e)
     return names
@@ -159,6 +227,8 @@ async def _load_status_names() -> dict[str, str]:
             sid = row.get("STATUS_ID")
             if sid:
                 names[str(sid)] = (row.get("NAME") or sid)[:100]
+    except BitrixWebhookError:
+        raise
     except Exception as e:
         logger.warning("crm.status.list: %s", e)
     return names
@@ -187,6 +257,8 @@ async def _load_user_names(ids: set[int]) -> dict[int, str]:
             label = (name or u.get("EMAIL") or str(uid))[:255]
             _user_cache[uid] = label
             out[uid] = label
+        except BitrixWebhookError:
+            raise
         except Exception as e:
             logger.debug("user.get %s: %s", uid, e)
             _user_cache[uid] = f"#{uid}"
@@ -282,6 +354,8 @@ async def import_leads_from_bitrix(
                     "start": start,
                 },
             )
+        except BitrixWebhookError:
+            raise
         except Exception as e:
             errors.append(str(e))
             logger.exception("crm.lead.list failed at start=%s", start)
