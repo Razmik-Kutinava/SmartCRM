@@ -29,6 +29,9 @@ class Lead(Base):
     next_call: Mapped[str] = mapped_column(String(100), default="—")
     description: Mapped[str] = mapped_column(Text, default="")
 
+    # ── Bitrix24 (дедуп при повторном импорте) ───────────────────────────────
+    bitrix_lead_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
+
     # ── Идентификаторы (из Checko/DaData) ─────────────────────────────────────
     inn: Mapped[Optional[str]] = mapped_column(String(20), nullable=True, default=None)
     ogrn: Mapped[Optional[str]] = mapped_column(String(20), nullable=True, default=None)
@@ -91,6 +94,7 @@ class Lead(Base):
             "description": self.description,
             "created": self.created_at.strftime("%d.%m.%Y") if self.created_at else "—",
             # Новые поля
+            "bitrixLeadId": self.bitrix_lead_id,
             "inn": self.inn or "",
             "ogrn": self.ogrn or "",
             "checko": checko,

@@ -41,6 +41,13 @@ class LeadCreate(BaseModel):
     description: str = ""
 
 
+class BitrixImportBody(BaseModel):
+    """Импорт лидов из Битрикс24 (входящий вебхук, переменная BITRIX24_WEBHOOK_URL)."""
+
+    date_from: str = "2023-01-01"
+    max_items: int = 10000
+
+
 class LeadPatch(BaseModel):
     company: Optional[str] = None
     contact: Optional[str] = None
@@ -67,6 +74,33 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Lead).order_by(Lead.created_at.desc()))
     leads = result.scalars().all()
     return [l.to_dict() for l in leads]
+
+
+@router.post("/import-bitrix")
+async def import_leads_bitrix(
+    body: BitrixImportBody = BitrixImportBody(),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Забирает лиды из Битрикс24 (crm.lead.list) с DATE_CREATE >= date_from,
+    создаёт записи или обновляет по bitrix_lead_id.
+    """
+    try:
+        from integrations.bitrix24 import import_leads_from_bitrix
+    except ImportError as e:
+        raise HTTPException(500, detail=f"Модуль интеграции: {e}") from e
+    try:
+        result = await import_leads_from_bitrix(
+            db,
+            date_from=body.date_from.strip(),
+            max_items=body.max_items,
+        )
+    except RuntimeError as e:
+        raise HTTPException(503, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("import-bitrix")
+        raise HTTPException(502, detail=str(e)) from e
+    return {"status": "ok", **result}
 
 
 @router.post("", status_code=201)

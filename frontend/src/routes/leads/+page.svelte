@@ -5,6 +5,7 @@
 		apiCreateLead,
 		apiUpdateLead,
 		apiDeleteLead,
+		apiImportBitrix,
 		readLeadsCache,
 		writeLeadsCache,
 	} from '$lib/leadsStorage.js';
@@ -18,6 +19,7 @@
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
 	let editingLead = $state(null); // лид в режиме редактирования
 	let apiError = $state(false); // флаг недоступности API
+	let bitrixImporting = $state(false);
 
 	const stages = ['all', 'Новый', 'Квалифицирован', 'КП отправлено', 'Переговоры', 'Выигран', 'Проигран'];
 
@@ -63,6 +65,29 @@
 	function notify(text, type = 'success') {
 		notification = { text, type };
 		setTimeout(() => notification = null, 4000);
+	}
+
+	async function runBitrixImport() {
+		if (bitrixImporting) return;
+		bitrixImporting = true;
+		try {
+			const res = await apiImportBitrix({ date_from: '2023-01-01', max_items: 10000 });
+			const fresh = await fetchLeads();
+			leads = fresh;
+			writeLeadsCache(leads);
+			notify(
+				`Битрикс24: +${res.imported} новых, обновлено ${res.updated} (всего обработано ${res.total_processed})`,
+				'info'
+			);
+			if (res.error_count > 0) {
+				notify(`Предупреждения импорта: ${res.error_count} (см. лог бэкенда)`, 'error');
+			}
+		} catch (e) {
+			console.error('[leads] Bitrix import:', e);
+			notify(`Импорт Битрикс24: ${e.message}`, 'error');
+		} finally {
+			bitrixImporting = false;
+		}
 	}
 
 	/** Слишком общие формы — не матчим по одному слову (иначе «ООО» бьёт в любую компанию) */
@@ -407,7 +432,13 @@
 		<p class="text-xs text-gray-500">{filtered.length} из {leads.length}</p>
 	</div>
 	<div class="flex items-center gap-2">
-		<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg">📤 Импорт</button>
+		<button
+			type="button"
+			disabled={bitrixImporting}
+			onclick={runBitrixImport}
+			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
+			title="Нужен BITRIX24_WEBHOOK_URL на сервере"
+		>{bitrixImporting ? '⏳ Битрикс24…' : '📤 Битрикс24'}</button>
 		<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg">📥 Экспорт</button>
 		<button
 			onclick={() => {

@@ -50,6 +50,7 @@ async def init_db():
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS phone VARCHAR(100) DEFAULT '—'",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS checko_json TEXT",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS tech_json TEXT",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS bitrix_lead_id INTEGER",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS financials_json TEXT",
         ]
         for sql in migrations:
