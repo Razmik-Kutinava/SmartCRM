@@ -2,6 +2,7 @@ import re
 from datetime import datetime, timezone
 from email.utils import getaddresses, parsedate_to_datetime
 from typing import Any
+from core.crypto import decrypt
 
 from bs4 import BeautifulSoup
 from imap_tools import MailBox
@@ -60,7 +61,7 @@ def _fetch_imap_messages(account: EmailAccount) -> list[dict[str, Any]]:
     from imap_tools import MailBox, MailBoxUnencrypted
     mailbox_cls = MailBox if account.use_ssl else MailBoxUnencrypted
     with mailbox_cls(host=account.imap_server, port=account.imap_port) as mailbox:
-        mailbox.login(account.username, account.password)
+        mailbox.login(account.username, decrypt(account.password))
         for msg in mailbox.fetch(limit=1000, reverse=True):
             subject = msg.subject or ''
             body = to_text(msg.text or '', msg.html or '')

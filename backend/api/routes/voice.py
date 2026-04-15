@@ -5,8 +5,10 @@ Voice API:
   WS   /ws/voice           — полный голосовой пайплайн
 """
 import logging
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, UploadFile, File
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
+
+MAX_AUDIO_BYTES = 10 * 1024 * 1024  # 10 MB
 from pydantic import BaseModel
 
 from voice.pipeline import process_audio, process_text
@@ -35,7 +37,9 @@ async def transcribe_audio(file: UploadFile = File(...)):
     Принимает аудиофайл → возвращает транскрипцию Whisper.
     """
     from voice.whisper import transcribe
-    audio_bytes = await file.read()
+    audio_bytes = await file.read(MAX_AUDIO_BYTES + 1)
+    if len(audio_bytes) > MAX_AUDIO_BYTES:
+        raise HTTPException(413, detail="Файл слишком большой (максимум 10 МБ)")
     transcript = await transcribe(audio_bytes, file.filename or "audio.webm")
     return {"transcript": transcript}
 

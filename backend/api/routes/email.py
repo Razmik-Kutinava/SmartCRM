@@ -13,6 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import get_db
+from core.crypto import encrypt, decrypt
 from db.models import EmailAccount, EmailCampaign, EmailMessage, EmailThread, Lead, Task
 from email_sync.sync import sync_account_messages
 
@@ -102,7 +103,7 @@ async def _send_email_via_smtp(account: EmailAccount, subject: str, body: str, t
         hostname=account.smtp_server,
         port=account.smtp_port,
         username=account.username,
-        password=account.password,
+        password=decrypt(account.password),
         start_tls=not account.use_ssl,
         use_tls=account.use_ssl,
         timeout=30,
@@ -122,7 +123,7 @@ async def connect_email_account(body: EmailAccountCreate, db: AsyncSession = Dep
     if account:
         account.name = body.name
         account.provider = body.provider
-        account.password = body.password
+        account.password = encrypt(body.password)
         account.imap_server = body.imap_server
         account.imap_port = body.imap_port
         account.smtp_server = body.smtp_server
@@ -130,7 +131,9 @@ async def connect_email_account(body: EmailAccountCreate, db: AsyncSession = Dep
         account.use_ssl = body.use_ssl
         await db.flush()
     else:
-        account = EmailAccount(**body.model_dump())
+        data = body.model_dump()
+        data["password"] = encrypt(data["password"])
+        account = EmailAccount(**data)
         db.add(account)
         await db.flush()
 
@@ -139,7 +142,7 @@ async def connect_email_account(body: EmailAccountCreate, db: AsyncSession = Dep
     except Exception as e:
         await db.rollback()
         logger.warning("Email sync failed: %s", e)
-        raise HTTPException(status_code=400, detail=f"Ошибка синхронизации почты: {e}")
+        raise HTTPException(status_code=400, detail="Ошибка синхронизации почты. Проверьте учётные данные и настройки сервера.")
     return {"account": account.to_dict(), "sync": sync_result}
 
 

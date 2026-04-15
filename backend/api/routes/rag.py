@@ -81,7 +81,7 @@ async def rag_upload(
         ) from e
     except Exception as e:
         logger.exception("RAG upload")
-        raise HTTPException(500, detail=str(e)) from e
+        raise HTTPException(500, detail="Внутренняя ошибка загрузки. Подробности в логах.") from e
     if result.get("error"):
         raise HTTPException(400, detail=result["error"])
     return {"ok": True, **result}

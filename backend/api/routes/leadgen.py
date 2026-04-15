@@ -81,8 +81,8 @@ async def analyze(body: AnalyzeRequest):
         )
         return result
     except Exception as e:
-        logger.error("Leadgen analyze error: %s", e)
-        raise HTTPException(500, f"Ошибка пайплайна: {e}")
+        logger.exception("Leadgen analyze error: %s", e)
+        raise HTTPException(500, "Внутренняя ошибка пайплайна. Подробности в логах.")
 
 
 @router.post("/cluster")
@@ -95,8 +95,8 @@ async def cluster(body: ClusterRequest):
         result = await run_cluster(body.inn.strip())
         return result
     except Exception as e:
-        logger.error("Leadgen cluster error: %s", e)
-        raise HTTPException(500, f"Ошибка кластер-поиска: {e}")
+        logger.exception("Leadgen cluster error: %s", e)
+        raise HTTPException(500, "Внутренняя ошибка кластер-поиска. Подробности в логах.")
 
 
 @router.post("/portrait")
@@ -114,8 +114,8 @@ async def portrait_search(body: PortraitRequest):
         )
         return result
     except Exception as e:
-        logger.error("Portrait search error: %s", e)
-        raise HTTPException(500, f"Ошибка поиска по портрету: {e}")
+        logger.exception("Portrait search error: %s", e)
+        raise HTTPException(500, "Внутренняя ошибка поиска по портрету. Подробности в логах.")
 
 
 @router.post("/save")
@@ -130,8 +130,8 @@ async def save_to_crm(body: SaveRequest):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("Save to CRM error: %s", e)
-        raise HTTPException(500, f"Ошибка сохранения: {e}")
+        logger.exception("Save to CRM error: %s", e)
+        raise HTTPException(500, "Внутренняя ошибка сохранения. Подробности в логах.")
 
 
 @router.get("/config")

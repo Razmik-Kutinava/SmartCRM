@@ -868,8 +868,8 @@ async def run_agent(agent_id: str, body: AgentRunBody):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("Тест-запуск агента %s ошибка: %s", agent_id, e)
-        raise HTTPException(500, detail=str(e))
+        logger.exception("Тест-запуск агента %s ошибка: %s", agent_id, e)
+        raise HTTPException(500, detail="Внутренняя ошибка агента. Подробности в логах.")
 
     elapsed_ms = round((time.monotonic() - t0) * 1000)
     return {

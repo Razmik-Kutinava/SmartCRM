@@ -78,7 +78,7 @@ async def put_search_config(body: SearchConfigBody):
         save_config(body.config)
         return {"ok": True}
     except Exception as e:
-        raise HTTPException(500, detail=str(e))
+        raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
 
 
 @router.post("/run")
@@ -98,7 +98,7 @@ async def run_search(body: SearchRunBody):
         return {"ok": True, **result}
     except Exception as e:
         logger.error("Search /run ошибка: %s", e)
-        raise HTTPException(500, detail=str(e))
+        raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
 
 
 @router.get("/cache")
@@ -142,7 +142,7 @@ async def free_search_ask(body: FreeSearchBody):
         return {"ok": True, **result}
     except Exception as e:
         logger.error("Search /ask ошибка: %s", e)
-        raise HTTPException(500, detail=str(e))
+        raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
 
 
 @router.post("/prospect")
@@ -161,7 +161,7 @@ async def prospect_search(body: ProspectBody):
         return {"ok": True, **result}
     except Exception as e:
         logger.error("Search /prospect ошибка: %s", e)
-        raise HTTPException(500, detail=str(e))
+        raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
 
 
 @router.post("/enrich-lead")
@@ -175,7 +175,7 @@ async def enrich_lead_search(body: EnrichLeadBody):
         return {"ok": True, **result}
     except Exception as e:
         logger.error("Search /enrich-lead ошибка: %s", e)
-        raise HTTPException(500, detail=str(e))
+        raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
 
 
 @router.post("/find-for-rag")
@@ -192,7 +192,7 @@ async def find_for_rag_search(body: FindForRagBody):
         return {"ok": True, **result}
     except Exception as e:
         logger.error("Search /find-for-rag ошибка: %s", e)
-        raise HTTPException(500, detail=str(e))
+        raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
 
 
 @router.post("/agent-task")
@@ -210,4 +210,4 @@ async def agent_task_search(body: AgentTaskBody):
         return {"ok": True, **result}
     except Exception as e:
         logger.error("Search /agent-task ошибка: %s", e)
-        raise HTTPException(500, detail=str(e))
+        raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")

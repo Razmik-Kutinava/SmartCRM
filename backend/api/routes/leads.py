@@ -89,7 +89,8 @@ async def bitrix_import_stats(
     try:
         from integrations.bitrix24 import BitrixWebhookError, fetch_bitrix_lead_total
     except ImportError as e:
-        raise HTTPException(500, detail=f"Модуль интеграции: {e}") from e
+        logger.exception("Ошибка импорта модуля bitrix24: %s", e)
+        raise HTTPException(500, detail="Ошибка сервера. Проверьте логи.") from e
     try:
         bitrix_total = await fetch_bitrix_lead_total(date_from.strip())
     except BitrixWebhookError as e:
@@ -118,7 +119,8 @@ async def import_leads_bitrix(
     try:
         from integrations.bitrix24 import BitrixWebhookError, import_leads_from_bitrix
     except ImportError as e:
-        raise HTTPException(500, detail=f"Модуль интеграции: {e}") from e
+        logger.exception("Ошибка импорта модуля bitrix24: %s", e)
+        raise HTTPException(500, detail="Ошибка сервера. Проверьте логи.") from e
     try:
         result = await import_leads_from_bitrix(
             db,
@@ -131,7 +133,7 @@ async def import_leads_bitrix(
         raise HTTPException(503, detail=str(e)) from e
     except Exception as e:
         logger.exception("import-bitrix")
-        raise HTTPException(502, detail=str(e)) from e
+        raise HTTPException(502, detail="Ошибка при импорте из Битрикс24. Подробности в логах.") from e
     return {"status": "ok", **result}
 
 

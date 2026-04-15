@@ -331,10 +331,11 @@ async def run_agent_on_lead(body: RunAgentBody, db: AsyncSession = Depends(get_d
         else:
             raise HTTPException(400, f"Агент {body.agent!r} не поддерживается")
     except ImportError as e:
-        raise HTTPException(500, f"Агент не найден: {e}")
+        logger.exception("Agent import error: %s", e)
+        raise HTTPException(500, "Ошибка загрузки агента. Подробности в логах.")
     except Exception as e:
-        logger.error("Agent run error: %s", e)
-        raise HTTPException(500, f"Ошибка агента: {e}")
+        logger.exception("Agent run error: %s", e)
+        raise HTTPException(500, "Внутренняя ошибка агента. Подробности в логах.")
 
     # 8. Сохранить в лог
     log = AgentRunLog(

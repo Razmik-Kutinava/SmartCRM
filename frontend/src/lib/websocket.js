@@ -153,9 +153,12 @@ export function sendAudio(blob) {
 /** HTTP: текстовая команда без WebSocket */
 export async function postCommand(text) {
 	const base = getApiUrl();
+	const apiKey = import.meta.env.PUBLIC_SMARTCRM_API_KEY || '';
+	const headers = { 'Content-Type': 'application/json' };
+	if (apiKey) headers['X-API-Key'] = apiKey;
 	const r = await fetch(`${base}/api/voice/command`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers,
 		body: JSON.stringify({ text })
 	});
 	return r.json();
