@@ -1,0 +1,61 @@
+name: 🤖 AI Review
+
+on:
+  # Автоматически на каждый Pull Request
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+  # Ручной запуск (для тестирования или отдельного PR)
+  workflow_dispatch:
+    inputs:
+      review-command:
+        type: choice
+        default: "run"
+        options:
+          - run           # полное ревью (inline + summary)
+          - run-inline    # только inline-комментарии по строкам
+          - run-summary   # только общий summary-комментарий
+          - run-context   # ревью с контекстом всего файла
+        description: "Тип ревью"
+
+      pull-request-number:
+        type: string
+        required: false
+        description: "Номер PR (только для ручного запуска; при автозапуске подставляется автоматически)"
+
+jobs:
+  ai-review:
+    name: Run AI Review
+    runs-on: ubuntu-latest
+
+    # Права: нужны для публикации комментариев в PR
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      # 1️⃣ Клонируем репозиторий (нужен полный diff)
+      - name: 🧱 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2️⃣ Запускаем AI Review через Groq (быстро, без раскрутки контейнера)
+      - name: 🚀 Run AI Review
+        uses: Nikita-Filonov/ai-review@v0.27.0
+        env:
+          # Groq API key (добавить в Settings → Secrets → GROQ_API_KEY)
+          LLM__HTTP_CLIENT__API_TOKEN: ${{ secrets.GROQ_API_KEY }}
+
+          # GitHub токен для публикации комментариев (автоматически доступен)
+          VCS__HTTP_CLIENT__API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Контекст PR
+          VCS__PIPELINE__OWNER: ${{ github.repository_owner }}
+          VCS__PIPELINE__REPO: ${{ github.event.repository.name }}
+          VCS__PIPELINE__PULL_NUMBER: ${{ inputs.pull-request-number || github.event.pull_request.number }}
+
+        with:
+          # При автозапуске — полное ревью; при ручном — выбранный тип
+          review-command: ${{ inputs.review-command || 'run' }}

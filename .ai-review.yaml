@@ -1,0 +1,57 @@
+# AI Review — конфиг для SmartCRM
+# Документация: https://github.com/Nikita-Filonov/ai-review
+
+# ── LLM провайдер ────────────────────────────────────────────────────────────
+# Используем Groq: OpenAI-совместимый API, быстрый, ключ уже есть в проекте.
+# Для локального запуска без интернета — см. секцию "Ollama" ниже.
+llm:
+  provider: OPENAI
+  meta:
+    model: llama-3.1-8b-instant   # та же модель, что используется в backend
+    max_tokens: 2048
+    temperature: 0.2              # строгие, предсказуемые ответы
+  http_client:
+    api_url: https://api.groq.com/openai/v1
+    timeout: 120
+
+# ── Альтернатива: Ollama (локально, без API-ключей) ──────────────────────────
+# Раскомментируйте для запуска полностью локально:
+#
+# llm:
+#   provider: OLLAMA
+#   meta:
+#     model: llama3.2             # та же дефолтная модель из backend
+#     max_tokens: 2048
+#     temperature: 0.2
+#   http_client:
+#     api_url: http://localhost:11434
+#     timeout: 600
+
+# ── VCS: GitHub ──────────────────────────────────────────────────────────────
+vcs:
+  provider: GITHUB
+  http_client:
+    api_url: https://api.github.com
+    timeout: 120
+
+# ── Что анализировать ────────────────────────────────────────────────────────
+review:
+  # Исключаем файлы которые не нужно ревьювить
+  exclude_patterns:
+    - "**/.venv/**"
+    - "**/node_modules/**"
+    - "**/__pycache__/**"
+    - "**/*.pyc"
+    - "**/migrations/**"
+    - "backend/data/**"
+    - "docs/**"
+    - "**/*.json"
+    - "**/*.md"
+    - "**/*.lock"
+    - "**/*.txt"
+
+  # Язык комментариев
+  language: ru
+
+  # Максимум комментариев на PR (чтобы не заспамить)
+  max_comments: 15
