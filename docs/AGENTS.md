@@ -20,8 +20,10 @@ Intent + Slots (от Hermes или UI)
 final_reply + decision + next_action
 ```
 
-**LLM провайдер:** Groq (`llama-3.1-8b-instant`) → Ollama (`llama3.2`) fallback  
+**LLM провайдер (агенты):** Groq (`GROQ_MODEL`, по умолчанию `llama-3.1-8b-instant`) → Ollama (`OLLAMA_MODEL`, например `qwen2.5:0.5b`) fallback — см. `core/llm.py`, `docs/stack/LLM.md`  
 **Агентный state:** `AgentState` TypedDict (base.py) — общий контейнер через весь pipeline
+
+**Тендерный поиск** вынесен в отдельный модуль API/UI (**`/api/tenders`**, вкладка «Тендеры»), это не отдельный узел LangGraph. Описание источников, лимитов и env: `docs/TENDERS.md`.
 
 ---
 
@@ -148,9 +150,11 @@ final_reply + decision + next_action
 
 ## Hermes — Роутер (не агент)
 
-**Роль:** Центральный мозг. Парсит голосовые команды в структурированные интенты. Роутит в нужного агента.
+**Роль:** Парсит текст команды в структурированный JSON (`intent`, `agents`, `slots`, `parallel`, `reply`). Роутит в оркестратор LangGraph.
 
-**Модель:** `hermes3:latest` через Ollama (локально)
+**Реализация:** `core/hermes.py` → `parse_intent()`.
+
+**LLM:** не привязан «только к Ollama». При наличии `GROQ_API_KEY` используется **Groq** и **Ollama** в порядке, заданном `HERMES_ROUTING_POLICY` (`default` | `local_first`). Локальные модели: `HERMES_MODEL`, `HERMES_FALLBACK` (например `qwen2.5:0.5b` → `qwen2.5:3b`). Дополнительно: fastpath, кэш, post-verify, при отказе LLM — **rescue**-эвристики (CPU-only сценарии). Подробно: `docs/stack/LLM.md`, `docs/RUNBOOK.md`.
 
 **Output формат:**
 ```json
@@ -158,6 +162,17 @@ final_reply + decision + next_action
   "intent": "create_lead",
   "agents": ["analyst", "marketer"],
   "slots": {"company": "ACME", "contact": "Иван"},
-  "parallel": true
+  "parallel": true,
+  "reply": "Краткий ответ пользователю по-русски"
 }
 ```
+
+---
+
+## Dr. QA — эксперименты над Hermes (`core/qa_agent.py`)
+
+**Роль:** методология A/B, гипотезы, статистика и канареечные выкладки для NLU (Hermes), не замена продуктовым агентам CRM.
+
+**Данные:** `backend/data/qa_lab.sqlite3`.
+
+**Связь:** использует те же метрики и скрипты, что описаны в `docs/stack/LLM.md` (rollout, gate). Подробнее — docstring и константы в `qa_agent.py`.
