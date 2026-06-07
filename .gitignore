@@ -17,3 +17,6 @@ backend/server.log
 
 # Случайные выводы в корне
 /result.json
+
+# Локальный клон референса (см. docs/reference/README.md)
+docs/reference/CRM-points-system/
