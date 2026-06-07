@@ -11,7 +11,7 @@
 ## Документация
 
 - Карта: [`docs/README.md`](docs/README.md)
-- Продукт: [`docs/product/PRD.md`](docs/product/PRD.md), [`docs/product/ARCHITECTURE.md`](docs/product/ARCHITECTURE.md)
+- Продукт: [`docs/product/PRD_MAP.md`](docs/product/PRD_MAP.md) (карта), [`docs/product/PRD.md`](docs/product/PRD.md), [`docs/product/ARCHITECTURE.md`](docs/product/ARCHITECTURE.md)
 - Журнал работы: `docs/operations/`
 
 ## Контекст проекта
