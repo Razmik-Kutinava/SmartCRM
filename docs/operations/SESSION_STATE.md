@@ -72,4 +72,6 @@
 
 2026-06-07 | Действие: P6 остаток — `qa/`, `tenders/`, `analyst/`, `rag/search/`, `leadgen/pipeline/`, `checko/`; фикс cross-imports + `_resplit_leadgen_pkgs.py`; тесты leadgen+voice+tenders+qa+analyst+rag: **114 passed**. | Следующий шаг: коммит P6 остаток; Фаза 1 PRD_MAP. | Вопросы: нет | Статус: done
 
+2026-06-07 | Действие: коммит `725b284` (P6+CRM+tenders+leads UI) + push `main` → origin (25 коммитов). | Следующий шаг: **Фаза 1 PRD_MAP** — баги/чеклист в ISSUES. | Вопросы: нет | Статус: done
+
 ---
