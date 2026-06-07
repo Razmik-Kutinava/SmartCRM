@@ -15,7 +15,7 @@
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
-- (pending) docs: integrate PRD tech delta v3
+- 67150fc docs: integrate PRD tech delta v3
 - d024a0a docs: add PRD_NOTES table of contents
 - 8f364a7 docs: PRD_MAP phase checklists from PRD_NOTES
 
