@@ -1,4 +1,10 @@
-# Руководство для разработчиков SmartCRM
+﻿# Руководство для разработчиков SmartCRM
+
+**Структура репо и лимиты кода:** [REPO_LAYOUT.md](REPO_LAYOUT.md) · [LAYOUT_AUDIT.md](LAYOUT_AUDIT.md)  
+**Правила агента:** `.cursor/rules/smartcrm-repo-layout.mdc`, `smartcrm-code-split.mdc`  
+Переносы файлов и сплит монолитов >200 строк — только после **`go`** (см. аудит).
+
+---
 
 ## Структура проекта
 
@@ -6,7 +12,7 @@
 backend/
   agents/       — 5 агентов + оркестратор (LangGraph)
   api/routes/   — FastAPI роуты (leads, voice, agents)
-  core/         — Hermes роутер, LLM клиент (Groq→Ollama)
+  core/         — Hermes (Groq+Ollama), llm.py, qa_agent
   db/models/    — SQLAlchemy модели
   rag/          — Chroma + поисковики
   voice/        — Whisper пайплайн
@@ -21,6 +27,14 @@ frontend/
 ---
 
 ## Соглашения по коду
+
+### Размер файлов
+
+| Цель | ≤ 50 строк (новый код) |
+| Норма | 51–120 |
+| Стоп | > 200 — сначала сплит + `go` |
+
+Один файл — одна ответственность; дробить по домену (`core/hermes/`, не `utils/`).
 
 ### Python (backend)
 - Python 3.11+
@@ -63,11 +77,14 @@ refactor: рефактор LLM клиента
 3. Добавить инструменты (tools)
 4. Зарегистрировать в `orchestrator.py`
 5. Добавить роутинг в `core/hermes.py`
-6. Описать в `docs/AGENTS.md`
+6. Описать в `docs/agents/langgraph.md`
 
 ---
 
 ## Тестирование
+
+Все backend-тесты — в **`backend/tests/`** (зеркало структуры `backend/`).  
+Legacy `tests/` в корне — см. [LAYOUT_AUDIT.md](LAYOUT_AUDIT.md) пакет P1.
 
 ```bash
 # Backend

@@ -8,17 +8,17 @@
 `Последние коммиты:[3 последних]`  
 `Открытые вопросы:[список или "нет"]`
 
-Спринт:[Фаза 1] | Задача:[Проход PRD_MAP чеклист + баги] | Статус:в работе
+Спринт:[Фаза 1] | Задача:[Проход PRD_MAP + порядок в репо] | Статус:в работе
 
-Следующий шаг: идти `docs/product/PRD_MAP.md` Фаза 1 сверху вниз — смоук `[x]` пунктов, хвост 🔴 Hermes интенты + UI `voice_action` (контракт: `ARCHITECTURE.md#контракт-voice_action`); баги → `ISSUES.md`. Техдельта v3 в доках — done.
+Следующий шаг: (1) Фаза 1 `PRD_MAP` — Hermes + voice_action; (2) по желанию **`go P1`**… из `docs/dev/LAYOUT_AUDIT.md` для переносов. Правила структуры — в `.cursor/rules/smartcrm-repo-*.mdc`.
 
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
+- (pending) chore: repo layout rules and structure audit
+- a619ee8 docs: update HANDOFF with v3 delta commit hash
 - 67150fc docs: integrate PRD tech delta v3
-- d024a0a docs: add PRD_NOTES table of contents
-- 8f364a7 docs: PRD_MAP phase checklists from PRD_NOTES
 
-Открытые вопросы: PRD_NOTES ~1800 строк — черновик; стек/доки пользователь дополнит в конце NOTES.
+Открытые вопросы: какой пакет аудита апрувить первым (P1 тесты / P2 мусор в корне / P6 сплит кода).
 
 ---

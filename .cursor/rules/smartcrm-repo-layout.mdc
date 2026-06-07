@@ -1,0 +1,83 @@
+---
+description: SmartCRM — структура репозитория, куда класть файлы, запрет переносов без апрува
+alwaysApply: true
+---
+
+# SmartCRM — структура репозитория
+
+Канон дерева: **`docs/dev/REPO_LAYOUT.md`**. Аудит «что не на месте»: **`docs/dev/LAYOUT_AUDIT.md`**.
+
+---
+
+## 1. Куда что класть (новые файлы)
+
+| Тип | Папка | Пример |
+|-----|-------|--------|
+| Продукт, PRD, архитектура | `docs/product/` | `PRD.md`, `ARCHITECTURE.md` |
+| Модуль продукта (описание) | `docs/modules/` | `leads.md`, `tenders.md` |
+| Агенты, Hermes | `docs/agents/` | `langgraph.md` |
+| Стек (LLM, RAG) | `docs/stack/` | `LLM.md`, `RAG.md` |
+| Запуск, runbook | `docs/start/` | `SETUP.md`, `RUNBOOK.md` |
+| API-контракт | `docs/api/` | `API.md` |
+| Операционка сессий | `docs/operations/` | `HANDOFF.md`, `ISSUES.md` |
+| Для разработчиков | `docs/dev/` | `CONTRIBUTING.md`, `REPO_LAYOUT.md` |
+| Устаревшее | `docs/archive/` | только по явному решению |
+| Референс (чужой проект) | `docs/reference/` | не трогать без `go` |
+| FastAPI роуты | `backend/api/routes/` | `leads.py` |
+| Бизнес-логика | `backend/core/`, `backend/services/` | по домену |
+| Агенты LangGraph | `backend/agents/` | `analyst.py` |
+| ORM | `backend/db/models/` | `lead.py` |
+| RAG | `backend/rag/` | |
+| Скрипты (не тесты) | `backend/scripts/` | |
+| Артефакты, кэш, eval JSON | `backend/data/` | не в корень репо |
+| Тесты backend | `backend/tests/` | зеркало структуры `backend/` |
+| Фикстуры тестов | `backend/tests/fixtures/{домен}/` | |
+| Eval вне pytest | `eval/` | `cases.jsonl`, `run_eval.py` |
+| UI страницы | `frontend/src/routes/` | по URL |
+| Переиспользуемая логика UI | `frontend/src/lib/` | |
+| Компоненты | `frontend/src/components/` | |
+
+**Запрещено в корне репо:** `result.json`, `swagger.json`, openapi-схемы, логи, sqlite, кэши — только в `backend/data/` или `docs/api/`.
+
+---
+
+## 2. Тесты — одно место, зеркало кода
+
+- **Все pytest backend** → `backend/tests/`, не в корне `tests/` (legacy — см. аудит).
+- Именование: `test_{модуль}.py` или `backend/tests/{пакет}/test_{файл}.py`.
+- Интеграционные тесты — в `backend/tests/integration/`, не рядом с `main.py`.
+- Фикстуры — только `backend/tests/fixtures/`, не размазаны по `backend/data/`.
+
+Перед merge корневого `tests/` в `backend/tests/` — план в `LAYOUT_AUDIT.md` и **`go`** пользователя.
+
+---
+
+## 3. Переносы и новые папки — только с апрува
+
+**Запрещено без явного `go` пользователя:**
+
+- `git mv`, переименование папок, удаление файлов проекта
+- Массовая реорганизация доков
+- Перенос `docs/reference/` или содержимого `docs/archive/`
+
+**Обязательный порядок:**
+
+1. Показать таблицу: `файл | сейчас | куда | риск` (обновить `docs/dev/LAYOUT_AUDIT.md`).
+2. Ждать **`go`** на конкретный пакет (например «пакет 1: тесты»).
+3. Один пакет → коммит → `docs/operations/SESSION_STATE.md`.
+
+Новый файл в **правильной** папке по таблице выше — можно без `go`. Новая **папка верхнего уровня** — только после `go`.
+
+---
+
+## 4. Доки — без дублей
+
+- Канон продукта: `docs/product/PRD.md` + `ARCHITECTURE.md`.
+- Черновики: `docs/product/PRD_NOTES.md` — не копировать блоки в другие файлы; ссылка «→ см. PRD §…».
+- Карта всех доков: `docs/README.md`.
+
+---
+
+## 5. Связь с workflow
+
+После шага по структуре: коммит + `SESSION_STATE` + при смене статуса `HANDOFF` (см. `smartcrm-agent-workflow.mdc`).
