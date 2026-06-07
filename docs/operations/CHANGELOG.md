@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-07 — P3: убрана backend/backend/data/
+
+**Сделано:** `tender_sources_ab.json` → `backend/data/`; дубль `via_qa` и каталог `backend/backend/` удалены; предупреждение в `tender_sources_ab.py` (запуск из `backend/`).
+
+---
+
 ## 2026-06-07 — P2: корень без мусора + анти-накопление
 
 **Сделано:** `swagger.json` + DataNewton schema → `docs/api/openapi/`; артефакты → `backend/data/artifacts/` (gitignore); пустой `result.json` и `server.log` убраны; `.gitignore`; правила «куда новые файлы / не плодить папки» в `smartcrm-repo-layout.mdc`, `REPO_LAYOUT.md`. P2 → done в `LAYOUT_AUDIT`.

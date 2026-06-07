@@ -84,7 +84,7 @@ backend/
     └── integration/        # (целевая папка)
 ```
 
-**Не класть:** тесты в `backend/test_*.py` вне `tests/`; данные в `backend/backend/` (ошибочная вложенность).
+**Не класть:** тесты в `backend/test_*.py` вне `tests/`. Скрипты запускать из `backend/` — иначе артефакты уйдут в `backend/backend/data/` (удалено в P3).
 
 ---
 

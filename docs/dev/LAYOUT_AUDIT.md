@@ -11,7 +11,7 @@
 |-------|-----|------|--------|
 | **P1** | Корневой `tests/` → `backend/tests/` | импорты, pytest.ini, CI | **done** (2026-06-07) |
 | **P2** | Мусор в корне → `docs/api/openapi/`, `backend/data/artifacts/`; `.gitignore` | — | **done** (2026-06-07) |
-| **P3** | `backend/backend/data/` → `backend/data/` | пути в тендерных скриптах | ждёт `go` |
+| **P3** | `backend/backend/data/` → `backend/data/` | пути в тендерных скриптах | **done** (2026-06-07) |
 | **P4** | `backend/test_email_integration.py` → `backend/tests/integration/` | — | ждёт `go` |
 | **P5** | Незакоммиченное удаление старых `docs/*.md` из корня `docs/` | git history | ждёт `go` |
 | **P6** | Сплит топ-монолитов (см. ниже) | регрессия | ждёт `go` по файлу |
@@ -39,11 +39,13 @@
 | `test_rag_chunks.py` | `/tests/` | `backend/tests/rag/test_rag_chunks.py` |
 | `backend/test_email_integration.py` | `backend/` | `backend/tests/integration/test_email_integration.py` | P4 |
 
-### Данные / артефакты
+### Данные / артефакты — P3 done
 
-| Путь | Проблема | Куда | Пакет |
-|------|----------|------|-------|
-| `backend/backend/data/` | Лишний уровень `backend/` | `backend/data/` | P3 |
+| Файл | Было | Стало |
+|------|------|-------|
+| `tender_sources_ab.json` | `backend/backend/data/` | `backend/data/tender_sources_ab.json` |
+| `tender_sources_via_qa.json` (дубль) | `backend/backend/data/` | удалён (канон в `backend/data/`) |
+| `backend/backend/` | лишняя вложенность | каталог удалён |
 
 ### Доки
 
