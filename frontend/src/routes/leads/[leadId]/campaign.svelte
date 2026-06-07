@@ -3,6 +3,7 @@ import { onMount } from 'svelte';
 import { createCampaign } from '$lib/emailStorage.js';
 import { goto } from '$app/navigation';
 
+
 let { params } = $props();
 let leadId = params.leadId;
 let subject = $state('');

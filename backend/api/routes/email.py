@@ -98,16 +98,23 @@ async def _send_email_via_smtp(account: EmailAccount, subject: str, body: str, t
         message["References"] = in_reply_to
     message.set_content(body)
 
-    await aiosmtplib.send(
-        message,
-        hostname=account.smtp_server,
-        port=account.smtp_port,
-        username=account.username,
-        password=decrypt(account.password),
-        start_tls=not account.use_ssl,
-        use_tls=account.use_ssl,
-        timeout=30,
-    )
+    try:
+        await aiosmtplib.send(
+            message,
+            hostname=account.smtp_server,
+            port=account.smtp_port,
+            username=account.username,
+            password=decrypt(account.password),
+            start_tls=not account.use_ssl,
+            use_tls=account.use_ssl,
+            validate_certs=True,
+            timeout=30,
+        )
+    except Exception as e:
+        # SMTP-исключения иногда содержат отголоски сессии — не пробрасываем
+        # оригинал в HTTP, чтобы не вытащить пароль/команды AUTH в трейсбек.
+        logger.warning("SMTP send failed (%s): %s", type(e).__name__, account.smtp_server)
+        raise RuntimeError(f"SMTP-отправка не удалась: {type(e).__name__}") from None
 
 
 @router.get("/accounts")

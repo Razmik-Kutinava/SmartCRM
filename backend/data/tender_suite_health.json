@@ -1,0 +1,33 @@
+{
+  "type": "health",
+  "ts": "2026-04-16T11:13:20.651675+00:00",
+  "law": "all",
+  "queries": [
+    "ремонт",
+    "поставка"
+  ],
+  "summary": {
+    "gosplan": {
+      "calls": 2,
+      "ok_calls": 2,
+      "calls_with_data": 2,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 4475.45,
+      "p95_latency_ms": 5735.33,
+      "avg_items": 30.0
+    },
+    "tenderguru": {
+      "calls": 2,
+      "ok_calls": 2,
+      "calls_with_data": 2,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 1773.22,
+      "p95_latency_ms": 1846.04,
+      "avg_items": 10.0
+    }
+  },
+  "pass": true,
+  "failures": []
+}

@@ -197,8 +197,9 @@
 		{@const h  = live.hunter || {}}
 		{@const ap = live.apollo || {}}
 		{@const ch = live.checko || {}}
+		{@const mz = live.moy_zakupki || {}}
 		{@const chRt = ch.runtime || {}}
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+		<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 mb-6">
 
 			<!-- Groq -->
 			<div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
@@ -272,6 +273,17 @@
 						403 подряд: {chRt.breaker_forbidden_streak}/{chRt.breaker_threshold}
 					</div>
 				{/if}
+			</div>
+
+			<!-- Мои-Закупки -->
+			<div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
+				<div class="flex items-center justify-between mb-2">
+					<span class="text-xs font-semibold text-white">◇ Мои-Закупки</span>
+					<span class="text-xs px-1.5 py-0.5 rounded {mz.configured ? 'bg-green-900/40 text-green-400' : 'bg-gray-800 text-gray-500'}">
+						{mz.configured ? 'ключ' : 'нет ключа'}
+					</span>
+				</div>
+				<div class="text-xs text-gray-400">{mz.note || 'КТРУ / ОКПД-2, квота месячная'}</div>
 			</div>
 
 		</div>

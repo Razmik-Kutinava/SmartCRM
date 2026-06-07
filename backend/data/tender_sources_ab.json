@@ -1,0 +1,96 @@
+{
+  "baseline": {
+    "law": "44",
+    "queries": [
+      "битрикс24",
+      "crm система",
+      "внедрение crm"
+    ],
+    "summary": {
+      "gosplan": {
+        "calls": 6,
+        "ok_calls": 6,
+        "calls_with_data": 6,
+        "error_calls": 0,
+        "skipped_calls": 0,
+        "avg_latency_ms": 3063.49,
+        "p95_latency_ms": 7955.97,
+        "avg_items": 30.0
+      },
+      "tenderguru": {
+        "calls": 6,
+        "ok_calls": 6,
+        "calls_with_data": 0,
+        "error_calls": 0,
+        "skipped_calls": 0,
+        "avg_latency_ms": 1118.73,
+        "p95_latency_ms": 1956.22,
+        "avg_items": 0.0
+      }
+    }
+  },
+  "variant": {
+    "law": "all",
+    "queries": [
+      "ремонт",
+      "поставка",
+      "строительство"
+    ],
+    "summary": {
+      "gosplan": {
+        "calls": 6,
+        "ok_calls": 6,
+        "calls_with_data": 6,
+        "error_calls": 0,
+        "skipped_calls": 0,
+        "avg_latency_ms": 2494.91,
+        "p95_latency_ms": 4553.54,
+        "avg_items": 30.0
+      },
+      "tenderguru": {
+        "calls": 6,
+        "ok_calls": 6,
+        "calls_with_data": 6,
+        "error_calls": 0,
+        "skipped_calls": 0,
+        "avg_latency_ms": 1145.73,
+        "p95_latency_ms": 1350.0,
+        "avg_items": 10.0
+      }
+    }
+  },
+  "delta": {
+    "gosplan": {
+      "calls_with_data": {
+        "baseline": 6,
+        "variant": 6
+      },
+      "avg_items": {
+        "baseline": 30.0,
+        "variant": 30.0,
+        "delta_abs": 0.0
+      },
+      "p95_latency_ms": {
+        "baseline": 7955.97,
+        "variant": 4553.54,
+        "delta_pct": -42.77
+      }
+    },
+    "tenderguru": {
+      "calls_with_data": {
+        "baseline": 0,
+        "variant": 6
+      },
+      "avg_items": {
+        "baseline": 0.0,
+        "variant": 10.0,
+        "delta_abs": 10.0
+      },
+      "p95_latency_ms": {
+        "baseline": 1956.22,
+        "variant": 1350.0,
+        "delta_pct": -30.99
+      }
+    }
+  }
+}

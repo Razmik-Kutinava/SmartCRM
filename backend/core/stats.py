@@ -258,6 +258,38 @@ KNOWN_LIMITS: dict[str, dict] = {
         "reset": "monthly",
         "docs": "https://builtwith.com/plans",
     },
+    "gosplan": {
+        "name": "Gosplan API (ЕИС)",
+        "plan": "free",
+        # На тестовом контуре v2test.gosplan.info: 10 запросов/мин.
+        # Показываем дневной ориентир, чтобы видеть риск упора в лимит.
+        "limit_day_calls": 14_400,  # 10 req/min * 1440 min/day
+        "limit_month_calls": None,
+        "limit_day_tokens": None,
+        "limit_month_tokens": None,
+        "reset": "daily",
+        "docs": "https://v2test.gosplan.info",
+    },
+    "datanewton": {
+        "name": "DataNewton API",
+        "plan": "free",
+        "limit_day_calls": 288_000,  # 200 req/min * 1440 min/day
+        "limit_month_calls": None,
+        "limit_day_tokens": None,
+        "limit_month_tokens": None,
+        "reset": "daily",
+        "docs": "https://api.datanewton.ru",
+    },
+    "moy_zakupki": {
+        "name": "Мои-Закупки (КТРУ / ОКПД-2)",
+        "plan": "free",
+        "limit_day_calls": None,
+        "limit_month_calls": 1_000,  # тариф Free по документации провайдера
+        "limit_day_tokens": None,
+        "limit_month_tokens": None,
+        "reset": "monthly",
+        "docs": "https://moy-zakupki.ru",
+    },
 }
 
 

@@ -1,0 +1,11 @@
+{
+  "cases_total": 26,
+  "cases_success": 26,
+  "success_rate_pct": 100.0,
+  "error_rate_pct": 0.0,
+  "accuracy_pct": 100.0,
+  "avg_ms": 11848,
+  "p95_ms": 12531,
+  "throughput_rps": 0.084,
+  "bad": []
+}

@@ -1,0 +1,34 @@
+{
+  "type": "load",
+  "ts": "2026-04-16T11:14:10.954702+00:00",
+  "law": "all",
+  "queries": [
+    "ремонт",
+    "поставка"
+  ],
+  "seconds": 12,
+  "concurrency": 4,
+  "elapsed_s": 16.069,
+  "summary": {
+    "gosplan": {
+      "calls": 7,
+      "ok_calls": 7,
+      "error_calls": 0,
+      "calls_with_data": 7,
+      "error_rate_pct": 0.0,
+      "avg_latency_ms": 6927.23,
+      "p95_latency_ms": 13176.74,
+      "rps": 0.436
+    },
+    "tenderguru": {
+      "calls": 7,
+      "ok_calls": 7,
+      "error_calls": 0,
+      "calls_with_data": 7,
+      "error_rate_pct": 0.0,
+      "avg_latency_ms": 3708.21,
+      "p95_latency_ms": 5776.91,
+      "rps": 0.436
+    }
+  }
+}

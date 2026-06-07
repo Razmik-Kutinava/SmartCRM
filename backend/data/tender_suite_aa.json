@@ -1,0 +1,70 @@
+{
+  "type": "aa",
+  "ts": "2026-04-16T11:13:41.592721+00:00",
+  "law": "all",
+  "queries": [
+    "ремонт",
+    "поставка"
+  ],
+  "runs": 2,
+  "a_summary": {
+    "gosplan": {
+      "calls": 4,
+      "ok_calls": 4,
+      "calls_with_data": 4,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 2843.02,
+      "p95_latency_ms": 3811.84,
+      "avg_items": 30.0
+    },
+    "tenderguru": {
+      "calls": 4,
+      "ok_calls": 4,
+      "calls_with_data": 4,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 2056.84,
+      "p95_latency_ms": 2947.9,
+      "avg_items": 10.0
+    }
+  },
+  "b_summary": {
+    "gosplan": {
+      "calls": 4,
+      "ok_calls": 4,
+      "calls_with_data": 4,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 3952.19,
+      "p95_latency_ms": 6405.0,
+      "avg_items": 30.0
+    },
+    "tenderguru": {
+      "calls": 4,
+      "ok_calls": 4,
+      "calls_with_data": 4,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 1462.32,
+      "p95_latency_ms": 1725.55,
+      "avg_items": 10.0
+    }
+  },
+  "drift": {
+    "gosplan": {
+      "calls_with_data_drift": 0,
+      "p95_latency_drift_ms": 2593.16,
+      "avg_items_drift": 0.0
+    },
+    "tenderguru": {
+      "calls_with_data_drift": 0,
+      "p95_latency_drift_ms": 1222.35,
+      "avg_items_drift": 0.0
+    }
+  },
+  "stable": false,
+  "failures": [
+    "gosplan: p95 drift too high (2593.16ms)"
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "cases_count": 26,
+  "stages": [
+    {
+      "stage": "baseline_cpu_fast",
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "success_rate_pct": 100.0,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 15.38,
+        "avg_ms": 12030,
+        "p95_ms": 12862,
+        "throughput_rps": 0.083
+      },
+      "bad": [
+        {
+          "text": "Радей Интервинарик, контакт Иван.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "...это львит о ромашка.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Я хочу, чтобы этот сконсуял такие задачи и создал их сервис.",
+          "expected": "create_task",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "СтройМастер.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Сгруппируй новые лиды вместе.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "В компании Ивановы добавь город Москва и отрасли тяжелой промышленности.",
+          "expected": "update_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Удали лид альфа полностью.",
+          "expected": "delete_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Также добавь город Москва и отрасль тяжелая промышленность.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Исправь в лиде Ивановы контакт не Петр, а Алексей.",
+          "expected": "update_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Создай лид Ивановы, город Москва, контакт Петр, отрасль тяжелая промышленность.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Создай лид технологии, добавь контакт Арсен, город Москва. Заметки позвонить через две недели.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Создай тек, блять.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Эдуардстрой. Добавь сайт eduardстрой.com.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Эдуард Строй, добавь заметку позвонить с автором.",
+          "expected": "create_task",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Эдуард Строй, добавь юридический адрес Москва.",
+          "expected": "update_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Добавь юридический адрес город Москва.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Добавь компанию Эдуард Строй.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Создай компанию TORG-AVTO, контакт Иван, почта TORG-TECHNO.COM, напиши в заметках, перезвони через два дня.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Создай лист Альфа, контакт Петра, почта Петр.ру, бюджет у них 5 миллионов, в детали перезвонить через 3 дня.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Создая вид, альфа-трас.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Создай Лид, Банк, Арарат.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "pokazi lidy",
+          "expected": "list_leads",
+          "predicted": "noop",
+          "model": "none"
+        }
+      ]
+    },
+    {
+      "stage": "quality_tune_rescue_v2",
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "success_rate_pct": 100.0,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 92.31,
+        "avg_ms": 11754,
+        "p95_ms": 12488,
+        "throughput_rps": 0.085
+      },
+      "bad": [
+        {
+          "text": "Радей Интервинарик, контакт Иван.",
+          "expected": "create_lead",
+          "predicted": "noop",
+          "model": "none"
+        },
+        {
+          "text": "Эдуард Строй, добавь юридический адрес Москва.",
+          "expected": "update_lead",
+          "predicted": "create_lead",
+          "model": "rescue"
+        }
+      ],
+      "delta_vs_baseline": {
+        "success_rate_pct_points": 0.0,
+        "accuracy_pct_points": 76.93,
+        "error_rate_pct_points": 0.0,
+        "avg_ms_pct": -2.29,
+        "p95_ms_pct": -2.91,
+        "throughput_rps_pct": 2.41
+      }
+    }
+  ],
+  "gate": {
+    "stage": "quality_tune_rescue_v2",
+    "accept": true,
+    "rules": {
+      "min_success_rate_delta": 0,
+      "min_accuracy_delta": 10,
+      "max_p95_delta_pct": 10
+    }
+  }
+}

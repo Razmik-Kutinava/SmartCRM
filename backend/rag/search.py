@@ -63,6 +63,8 @@ _DEFAULT_CONFIG: dict[str, Any] = {
         "serper": {"enabled": True, "weight": 1.0, "max_results": 10},
         "brave":  {"enabled": True, "weight": 0.8, "max_results": 8},
         "tavily": {"enabled": True, "weight": 1.2, "max_results": 5},
+        "datanewton": {"enabled": True, "weight": 1.1, "max_results": 10},
+        "moy_zakupki": {"enabled": True, "weight": 0.85, "max_results": 8},
     },
     "reranking":          {"enabled": True,  "top_k": 7},
     "date_filter_months": 24,
@@ -258,6 +260,105 @@ async def _search_tavily(query: str, max_results: int) -> list[dict]:
         return []
 
 
+async def _search_datanewton(query: str, max_results: int) -> list[dict]:
+    """
+    Поиск компаний через DataNewton /v1/suggestions.
+    Используется как параллельный провайдер к веб-поисковикам.
+    """
+    key = os.getenv("DATANEWTON_API_KEY", "")
+    if not key:
+        return []
+    try:
+        async with httpx.AsyncClient(timeout=12.0) as c:
+            r = await c.post(
+                "https://api.datanewton.ru/v1/suggestions",
+                params={"key": key},
+                json={
+                    "search_query": query,
+                    "type": "all",
+                    "is_active": True,
+                },
+            )
+            if r.status_code == 429:
+                try:
+                    from core.stats import track_api
+                    track_api("datanewton", error=True)
+                except Exception:
+                    pass
+                return []
+            r.raise_for_status()
+            data = r.json()
+        items = (data.get("data") or [])[:max_results]
+        results = []
+        for item in items:
+            name = (item.get("name") or "").strip()
+            inn = (item.get("inn") or "").strip()
+            ogrn = (item.get("ogrn") or "").strip()
+            region = (item.get("region") or "").strip()
+            okved = (item.get("activity_kind_industry_code") or "").strip()
+            okved_desc = (item.get("activity_kind_dsc") or "").strip()
+            manager = (item.get("manager_name") or "").strip()
+            active = item.get("active")
+            snippet_parts = []
+            if inn:
+                snippet_parts.append(f"ИНН: {inn}")
+            if ogrn:
+                snippet_parts.append(f"ОГРН: {ogrn}")
+            if region:
+                snippet_parts.append(f"Регион: {region}")
+            if okved:
+                snippet_parts.append(f"ОКВЭД: {okved}")
+            if okved_desc:
+                snippet_parts.append(okved_desc)
+            if manager:
+                snippet_parts.append(f"Руководитель: {manager}")
+            if active is not None:
+                snippet_parts.append("Статус: действует" if active else "Статус: недействующая")
+            snippet = " · ".join([p for p in snippet_parts if p])[:700]
+            results.append({
+                "title": name or f"Контрагент {inn or ogrn}",
+                "snippet": snippet,
+                "url": "",
+                "date": "",
+                "source": "datanewton",
+            })
+        try:
+            from core.stats import track_api
+            track_api("datanewton")
+        except Exception:
+            pass
+        return results
+    except Exception as e:
+        logger.warning("DataNewton ошибка: %s", e)
+        try:
+            from core.stats import track_api
+            track_api("datanewton", error=True)
+        except Exception:
+            pass
+        return []
+
+
+async def _search_moy_zakupki(query: str, max_results: int) -> list[dict]:
+    """
+    Справочники КТРУ / ОКПД-2 (Мои-Закупки) — параллельно к веб-поиску.
+    """
+    if not (os.getenv("MOY_ZAKUPKI_API_KEY") or "").strip():
+        return []
+    try:
+        from services.moy_zakupki import search_hints_for_query
+
+        return await search_hints_for_query(query, max_results)
+    except Exception as e:
+        logger.warning("Мои-Закупки (поиск) ошибка: %s", e)
+        try:
+            from core.stats import track_api
+
+            track_api("moy_zakupki", error=True)
+        except Exception:
+            pass
+        return []
+
+
 # ── Постобработка ─────────────────────────────────────────────────────────────
 
 def _domain(url: str) -> str:
@@ -448,6 +549,10 @@ async def search_company(
                 tasks.append(asyncio.create_task(_search_brave(q, max_r)))
             elif provider == "tavily":
                 tasks.append(asyncio.create_task(_search_tavily(q, max_r)))
+            elif provider == "datanewton":
+                tasks.append(asyncio.create_task(_search_datanewton(q, max_r)))
+            elif provider == "moy_zakupki":
+                tasks.append(asyncio.create_task(_search_moy_zakupki(q, max_r)))
             else:
                 continue
             task_meta.append(provider)
@@ -517,6 +622,10 @@ async def free_search(
             tasks.append(asyncio.create_task(_search_brave(query, mr)))
         elif provider == "tavily":
             tasks.append(asyncio.create_task(_search_tavily(query, mr)))
+        elif provider == "datanewton":
+            tasks.append(asyncio.create_task(_search_datanewton(query, mr)))
+        elif provider == "moy_zakupki":
+            tasks.append(asyncio.create_task(_search_moy_zakupki(query, mr)))
         else:
             continue
         task_meta.append(provider)
@@ -626,6 +735,10 @@ async def prospect_companies(
                 tasks.append(asyncio.create_task(_search_brave(q, mr)))
             elif provider == "tavily":
                 tasks.append(asyncio.create_task(_search_tavily(q, mr)))
+            elif provider == "datanewton":
+                tasks.append(asyncio.create_task(_search_datanewton(q, mr)))
+            elif provider == "moy_zakupki":
+                tasks.append(asyncio.create_task(_search_moy_zakupki(q, mr)))
             else:
                 continue
             task_meta.append(provider)
@@ -742,6 +855,10 @@ async def enrich_lead(lead: dict) -> dict[str, Any]:
                 tasks.append(asyncio.create_task(_search_serper(q, mr)))
             elif provider == "tavily":
                 tasks.append(asyncio.create_task(_search_tavily(q, mr)))
+            elif provider == "datanewton":
+                tasks.append(asyncio.create_task(_search_datanewton(q, mr)))
+            elif provider == "moy_zakupki":
+                tasks.append(asyncio.create_task(_search_moy_zakupki(q, mr)))
             else:
                 continue
             task_meta.append((provider, field))
@@ -832,6 +949,10 @@ async def search_for_rag(
             tasks.append(asyncio.create_task(_search_brave(search_query, mr)))
         elif provider == "tavily":
             tasks.append(asyncio.create_task(_search_tavily(search_query, mr)))
+        elif provider == "datanewton":
+            tasks.append(asyncio.create_task(_search_datanewton(search_query, mr)))
+        elif provider == "moy_zakupki":
+            tasks.append(asyncio.create_task(_search_moy_zakupki(search_query, mr)))
         else:
             continue
         task_meta.append(provider)
@@ -926,6 +1047,10 @@ async def agent_task_search(
                 search_tasks.append(asyncio.create_task(_search_brave(q, mr)))
             elif provider == "tavily":
                 search_tasks.append(asyncio.create_task(_search_tavily(q, mr)))
+            elif provider == "datanewton":
+                search_tasks.append(asyncio.create_task(_search_datanewton(q, mr)))
+            elif provider == "moy_zakupki":
+                search_tasks.append(asyncio.create_task(_search_moy_zakupki(q, mr)))
             else:
                 continue
             task_meta.append(provider)

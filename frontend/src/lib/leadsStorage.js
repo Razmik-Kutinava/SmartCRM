@@ -5,6 +5,7 @@
  * (пока не пришёл ответ от API).
  */
 import { browser } from '$app/environment';
+import { defaultApprovals, mergeApprovals } from './leadApprovals.js';
 
 const CACHE_KEY = 'smartcrm_leads_cache_v2';
 
@@ -110,6 +111,35 @@ export async function apiCreateLead(data) {
 }
 
 /** Обновить поля лида в БД */
+/** Полный ответ по одному лиду (включая scoreAdvisory) и обновление кэша списка */
+export async function fetchLeadById(id) {
+	const n = Number(id);
+	if (Number.isNaN(n)) throw new Error('Некорректный id лида');
+	const url = `${API()}/${n}`;
+	const r = await fetch(url);
+	if (!r.ok) {
+		const text = await r.text().catch(() => '');
+		throw new Error(`GET ${url} → ${r.status}: ${text}`);
+	}
+	const lead = await r.json();
+	const all = readLeadsCache();
+	const idx = all.findIndex((l) => l.id === n);
+	const next = idx >= 0 ? all.map((l) => (l.id === n ? lead : l)) : [...all, lead];
+	cacheWrite(next);
+	return lead;
+}
+
+function formatLeadPatchError(status, text, parsed) {
+	const d = parsed?.detail;
+	if (d && typeof d === 'object' && d.code === 'stage_transition_blocked' && Array.isArray(d.messages)) {
+		return d.messages.join('\n');
+	}
+	if (typeof d === 'string') return d;
+	if (Array.isArray(d)) return d.map((x) => x.msg || x).join('; ');
+	if (d && typeof d === 'object') return JSON.stringify(d);
+	return text || `HTTP ${status}`;
+}
+
 export async function apiUpdateLead(id, patch) {
 	const url = `${API()}/${id}`;
 	console.log('[API] PATCH', url, patch);
@@ -120,7 +150,13 @@ export async function apiUpdateLead(id, patch) {
 	});
 	if (!r.ok) {
 		const text = await r.text().catch(() => '');
-		throw new Error(`PATCH ${url} → ${r.status}: ${text}`);
+		let parsed = {};
+		try {
+			parsed = text ? JSON.parse(text) : {};
+		} catch {
+			/* text */
+		}
+		throw new Error(formatLeadPatchError(r.status, text, parsed));
 	}
 	return r.json();
 }
@@ -218,13 +254,19 @@ export function enrichLeadForCard(raw) {
 		description: '',
 		history: [],
 		tasks: [],
+		amountRub: null,
+		paidAmountRub: null,
+		scoreAdvisory: null,
+		approvals: {},
 	};
-	return {
+	const merged = {
 		...base,
 		...raw,
 		history: Array.isArray(raw.history) ? raw.history : base.history,
 		tasks: Array.isArray(raw.tasks) ? raw.tasks : base.tasks,
 	};
+	merged.approvals = mergeApprovals(defaultApprovals(), merged.approvals || {});
+	return merged;
 }
 
 export function getLeadById(id) {

@@ -14,7 +14,7 @@
 | **P3** | `backend/backend/data/` → `backend/data/` | пути в тендерных скриптах | **done** (2026-06-07) |
 | **P4** | `backend/test_email_integration.py` → `backend/tests/integration/` | — | **done** (2026-06-07) |
 | **P5** | Миграция плоских `docs/*.md` → вложенная структура | git history | **done** (2026-06-07) |
-| **P6** | Сплит топ-монолитов (см. ниже) | регрессия | **в работе** — `leads/`, `hermes/`, `ops/` done |
+| **P6** | Сплит топ-монолитов (см. ниже) | регрессия | **done** (2026-06-07) |
 
 ---
 
@@ -64,15 +64,15 @@
 
 | Строк | Файл | Предлагаемый сплит |
 |-------|------|-------------------|
-| 1725 | `backend/leadgen/pipeline.py` | `pipeline/search.py`, `score.py`, `persist.py` |
-| 983 | `backend/rag/search.py` | `search/providers.py`, `search/merge.py` |
-| 962 | `backend/leadgen/modules/checko.py` | по endpoint-группам |
-| ~~793~~ | ~~`backend/api/routes/ops.py`~~ | **`api/routes/ops/`** (traces, dashboard, hermes, eval, agents, logs, crm) — done |
-| 757 | `backend/api/routes/tenders.py` | `routes/tenders/search.py`, `favorites.py` |
-| ~~664~~ | ~~`backend/core/hermes.py`~~ | **`core/hermes/`** (config, prompts, parse, rescue, cache, providers) — done |
-| 640 | `backend/core/qa_agent.py` | `core/qa/experiments.py`, `stats.py` |
-| ~~354~~ | ~~`api/routes/leads.py`~~ | **`api/routes/leads/`** (schemas, presenter, crud, engagement, bitrix) — done |
-| 300 | `backend/agents/analyst.py` | промпт / tools / run |
+| ~~1725~~ | ~~`backend/leadgen/pipeline.py`~~ | **`leadgen/pipeline/`** (run, cluster, search_by_portrait, gather, score_card, persist, portrait_*, utils) — done |
+| ~~983~~ | ~~`backend/rag/search.py`~~ | **`rag/search/`** (cache, config, providers, merge, company_search, prospect, rag_queries) — done |
+| ~~962~~ | ~~`backend/leadgen/modules/checko.py`~~ | **`leadgen/modules/checko/`** (cache, http_client, helpers, parse_company, search, endpoints, person) — done |
+| ~~793~~ | ~~`backend/api/routes/ops.py`~~ | **`api/routes/ops/`** — done |
+| ~~757~~ | ~~`backend/api/routes/tenders.py`~~ | **`api/routes/tenders/`** — done |
+| ~~664~~ | ~~`backend/core/hermes.py`~~ | **`core/hermes/`** — done |
+| ~~640~~ | ~~`backend/core/qa_agent.py`~~ | **`core/qa/`** — done |
+| ~~354~~ | ~~`api/routes/leads.py`~~ | **`api/routes/leads/`** — done |
+| ~~300~~ | ~~`backend/agents/analyst.py`~~ | **`agents/analyst/`** — done |
 
 Полный список — по мере касания; не сплитить всё сразу.
 

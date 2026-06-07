@@ -1,0 +1,101 @@
+{
+  "status_filter": "all",
+  "models": [
+    "groq"
+  ],
+  "repeat": 3,
+  "stages": [
+    {
+      "stage": "baseline",
+      "kpi": {
+        "model": "groq",
+        "cases_total": 15,
+        "cases_success": 15,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 80,
+        "avg_ms": 401
+      },
+      "usage": {
+        "prompt_tokens": 4164,
+        "completion_tokens": 1113,
+        "total_tokens": 5277
+      },
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 0.0,
+        "error_rate_pct_points": 0.0,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      }
+    },
+    {
+      "stage": "fastpath",
+      "kpi": {
+        "model": "groq",
+        "cases_total": 15,
+        "cases_success": 15,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 80,
+        "avg_ms": 443
+      },
+      "usage": {
+        "prompt_tokens": 4164,
+        "completion_tokens": 1027,
+        "total_tokens": 5191
+      },
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 10.47,
+        "error_rate_pct_points": 0.0,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": -1.63
+      }
+    },
+    {
+      "stage": "fastpath_plus_verify",
+      "kpi": {
+        "model": "groq",
+        "cases_total": 15,
+        "cases_success": 15,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 80,
+        "avg_ms": 840
+      },
+      "usage": {
+        "prompt_tokens": 4164,
+        "completion_tokens": 1019,
+        "total_tokens": 5183
+      },
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 109.48,
+        "error_rate_pct_points": 0.0,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": -1.78
+      }
+    },
+    {
+      "stage": "all_features",
+      "kpi": {
+        "model": "groq",
+        "cases_total": 15,
+        "cases_success": 15,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 80,
+        "avg_ms": 421
+      },
+      "usage": {
+        "prompt_tokens": 4164,
+        "completion_tokens": 1016,
+        "total_tokens": 5180
+      },
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 4.99,
+        "error_rate_pct_points": 0.0,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": -1.84
+      }
+    }
+  ]
+}

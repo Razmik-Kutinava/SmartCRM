@@ -70,7 +70,12 @@ async def voice_websocket(ws: WebSocket):
 
             # Текстовая команда (для тестов из браузера)
             if "text" in message:
-                data = __import__("json").loads(message["text"])
+                import json as _json
+                try:
+                    data = _json.loads(message["text"])
+                except (ValueError, TypeError):
+                    await ws.send_json({"type": "error", "message": "Невалидный JSON"})
+                    continue
 
                 if data.get("type") == "text":
                     text = data["text"]
@@ -117,9 +122,9 @@ async def voice_websocket(ws: WebSocket):
             logger.info("WebSocket голос: сессия закрыта клиентом")
         else:
             logger.error(f"WebSocket голос ошибка: {e}")
-    except Exception as e:
-        logger.error(f"WebSocket голос ошибка: {e}")
+    except Exception:
+        logger.exception("WebSocket голос: внутренняя ошибка")
         try:
-            await ws.send_json({"type": "error", "message": str(e)})
+            await ws.send_json({"type": "error", "message": "Внутренняя ошибка сервера"})
         except Exception:
             pass

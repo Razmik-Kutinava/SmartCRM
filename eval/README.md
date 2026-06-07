@@ -2,6 +2,8 @@
 
 Набор для проверки роутера `backend/core/hermes.py`: текст команды → JSON с `intent` и `slots`.
 
+**Два контура:** (1) этот каталог и `cases.jsonl` + `eval/run_eval.py` — офлайн-скрипт; (2) сценарии в PostgreSQL (`EvalScenario`) и скрипты `backend/scripts/run_hermes_*.py` — см. `docs/stack/LLM.md`, `docs/RUNBOOK.md`.
+
 ## Интенты
 
 | Группа | Интент | Смысл |

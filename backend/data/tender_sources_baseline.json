@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-04-16T10:55:29.489464+00:00",
+  "law": "44",
+  "runs": 1,
+  "queries": [
+    "битрикс24",
+    "crm система",
+    "внедрение crm"
+  ],
+  "checks": [
+    {
+      "provider": "gosplan",
+      "query": "битрикс24",
+      "ok": true,
+      "items": 30,
+      "latency_ms": 2206.65,
+      "error": null
+    },
+    {
+      "provider": "tenderguru",
+      "query": "битрикс24",
+      "ok": true,
+      "items": 0,
+      "latency_ms": 888.82,
+      "error": null
+    },
+    {
+      "provider": "gosplan",
+      "query": "crm система",
+      "ok": true,
+      "items": 30,
+      "latency_ms": 1694.59,
+      "error": null
+    },
+    {
+      "provider": "tenderguru",
+      "query": "crm система",
+      "ok": true,
+      "items": 0,
+      "latency_ms": 2568.83,
+      "error": null
+    },
+    {
+      "provider": "gosplan",
+      "query": "внедрение crm",
+      "ok": true,
+      "items": 30,
+      "latency_ms": 1778.03,
+      "error": null
+    },
+    {
+      "provider": "tenderguru",
+      "query": "внедрение crm",
+      "ok": true,
+      "items": 0,
+      "latency_ms": 1112.12,
+      "error": null
+    }
+  ],
+  "summary": {
+    "gosplan": {
+      "calls": 3,
+      "ok_calls": 3,
+      "calls_with_data": 3,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 1893.09,
+      "p95_latency_ms": 2206.65,
+      "avg_items": 30.0
+    },
+    "tenderguru": {
+      "calls": 3,
+      "ok_calls": 3,
+      "calls_with_data": 0,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 1523.26,
+      "p95_latency_ms": 2568.83,
+      "avg_items": 0.0
+    }
+  }
+}

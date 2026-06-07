@@ -1,0 +1,46 @@
+{
+  "cases_count": 26,
+  "stages": [
+    {
+      "stage": "baseline_local",
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 11.54,
+        "avg_ms": 40527,
+        "p95_ms": 41136,
+        "throughput_rps": 0.025
+      }
+    },
+    {
+      "stage": "cpu_fast_profile",
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 15.38,
+        "avg_ms": 39157,
+        "p95_ms": 41038,
+        "throughput_rps": 0.026
+      },
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 3.84,
+        "error_rate_pct_points": 0.0,
+        "avg_ms_pct": -3.38,
+        "p95_ms_pct": -0.24,
+        "throughput_rps_pct": 4.0
+      }
+    }
+  ],
+  "gate": {
+    "stage": "cpu_fast_profile",
+    "accept": false,
+    "rules": {
+      "min_accuracy_delta": -3.0,
+      "max_error_rate_delta": 2.0,
+      "max_p95_delta_pct": 0.0,
+      "min_throughput_delta_pct": 5.0
+    }
+  }
+}

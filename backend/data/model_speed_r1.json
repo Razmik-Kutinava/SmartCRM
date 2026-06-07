@@ -1,0 +1,55 @@
+{
+  "cases_count": 26,
+  "results": [
+    {
+      "model": "qwen2.5:3b",
+      "cases_total": 26,
+      "cases_success": 26,
+      "accuracy_pct": 11.54,
+      "error_rate_pct": 0.0,
+      "avg_ms": 24574,
+      "p95_ms": 24773,
+      "throughput_rps": 0.041
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "cases_total": 26,
+      "cases_success": 26,
+      "accuracy_pct": 11.54,
+      "error_rate_pct": 0.0,
+      "avg_ms": 24653,
+      "p95_ms": 24855,
+      "throughput_rps": 0.041
+    },
+    {
+      "model": "tinyllama:latest",
+      "cases_total": 26,
+      "cases_success": 26,
+      "accuracy_pct": 11.54,
+      "error_rate_pct": 0.0,
+      "avg_ms": 24684,
+      "p95_ms": 25101,
+      "throughput_rps": 0.041
+    },
+    {
+      "model": "llama3.2:latest",
+      "cases_total": 26,
+      "cases_success": 26,
+      "accuracy_pct": 11.54,
+      "error_rate_pct": 0.0,
+      "avg_ms": 24747,
+      "p95_ms": 24932,
+      "throughput_rps": 0.04
+    },
+    {
+      "model": "hermes3:latest",
+      "cases_total": 26,
+      "cases_success": 26,
+      "accuracy_pct": 11.54,
+      "error_rate_pct": 0.0,
+      "avg_ms": 24940,
+      "p95_ms": 26264,
+      "throughput_rps": 0.04
+    }
+  ]
+}

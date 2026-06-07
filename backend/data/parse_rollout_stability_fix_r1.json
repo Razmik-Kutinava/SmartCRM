@@ -1,0 +1,14 @@
+{
+  "sample_limit": 10,
+  "kpi": {
+    "cases_total": 10,
+    "cases_success": 10,
+    "success_rate_pct": 100.0,
+    "error_rate_pct": 0.0,
+    "accuracy_pct": 40.0,
+    "avg_ms": 11247,
+    "p95_ms": 13024
+  },
+  "target_success_rate_pct": 80.0,
+  "target_met": true
+}

@@ -117,7 +117,7 @@
 		<p class="text-xs text-gray-500">SmartCRM · AI отдел продаж</p>
 	</div>
 	<div class="flex items-center gap-2">
-		<a href="/leads" class="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-lg transition-colors">
+		<a href="/leads/list" class="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-lg transition-colors">
 			Все лиды
 		</a>
 		<a href="/agents" class="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm rounded-lg transition-colors">
@@ -162,7 +162,7 @@
 		<div class="col-span-2 bg-gray-900 border border-gray-800 rounded-xl">
 			<div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-800">
 				<span class="text-sm font-medium text-white">Последние лиды</span>
-				<a href="/leads" class="text-xs text-indigo-400 hover:text-indigo-300">Все лиды →</a>
+				<a href="/leads/list" class="text-xs text-indigo-400 hover:text-indigo-300">Все лиды →</a>
 			</div>
 			<div class="divide-y divide-gray-800">
 				{#each leads as lead}
@@ -233,7 +233,7 @@
 	<div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
 		<div class="text-sm font-medium text-white mb-3">Быстрые действия</div>
 		<div class="flex flex-wrap gap-2">
-			<a href="/leads" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">+ Новый лид</a>
+			<a href="/leads/list" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">+ Новый лид</a>
 			<a href="/agents" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">🤖 Задача агенту</a>
 			<a href="/ops/intents/traces" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">📡 Трейсы</a>
 			<a href="/ops/voice" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">🎙 Настройка голоса</a>

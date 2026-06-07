@@ -1,0 +1,52 @@
+{
+  "benchmark": "ollama_raw_speed_r2_short_predict",
+  "limit": 3,
+  "timeout_sec": 20,
+  "results": [
+    {
+      "model": "hermes3:latest",
+      "requests_total": 3,
+      "requests_ok": 0,
+      "error_rate_pct": 100.0,
+      "avg_ms": 0,
+      "p95_ms": 0,
+      "avg_tokens_per_sec": 0
+    },
+    {
+      "model": "qwen2.5:3b",
+      "requests_total": 3,
+      "requests_ok": 0,
+      "error_rate_pct": 100.0,
+      "avg_ms": 0,
+      "p95_ms": 0,
+      "avg_tokens_per_sec": 0
+    },
+    {
+      "model": "llama3.2:latest",
+      "requests_total": 3,
+      "requests_ok": 0,
+      "error_rate_pct": 100.0,
+      "avg_ms": 0,
+      "p95_ms": 0,
+      "avg_tokens_per_sec": 0
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "requests_total": 3,
+      "requests_ok": 0,
+      "error_rate_pct": 100.0,
+      "avg_ms": 0,
+      "p95_ms": 0,
+      "avg_tokens_per_sec": 0
+    },
+    {
+      "model": "tinyllama:latest",
+      "requests_total": 3,
+      "requests_ok": 0,
+      "error_rate_pct": 100.0,
+      "avg_ms": 0,
+      "p95_ms": 0,
+      "avg_tokens_per_sec": 0
+    }
+  ]
+}

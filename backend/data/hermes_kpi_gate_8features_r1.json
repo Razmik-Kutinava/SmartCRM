@@ -1,0 +1,226 @@
+{
+  "gate": {
+    "min_accuracy_delta": -0.5,
+    "max_error_rate_delta": 1.0,
+    "min_throughput_delta_pct": -5.0,
+    "max_p95_delta_pct": 10.0
+  },
+  "decisions": [
+    {
+      "stage": "f1_context_profile",
+      "accept": true,
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": -3.4,
+        "error_rate_pct_points": 0.0,
+        "p95_ms_pct": -9.87,
+        "throughput_rps_pct": 3.4,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      },
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 11.54,
+        "avg_ms": 2191,
+        "p95_ms": 2200,
+        "throughput_rps": 0.456
+      },
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      }
+    },
+    {
+      "stage": "f2_quant_model",
+      "accept": false,
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 53.53,
+        "error_rate_pct_points": 0.0,
+        "p95_ms_pct": 73.41,
+        "throughput_rps_pct": -34.92,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      },
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 11.54,
+        "avg_ms": 3482,
+        "p95_ms": 4233,
+        "throughput_rps": 0.287
+      },
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      }
+    },
+    {
+      "stage": "f3_keepalive_preload",
+      "accept": false,
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 30.25,
+        "error_rate_pct_points": 0.0,
+        "p95_ms_pct": 50.92,
+        "throughput_rps_pct": -23.36,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      },
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 11.54,
+        "avg_ms": 2954,
+        "p95_ms": 3684,
+        "throughput_rps": 0.338
+      },
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      }
+    },
+    {
+      "stage": "f4_gpu_offload",
+      "accept": true,
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": -2.56,
+        "error_rate_pct_points": 0.0,
+        "p95_ms_pct": -5.61,
+        "throughput_rps_pct": 2.49,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      },
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 11.54,
+        "avg_ms": 2210,
+        "p95_ms": 2304,
+        "throughput_rps": 0.452
+      },
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      }
+    },
+    {
+      "stage": "f5_parallelism",
+      "accept": false,
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 12.35,
+        "error_rate_pct_points": 0.0,
+        "p95_ms_pct": 11.51,
+        "throughput_rps_pct": 216.78,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      },
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 11.54,
+        "avg_ms": 2548,
+        "p95_ms": 2722,
+        "throughput_rps": 1.397
+      },
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      }
+    },
+    {
+      "stage": "f6_context_hygiene",
+      "accept": true,
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 0.4,
+        "error_rate_pct_points": 0.0,
+        "p95_ms_pct": 2.87,
+        "throughput_rps_pct": -0.45,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      },
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 11.54,
+        "avg_ms": 2277,
+        "p95_ms": 2511,
+        "throughput_rps": 0.439
+      },
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      }
+    },
+    {
+      "stage": "f7_routing_policy",
+      "accept": true,
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": -0.53,
+        "error_rate_pct_points": 0.0,
+        "p95_ms_pct": 3.56,
+        "throughput_rps_pct": 0.45,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      },
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 11.54,
+        "avg_ms": 2256,
+        "p95_ms": 2528,
+        "throughput_rps": 0.443
+      },
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      }
+    },
+    {
+      "stage": "f8_full_stack",
+      "accept": false,
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 43.03,
+        "error_rate_pct_points": 0.0,
+        "p95_ms_pct": 34.62,
+        "throughput_rps_pct": -30.16,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      },
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 11.54,
+        "avg_ms": 3244,
+        "p95_ms": 3286,
+        "throughput_rps": 0.308
+      },
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      }
+    }
+  ]
+}

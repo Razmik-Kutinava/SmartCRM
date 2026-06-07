@@ -11,6 +11,15 @@
 		writeLeadsCache,
 	} from '$lib/leadsStorage.js';
 	import { getApiUrl, onMessage } from '$lib/websocket.js';
+	import { goto } from '$app/navigation';
+	import {
+		DEFAULT_CRM_STAGES,
+		CRM_STAGES,
+		loadCrmConfig,
+		getCachedCrmConfig,
+		leadPriorityTier,
+		priorityTierBadgeClass,
+	} from '$lib/crmStages.js';
 
 	const API = getApiUrl();
 
@@ -24,17 +33,20 @@
 	/** @type {{ bitrix_total: number | null, local_bitrix_leads_count: number, date_from?: string } | null} */
 	let bitrixStats = $state(null);
 
-	const stages = ['all', 'Новый', 'Квалифицирован', 'КП отправлено', 'Переговоры', 'Выигран', 'Проигран'];
+	/** Воронка с сервера (Ops → CRM / crm_settings.json), иначе дефолт */
+	let stages = $state(/** @type {string[]} */ (['all', ...DEFAULT_CRM_STAGES]));
 
 	// Сразу показываем кэш, потом перезаписываем данными из БД
 	let leads = $state(readLeadsCache());
 
 	onMount(async () => {
+		await loadCrmConfig();
+		stages = ['all', ...CRM_STAGES];
 		try {
 			const fresh = await fetchLeads();
 			leads = fresh;
 			apiError = false;
-			console.log('[leads] загружено из БД:', fresh.length);
+			console.log('[Leads] список загружен из БД:', fresh.length);
 		} catch (e) {
 			console.error('[leads] fetchLeads ошибка:', e);
 			apiError = true;
@@ -258,7 +270,7 @@
 					email: slots.email || '—',
 					phone: slots.phone || '—',
 					stage: slots.stage || 'Новый',
-					score: 50,
+					score: getCachedCrmConfig()?.default_new_lead_score ?? 50,
 					source: 'Голосовая команда',
 					budget: slots.budget || '—',
 					city: cityText || '—',
@@ -385,8 +397,8 @@
 			}
 
 			case 'list_tasks': {
-				// Открываем страницу задач или показываем уведомление
-				notify('Задачи — раздел в разработке. Используй голос для создания задач.', 'info');
+				goto('/leads/tasks');
+				notify('Раздел задач', 'info');
 				break;
 			}
 
@@ -434,16 +446,22 @@
 		return 'text-red-400';
 	}
 
-	function deleteLead(lead) {
-		leads = leads.filter(l => l.id !== lead.id);
-		notify(`Лид удалён: ${lead.company}`, 'info');
+	async function deleteLead(lead) {
+		try {
+			await apiDeleteLead(lead.id);
+			leads = leads.filter((l) => l.id !== lead.id);
+			writeLeadsCache(leads);
+			notify(`Лид удалён: ${lead.company}`, 'info');
+		} catch (e) {
+			notify(`Ошибка удаления: ${e.message}`, 'error');
+		}
 	}
 </script>
 
 <!-- Header -->
 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900 shrink-0">
 	<div>
-		<h1 class="text-lg font-semibold text-white">Лиды</h1>
+		<h1 class="text-lg font-semibold text-white">Список лидов</h1>
 		<p class="text-xs text-gray-500">{filtered.length} из {leads.length}</p>
 		{#if bitrixStats}
 			<p class="text-[11px] text-gray-600 mt-0.5" title={bitrixStats.hint || ''}>
@@ -516,6 +534,7 @@
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Контакт</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Этап</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Скоринг</th>
+				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Приоритет</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Бюджет</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Источник</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium max-w-[14rem]">Заметка</th>
@@ -524,6 +543,7 @@
 		</thead>
 		<tbody class="divide-y divide-gray-800/60">
 			{#each filtered as lead, i}
+				{@const tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
 				<tr class="hover:bg-gray-800/30 transition-colors group">
 					<td class="px-6 py-3 text-gray-600 text-xs">{i + 1}</td>
 					<td class="px-4 py-3">
@@ -541,6 +561,9 @@
 					<td class="px-4 py-3">
 						<span class="font-bold {scoreColor(lead.score)}">{lead.score}</span>
 						<span class="text-gray-600 text-xs">/100</span>
+					</td>
+					<td class="px-4 py-3">
+						<span class="px-2 py-0.5 rounded text-xs font-medium {priorityTierBadgeClass(tier)}">{tier.label}</span>
 					</td>
 					<td class="px-4 py-3 text-gray-300">{lead.budget}</td>
 					<td class="px-4 py-3 text-gray-500 text-xs">{lead.source}</td>
@@ -565,7 +588,7 @@
 
 			{#if filtered.length === 0}
 				<tr>
-					<td colspan="8" class="px-6 py-12 text-center text-gray-600 text-sm">
+					<td colspan="10" class="px-6 py-12 text-center text-gray-600 text-sm">
 						Лидов не найдено. Скажи "создай лид компания ..." 🎙
 					</td>
 				</tr>

@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-07 — P6 (шаг 4–9): остаток монолитов
+
+**Сделано:**
+- `core/qa_agent.py` → `core/qa/`
+- `api/routes/tenders.py` → `api/routes/tenders/`
+- `agents/analyst.py` → `agents/analyst/`
+- `rag/search.py` → `rag/search/`
+- `leadgen/pipeline.py` → `leadgen/pipeline/` (9 модулей, re-export публичного API)
+- `leadgen/modules/checko.py` → `leadgen/modules/checko/` (cache, http_client, helpers, parse, search, endpoints, person)
+
+**Тесты:** `test_leadgen` + `test_voice_pipeline` + tender/qa/analyst/rag — **114 passed**.
+
+**Правки совместимости:** monkeypatch путей checko в тестах; `voice.pipeline.parse_intent` для mock; `employees_unknown` в portrait match.
+
+---
+
 ## 2026-06-07 — P6 (шаг 3): сплит `api/routes/ops`
 
 **Сделано:** `ops.py` (970 строк) → `api/routes/ops/{schemas,eval_cases,traces,dashboard,hermes,voice,eval,agents,logs,crm,__init__}.py`. URL `/api/ops/*` без изменений; 34 роута. Тест `test_ops_closes_groq_client` обновлён под пакет.

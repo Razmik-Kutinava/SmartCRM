@@ -124,6 +124,8 @@ async def get_providers_status():
         "serper": {"key_set": bool(os.getenv("SERPER_API_KEY")), "label": "Google (Serper)"},
         "brave":  {"key_set": bool(os.getenv("BRAVE_API_KEY")),  "label": "Brave Search"},
         "tavily": {"key_set": bool(os.getenv("TAVILY_API_KEY")), "label": "Tavily AI"},
+        "datanewton": {"key_set": bool(os.getenv("DATANEWTON_API_KEY")), "label": "DataNewton"},
+        "moy_zakupki": {"key_set": bool(os.getenv("MOY_ZAKUPKI_API_KEY")), "label": "Мои-Закупки (КТРУ/ОКПД-2)"},
     }
 
 

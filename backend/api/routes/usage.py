@@ -196,7 +196,7 @@ async def get_stats():
 
 @router.get("/live")
 async def get_live():
-    """Живые данные от провайдеров (Hunter, Apollo, Groq, Checko)."""
+    """Живые данные от провайдеров (Hunter, Apollo, Groq, Checko). Мои-Закупки — только факт настройки ключа (без расхода квоты)."""
     hunter, apollo, groq, checko = await asyncio.gather(
         _hunter_account(),
         _apollo_account(),
@@ -215,12 +215,19 @@ async def get_live():
     except Exception:
         checko_live["runtime"] = {}
 
+    mz_key = (os.getenv("MOY_ZAKUPKI_API_KEY") or "").strip()
+    moy_zakupki = {
+        "configured": bool(mz_key),
+        "note": "КТРУ/ОКПД-2, квота месячная; расход — /api/usage/stats (moy_zakupki)",
+    }
+
     return {
         "status": "ok",
         "hunter": safe(hunter),
         "apollo": safe(apollo),
         "groq": safe(groq),
         "checko": checko_live,
+        "moy_zakupki": moy_zakupki,
     }
 
 
@@ -251,6 +258,8 @@ def _key_env(service: str) -> str:
         "apollo": "APOLLO_API_KEY",
         "checko": "CHECKO_API_KEY",
         "builtwith": "BUILTWITH_API_KEY",
+        "datanewton": "DATANEWTON_API_KEY",
+        "moy_zakupki": "MOY_ZAKUPKI_API_KEY",
         "ollama": "",
     }.get(service, "")
 

@@ -18,6 +18,8 @@
 		{ href: '/ops/stats',    label: 'Статистика' },
 		{ href: '/ops/insights', label: 'Инсайты' },
 		{ href: '/ops/api-limits', label: '🔑 API Лимиты' },
+		{ href: '/ops/logs',     label: '📋 Логи' },
+		{ href: '/ops/crm',      label: '⚙️ CRM' },
 	];
 
 	function isActive(href, exact) {
@@ -67,6 +69,7 @@
 			{#each nav as item}
 				<a
 					href={item.href}
+					data-sveltekit-preload-data={item.href === '/ops/logs' ? 'off' : 'hover'}
 					class="px-3 py-1.5 rounded-lg text-sm transition-colors
 						{isActive(item.href, item.exact)
 						? 'bg-indigo-600 text-white'

@@ -76,7 +76,22 @@ async def read_lead_by_id(lead_id: int) -> Optional[dict]:
 
 
 async def update_lead_score(lead_id: int, score: int, reason: str = "") -> dict:
-    """Обновить CRM-скор лида (0–100)."""
+    """Обновить CRM-скор лида (0–100). По умолчанию отключено: балл задаёт менеджер в UI (crm_settings.agents_may_update_score)."""
+    from core import crm_settings_store
+
+    settings = crm_settings_store.load_settings()
+    if settings.get("manager_sets_score", True) and not settings.get("agents_may_update_score", False):
+        logger.info(
+            "tools.update_lead_score пропущен (лид #%s): менеджер владеет score; agents_may_update_score=false",
+            lead_id,
+        )
+        return {
+            "ok": False,
+            "skipped": True,
+            "lead_id": lead_id,
+            "message": "Скор в CRM меняет только менеджер; агент не перезаписывает поле score.",
+            "reason": reason,
+        }
     score = max(0, min(100, score))
     try:
         result = await _api_patch(f"/api/leads/{lead_id}", {"score": score})

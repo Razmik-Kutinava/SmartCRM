@@ -1,0 +1,48 @@
+{
+  "cases_count": 26,
+  "stages": [
+    {
+      "stage": "baseline_cpu_fast",
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "success_rate_pct": 100.0,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 15.38,
+        "avg_ms": 11761,
+        "p95_ms": 12508,
+        "throughput_rps": 0.085
+      }
+    },
+    {
+      "stage": "quality_tune_rescue",
+      "kpi": {
+        "cases_total": 26,
+        "cases_success": 26,
+        "success_rate_pct": 100.0,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 84.62,
+        "avg_ms": 11736,
+        "p95_ms": 12236,
+        "throughput_rps": 0.085
+      },
+      "delta_vs_baseline": {
+        "success_rate_pct_points": 0.0,
+        "accuracy_pct_points": 69.24,
+        "error_rate_pct_points": 0.0,
+        "avg_ms_pct": -0.21,
+        "p95_ms_pct": -2.17,
+        "throughput_rps_pct": 0.0
+      }
+    }
+  ],
+  "gate": {
+    "stage": "quality_tune_rescue",
+    "accept": true,
+    "rules": {
+      "min_success_rate_delta": 0,
+      "min_accuracy_delta": 10,
+      "max_p95_delta_pct": 10
+    }
+  }
+}

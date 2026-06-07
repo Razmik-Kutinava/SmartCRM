@@ -1,0 +1,95 @@
+{
+  "status_filter": "all",
+  "repeat": 3,
+  "cases_count": 15,
+  "stages": [
+    {
+      "stage": "baseline",
+      "kpi": {
+        "cases_total": 15,
+        "cases_success": 15,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 80.0,
+        "avg_ms": 2238
+      },
+      "usage": {
+        "prompt_tokens": 4164,
+        "completion_tokens": 1052,
+        "total_tokens": 5216
+      },
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 0.0,
+        "error_rate_pct_points": 0.0,
+        "prompt_tokens_pct": 0.0,
+        "total_tokens_pct": 0.0
+      }
+    },
+    {
+      "stage": "fastpath",
+      "kpi": {
+        "cases_total": 15,
+        "cases_success": 15,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 80.0,
+        "avg_ms": 3049
+      },
+      "usage": {
+        "prompt_tokens": 3321,
+        "completion_tokens": 865,
+        "total_tokens": 4186
+      },
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 36.24,
+        "error_rate_pct_points": 0.0,
+        "prompt_tokens_pct": -20.24,
+        "total_tokens_pct": -19.75
+      }
+    },
+    {
+      "stage": "fastpath_plus_verify",
+      "kpi": {
+        "cases_total": 15,
+        "cases_success": 15,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 80.0,
+        "avg_ms": 3020
+      },
+      "usage": {
+        "prompt_tokens": 3321,
+        "completion_tokens": 844,
+        "total_tokens": 4165
+      },
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": 34.94,
+        "error_rate_pct_points": 0.0,
+        "prompt_tokens_pct": -20.24,
+        "total_tokens_pct": -20.15
+      }
+    },
+    {
+      "stage": "all_features",
+      "kpi": {
+        "cases_total": 15,
+        "cases_success": 15,
+        "error_rate_pct": 0.0,
+        "accuracy_pct": 80.0,
+        "avg_ms": 1096
+      },
+      "usage": {
+        "prompt_tokens": 1107,
+        "completion_tokens": 280,
+        "total_tokens": 1387
+      },
+      "delta_vs_baseline": {
+        "accuracy_pct_points": 0.0,
+        "avg_ms_pct": -51.03,
+        "error_rate_pct_points": 0.0,
+        "prompt_tokens_pct": -73.41,
+        "total_tokens_pct": -73.41
+      }
+    }
+  ]
+}

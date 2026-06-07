@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-04-16T10:56:15.516832+00:00",
+  "law": "all",
+  "runs": 1,
+  "queries": [
+    "ремонт",
+    "поставка",
+    "строительство"
+  ],
+  "checks": [
+    {
+      "provider": "gosplan",
+      "query": "ремонт",
+      "ok": true,
+      "items": 30,
+      "latency_ms": 6023.4,
+      "error": null
+    },
+    {
+      "provider": "tenderguru",
+      "query": "ремонт",
+      "ok": true,
+      "items": 10,
+      "latency_ms": 1200.02,
+      "error": null
+    },
+    {
+      "provider": "gosplan",
+      "query": "поставка",
+      "ok": true,
+      "items": 30,
+      "latency_ms": 2713.17,
+      "error": null
+    },
+    {
+      "provider": "tenderguru",
+      "query": "поставка",
+      "ok": true,
+      "items": 10,
+      "latency_ms": 3423.74,
+      "error": null
+    },
+    {
+      "provider": "gosplan",
+      "query": "строительство",
+      "ok": true,
+      "items": 30,
+      "latency_ms": 1635.0,
+      "error": null
+    },
+    {
+      "provider": "tenderguru",
+      "query": "строительство",
+      "ok": true,
+      "items": 10,
+      "latency_ms": 4121.51,
+      "error": null
+    }
+  ],
+  "summary": {
+    "gosplan": {
+      "calls": 3,
+      "ok_calls": 3,
+      "calls_with_data": 3,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 3457.19,
+      "p95_latency_ms": 6023.4,
+      "avg_items": 30.0
+    },
+    "tenderguru": {
+      "calls": 3,
+      "ok_calls": 3,
+      "calls_with_data": 3,
+      "error_calls": 0,
+      "skipped_calls": 0,
+      "avg_latency_ms": 2915.09,
+      "p95_latency_ms": 4121.51,
+      "avg_items": 10.0
+    }
+  }
+}

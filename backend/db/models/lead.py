@@ -2,10 +2,15 @@
 ORM модель лида (как в Битрикс: компания, контакт, статус, источник, сумма и т.д.)
 """
 from datetime import datetime, timezone
-from sqlalchemy import String, Integer, DateTime, Text, func
+from decimal import Decimal
+from typing import Any, Optional
+
+from sqlalchemy import JSON, DateTime, Integer, Numeric, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
-from typing import Optional
+
 from db.session import Base
+
+from core.lead_approvals import merge_approvals_payload
 
 
 class Lead(Base):
@@ -20,6 +25,9 @@ class Lead(Base):
     score: Mapped[int] = mapped_column(Integer, default=50)
     source: Mapped[str] = mapped_column(String(100), default="—")
     budget: Mapped[str] = mapped_column(String(100), default="—")
+    # Суммы сделки в ₽ (менеджер); для отчётов и подсказок воронки
+    amount_rub: Mapped[Optional[Decimal]] = mapped_column(Numeric(14, 2), nullable=True, default=None)
+    paid_amount_rub: Mapped[Optional[Decimal]] = mapped_column(Numeric(14, 2), nullable=True, default=None)
     position: Mapped[str] = mapped_column(String(255), default="—")
     website: Mapped[str] = mapped_column(String(255), default="—")
     employees: Mapped[str] = mapped_column(String(100), default="—")
@@ -28,6 +36,9 @@ class Lead(Base):
     responsible: Mapped[str] = mapped_column(String(255), default="Я")
     next_call: Mapped[str] = mapped_column(String(100), default="—")
     description: Mapped[str] = mapped_column(Text, default="")
+
+    # Чеклист апрувов/документов (JSON camelCase), референс — CRM points system
+    approvals: Mapped[Optional[dict[str, Any]]] = mapped_column(JSON, nullable=True, default=None)
 
     # ── Bitrix24 (дедуп при повторном импорте) ───────────────────────────────
     bitrix_lead_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
@@ -74,6 +85,13 @@ class Lead(Base):
         except Exception:
             pass
 
+        def _money(v: Optional[Decimal]) -> Optional[float]:
+            if v is None:
+                return None
+            return float(v)
+
+        approvals_out = merge_approvals_payload(getattr(self, "approvals", None), {})
+
         return {
             "id": self.id,
             "company": self.company,
@@ -84,6 +102,8 @@ class Lead(Base):
             "score": self.score,
             "source": self.source,
             "budget": self.budget,
+            "amountRub": _money(self.amount_rub),
+            "paidAmountRub": _money(self.paid_amount_rub),
             "position": self.position,
             "website": self.website,
             "employees": self.employees,
@@ -100,4 +120,5 @@ class Lead(Base):
             "checko": checko,
             "tech": tech,
             "financials": financials,
+            "approvals": approvals_out,
         }

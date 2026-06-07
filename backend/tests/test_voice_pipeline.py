@@ -266,7 +266,7 @@ async def test_pipeline_page_context():
     async def mock_run_agents(**kwargs):
         return {"agents_ran": False, "final_reply": "ok"}
 
-    with patch("core.hermes.parse_intent", side_effect=mock_parse), \
+    with patch("voice.pipeline.parse_intent", side_effect=mock_parse), \
          patch("agents.orchestrator.run_agents", side_effect=mock_run_agents):
         # Импортируем pipeline после патча
         if "voice.pipeline" in sys.modules:

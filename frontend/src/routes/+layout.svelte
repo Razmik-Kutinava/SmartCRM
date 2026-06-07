@@ -16,6 +16,7 @@
 		{ href: '/agents', label: 'Агенты', icon: '⬣' },
 		{ href: '/rag', label: 'База знаний', icon: '⬤' },
 		{ href: '/leadgen', label: 'Лидогенерация', icon: '◆' },
+		{ href: '/tenders', label: 'Тендеры', icon: '◇' },
 		{ href: '/search', label: 'Поиск', icon: '◎' },
 		{ href: '/analytics', label: 'Аналитика', icon: '◈' },
 		{ href: '/ops', label: 'Ops / Качество', icon: '◉' },
@@ -54,8 +55,10 @@
 	// Контекст текущей страницы для Hermes
 	function pageContext() {
 		const path = $page.url.pathname;
-		if (path.startsWith('/leads'))    return 'Страница: Лиды';
+		if (path.startsWith('/leads'))      return 'Страница: Лиды';
+		if (path.startsWith('/crm'))      return 'Страница: Лиды';
 		if (path.startsWith('/leadgen'))   return 'Страница: Лидогенерация';
+		if (path.startsWith('/tenders'))   return 'Страница: Тендеры';
 		if (path.startsWith('/search'))   return 'Страница: Поиск';
 		if (path.startsWith('/email'))    return 'Страница: Email';
 		if (path.startsWith('/rag'))      return 'Страница: База знаний';
@@ -114,7 +117,9 @@
 		const intent = data.intent;
 		// При создании/показе лидов — переходим на страницу лидов
 		if (['create_lead','list_leads','update_lead','delete_lead'].includes(intent)) {
-			if (!$page.url.pathname.startsWith('/leads')) goto('/leads');
+			if (!$page.url.pathname.startsWith('/leads') && !$page.url.pathname.startsWith('/crm')) {
+				goto('/leads/list');
+			}
 		}
 		// При поиске — переходим на поиск
 		if (intent === 'search_web' && !$page.url.pathname.startsWith('/search')) {
@@ -203,9 +208,13 @@
 				<a
 					href={item.href}
 					class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150
-						{$page.url.pathname === item.href
-							? 'bg-indigo-600 text-white font-medium'
-							: 'text-gray-400 hover:text-white hover:bg-gray-800'}"
+						{item.href === '/leads'
+							? ($page.url.pathname.startsWith('/leads') || $page.url.pathname.startsWith('/crm')
+								? 'bg-indigo-600 text-white font-medium'
+								: 'text-gray-400 hover:text-white hover:bg-gray-800')
+							: $page.url.pathname === item.href
+								? 'bg-indigo-600 text-white font-medium'
+								: 'text-gray-400 hover:text-white hover:bg-gray-800'}"
 				>
 					<span class="text-xs opacity-70">{item.icon}</span>
 					{item.label}

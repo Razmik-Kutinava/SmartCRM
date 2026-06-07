@@ -84,8 +84,8 @@ class TestCheckoIdentification:
                 "r": "01.01.2020",
             }]
 
-        monkeypatch.setattr(checko_mod, "_available", lambda: False)
-        monkeypatch.setattr(checko_mod, "_search_egrul_rows", fake_rows)
+        monkeypatch.setattr("leadgen.modules.checko.http_client._available", lambda: False)
+        monkeypatch.setattr("leadgen.modules.checko.search._search_egrul_rows", fake_rows)
         res = asyncio.get_event_loop().run_until_complete(checko_mod.search_companies("тест", count=3))
         assert len(res) == 1
         assert res[0]["inn"] == "7700000000"
@@ -197,7 +197,7 @@ class TestNewsAPI:
     def test_parse_article(self):
         from leadgen.modules.newsapi import _parse_article
         from datetime import datetime, timezone, timedelta
-        pub = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
+        pub = (datetime.now(timezone.utc) - timedelta(days=5)).isoformat()
         a = _parse_article({
             "title": "Компания привлекла инвестиции",
             "description": "100 млн рублей",

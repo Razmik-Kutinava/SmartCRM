@@ -1,0 +1,47 @@
+{
+  "benchmark": "ollama_fastest_model_r1",
+  "limit": 3,
+  "timeout_sec": 90,
+  "results": [
+    {
+      "model": "qwen2.5:0.5b",
+      "requests_total": 3,
+      "requests_ok": 3,
+      "error_rate_pct": 0.0,
+      "avg_ms": 21178,
+      "p95_ms": 25771
+    },
+    {
+      "model": "qwen2.5:3b",
+      "requests_total": 3,
+      "requests_ok": 3,
+      "error_rate_pct": 0.0,
+      "avg_ms": 22784,
+      "p95_ms": 25918
+    },
+    {
+      "model": "llama3.2:latest",
+      "requests_total": 3,
+      "requests_ok": 3,
+      "error_rate_pct": 0.0,
+      "avg_ms": 26232,
+      "p95_ms": 21814
+    },
+    {
+      "model": "tinyllama:latest",
+      "requests_total": 3,
+      "requests_ok": 3,
+      "error_rate_pct": 0.0,
+      "avg_ms": 28396,
+      "p95_ms": 27823
+    },
+    {
+      "model": "hermes3:latest",
+      "requests_total": 3,
+      "requests_ok": 3,
+      "error_rate_pct": 0.0,
+      "avg_ms": 29671,
+      "p95_ms": 24896
+    }
+  ]
+}

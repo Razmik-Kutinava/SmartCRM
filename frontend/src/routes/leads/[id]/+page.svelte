@@ -2,23 +2,225 @@
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { page } from '$app/stores';
-	import { enrichLeadForCard, getLeadById } from '$lib/leadsStorage.js';
+	import {
+		enrichLeadForCard,
+		getLeadById,
+		apiUpdateLead,
+		fetchLeads,
+		fetchLeadById,
+		writeLeadsCache,
+	} from '$lib/leadsStorage.js';
+	import {
+		CRM_STAGES,
+		loadCrmConfig,
+		getCachedCrmConfig,
+		leadPriorityTier,
+		priorityTierBadgeClass,
+	} from '$lib/crmStages.js';
 	import { fetchEmailAccounts, fetchEmailThreads } from '$lib/emailStorage.js';
+	import {
+		APPROVAL_KEYS,
+		APPROVAL_LABELS_RU,
+		defaultApprovals,
+		mergeApprovals,
+	} from '$lib/leadApprovals.js';
 
 	let lead    = $state(null);
 	let notFound = $state(false);
+
+	let approvalsDraft = $state({});
+	function syncApprovalsDraft() {
+		if (!lead) {
+			approvalsDraft = defaultApprovals();
+			return;
+		}
+		approvalsDraft = mergeApprovals(defaultApprovals(), lead.approvals);
+	}
 
 	function sync() {
 		const id = get(page).params.id;
 		const raw = getLeadById(id);
 		lead     = raw ? enrichLeadForCard(raw) : null;
 		notFound = !raw;
+		syncApprovalsDraft();
 	}
 
 	onMount(() => {
-		sync();
-		return page.subscribe(() => sync());
+		let lastFetchedOkId = '';
+		async function pullLead() {
+			await loadCrmConfig();
+			const id = String(get(page).params.id ?? '');
+			if (id && id !== lastFetchedOkId) {
+				try {
+					await fetchLeadById(id);
+					lastFetchedOkId = id;
+				} catch {
+					/* офлайн / демо — остаётся кэш; id не фиксируем, чтобы повторить fetch при следующем заходе */
+				}
+			}
+			sync();
+			syncMoneyInputsFromLead();
+			await loadLeadActivity();
+		}
+		pullLead();
+		return page.subscribe(pullLead);
 	});
+
+	let stageSaving = $state(false);
+	let moneyAmountStr = $state('');
+	let moneyPaidStr = $state('');
+	let moneySaving = $state(false);
+
+	let leadComments = $state([]);
+	let leadAudit = $state([]);
+	let leadComms = $state([]);
+	let commentDraft = $state('');
+	let commentPosting = $state(false);
+	let commType = $state('call');
+	let commContent = $state('');
+	let commSaving = $state(false);
+	let approvalsSaving = $state(false);
+
+	async function loadLeadActivity() {
+		const id = String(get(page).params.id ?? '');
+		const n = Number(id);
+		if (!id || Number.isNaN(n)) return;
+		try {
+			const [cr, ra, rc] = await Promise.all([
+				fetch(`/api/leads/${n}/comments?limit=40`),
+				fetch(`/api/leads/${n}/audit?limit=35`),
+				fetch(`/api/leads/${n}/communications?limit=40`),
+			]);
+			if (cr.ok) leadComments = await cr.json();
+			else leadComments = [];
+			if (ra.ok) leadAudit = await ra.json();
+			else leadAudit = [];
+			if (rc.ok) leadComms = await rc.json();
+			else leadComms = [];
+		} catch {
+			leadComments = [];
+			leadAudit = [];
+			leadComms = [];
+		}
+	}
+
+	async function postLeadComment() {
+		if (!lead || !commentDraft.trim() || commentPosting) return;
+		commentPosting = true;
+		try {
+			const r = await fetch(`/api/leads/${lead.id}/comments`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ body: commentDraft.trim(), author: 'Менеджер' }),
+			});
+			if (!r.ok) throw new Error(await r.text());
+			commentDraft = '';
+			await loadLeadActivity();
+		} catch (e) {
+			console.error(e);
+			alert('Не удалось сохранить комментарий: ' + (e?.message || e));
+		} finally {
+			commentPosting = false;
+		}
+	}
+
+	function syncMoneyInputsFromLead() {
+		if (!lead) return;
+		moneyAmountStr = lead.amountRub != null && lead.amountRub !== '' ? String(lead.amountRub) : '';
+		moneyPaidStr = lead.paidAmountRub != null && lead.paidAmountRub !== '' ? String(lead.paidAmountRub) : '';
+	}
+
+	async function saveApprovalsChecklist() {
+		if (!lead || approvalsSaving) return;
+		approvalsSaving = true;
+		try {
+			await apiUpdateLead(lead.id, { approvals: approvalsDraft });
+			await fetchLeadById(lead.id);
+			sync();
+			syncMoneyInputsFromLead();
+			await loadLeadActivity();
+		} catch (e) {
+			console.error(e);
+			alert('Не удалось сохранить чеклист: ' + (e?.message || e));
+		} finally {
+			approvalsSaving = false;
+		}
+	}
+
+	async function submitCommunication() {
+		if (!lead || !commContent.trim() || commSaving) return;
+		commSaving = true;
+		try {
+			const r = await fetch(`/api/leads/${lead.id}/communications`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					communicationType: commType,
+					content: commContent.trim(),
+					actor: 'Менеджер',
+				}),
+			});
+			if (!r.ok) throw new Error(await r.text());
+			commContent = '';
+			await loadLeadActivity();
+		} catch (e) {
+			console.error(e);
+			alert('Не удалось записать касание: ' + (e?.message || e));
+		} finally {
+			commSaving = false;
+		}
+	}
+
+	async function saveMoneyFields() {
+		if (!lead || moneySaving) return;
+		const parseNum = (s) => {
+			const t = String(s).trim().replace(/\s/g, '').replace(',', '.');
+			if (t === '') return null;
+			const n = Number(t);
+			return Number.isFinite(n) ? n : NaN;
+		};
+		const a = parseNum(moneyAmountStr);
+		const p = parseNum(moneyPaidStr);
+		if (Number.isNaN(a) || Number.isNaN(p)) {
+			alert('Введите суммы числами (можно с десятичной точкой).');
+			return;
+		}
+		moneySaving = true;
+		try {
+			await apiUpdateLead(lead.id, { amountRub: a, paidAmountRub: p });
+			await fetchLeadById(lead.id);
+			sync();
+			syncMoneyInputsFromLead();
+			await loadLeadActivity();
+		} catch (e) {
+			console.error(e);
+			alert('Не удалось сохранить суммы: ' + (e?.message || e));
+		} finally {
+			moneySaving = false;
+		}
+	}
+
+	async function setStage(newStage) {
+		if (!lead || stageSaving) return;
+		stageSaving = true;
+		try {
+			await apiUpdateLead(lead.id, { stage: newStage });
+			const fresh = await fetchLeads();
+			writeLeadsCache(fresh);
+			try {
+				await fetchLeadById(lead.id);
+			} catch {
+				/* список уже обновлён */
+			}
+			sync();
+			await loadLeadActivity();
+		} catch (e) {
+			console.error(e);
+			alert('Не удалось сменить этап: ' + (e?.message || e));
+		} finally {
+			stageSaving = false;
+		}
+	}
 
 	let activeTab = $state('overview');
 	let noteText  = $state('');
@@ -246,13 +448,14 @@
 {#if notFound}
 	<div class="flex flex-col items-center justify-center flex-1 p-8 text-center">
 		<p class="text-lg text-white mb-2">Лид не найден</p>
-		<a href="/leads" class="text-indigo-400 hover:text-indigo-300 text-sm">← К списку лидов</a>
+		<a href="/leads/list" class="text-indigo-400 hover:text-indigo-300 text-sm">← К списку лидов</a>
 	</div>
 {:else if lead}
+	{@const _tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
 	<!-- Header -->
 	<div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900 shrink-0">
 		<div class="flex items-center gap-3">
-			<a href="/leads" class="text-gray-500 hover:text-white transition-colors text-sm">← Лиды</a>
+			<a href="/leads/list" class="text-gray-500 hover:text-white transition-colors text-sm">← Лиды</a>
 			<span class="text-gray-700">/</span>
 			<span class="text-sm text-white font-medium">{lead.company}</span>
 		</div>
@@ -274,10 +477,26 @@
 				<div>
 					<div class="text-lg font-bold text-white">{lead.company}</div>
 					<div class="text-sm text-gray-400 mt-0.5">{lead.contact} · {lead.position}</div>
-					<div class="flex items-center gap-2 mt-2">
+					<div class="flex items-center gap-2 mt-2 flex-wrap">
 						<span class="px-2 py-0.5 bg-blue-900 text-blue-300 text-xs rounded-full font-medium">{lead.stage}</span>
 						<span class="text-green-400 font-bold text-sm">{lead.score}/100</span>
+						<span class="px-2 py-0.5 rounded text-xs font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
 					</div>
+					<p class="text-[11px] text-gray-600 mt-1 leading-snug">
+						Балл вручную менеджером; автоматом не перезаписывается. Ниже — суммы в ₽ и подсказка/предупреждения с бэка.
+					</p>
+					{#if lead.scoreAdvisory?.suggestedScore != null}
+						<p class="text-xs text-gray-500 mt-1">
+							Подсказка (не меняет балл менеджера): <span class="text-amber-400/90">{lead.scoreAdvisory.suggestedScore}/100</span>
+						</p>
+					{/if}
+					{#if lead.scoreAdvisory?.warnings?.length}
+						<ul class="mt-2 space-y-1 text-xs text-amber-200/95 bg-amber-950/40 border border-amber-900/60 rounded-lg px-2 py-2 list-disc list-inside">
+							{#each lead.scoreAdvisory.warnings as w}
+								<li>{w}</li>
+							{/each}
+						</ul>
+					{/if}
 				</div>
 
 				<div class="space-y-2">
@@ -304,6 +523,71 @@
 				</div>
 
 				<div class="space-y-2">
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Суммы сделки (₽)</div>
+					<div class="space-y-2 text-sm">
+						<label class="block">
+							<span class="text-gray-500 text-xs">Сумма договора / сделки</span>
+							<input
+								type="text"
+								inputmode="decimal"
+								bind:value={moneyAmountStr}
+								class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm"
+								placeholder="например 1250000"
+							/>
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Оплачено</span>
+							<input
+								type="text"
+								inputmode="decimal"
+								bind:value={moneyPaidStr}
+								class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm"
+								placeholder="0"
+							/>
+						</label>
+						<button
+							type="button"
+							disabled={moneySaving}
+							onclick={saveMoneyFields}
+							class="w-full py-1.5 rounded-lg text-xs font-medium bg-emerald-900/60 hover:bg-emerald-800/70 text-emerald-100 disabled:opacity-50"
+						>
+							{moneySaving ? 'Сохранение…' : 'Сохранить суммы'}
+						</button>
+					</div>
+				</div>
+
+				<div class="space-y-2 border-t border-gray-800 pt-4">
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Апрувы и документы</div>
+					<p class="text-[10px] text-gray-600 leading-snug">
+						Как в CRM points: влияют на подсказку балла (не на балл менеджера). Веса — в Ops → scoring_advisory.
+					</p>
+					<div class="grid grid-cols-1 gap-1.5 max-h-52 overflow-y-auto text-xs">
+						{#each APPROVAL_KEYS as k}
+							<label class="flex items-start gap-2 text-gray-300 cursor-pointer select-none">
+								<input
+									type="checkbox"
+									class="mt-0.5 rounded border-gray-600"
+									checked={!!approvalsDraft[k]}
+									onchange={(e) => {
+										approvalsDraft[k] = e.currentTarget.checked;
+										approvalsDraft = { ...approvalsDraft };
+									}}
+								/>
+								<span>{APPROVAL_LABELS_RU[k] || k}</span>
+							</label>
+						{/each}
+					</div>
+					<button
+						type="button"
+						disabled={approvalsSaving}
+						onclick={saveApprovalsChecklist}
+						class="w-full py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-100 disabled:opacity-50"
+					>
+						{approvalsSaving ? 'Сохранение…' : 'Сохранить чеклист'}
+					</button>
+				</div>
+
+				<div class="space-y-2">
 					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Детали</div>
 					<div class="space-y-2 text-sm">
 						{#each [
@@ -311,7 +595,7 @@
 							['Сотрудники',     lead.employees],
 							['Город',          lead.city],
 							['Источник',       lead.source],
-							['Бюджет',         lead.budget],
+							['Бюджет (текст)', lead.budget],
 							['Ответственный',  lead.responsible],
 							['Создан',         lead.created],
 							['Следующий звонок', lead.nextCall],
@@ -334,10 +618,109 @@
 				<div class="space-y-2">
 					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Сменить этап</div>
 					<div class="grid grid-cols-2 gap-1">
-						{#each ['Новый', 'Квалифицирован', 'КП отправлено', 'Переговоры', 'Выигран', 'Проигран'] as stage}
-							<button class="px-2 py-1 text-xs rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors text-left">
+						{#each CRM_STAGES as stage}
+							<button
+								type="button"
+								disabled={stageSaving}
+								onclick={() => setStage(stage)}
+								class="px-2 py-1 text-xs rounded-lg text-left transition-colors disabled:opacity-50
+									{lead.stage === stage
+									? 'bg-indigo-600 text-white'
+									: 'bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white'}"
+							>
 								{stage}
 							</button>
+						{/each}
+					</div>
+					{#if (getCachedCrmConfig()?.stageTransitionRules || []).length}
+						<p class="text-[10px] text-gray-600 mt-2 leading-snug">
+							Правила переходов (из CRM): для целевой стадии могут требоваться поля — при блокировке смотри текст ошибки.
+						</p>
+					{/if}
+				</div>
+
+				<div class="space-y-2 border-t border-gray-800 pt-4">
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Касания (лог)</div>
+					<div class="max-h-32 overflow-y-auto space-y-1.5 text-[11px] mb-2">
+						{#each leadComms as log (log.id)}
+							<div class="text-gray-400 border-b border-gray-800/80 pb-1">
+								<span class="text-cyan-600/90">{log.communicationType}</span>
+								<span class="text-gray-600"> · {log.actor}</span>
+								<div class="text-gray-300 mt-0.5 whitespace-pre-wrap">{log.content}</div>
+								<div class="text-gray-600">{log.createdAt ? new Date(log.createdAt).toLocaleString('ru-RU') : ''}</div>
+							</div>
+						{:else}
+							<p class="text-gray-600">Пока нет записей.</p>
+						{/each}
+					</div>
+					<select
+						bind:value={commType}
+						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200"
+					>
+						<option value="call">Звонок</option>
+						<option value="meeting">Встреча</option>
+						<option value="email">Письмо</option>
+						<option value="other">Другое</option>
+					</select>
+					<textarea
+						bind:value={commContent}
+						placeholder="Что сделали / договорились…"
+						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600 min-h-[3rem]"
+					></textarea>
+					<button
+						type="button"
+						disabled={commSaving}
+						onclick={submitCommunication}
+						class="w-full py-1.5 rounded-lg text-xs font-medium bg-cyan-900/40 hover:bg-cyan-800/50 text-cyan-100 disabled:opacity-50"
+					>
+						{commSaving ? 'Запись…' : 'Записать касание'}
+					</button>
+				</div>
+
+				<div class="space-y-2 border-t border-gray-800 pt-4">
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Комментарии</div>
+					<div class="max-h-40 overflow-y-auto space-y-2 text-xs">
+						{#each leadComments as c (c.id)}
+							<div class="bg-gray-950/80 border border-gray-800 rounded px-2 py-1.5">
+								<div class="text-gray-500 mb-0.5">{c.author} · {c.createdAt ? new Date(c.createdAt).toLocaleString('ru-RU') : ''}</div>
+								<div class="text-gray-200 whitespace-pre-wrap">{c.body}</div>
+							</div>
+						{:else}
+							<p class="text-gray-600">Пока нет комментариев.</p>
+						{/each}
+					</div>
+					<textarea
+						bind:value={commentDraft}
+						placeholder="Комментарий к сделке…"
+						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600 min-h-[4rem]"
+					></textarea>
+					<button
+						type="button"
+						disabled={commentPosting}
+						onclick={postLeadComment}
+						class="w-full py-1.5 rounded-lg text-xs font-medium bg-indigo-900/50 hover:bg-indigo-800/60 text-indigo-100 disabled:opacity-50"
+					>
+						{commentPosting ? 'Отправка…' : 'Добавить комментарий'}
+					</button>
+				</div>
+
+				<div class="space-y-2 border-t border-gray-800 pt-4">
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">История полей</div>
+					<div class="max-h-36 overflow-y-auto space-y-1 text-[11px]">
+						{#each leadAudit as row (row.id)}
+							<div class="text-gray-400 border-b border-gray-800/80 pb-1">
+								{#if row.eventType && row.eventType !== 'field_change'}
+									<span class="text-[10px] text-cyan-500/90 mr-1">[{row.eventType}]</span>
+								{/if}
+								<span class="text-amber-600/90">{row.field}</span>
+								<span class="text-gray-600"> ← </span>
+								<span class="text-gray-500 line-clamp-1">{row.oldValue || '—'}</span>
+								<span class="text-gray-600"> → </span>
+								<span class="text-gray-300 line-clamp-1">{row.newValue || '—'}</span>
+								<div class="text-gray-600 mt-0.5">{row.actor} · {row.changedAt ? new Date(row.changedAt).toLocaleString('ru-RU') : ''}</div>
+							</div>
+						{:else}
+							<p class="text-gray-600">Изменений по полям ещё не было.</p>
 						{/each}
 					</div>
 				</div>

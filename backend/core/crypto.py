@@ -28,12 +28,15 @@ if _raw:
         _fernet = Fernet(_raw.encode() if isinstance(_raw, str) else _raw)
         logger.info("Crypto: Fernet инициализирован из SECRET_KEY")
     except Exception as e:
+        # Невалидный SECRET_KEY — это ошибка конфигурации.
+        # Молча подменять на эфемерный ключ опасно: ранее зашифрованные записи
+        # станут нерасшифруемыми без предупреждения. Фейлимся громко.
         logger.error(
             "Crypto: SECRET_KEY невалиден (%s). "
             "Сгенерируйте ключ: python -c \"from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())\"",
             e,
         )
-        _fernet = Fernet(Fernet.generate_key())
+        raise RuntimeError(f"Невалидный SECRET_KEY: {e}") from e
 else:
     _ephemeral = Fernet.generate_key()
     _fernet = Fernet(_ephemeral)
@@ -53,8 +56,10 @@ def decrypt(value: str) -> str:
     Расшифровать строку.
     Если value не является Fernet-токеном (legacy plaintext) — возвращает как есть.
     """
+    if value is None:
+        return value
     try:
         return _fernet.decrypt(value.encode()).decode()
-    except (InvalidToken, Exception):
-        # Старая запись без шифрования — возвращаем как есть
+    except InvalidToken:
+        # Старая запись без шифрования (legacy plaintext) — возвращаем как есть
         return value
