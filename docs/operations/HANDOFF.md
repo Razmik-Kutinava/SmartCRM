@@ -15,6 +15,7 @@
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
+- 9b45686 refactor: P4 move email integration test to tests/integration
 - 9c6ef13 chore: P3 remove backend/backend/data nesting
 - 7432d2b chore: P2 clean repo root, openapi in docs/api, artifact gitignore
 - 2e0cd60 refactor: move root tests/ to backend/tests/ (P1 layout)
