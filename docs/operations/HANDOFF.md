@@ -15,6 +15,7 @@
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
+- 9c6ef13 chore: P3 remove backend/backend/data nesting
 - 7432d2b chore: P2 clean repo root, openapi in docs/api, artifact gitignore
 - 2e0cd60 refactor: move root tests/ to backend/tests/ (P1 layout)
 - 637941c chore: repo layout rules, code split limits, structure audit
