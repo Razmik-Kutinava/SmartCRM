@@ -10,14 +10,14 @@
 
 Спринт:[Фаза 1] | Задача:[Проход PRD_MAP + порядок в репо] | Статус:в работе
 
-Следующий шаг: **коммит P6 остаток** (qa, tenders, analyst, rag/search, pipeline, checko) → **Фаза 1 PRD_MAP** (баги в ISSUES). P6 + P1–P5 layout — **done**.
+Следующий шаг: **Фаза 1 PRD_MAP** (чеклист, баги в ISSUES). P6 + P1–P5 layout + backend README pack + правило §5 — **done**. Ждём задачу от пользователя.
 
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
-- 46d634f refactor: P6 split api/routes/leads into package
-- 1d02403 docs: P5 migrate flat docs to nested structure
-- 9b45686 refactor: P4 move email integration test to tests/integration
+- (после push) docs: backend README sync rule in smartcrm-repo-layout.mdc
+- 351fc23 docs: add backend zone READMEs and README sync draft
+- 725b284 refactor: complete P6 monolith splits and CRM/tender stack
 - 9c6ef13 chore: P3 remove backend/backend/data nesting
 - 7432d2b chore: P2 clean repo root, openapi in docs/api, artifact gitignore
 - 2e0cd60 refactor: move root tests/ to backend/tests/ (P1 layout)

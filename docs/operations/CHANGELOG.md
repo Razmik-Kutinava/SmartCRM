@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-06-07 — Backend README pack + правило синхронизации
+
+**Сделано:**
+- 15× `backend/**/README.md` — карта зон простыми словами.
+- Правило §5 **Backend README Sync** в `.cursor/rules/smartcrm-repo-layout.mdc` (апрув `go readme rule`).
+- Справочник: `docs/dev/BACKEND_README_SYNC_DRAFT.md` (статус: применено).
+
+**Обязательство агентов:** при изменениях в `backend/` обновлять README зоны в том же коммите.
+
+---
+
 ## 2026-06-07 — P6 (шаг 4–9): остаток монолитов
 
 **Сделано:**

@@ -103,6 +103,53 @@ alwaysApply: true
 
 ---
 
-## 5. Связь с workflow
+## 5. Backend README Sync (обязательно при изменениях в `backend/`)
 
-После шага по структуре: коммит + `SESSION_STATE` + при смене статуса `HANDOFF` (см. `smartcrm-agent-workflow.mdc`).
+Карта бэкенда простыми словами: **`backend/README.md`** и README в каждой зоне. Канон списка зон — `docs/dev/BACKEND_README_SYNC_DRAFT.md` (история решения).
+
+### Где живут README
+
+| Уровень | Файл |
+|---------|------|
+| Весь бэкенд | `backend/README.md` |
+| Зона | `backend/{api,core,agents,leadgen,rag,db,services,voice,integrations,email_sync,scripts,tests,data}/README.md` |
+| Роуты | `backend/api/routes/README.md` (секции `leads/`, `ops/`, `tenders/`) |
+
+Подпапки (`core/hermes/`, `leadgen/pipeline/` и т.д.) **без отдельного README** — только секция в README родителя.
+
+### Когда обновлять (в том же коммите, что и код)
+
+| Изменение в коде | Обновить README |
+|------------------|-----------------|
+| Новый файл в существующей папке | Таблица «файл → за что» в README зоны |
+| Новая папка-пакет (2+ файла) | Строка в `backend/README.md` + секция в README родителя |
+| Переименование / удаление файла | Поправить или убрать строку в README зоны |
+| Новый HTTP-роут | `api/routes/README.md` |
+| Новый внешний сервис | `services/README.md` (+ `leadgen/README.md` при необходимости) |
+| Новая модель БД | `db/README.md` § models |
+| Новый pytest-файл | `tests/README.md` |
+| Новый CLI-скрипт | `scripts/README.md` |
+
+### Формат
+
+- Язык: **русский**, простые слова, **1 строка на файл**.
+- Только «что лежит где», не дублировать PRD.
+- ~2 экрана максимум на README зоны; контракты API → `docs/api/`.
+
+### Чеклист агента (конец шага с кодом в `backend/`)
+
+1. Затронутые зоны — в таблице выше?
+2. README родителя обновлён (или явно «без изменений README»)?
+3. `backend/README.md` актуален, если появилась новая верхнеуровневая папка?
+
+### Исключения
+
+- Однострочный фикс без смены ответственности файла — README не трогать.
+- Runtime `data/*.json` — не описывать каждый файл, только тип в `data/README.md`.
+
+---
+
+## 6. Связь с workflow
+
+После шага по структуре: коммит + `SESSION_STATE` + при смене статуса `HANDOFF` (см. `smartcrm-agent-workflow.mdc`).  
+Изменения в `backend/` — также §5 Backend README Sync.

@@ -1,7 +1,7 @@
-# Черновик правила: синхронизация backend README
+# Правило: синхронизация backend README
 
-> **Статус:** черновик — не в правилах до явного `go` от пользователя.  
-> После апрува: влить в `.cursor/rules/smartcrm-repo-layout.mdc` (§ Backend README).
+> **Статус:** **применено** — активное правило в `.cursor/rules/smartcrm-repo-layout.mdc` §5.  
+> Этот файл — справочник и история решения (2026-06-07, апрув `go readme rule`).
 
 ---
 

@@ -76,4 +76,8 @@
 
 2026-06-07 | Действие: 15× `backend/**/README.md` (карта бэкенда); ссылка в REPO_LAYOUT; черновик правила README-sync — ждёт апрув. | Следующий шаг: апрув правила → commit+push. | Вопросы: нет | Статус: in_progress
 
+2026-06-07 | Действие: push `351fc23` — backend README pack + BACKEND_README_SYNC_DRAFT. | Следующий шаг: апрув правила → влить в smartcrm-repo-layout.mdc. | Вопросы: нет | Статус: done
+
+2026-06-07 | Действие: правило §5 Backend README Sync в `smartcrm-repo-layout.mdc`; DRAFT → применено; CHANGELOG+HANDOFF. | Следующий шаг: commit+push; ждём задачу пользователя (Фаза 1 PRD_MAP). | Вопросы: нет | Статус: done
+
 ---
