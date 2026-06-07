@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-07 — P4: email integration test в tests/integration/
+
+**Сделано:** `backend/test_email_integration.py` → `backend/tests/integration/test_email_integration.py`; путь в `docs/email/setup.md`.
+
+---
+
 ## 2026-06-07 — P3: убрана backend/backend/data/
 
 **Сделано:** `tender_sources_ab.json` → `backend/data/`; дубль `via_qa` и каталог `backend/backend/` удалены; предупреждение в `tender_sources_ab.py` (запуск из `backend/`).

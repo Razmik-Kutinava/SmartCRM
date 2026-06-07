@@ -81,7 +81,7 @@ backend/
 ├── data/                   # JSON-кэш, chroma_db, sqlite артефакты
 └── tests/                  # Все pytest + fixtures
     ├── fixtures/
-    └── integration/        # (целевая папка)
+    └── integration/        # интеграционные смоуки (email и др.)
 ```
 
 **Не класть:** тесты в `backend/test_*.py` вне `tests/`. Скрипты запускать из `backend/` — иначе артефакты уйдут в `backend/backend/data/` (удалено в P3).

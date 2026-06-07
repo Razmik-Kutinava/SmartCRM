@@ -12,7 +12,7 @@
 | **P1** | Корневой `tests/` → `backend/tests/` | импорты, pytest.ini, CI | **done** (2026-06-07) |
 | **P2** | Мусор в корне → `docs/api/openapi/`, `backend/data/artifacts/`; `.gitignore` | — | **done** (2026-06-07) |
 | **P3** | `backend/backend/data/` → `backend/data/` | пути в тендерных скриптах | **done** (2026-06-07) |
-| **P4** | `backend/test_email_integration.py` → `backend/tests/integration/` | — | ждёт `go` |
+| **P4** | `backend/test_email_integration.py` → `backend/tests/integration/` | — | **done** (2026-06-07) |
 | **P5** | Незакоммиченное удаление старых `docs/*.md` из корня `docs/` | git history | ждёт `go` |
 | **P6** | Сплит топ-монолитов (см. ниже) | регрессия | ждёт `go` по файлу |
 
@@ -37,7 +37,7 @@
 | `test_eval_scenarios_api.py` | `/tests/` | `backend/tests/api/test_eval_scenarios_api.py` |
 | `test_hermes_eval.py` | `/tests/` | `backend/tests/core/test_hermes_eval.py` |
 | `test_rag_chunks.py` | `/tests/` | `backend/tests/rag/test_rag_chunks.py` |
-| `backend/test_email_integration.py` | `backend/` | `backend/tests/integration/test_email_integration.py` | P4 |
+| `test_email_integration.py` | `backend/` | `backend/tests/integration/test_email_integration.py` | P4 done |
 
 ### Данные / артефакты — P3 done
 

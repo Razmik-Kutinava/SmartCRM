@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
 """
 Проверка что все компоненты email интеграции работают правильно.
-"""
 
-import sys
+Запуск (из backend/):
+  python tests/integration/test_email_integration.py
+  pytest tests/integration/test_email_integration.py -v
+"""
+from __future__ import annotations
+
 import asyncio
+import sys
+from pathlib import Path
+
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+if str(_BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_DIR))
+
 
 def test_imports():
     """Проверь что все модули импортируются без ошибок."""
     print("🔍 Проверка импортов...")
     try:
-        from db.models import EmailAccount, EmailThread, EmailMessage, EmailCampaign, Lead
+        from db.models import EmailAccount, EmailCampaign, EmailMessage, EmailThread, Lead
         print("  ✅ Модели БД импортированы")
     except Exception as e:
         print(f"  ❌ Ошибка импорта моделей: {e}")
@@ -58,14 +69,13 @@ def test_database_models():
     """Проверь что модели БД работают."""
     print("\n📊 Проверка моделей БД...")
     try:
-        from db.models import EmailAccount, EmailThread, EmailMessage, EmailCampaign
-        
-        # Проверим что таблицы определены
-        assert hasattr(EmailAccount, '__tablename__'), "EmailAccount не имеет __tablename__"
-        assert hasattr(EmailThread, '__tablename__'), "EmailThread не имеет __tablename__"
-        assert hasattr(EmailMessage, '__tablename__'), "EmailMessage не имеет __tablename__"
-        assert hasattr(EmailCampaign, '__tablename__'), "EmailCampaign не имеет __tablename__"
-        
+        from db.models import EmailAccount, EmailCampaign, EmailMessage, EmailThread
+
+        assert hasattr(EmailAccount, "__tablename__"), "EmailAccount не имеет __tablename__"
+        assert hasattr(EmailThread, "__tablename__"), "EmailThread не имеет __tablename__"
+        assert hasattr(EmailMessage, "__tablename__"), "EmailMessage не имеет __tablename__"
+        assert hasattr(EmailCampaign, "__tablename__"), "EmailCampaign не имеет __tablename__"
+
         print("  ✅ Все модели имеют корректную структуру")
         print(f"    - EmailAccount ({EmailAccount.__tablename__})")
         print(f"    - EmailThread ({EmailThread.__tablename__})")
@@ -82,26 +92,16 @@ def test_api_endpoints():
     print("\n🔌 Проверка API endpoints...")
     try:
         from api.routes.email import router
-        
+
         endpoints = []
         for route in router.routes:
-            if hasattr(route, 'path') and hasattr(route, 'methods'):
+            if hasattr(route, "path") and hasattr(route, "methods"):
                 endpoints.append(f"{route.methods} {route.path}")
-        
-        expected_endpoints = [
-            "GET /api/email/accounts",
-            "POST /api/email/accounts/connect",
-            "GET /api/email/threads",
-            "POST /api/email/send",
-            "POST /api/email/reply",
-            "POST /api/email/campaigns",
-            "POST /api/email/bind-lead",
-        ]
-        
+
         print("  Найденные endpoints:")
         for ep in endpoints:
             print(f"    - {ep}")
-        
+
         print("\n  ✅ Все необходимые endpoints определены")
         return True
     except Exception as e:
@@ -112,7 +112,7 @@ def test_api_endpoints():
 def test_yandex_settings():
     """Проверь правильность настроек для Яндекс Почты."""
     print("\n🎯 Проверка настроек Яндекс Почты...")
-    
+
     yandex_settings = {
         "IMAP сервер": "imap.yandex.com",
         "IMAP порт": 993,
@@ -120,47 +120,45 @@ def test_yandex_settings():
         "SMTP порт": 465,
         "SSL": True,
     }
-    
+
     print("  Рекомендуемые настройки для Яндекс Почты:")
     for key, value in yandex_settings.items():
         print(f"    - {key}: {value}")
-    
+
     print("\n  ⚠️  ВАЖНО для Яндекс:")
     print("    1. Используй app-password, не обычный пароль")
     print("    2. Создай пароль в https://id.yandex.ru/security/app-passwords")
     print("    3. Используй email@yandex.com в качестве username")
-    
+
     return True
 
 
 def main():
-    """Главная проверка."""
+    """Главная проверка (CLI)."""
     print("=" * 50)
     print("Email Integration Test Suite")
     print("=" * 50)
-    
-    results = []
-    
-    # Запусти все тесты
-    results.append(("Импорты", test_imports()))
-    results.append(("Модели БД", test_database_models()))
-    results.append(("API endpoints", test_api_endpoints()))
-    results.append(("Яндекс настройки", test_yandex_settings()))
-    
-    # Итоги
+
+    results = [
+        ("Импорты", test_imports()),
+        ("Модели БД", test_database_models()),
+        ("API endpoints", test_api_endpoints()),
+        ("Яндекс настройки", test_yandex_settings()),
+    ]
+
     print("\n" + "=" * 50)
     print("ИТОГИ:")
     print("=" * 50)
-    
+
     all_passed = True
     for test_name, passed in results:
         status = "✅ PASS" if passed else "❌ FAIL"
         print(f"{status} - {test_name}")
         if not passed:
             all_passed = False
-    
+
     print("=" * 50)
-    
+
     if all_passed:
         print("\n🎉 Все проверки пройдены!")
         print("\nПроверь что:")
