@@ -1,11 +1,26 @@
 # SmartCRM — Cursor Rules
 
+## Рабочий процесс агента (обязательно)
+
+См. [`.cursor/rules/smartcrm-agent-workflow.mdc`](.cursor/rules/smartcrm-agent-workflow.mdc):
+
+1. **Коммит** после каждого сделанного шага (пуш не обязателен).
+2. **Операционка** — `docs/operations/` после каждого действия, чтобы другой агент мог продолжить.
+3. **Один шаг → запись → стоп** до явного апрува на следующий шаг.
+
+## Документация
+
+- Карта: [`docs/README.md`](docs/README.md)
+- Продукт: [`docs/product/PRD.md`](docs/product/PRD.md), [`docs/product/ARCHITECTURE.md`](docs/product/ARCHITECTURE.md)
+- Журнал работы: `docs/operations/`
+
 ## Контекст проекта
 
 SmartCRM — мультиагентная CRM-система. Один оператор управляет 5 AI-агентами через голосовой интерфейс. Заменяет отдел продаж.
 
-Читай docs/PRD.md для понимания продукта.
-Читай docs/ARCHITECTURE.md для понимания системы.
+Читай docs/product/PRD.md для понимания продукта.
+Читай docs/product/ARCHITECTURE.md для понимания системы.
+Читай docs/start/RUNBOOK.md для потока данных, путей и LLM.
 
 ---
 
@@ -13,8 +28,8 @@ SmartCRM — мультиагентная CRM-система. Один опер�
 
 - **Backend:** Python 3.11+, FastAPI, asyncio, SQLAlchemy (async), PostgreSQL, Redis
 - **Агенты:** LangGraph (параллельные графы)
-- **LLM:** Groq API → Ollama/Qwen fallback
-- **Роутер:** Hermes (Ollama, всегда локально)
+- **LLM:** Groq API → Ollama/Qwen fallback (`core/llm.py`)
+- **Роутер:** Hermes — Groq и/или Ollama по политике (`core/hermes.py`, см. `docs/stack/LLM.md`)
 - **Голос:** Groq Whisper (STT)
 - **RAG:** Chroma + Brave/Tavily/Serper
 - **Frontend:** SvelteKit + Tailwind CSS + Vite
@@ -59,10 +74,10 @@ SmartCRM — мультиагентная CRM-система. Один опер�
 ## LLM вызовы
 
 ```python
-# Всегда через core/llm.py — не напрямую
-from core.llm import llm_client
+# Агенты — через core/llm.py
+from core.llm import chat
 
-response = await llm_client.chat(messages, model="auto")
+response = await chat(messages, model="auto")
 # "auto" = Groq если доступен, иначе Ollama
 ```
 
@@ -76,7 +91,7 @@ response = await llm_client.chat(messages, model="auto")
 intent → agents/orchestrator.py → LangGraph
 ```
 
-Не менять этот порядок без обновления docs/ARCHITECTURE.md.
+Не менять этот порядок без обновления docs/product/ARCHITECTURE.md.
 
 ---
 
