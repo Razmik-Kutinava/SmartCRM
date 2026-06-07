@@ -1,16 +1,11 @@
 """
 Тесты RAG: чанкинг, Chroma, фильтр по агенту, prefetch в слоты.
 
-Запуск: python -m pytest tests/test_rag_chunks.py -v
+Запуск: cd backend && pytest tests/rag/test_rag_chunks.py -v
 """
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 from rag.chunking import semantic_chunks
 from rag.retrieve import (

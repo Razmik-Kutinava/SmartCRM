@@ -14,7 +14,7 @@ SmartCRM/
 ├── docs/             # Вся документация (не в корне)
 ├── eval/             # Eval-наборы и скрипты вне pytest
 ├── scripts/          # Репо-уровень (setup_db.sh и т.п.)
-├── tests/            # ⚠ LEGACY — цель: объединить в backend/tests/
+├── tests/            # удалено — все pytest в backend/tests/
 ├── docker-compose.yml
 ├── .env.example      # Шаблон; .env только локально
 └── README.md
@@ -85,7 +85,7 @@ backend/
 | `services/tenderguru.py` | `tests/services/test_tenderguru.py` |
 | `agents/analyst.py` | `tests/agents/test_analyst.py` |
 
-Корневой `tests/` → перенос в `backend/tests/` по [LAYOUT_AUDIT.md](LAYOUT_AUDIT.md).
+Все pytest — только `backend/tests/` (зеркало `backend/`).
 
 ---
 

@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-07 — P1: тесты в backend/tests/
+
+**Сделано:** `tests/` (корень) удалён; перенос в `backend/tests/api/`, `core/`, `rag/`; общий `backend/tests/conftest.py` (SQLite + X-API-Key). `LAYOUT_AUDIT` P1 → done.
+
+---
+
 ## 2026-06-07 — Правила структуры репо и лимиты кода
 
 **Сделано:** `.cursor/rules/smartcrm-repo-layout.mdc` (куда класть, тесты, запрет mv без `go`); `smartcrm-code-split.mdc` (цель 50 / стоп 200); `docs/dev/REPO_LAYOUT.md`; `docs/dev/LAYOUT_AUDIT.md` (пакеты P1–P6); ссылки в `CONTRIBUTING.md`, `docs/README.md`. Переносов файлов нет.

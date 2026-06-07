@@ -10,7 +10,7 @@
 
 Спринт:[Фаза 1] | Задача:[Проход PRD_MAP + порядок в репо] | Статус:в работе
 
-Следующий шаг: (1) Фаза 1 `PRD_MAP` — Hermes + voice_action; (2) по желанию **`go P1`**… из `docs/dev/LAYOUT_AUDIT.md` для переносов. Правила структуры — в `.cursor/rules/smartcrm-repo-*.mdc`.
+Следующий шаг: (1) Фаза 1 `PRD_MAP` — Hermes + voice_action; (2) **`go P2`** (мусор в корне) или P3 из `LAYOUT_AUDIT.md`. P1 тесты — done.
 
 Блокеры: нет
 

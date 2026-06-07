@@ -32,6 +32,8 @@
 
 2026-06-07 | Действие: Правила структуры репо и сплита кода — `.cursor/rules/smartcrm-repo-layout.mdc`, `smartcrm-code-split.mdc`; канон `docs/dev/REPO_LAYOUT.md`; аудит `LAYOUT_AUDIT.md` (пакеты P1–P6 без переносов); обновлены CONTRIBUTING, docs/README. | Следующий шаг: коммит; пользователь выбирает `go P1`… для переносов. | Вопросы: нет | Статус: done
 
+2026-06-07 | Действие: P1 layout — корневой `tests/` → `backend/tests/{api,core,rag}/`; `conftest.py` с auth для pytest; удалён `/tests/`; pytest: 25 passed (api+rag+hermes unit). | Следующий шаг: `go P2` или Фаза 1 PRD_MAP. | QA: api 13, rag 7, hermes parser 5 green | Статус: done
+
 2026-05-04 | Действие: P2 по явному `go` пользователя — `LeadComment`/`LeadFieldAudit`, `GET/POST /api/leads/{id}/comments`, `GET .../audit`, валидация `stage_transition_rules` при PATCH, аудит полей; `crm_settings` + Ops + публичный config; UI карточки лида (комментарии, история) и Ops JSON для правил; `core/stage_transition.py`, тесты `test_stage_transition.py`; правка `docs/product/ARCHITECTURE.md`. | Следующий шаг: P3/доки по сделке или смоук; референс Rails без кода в репо — уточнять по экранам при необходимости. | Вопросы: нет | Статус: done
 
 2026-05-04 | Действие: Разбор референса `https://github.com/Razmik-Kutinava/CRM---points-system` — shallow clone в `docs/reference/CRM-points-system`; прочитаны `Lead`, `ScoreCalculator`, `LeadStateMachine`, `db/schema.rb` (булевы «апрувы»/доки на `leads`, `lead_histories`, `communication_logs`, авто-`score` после save). | Следующий шаг: по `go` — матрица переноса в PRD/ARCH или очередь фич (булевы флаги, communication log, формула как опция поверх advisory). | Вопросы: нет | Статус: done

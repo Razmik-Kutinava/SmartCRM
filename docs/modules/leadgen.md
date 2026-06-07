@@ -240,7 +240,7 @@ Hermes автоматически определяет интент и напр�
 
 ```bash
 cd backend
-pytest tests/test_leadgen.py -v
+cd backend && pytest tests/test_leadgen.py -v
 ```
 
 11 тестовых классов, ~40 проверок:

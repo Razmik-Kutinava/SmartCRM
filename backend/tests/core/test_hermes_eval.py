@@ -1,17 +1,18 @@
 """
-Eval-тесты Hermes: проверяем, что роутер правильно распознаёт intent и slots
-из текстовых команд (cases.jsonl).
+Eval-тесты Hermes: intent и slots из cases.jsonl.
 
-Запуск: pytest tests/test_hermes_eval.py -v
-Для быстрого smoke без реального API: pytest tests/test_hermes_eval.py -v -k "create or update or delete"
+Запуск: cd backend && pytest tests/core/test_hermes_eval.py -v
+Smoke без LLM: pytest tests/core/test_hermes_eval.py -v -k "Parser"
 """
 import json
-import re
 import os
-import pytest
+import re
 from pathlib import Path
 
-CASES_PATH = Path(__file__).parent.parent / "eval" / "cases.jsonl"
+import pytest
+
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+CASES_PATH = _REPO_ROOT / "eval" / "cases.jsonl"
 
 
 def load_cases():
@@ -33,10 +34,6 @@ def norm(s: str) -> str:
 
 
 def slots_match(expected: dict, actual: dict) -> tuple[bool, str]:
-    """
-    Проверяет, что каждый ключ expected содержится в actual.
-    Сравнение нечёткое: проверяем вхождение norm(expected_v) в norm(actual_v).
-    """
     for key, exp_val in expected.items():
         act_val = actual.get(key, "")
         if not act_val:
@@ -48,10 +45,8 @@ def slots_match(expected: dict, actual: dict) -> tuple[bool, str]:
     return True, ""
 
 
-# ── Юнит-тест парсера (без реального LLM) ──────────────────────────
-
 class TestHermesParser:
-    """Проверяем вспомогательные утилиты — работают без сетевых вызовов."""
+    """Утилиты — без сетевых вызовов."""
 
     def test_cases_file_exists(self):
         assert CASES_PATH.exists(), f"Не найден файл {CASES_PATH}"
@@ -77,10 +72,8 @@ class TestHermesParser:
         assert "email" in msg
 
 
-# ── Интеграционные тесты Hermes (требуют запущенного сервера) ───────
-# Пропускаются автоматически, если GROQ_API_KEY не задан или сервер недоступен.
-
 HERMES_AVAILABLE = bool(os.getenv("GROQ_API_KEY") or os.getenv("OLLAMA_HOST"))
+
 
 @pytest.mark.skipif(not HERMES_AVAILABLE, reason="GROQ/Ollama недоступны — пропускаем интеграционные тесты Hermes")
 class TestHermesIntents:

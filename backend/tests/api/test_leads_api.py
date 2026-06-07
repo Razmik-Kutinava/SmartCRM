@@ -73,7 +73,6 @@ async def test_update_lead_email(client):
     assert patch_r.status_code == 200
     assert patch_r.json()["email"] == "new@test.ru"
 
-    # Проверяем, что изменение сохранилось в БД
     get_r = await client.get(f"/api/leads/{lead_id}")
     assert get_r.json()["email"] == "new@test.ru"
 

@@ -83,8 +83,7 @@ refactor: рефактор LLM клиента
 
 ## Тестирование
 
-Все backend-тесты — в **`backend/tests/`** (зеркало структуры `backend/`).  
-Legacy `tests/` в корне — см. [LAYOUT_AUDIT.md](LAYOUT_AUDIT.md) пакет P1.
+Все backend-тесты — в **`backend/tests/`** (зеркало: `api/`, `core/`, `rag/`, …).
 
 ```bash
 # Backend

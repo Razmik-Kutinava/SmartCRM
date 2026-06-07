@@ -9,7 +9,7 @@
 
 | Пакет | Что | Риск | Статус |
 |-------|-----|------|--------|
-| **P1** | Корневой `tests/` → `backend/tests/` | импорты, pytest.ini, CI | ждёт `go` |
+| **P1** | Корневой `tests/` → `backend/tests/` | импорты, pytest.ini, CI | **done** (2026-06-07) |
 | **P2** | Мусор в корне (`result.json`, `swagger.json`, `datanewton-api-*.json`) → `backend/data/` / `docs/api/` | ссылки в скриптах | ждёт `go` |
 | **P3** | `backend/backend/data/` → `backend/data/` | пути в тендерных скриптах | ждёт `go` |
 | **P4** | `backend/test_email_integration.py` → `backend/tests/integration/` | — | ждёт `go` |
@@ -28,14 +28,15 @@
 | `swagger.json` | `/` | `docs/api/` или `backend/data/openapi/` | P2 |
 | `datanewton-api-v1-openapi-schema.json` | `/` | `docs/api/` | P2 |
 
-### Тесты (дубль)
+### Тесты (дубль) — P1 done
 
-| Файл | Сейчас | Куда | Пакет |
-|------|--------|------|-------|
-| `tests/test_leads_api.py` | `/tests/` | `backend/tests/api/test_leads_api.py` | P1 |
-| `tests/test_eval_scenarios_api.py` | `/tests/` | `backend/tests/api/test_eval_scenarios_api.py` | P1 |
-| `tests/test_hermes_eval.py` | `/tests/` | `backend/tests/core/test_hermes_eval.py` | P1 |
-| `tests/test_rag_chunks.py` | `/tests/` | `backend/tests/rag/test_rag_chunks.py` | P1 |
+| Файл | Было | Стало |
+|------|------|-------|
+| `conftest.py` | `/tests/` | `backend/tests/conftest.py` |
+| `test_leads_api.py` | `/tests/` | `backend/tests/api/test_leads_api.py` |
+| `test_eval_scenarios_api.py` | `/tests/` | `backend/tests/api/test_eval_scenarios_api.py` |
+| `test_hermes_eval.py` | `/tests/` | `backend/tests/core/test_hermes_eval.py` |
+| `test_rag_chunks.py` | `/tests/` | `backend/tests/rag/test_rag_chunks.py` |
 | `backend/test_email_integration.py` | `backend/` | `backend/tests/integration/test_email_integration.py` | P4 |
 
 ### Данные / артефакты
