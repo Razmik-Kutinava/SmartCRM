@@ -13,7 +13,7 @@
 | **P2** | Мусор в корне → `docs/api/openapi/`, `backend/data/artifacts/`; `.gitignore` | — | **done** (2026-06-07) |
 | **P3** | `backend/backend/data/` → `backend/data/` | пути в тендерных скриптах | **done** (2026-06-07) |
 | **P4** | `backend/test_email_integration.py` → `backend/tests/integration/` | — | **done** (2026-06-07) |
-| **P5** | Незакоммиченное удаление старых `docs/*.md` из корня `docs/` | git history | ждёт `go` |
+| **P5** | Миграция плоских `docs/*.md` → вложенная структура | git history | **done** (2026-06-07) |
 | **P6** | Сплит топ-монолитов (см. ниже) | регрессия | ждёт `go` по файлу |
 
 ---
@@ -47,12 +47,14 @@
 | `tender_sources_via_qa.json` (дубль) | `backend/backend/data/` | удалён (канон в `backend/data/`) |
 | `backend/backend/` | лишняя вложенность | каталог удалён |
 
-### Доки
+### Доки — P5 done
 
-| Проблема | Действие | Пакет |
-|----------|----------|-------|
-| Удалённые `docs/PRD.md`, `docs/ARCHITECTURE.md` … (в git status) | Закоммитить миграцию в `docs/product/`, `docs/modules/` | P5 |
-| `docs/reference/CRM-points-system/` | Референс — **не переносить** без явного решения | — |
+| Было | Стало |
+|------|-------|
+| 17 файлов `docs/*.md` в корне | удалены из git; контент в `product/`, `modules/`, `start/`, `email/`, `voice/`, `dev/`, `archive/` |
+| Таблица миграции | `docs/README.md` § «Старые пути» |
+
+`docs/reference/CRM-points-system/` — **не в git** (локальный клон для сравнения).
 
 ---
 

@@ -1,4 +1,4 @@
-# Рабочий процесс разработки
+﻿# Рабочий процесс разработки
 
 ## Порядок разработки
 
@@ -44,3 +44,5 @@ GROQ_API_KEY=gsk_...
 OLLAMA_HOST=http://localhost:11434
 DATABASE_URL=postgresql+asyncpg://smartcrm:smartcrm@localhost:5432/smartcrm
 ```
+
+Полный список переменных Hermes/LLM: **`docs/stack/LLM.md`**, операционный обзор: **`docs/start/RUNBOOK.md`**.

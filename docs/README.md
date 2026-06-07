@@ -69,12 +69,23 @@
 
 ## Старые пути (куда переехало)
 
-| Было | Стало |
-|------|-------|
-| `docs/product/PRD.md` | `docs/product/PRD.md` |
-| `docs/product/ARCHITECTURE.md` | `docs/product/ARCHITECTURE.md` |
-| `docs/start/SETUP.md` | `docs/start/SETUP.md` |
-| `docs/start/RUNBOOK.md` | `docs/start/RUNBOOK.md` |
-| `docs/api/API.md` | `docs/api/API.md` |
-| `docs/modules/leads.md` | `docs/modules/leads.md` |
-| `docs/agents/langgraph.md` | `docs/agents/langgraph.md` |
+| Было (плоский `docs/`) | Стало |
+|------------------------|-------|
+| `docs/PRD.md` | `docs/product/PRD.md` |
+| `docs/ARCHITECTURE.md` | `docs/product/ARCHITECTURE.md` |
+| `docs/SETUP.md` | `docs/start/SETUP.md` |
+| `docs/API.md` | `docs/api/API.md` |
+| `docs/LEADGEN.md` | `docs/modules/leadgen.md` |
+| `docs/TENDERS.md` | `docs/modules/tenders.md` |
+| `docs/SEARCH.md` | `docs/modules/search.md` |
+| `docs/BITRIX24_IMPORT.md` | `docs/modules/bitrix.md` |
+| `docs/CRM_ROUTES.md` | `docs/modules/leads.md` |
+| `docs/EMAIL.md` | `docs/email/overview.md` |
+| `docs/EMAIL_SETUP_GUIDE.md` | `docs/email/setup.md` |
+| `docs/email_architecture.md` | `docs/email/architecture.md` |
+| `docs/VOICE_COMMANDS.md` | `docs/voice/commands.md` |
+| `docs/VOICE_LEAD_PHRASES.md` | `docs/voice/lead-phrases.md` |
+| `docs/AGENTS.md` | `docs/agents/langgraph.md` |
+| `docs/code-reviewer-agent.md` | `docs/dev/code-review.md` |
+| `docs/AGENTS_TEST_RESULTS.md` | `docs/archive/` |
+| `docs/EMAIL_TEST_PLAN.md` | `docs/archive/` |

@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-07 — P5: миграция документации в вложенные папки
+
+**Сделано:** удалены 17 плоских `docs/*.md`; канон в `product/`, `modules/`, `start/`, `api/`, `email/`, `voice/`, `agents/`, `archive/`, `dev/`; таблица «Старые пути» в `docs/README.md`. `reference/CRM-points-system/` не коммитится.
+
+---
+
 ## 2026-06-07 — P4: email integration test в tests/integration/
 
 **Сделано:** `backend/test_email_integration.py` → `backend/tests/integration/test_email_integration.py`; путь в `docs/email/setup.md`.

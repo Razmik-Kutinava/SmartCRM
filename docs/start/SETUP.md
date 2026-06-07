@@ -1,4 +1,4 @@
-# SmartCRM — Запуск локально (WSL2 + Linux)
+﻿# SmartCRM — Запуск локально (WSL2 + Linux)
 
 ## Требования
 
@@ -7,7 +7,7 @@
 - Ollama (локально в WSL2)
 - Python 3.11+
 - Node.js 20+
-- Видеокарта 32GB VRAM (для Qwen 72B)
+- Для локальных моделей: достаточно CPU (медленнее) или GPU по возможности; см. актуальные модели в `docs/stack/LLM.md`
 
 ---
 
@@ -65,6 +65,12 @@ npm run dev
 - Backend API: http://localhost:8000
 - API docs: http://localhost:8000/docs
 - Health: http://localhost:8000/health
+
+---
+
+## Документация после запуска
+
+- Полный контекст LLM, Hermes, путей к данным: **`docs/start/RUNBOOK.md`**, **`docs/stack/LLM.md`**.
 
 ---
 
