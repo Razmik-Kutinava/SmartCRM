@@ -62,6 +62,8 @@ docs/
 
 ## `backend/`
 
+**Карта папок простыми словами:** [`backend/README.md`](../../backend/README.md) и README в каждой зоне (`api/`, `core/`, `leadgen/`, …).
+
 ```
 backend/
 ├── main.py                 # Точка входа FastAPI

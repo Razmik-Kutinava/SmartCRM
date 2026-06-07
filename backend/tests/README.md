@@ -1,0 +1,45 @@
+# Tests — автотесты backend
+
+```bash
+cd backend
+pytest                    # всё
+pytest tests/test_leadgen.py -q
+pytest tests/api/ -q
+```
+
+Конфиг: `pytest.ini`, фикстуры: `conftest.py`.
+
+---
+
+## Подпапки (зеркало кода)
+
+| Папка | Что тестирует |
+|-------|----------------|
+| `api/` | `test_leads_api.py`, `test_eval_scenarios_api.py` |
+| `core/` | `test_hermes_eval.py`, `test_qa_agent.py` |
+| `agents/` | `test_analyst.py` |
+| `rag/` | `test_search_pkg.py`, `test_rag_chunks.py` |
+| `integration/` | `test_email_integration.py` — смоук почты |
+
+---
+
+## Файлы в корне `tests/`
+
+| Файл | За что |
+|------|--------|
+| `test_leadgen.py` | Пайплайн, Checko, портрет, интеграция |
+| `test_voice_pipeline.py` | Hermes интенты, orchestrator, голос |
+| `test_tender_sources.py` | Источники тендеров |
+| `test_stage_transition.py` | Переходы стадий CRM |
+| `test_lead_score_advisory.py` | Скор-советы |
+| `test_review_fixes.py` | Регрессии по code review |
+| `test_agents.py` | Агенты |
+| `test_search.py` | Поиск |
+| `test_email_sync.py` | Синхронизация почты |
+| `test_bitrix_integration.py` | Битрикс |
+
+---
+
+## `fixtures/leadgen/`
+
+JSON и txt для моков Checko, BuiltWith, пайплайна — не менять без обновления тестов.
