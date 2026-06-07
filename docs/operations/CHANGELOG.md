@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-06-07 — P6 (шаг 3): сплит `api/routes/ops`
+
+**Сделано:** `ops.py` (970 строк) → `api/routes/ops/{schemas,eval_cases,traces,dashboard,hermes,voice,eval,agents,logs,crm,__init__}.py`. URL `/api/ops/*` без изменений; 34 роута. Тест `test_ops_closes_groq_client` обновлён под пакет.
+
+---
+
+## 2026-06-07 — P6 (шаг 2): сплит `core/hermes`
+
+**Сделано:** `hermes.py` (664 строки) → `core/hermes/{config,prompts,prompts_data,parse,rescue,cache,providers,text_utils,json_parse,__init__}.py`. Поведение `parse_intent` без изменений; импорты `from core.hermes import …` сохранены. Тесты: Parser 5 passed, voice prompt 1 passed.
+
+---
+
 ## 2026-06-07 — P6 (шаг 1): сплит `api/routes/leads`
 
 **Сделано:** `leads.py` (403 строки) → `api/routes/leads/{schemas,presenter,crud,engagement,bitrix_routes,__init__}.py`. Контракт API без изменений; pytest 21 passed.

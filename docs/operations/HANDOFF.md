@@ -10,7 +10,7 @@
 
 Спринт:[Фаза 1] | Задача:[Проход PRD_MAP + порядок в репо] | Статус:в работе
 
-Следующий шаг: **P6 шаг 2** (`hermes.py` / `ops.py` — по апруву) или **Фаза 1 PRD_MAP**. P6 leads — done; P1–P5 layout — done.
+Следующий шаг: **P6 остаток** (`pipeline.py` / `rag/search.py` / `tenders.py` — по одному `go`) или **Фаза 1 PRD_MAP**. P6: `leads/`, `hermes/`, `ops/` done; P1–P5 layout — done.
 
 Блокеры: нет
 

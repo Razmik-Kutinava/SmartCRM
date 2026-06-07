@@ -1,23 +1,3 @@
-"""
-Hermes — центральный роутер интентов.
-Принимает текст команды → возвращает структурированный JSON с интентом.
-Primary: Groq API (быстро). Fallback: Ollama (локально).
-"""
-import os
-import json
-import logging
-import httpx
-
-from core.hermes_prompt_store import get_active_system_prompt
-
-logger = logging.getLogger(__name__)
-
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_HERMES_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-HERMES_MODEL = os.getenv("HERMES_MODEL", "qwen2.5:3b")
-HERMES_FALLBACK = "qwen2.5:0.5b"
-
 SYSTEM_PROMPT = """Ты — роутер команд CRM. Извлекай интент из русского текста.
 Возвращай ТОЛЬКО валидный JSON, без пояснений и лишнего текста.
 
@@ -284,111 +264,22 @@ Input: "что такое блокчейн"
 Output: {"intent":"noop","agents":[],"slots":{},"parallel":false,"reply":"Для вопросов вне CRM используй другой инструмент."}
 """
 
+COMPACT_SYSTEM_PROMPT = """Ты — JSON-роутер CRM.
+Верни только JSON:
+{"intent":"...","agents":[...],"slots":{...},"parallel":false,"reply":"..."}
 
-def get_system_prompt() -> str:
-    """Активный системный промпт (встроенный или из backend/data/hermes_system_prompt.txt)."""
-    return get_active_system_prompt(SYSTEM_PROMPT)
+Интенты:
+create_lead, update_lead, delete_lead, list_leads,
+create_task, list_tasks, update_task, delete_task,
+run_analysis, ask_economist, ask_marketer, ask_tech, ask_strategist,
+search_web, write_email, generate_lead, find_leads_portrait, cluster_company, noop
 
-
-async def parse_intent(text: str) -> dict:
-    """
-    Парсит текст команды → возвращает dict с интентом.
-    Primary: Groq (быстро). Fallback: Ollama (локально).
-    """
-    messages = [
-        {"role": "system", "content": get_system_prompt()},
-        {"role": "user", "content": text},
-    ]
-
-    # 1. Пробуем Groq (быстро)
-    if GROQ_API_KEY:
-        try:
-            result = await _groq_chat(messages)
-            logger.info(f"Hermes/Groq сырой ответ: {result[:200]}")
-            parsed = _parse_json(result)
-            if parsed:
-                logger.info(f"Hermes/Groq разобрал: intent={parsed.get('intent')}")
-                parsed["_model"] = GROQ_HERMES_MODEL
-                return parsed
-        except Exception as e:
-            logger.warning(f"Hermes/Groq ошибка: {e}, переключаемся на Ollama")
-
-    # 2. Fallback: Ollama (медленно, локально)
-    for model in [HERMES_MODEL, HERMES_FALLBACK]:
-        try:
-            result = await _ollama_chat(messages, model)
-            logger.info(f"Hermes/Ollama ({model}) сырой ответ: {result[:200]}")
-            parsed = _parse_json(result)
-            if parsed:
-                logger.info(f"Hermes/Ollama ({model}) разобрал: intent={parsed.get('intent')}")
-                parsed["_model"] = model
-                return parsed
-            logger.warning(f"Hermes/Ollama ({model}) не смог распарсить JSON из: {result[:100]}")
-        except Exception as e:
-            logger.warning(f"Hermes/Ollama ({model}) ошибка: {e}")
-            continue
-
-    # Если оба упали — возвращаем noop
-    logger.error("Hermes: оба варианта недоступны, возвращаем noop")
-    return {
-        "intent": "noop",
-        "agents": [],
-        "slots": {},
-        "parallel": False,
-        "reply": "Не удалось распознать команду. Попробуйте ещё раз.",
-        "_model": "none",
-    }
-
-
-async def _groq_chat(messages: list[dict]) -> str:
-    """Groq API для быстрого парсинга интентов."""
-    from groq import AsyncGroq
-    client = AsyncGroq(api_key=GROQ_API_KEY)
-    response = await client.chat.completions.create(
-        model=GROQ_HERMES_MODEL,
-        messages=messages,
-        temperature=0.1,
-        max_tokens=256,
-        response_format={"type": "json_object"},
-    )
-    return response.choices[0].message.content
-
-
-async def _ollama_chat(messages: list[dict], model: str) -> str:
-    payload = {
-        "model": model,
-        "messages": messages,
-        "stream": False,
-        "format": "json",
-        "options": {"temperature": 0.1},
-    }
-    async with httpx.AsyncClient(timeout=120.0) as client:
-        response = await client.post(f"{OLLAMA_HOST}/api/chat", json=payload)
-        response.raise_for_status()
-        return response.json()["message"]["content"]
-
-
-def _parse_json(text: str) -> dict | None:
-    """Пытается распарсить JSON из ответа модели."""
-    text = text.strip()
-    # Убираем markdown блоки если есть
-    if text.startswith("```"):
-        text = text.split("```")[1]
-        if text.startswith("json"):
-            text = text[4:]
-    try:
-        parsed = json.loads(text)
-        # Groq иногда возвращает список — берём первый элемент
-        if isinstance(parsed, list):
-            parsed = parsed[0] if parsed else None
-        return parsed if isinstance(parsed, dict) else None
-    except json.JSONDecodeError:
-        # Ищем JSON объект внутри текста
-        start = text.find("{")
-        end = text.rfind("}") + 1
-        if start >= 0 and end > start:
-            try:
-                return json.loads(text[start:end])
-            except Exception:
-                pass
-    return None
+Правила:
+- если команда не CRM -> noop
+- для финансовых вопросов -> ask_economist
+- маркетинг/конкуренты -> ask_marketer
+- IT/интеграции -> ask_tech
+- стратегия/план действий -> ask_strategist
+- "проанализируй лид/компанию" -> run_analysis и 4 агента
+- не выдумывай слоты, заполняй только найденные
+"""

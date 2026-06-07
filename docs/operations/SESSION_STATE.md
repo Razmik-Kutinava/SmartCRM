@@ -66,4 +66,8 @@
 
 2026-06-07 | Действие: Оглавление в начале `PRD_NOTES.md` (модули, агенты, фазы, строки). | Следующий шаг: по go — проход Фазы 1. | Вопросы: нет | Статус: done
 
+2026-06-07 | Действие: P6 hermes — `core/hermes.py` → пакет `core/hermes/` (config, prompts, parse, rescue, cache, providers); rollout → `config`; тесты Parser 5 passed + voice prompt 1 passed; `LAYOUT_AUDIT` обновлён. | Следующий шаг: `go P6 ops` или Фаза 1. | Вопросы: нет | Статус: done
+
+2026-06-07 | Действие: P6 ops — `api/routes/ops.py` → пакет `api/routes/ops/` (10 модулей, 34 роута); тест review_fixes + hermes Parser 6 passed; коммит P6 hermes+ops. | Следующий шаг: P6 pipeline/search/tenders или Фаза 1 PRD_MAP. | Вопросы: нет | Статус: done
+
 ---

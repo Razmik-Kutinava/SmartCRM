@@ -14,7 +14,7 @@
 | **P3** | `backend/backend/data/` → `backend/data/` | пути в тендерных скриптах | **done** (2026-06-07) |
 | **P4** | `backend/test_email_integration.py` → `backend/tests/integration/` | — | **done** (2026-06-07) |
 | **P5** | Миграция плоских `docs/*.md` → вложенная структура | git history | **done** (2026-06-07) |
-| **P6** | Сплит топ-монолитов (см. ниже) | регрессия | **в работе** — `leads.py` done |
+| **P6** | Сплит топ-монолитов (см. ниже) | регрессия | **в работе** — `leads/`, `hermes/`, `ops/` done |
 
 ---
 
@@ -67,9 +67,9 @@
 | 1725 | `backend/leadgen/pipeline.py` | `pipeline/search.py`, `score.py`, `persist.py` |
 | 983 | `backend/rag/search.py` | `search/providers.py`, `search/merge.py` |
 | 962 | `backend/leadgen/modules/checko.py` | по endpoint-группам |
-| 793 | `backend/api/routes/ops.py` | `routes/ops/stats.py`, `agents.py`, … |
+| ~~793~~ | ~~`backend/api/routes/ops.py`~~ | **`api/routes/ops/`** (traces, dashboard, hermes, eval, agents, logs, crm) — done |
 | 757 | `backend/api/routes/tenders.py` | `routes/tenders/search.py`, `favorites.py` |
-| 664 | `backend/core/hermes.py` | `core/hermes/parse.py`, `rescue.py`, `cache.py` |
+| ~~664~~ | ~~`backend/core/hermes.py`~~ | **`core/hermes/`** (config, prompts, parse, rescue, cache, providers) — done |
 | 640 | `backend/core/qa_agent.py` | `core/qa/experiments.py`, `stats.py` |
 | ~~354~~ | ~~`api/routes/leads.py`~~ | **`api/routes/leads/`** (schemas, presenter, crud, engagement, bitrix) — done |
 | 300 | `backend/agents/analyst.py` | промпт / tools / run |
