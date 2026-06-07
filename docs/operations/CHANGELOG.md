@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-07 — P2: корень без мусора + анти-накопление
+
+**Сделано:** `swagger.json` + DataNewton schema → `docs/api/openapi/`; артефакты → `backend/data/artifacts/` (gitignore); пустой `result.json` и `server.log` убраны; `.gitignore`; правила «куда новые файлы / не плодить папки» в `smartcrm-repo-layout.mdc`, `REPO_LAYOUT.md`. P2 → done в `LAYOUT_AUDIT`.
+
+---
+
 ## 2026-06-07 — P1: тесты в backend/tests/
 
 **Сделано:** `tests/` (корень) удалён; перенос в `backend/tests/api/`, `core/`, `rag/`; общий `backend/tests/conftest.py` (SQLite + X-API-Key). `LAYOUT_AUDIT` P1 → done.

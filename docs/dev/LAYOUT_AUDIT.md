@@ -10,7 +10,7 @@
 | Пакет | Что | Риск | Статус |
 |-------|-----|------|--------|
 | **P1** | Корневой `tests/` → `backend/tests/` | импорты, pytest.ini, CI | **done** (2026-06-07) |
-| **P2** | Мусор в корне (`result.json`, `swagger.json`, `datanewton-api-*.json`) → `backend/data/` / `docs/api/` | ссылки в скриптах | ждёт `go` |
+| **P2** | Мусор в корне → `docs/api/openapi/`, `backend/data/artifacts/`; `.gitignore` | — | **done** (2026-06-07) |
 | **P3** | `backend/backend/data/` → `backend/data/` | пути в тендерных скриптах | ждёт `go` |
 | **P4** | `backend/test_email_integration.py` → `backend/tests/integration/` | — | ждёт `go` |
 | **P5** | Незакоммиченное удаление старых `docs/*.md` из корня `docs/` | git history | ждёт `go` |
@@ -44,8 +44,6 @@
 | Путь | Проблема | Куда | Пакет |
 |------|----------|------|-------|
 | `backend/backend/data/` | Лишний уровень `backend/` | `backend/data/` | P3 |
-| `backend/result.json` | Дубль | `backend/data/artifacts/` | P2 |
-| `backend/server.log` | Лог в репо | `.gitignore` + не коммитить | P2 |
 
 ### Доки
 

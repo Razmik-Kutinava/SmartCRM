@@ -8,3 +8,12 @@ dist/
 backend/.venv_wsl/
 **/.venv_wsl/
 .claude/settings.local.json
+
+# Runtime artifacts (скрипты, бенчмарки) — не в корне и не в git
+backend/data/artifacts/*
+!backend/data/artifacts/.gitkeep
+backend/server.log
+**/server.log
+
+# Случайные выводы в корне
+/result.json

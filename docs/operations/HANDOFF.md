@@ -10,7 +10,7 @@
 
 Спринт:[Фаза 1] | Задача:[Проход PRD_MAP + порядок в репо] | Статус:в работе
 
-Следующий шаг: (1) Фаза 1 `PRD_MAP` — Hermes + voice_action; (2) **`go P2`** (мусор в корне) или P3 из `LAYOUT_AUDIT.md`. P1 тесты — done.
+Следующий шаг: ждать апрув — **P3** (`backend/backend/data/`), **P4** (email integration test), **P5** (доки git), или **Фаза 1 PRD_MAP**. P1+P2 layout — done.
 
 Блокеры: нет
 
