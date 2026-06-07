@@ -15,7 +15,7 @@
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
-- (pending) chore: repo layout rules and structure audit
+- 637941c chore: repo layout rules, code split limits, structure audit
 - a619ee8 docs: update HANDOFF with v3 delta commit hash
 - 67150fc docs: integrate PRD tech delta v3
 
