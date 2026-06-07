@@ -143,7 +143,7 @@ Hermes для навигации: `{"intent":"navigate","ui_action":"navigate","
 | Компонент | Расположение | Заметки |
 |-----------|--------------|---------|
 | Модель лида | `backend/db/models/lead.py` | Поля CRM + JSON обогащения; `stage`, `score`. |
-| REST лидов | `backend/api/routes/leads.py` | CRUD, Bitrix-импорт. |
+| REST лидов | `backend/api/routes/leads/` | CRUD, Bitrix-импорт, engagement. |
 | Настройки воронки | `backend/core/crm_settings_store.py`, файл `backend/data/crm_settings.json` | `stages`, `priority_thresholds`, `score_range`, `default_new_lead_score`. |
 | Задачи | `backend/db/models/task.py`, роуты задач | `lead_id`, `sla_due`, `escalated`, `status`. |
 | Фронт стадий/приоритета | `frontend/src/lib/crmStages.js`, маршруты `frontend/src/routes/leads/**` | `loadCrmConfig()`, бейджи приоритета. |

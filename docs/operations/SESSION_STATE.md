@@ -42,6 +42,8 @@
 
 2026-06-07 | Действие: P5 — git-коммит миграции docs: удалены плоские `docs/*.md`, добавлены `start/`, `modules/`, `email/`, `voice/`, `archive/`, `ISSUES.md`; таблица в README. CRM-points-system не в git. | Следующий шаг: P6 или Фаза 1. | Статус: done
 
+2026-06-07 | Действие: P6 (шаг 1) — сплит `api/routes/leads.py` → пакет `leads/` (6 файлов); pytest leads 21 passed. | Следующий шаг: P6 следующий файл по апруву или Фаза 1. | QA: 21 passed | Статус: done
+
 2026-05-04 | Действие: P2 по явному `go` пользователя — `LeadComment`/`LeadFieldAudit`, `GET/POST /api/leads/{id}/comments`, `GET .../audit`, валидация `stage_transition_rules` при PATCH, аудит полей; `crm_settings` + Ops + публичный config; UI карточки лида (комментарии, история) и Ops JSON для правил; `core/stage_transition.py`, тесты `test_stage_transition.py`; правка `docs/product/ARCHITECTURE.md`. | Следующий шаг: P3/доки по сделке или смоук; референс Rails без кода в репо — уточнять по экранам при необходимости. | Вопросы: нет | Статус: done
 
 2026-05-04 | Действие: Разбор референса `https://github.com/Razmik-Kutinava/CRM---points-system` — shallow clone в `docs/reference/CRM-points-system`; прочитаны `Lead`, `ScoreCalculator`, `LeadStateMachine`, `db/schema.rb` (булевы «апрувы»/доки на `leads`, `lead_histories`, `communication_logs`, авто-`score` после save). | Следующий шаг: по `go` — матрица переноса в PRD/ARCH или очередь фич (булевы флаги, communication log, формула как опция поверх advisory). | Вопросы: нет | Статус: done

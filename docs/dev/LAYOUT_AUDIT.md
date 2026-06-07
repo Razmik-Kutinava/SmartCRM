@@ -14,7 +14,7 @@
 | **P3** | `backend/backend/data/` → `backend/data/` | пути в тендерных скриптах | **done** (2026-06-07) |
 | **P4** | `backend/test_email_integration.py` → `backend/tests/integration/` | — | **done** (2026-06-07) |
 | **P5** | Миграция плоских `docs/*.md` → вложенная структура | git history | **done** (2026-06-07) |
-| **P6** | Сплит топ-монолитов (см. ниже) | регрессия | ждёт `go` по файлу |
+| **P6** | Сплит топ-монолитов (см. ниже) | регрессия | **в работе** — `leads.py` done |
 
 ---
 
@@ -71,7 +71,7 @@
 | 757 | `backend/api/routes/tenders.py` | `routes/tenders/search.py`, `favorites.py` |
 | 664 | `backend/core/hermes.py` | `core/hermes/parse.py`, `rescue.py`, `cache.py` |
 | 640 | `backend/core/qa_agent.py` | `core/qa/experiments.py`, `stats.py` |
-| 354 | `backend/api/routes/leads.py` | `routes/leads/crud.py`, `score.py` |
+| ~~354~~ | ~~`api/routes/leads.py`~~ | **`api/routes/leads/`** (schemas, presenter, crud, engagement, bitrix) — done |
 | 300 | `backend/agents/analyst.py` | промпт / tools / run |
 
 Полный список — по мере касания; не сплитить всё сразу.

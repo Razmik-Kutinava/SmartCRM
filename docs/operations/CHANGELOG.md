@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-07 — P6 (шаг 1): сплит `api/routes/leads`
+
+**Сделано:** `leads.py` (403 строки) → `api/routes/leads/{schemas,presenter,crud,engagement,bitrix_routes,__init__}.py`. Контракт API без изменений; pytest 21 passed.
+
+---
+
 ## 2026-06-07 — P5: миграция документации в вложенные папки
 
 **Сделано:** удалены 17 плоских `docs/*.md`; канон в `product/`, `modules/`, `start/`, `api/`, `email/`, `voice/`, `agents/`, `archive/`, `dev/`; таблица «Старые пути» в `docs/README.md`. `reference/CRM-points-system/` не коммитится.
