@@ -1,6 +1,6 @@
 ﻿# SmartCRM — Product Requirements Document
 
-> **Навигатор:** [PRD_MAP.md](PRD_MAP.md) — карта фаз, модулей, статусы готовности.
+> **Чеклисты фаз:** [PRD_MAP.md](PRD_MAP.md) — Фаза 1→2→3, `[x]` перепроходим на баги. **Черновики:** [PRD_NOTES.md](PRD_NOTES.md).
 
 **Версия:** v2 (объединён с PRD Delta 2026-06-07)
 

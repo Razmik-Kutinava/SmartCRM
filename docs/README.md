@@ -8,8 +8,9 @@
 
 | Задача | Файл |
 |--------|------|
-| Карта продукта (фазы, статусы) | [product/PRD_MAP.md](product/PRD_MAP.md) |
+| Чеклисты фаз (проходим по порядку) | [product/PRD_MAP.md](product/PRD_MAP.md) |
 | Полный PRD | [product/PRD.md](product/PRD.md) |
+| Черновики и детали модулей | [product/PRD_NOTES.md](product/PRD_NOTES.md) |
 | Понять устройство системы | [product/ARCHITECTURE.md](product/ARCHITECTURE.md) |
 | Запустить локально | [start/SETUP.md](start/SETUP.md) |
 | Как идёт запрос, LLM, пути данных | [start/RUNBOOK.md](start/RUNBOOK.md) |

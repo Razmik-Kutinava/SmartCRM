@@ -8,17 +8,17 @@
 `Последние коммиты:[3 последних]`  
 `Открытые вопросы:[список или "нет"]`
 
-Спринт:[документация продукта] | Задача:[PRD_MAP + спринты по фазам] | Статус:в работе
+Спринт:[Фаза 1] | Задача:[Проход PRD_MAP чеклист + баги] | Статус:в работе
 
-Следующий шаг: по go — раскидать задачи из `docs/product/PRD_MAP.md` (таблица статусов + фазы) по спринтам; либо полировка `/leads`.
+Следующий шаг: идти `docs/product/PRD_MAP.md` Фаза 1 сверху вниз — смоук `[x]` пунктов, хвост 🔴 Hermes интенты + UI voice_action; баги → `ISSUES.md`.
 
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
-- (текущий) docs: extract PRD_MAP from user CRM map
+- b6a5017 docs: add PRD_NOTES inbox for product fragments
+- e166272 docs: extract PRD_MAP navigator from user CRM map
 - 9d33cf7 docs: merge PRD Delta v2 into unified PRD with phase roadmap
-- 72a6b3c docs: add PRD Delta v2 as separate product document
 
-Открытые вопросы: много незакоммиченного кода; PRD_MAP фиксирует ✅ лиды/баллы P1–P2 — сверить с продом при спринт-планировании.
+Открытые вопросы: PRD_NOTES ~1740 строк — черновик; стек/доки пользователь дополнит в конце NOTES.
 
 ---
