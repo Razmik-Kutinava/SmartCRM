@@ -10,15 +10,15 @@
 
 Спринт:[Фаза 1] | Задача:[Проход PRD_MAP чеклист + баги] | Статус:в работе
 
-Следующий шаг: идти `docs/product/PRD_MAP.md` Фаза 1 сверху вниз — смоук `[x]` пунктов, хвост 🔴 Hermes интенты + UI voice_action; баги → `ISSUES.md`.
+Следующий шаг: идти `docs/product/PRD_MAP.md` Фаза 1 сверху вниз — смоук `[x]` пунктов, хвост 🔴 Hermes интенты + UI `voice_action` (контракт: `ARCHITECTURE.md#контракт-voice_action`); баги → `ISSUES.md`. Техдельта v3 в доках — done.
 
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
-- b6a5017 docs: add PRD_NOTES inbox for product fragments
-- e166272 docs: extract PRD_MAP navigator from user CRM map
-- 9d33cf7 docs: merge PRD Delta v2 into unified PRD with phase roadmap
+- (pending) docs: integrate PRD tech delta v3
+- d024a0a docs: add PRD_NOTES table of contents
+- 8f364a7 docs: PRD_MAP phase checklists from PRD_NOTES
 
-Открытые вопросы: PRD_NOTES ~1740 строк — черновик; стек/доки пользователь дополнит в конце NOTES.
+Открытые вопросы: PRD_NOTES ~1800 строк — черновик; стек/доки пользователь дополнит в конце NOTES.
 
 ---

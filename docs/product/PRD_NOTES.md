@@ -1823,3 +1823,4 @@ Chroma RAG · Docker + Nginx
 | Дата | Что разобрали | Куда перенесли |
 |------|---------------|----------------|
 | 2026-06-07 | PRD_NOTES → чеклисты Фаза 1–3 | `docs/product/PRD_MAP.md` |
+| 2026-06-07 | Техдельта v3 (voice_action, email режимы, Search-to-Q&A, gate тендеров, lookalike, fanout) | `PRD.md` · `ARCHITECTURE.md#контракт-voice_action` · `langgraph.md#пакет-voice_action` · `RAG.md#search-to-qa` · `tenders.md#экономика-и-gate` · `leadgen.md#lookalike` · ссылки в `PRD_MAP.md` |

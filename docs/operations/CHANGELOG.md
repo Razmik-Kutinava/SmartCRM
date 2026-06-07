@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-06-07 — Техдельта v3 в документацию
+
+**Сделано:** без дублей текста — канон в `PRD.md` + точечные секции и перекрёстные ссылки:
+
+| Тема | Файл |
+|------|------|
+| `voice_action`, WS, Hermes `ui_action` | `PRD.md`, `ARCHITECTURE.md#контракт-voice_action` |
+| Пакет Стратег → UI | `langgraph.md#пакет-voice_action` |
+| Search-to-Q&A | `PRD.md`, `RAG.md#search-to-qa` |
+| Email Ассистирующий / Автономный | `PRD.md` |
+| Gate платного API тендеров | `tenders.md#экономика-и-gate` |
+| Lookalike won + апрув | `leadgen.md#lookalike`, `PRD.md` |
+| Чеклисты со ссылками | `PRD_MAP.md` |
+| Журнал (без копипаста) | `PRD_NOTES.md` |
+
+---
+
 ## 2026-06-07 — PRD_MAP: чеклисты Фаза 1–3 из PRD_NOTES
 
 **Сделано:** `PRD_MAP.md` — полные чеклисты всех фаз (`[x]` сдано по коду, перепроход на баги; хвост Фазы 1: Hermes + voice_action). `PRD_NOTES.md` — навигация, таблица роутов, placeholder стек/доки, ссылки на MAP. Обновлены `PRD.md`, `docs/README.md`.
