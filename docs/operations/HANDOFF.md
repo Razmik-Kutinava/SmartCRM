@@ -15,7 +15,7 @@
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
-- (после push) docs: backend README sync rule in smartcrm-repo-layout.mdc
+- d2557ad docs: Backend README Sync rule in smartcrm-repo-layout.mdc
 - 351fc23 docs: add backend zone READMEs and README sync draft
 - 725b284 refactor: complete P6 monolith splits and CRM/tender stack
 - 9c6ef13 chore: P3 remove backend/backend/data nesting
