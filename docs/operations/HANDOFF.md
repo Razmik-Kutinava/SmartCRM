@@ -15,6 +15,7 @@
 Блокеры: нет
 
 Последние коммиты (на ветке, последние известные):
+- 46d634f refactor: P6 split api/routes/leads into package
 - 1d02403 docs: P5 migrate flat docs to nested structure
 - 9b45686 refactor: P4 move email integration test to tests/integration
 - 9c6ef13 chore: P3 remove backend/backend/data nesting
