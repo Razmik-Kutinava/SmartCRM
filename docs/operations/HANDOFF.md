@@ -9,7 +9,7 @@
 - `leadCardMoney.js`, `leadCardActivity.js`, должность в форме
 - `test_lead_engagement.py`, обновлён `test_lead_card_edit.py` — 10 passed
 
-**Коммит:** (в отчёте)
+**Коммит:** `ffba9f5`
 
 **Блокеры:** нет 🔴
 
