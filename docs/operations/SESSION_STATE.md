@@ -96,4 +96,6 @@
 
 2026-06-08 | Действие: коммит `bcce33c` (ops sync). Регрессия p6: All zones passed (121 tests). | Следующий шаг: Фаза 1 PRD_MAP + go. | push по апруву | Статус: done
 
+2026-06-08 | Действие: push `main` → origin (6 коммитов: rules + ops sync). | Следующий шаг: Фаза 1 PRD_MAP с начала — пункт + go. | Статус: done
+
 ---

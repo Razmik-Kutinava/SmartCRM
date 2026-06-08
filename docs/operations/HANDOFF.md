@@ -15,6 +15,6 @@
 - bcce33c docs: ops sync RULES_MATRIX, check_agent_step, PRD_MAP cleanup
 - 406871d docs: HANDOFF hash 28ab125 after rules commit
 
-**Открытые вопросы:** push `main` — по апруву.
+**Открытые вопросы:** нет. `main` запушен в origin.
 
 ---
