@@ -308,8 +308,122 @@ on_get_or_patch_lead(lead, tasks):
 
 ---
 
+## Справочник стека
+
+Принцип: каждый слой — одна ответственность. **Groq → Ollama** fallback для LLM.
+
+```
+┌─────────────────────────────────────┐
+│  SvelteKit + Tailwind + Vite        │  /leads /email /agents /rag /ops
+└──────────────┬──────────────────────┘
+               │ HTTP / WebSocket
+┌──────────────▼──────────────────────┐
+│  FastAPI + asyncio                  │  REST + /ws/voice
+└──────┬───────────┬──────────────────┘
+       │           │
+┌──────▼───┐  ┌────▼─────────────────┐
+│PostgreSQL│  │  Redis (кэш, очереди, │
+│лиды,     │  │  WS-сессии, трейсы)  │
+│задачи    │  └──────────────────────┘
+└──────────┘
+       │
+┌──────▼──────────────────────────────┐
+│  LangGraph — Стратег + workers      │
+└──────┬───────────┬──────────────────┘
+       │           │
+┌──────▼───┐  ┌────▼─────────────────┐
+│  Groq    │  │  Ollama / Qwen       │
+└──────────┘  └──────────────────────┘
+       │
+┌──────▼──────────────────────────────┐
+│  Chroma — RAG (коллекции на агента) │
+└─────────────────────────────────────┘
+```
+
+### Frontend (SvelteKit)
+
+| Что | Детали |
+|-----|--------|
+| Роутинг | `/leads/*`, `/email`, `/agents`, `/rag`, `/ops` |
+| Голос | WebSocket → Whisper → Hermes |
+| Стор | `leadsStorage.js`, `crmStages.js` |
+| Конфиг воронки | `loadCrmConfig()` → `GET /api/crm/config` |
+
+### Backend (FastAPI)
+
+| Что | Детали |
+|-----|--------|
+| ORM | SQLAlchemy async, `init_db` при старте |
+| Пул | `pool_pre_ping=True`, `pool_recycle=280s` |
+| WebSocket | `/ws/voice` |
+
+Основные API:
+
+```
+/api/leads              — CRUD
+/api/leads/{id}         — карточка + scoreAdvisory
+/api/crm/config         — конфиг воронки
+/api/ops/crm-settings   — настройки Ops
+/api/tenders            — тендеры
+/api/search             — поиск (режимы)
+/api/rag                — база знаний
+/ws/voice               — голос
+```
+
+### PostgreSQL — основные таблицы
+
+```
+leads, tasks, lead_comments, lead_field_audits, lead_communication_logs
+```
+
+Ключевые поля лида: `score`, `stage`, `amount_rub`, `paid_amount_rub`, `approvals` (JSON), `priority`.
+
+### LangGraph
+
+Паттерн: **supervisor + workers**. Сейчас агенты часто отвечают по отдельности; **Фаза 2** — полный fanout через Стратега. См. `docs/agents/langgraph.md`.
+
+### Где настраивается
+
+| Что | Где |
+|-----|-----|
+| LLM политика | `docs/stack/LLM.md`, `HERMES_ROUTING_POLICY` |
+| Веса скоринга | Ops → CRM → JSON |
+| Промпты агентов | Ops → Агенты |
+| API ключи | `.env` + UI |
+| Стадии воронки | Ops → CRM |
+| RAG коллекции | `/rag` UI, `docs/stack/RAG.md` |
+
+Ключи `.env`: `GROQ_API_KEY`, `BRAVE_SEARCH_API_KEY`, `TAVILY_API_KEY`, `SERPER_API_KEY`, `DATABASE_URL`, `REDIS_URL`, `OLLAMA_HOST`, `HERMES_ROUTING_POLICY`.
+
+---
+
+## Статус документа (2026-06)
+
+| Раздел | Статус |
+|--------|--------|
+| Домен лидов P1–P3 | **В коде** — разделы as-is/to-be выше описывают план; фактическое состояние сверять с `PRD_MAP` |
+| Матрица агентов | Не отражает fanout Фазы 2 — см. `langgraph.md` |
+| Порядок внедрения P1–P3 | Закрыт по MAP; новые инкременты — **Фаза 2** в `PRD_MAP.md` |
+
+---
+
+## Ключевые решения (сводка)
+
+| Решение | Выбор | Почему |
+|---------|-------|--------|
+| Балл | Менеджер вручную | Предсказуемость |
+| Подсказка | `suggestedScore` без записи в БД | Менеджер главный |
+| Агенты и score | `agents_may_update_score=false` | Нет тихой перезаписи |
+| Деньги | `amount_rub` NUMERIC | Точность |
+| Аудит | Append-only | История не удаляется |
+| Стадии | Из конфига | Без хардкода |
+| Fallback LLM | Groq → Ollama | Независимость от провайдера |
+
+---
+
 ## Приложение — Версионирование документа
 
 | Дата | Изменение |
 |------|-----------|
+| 2026-06-08 | Справочник стека, статус документа, сводка решений (из PRD_NOTES). |
 | 2026-05-04 | Добавлен раздел домена лидов, план данных/API/модулей, решения по умолчанию, traceability к Rails-референсу. |

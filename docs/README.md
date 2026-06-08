@@ -17,6 +17,27 @@
 
 ---
 
+## Какой документ когда открывать
+
+| Ситуация | Документ |
+|----------|----------|
+| Новая сессия агента | `operations/HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
+| Что строим | `product/PRD_MAP.md` → `product/PRD.md` |
+| Как устроено технически | `product/ARCHITECTURE.md` |
+| Стек, API, БД | `product/ARCHITECTURE.md#справочник-стека` |
+| Что сломалось | `operations/ISSUES.md` |
+| Хвост / отложено | `operations/BACKLOG.md` |
+| Как запустить | `start/RUNBOOK.md` |
+| Агенты / Hermes | `agents/langgraph.md` |
+| LLM политика | `stack/LLM.md` |
+| История изменений | `operations/CHANGELOG.md` |
+
+**Три канона:** `PRD.md` (продукт) · `ARCHITECTURE.md` (техника) · `CHANGELOG.md` (история).
+
+**Агент:** HANDOFF → PRD_MAP → модульный doc → код → commit + ops (`smartcrm-commit-ops.mdc`).
+
+---
+
 ## Папки
 
 | Папка | Что внутри |

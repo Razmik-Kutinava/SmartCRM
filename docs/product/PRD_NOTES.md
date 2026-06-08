@@ -10,7 +10,7 @@
 
 ## Оглавление
 
-> ~1780 строк. В редакторе: `Ctrl+G` → номер строки.
+> ~1810 строк. В редакторе: `Ctrl+G` → номер строки.
 
 ### Служебное
 
@@ -65,8 +65,8 @@
 | § | Строка |
 |---|--------|
 | [Балльная воронка — как работает](#балльная-воронка--как-работает) | 1556 |
-| [🥞 Стек и ключевые документы](#-стек-и-ключевые-документы) | 1749 |
-| [Журнал разбора (агент)](#журнал-разбора-агент) | 1776 |
+| [🥞 Стек и ключевые документы](#-стек-и-ключевые-документы) | 1794 |
+| [Журнал разбора (агент)](#журнал-разбора-агент) | 1806 |
 
 ---
 
@@ -1793,28 +1793,13 @@ Ops → CRM → scoring_advisory → JSON:
 
 ## 🥞 Стек и ключевые документы
 
-> **Место для дополнений.** Вставляй сюда стек, ссылки, заметки по инфраструктуре.
+> **Канон (не дублировать здесь):**
+> - Стек, API, БД, Redis, конфиг → [`ARCHITECTURE.md`](ARCHITECTURE.md#справочник-стека)
+> - Карта docs, «когда что открывать» → [`docs/README.md`](../README.md)
+> - RAG коллекции → [`stack/RAG.md`](../stack/RAG.md#коллекции-chroma)
+> - Gaps в доках → [`operations/BACKLOG.md`](../operations/BACKLOG.md#документация-фаза-2)
 
-### Стек (черновик)
-
-```
-SvelteKit + FastAPI + PostgreSQL + Redis + LangGraph
-Groq → Ollama fallback
-Chroma RAG · Docker + Nginx
-```
-
-<!-- дополни: версии, env, деплой -->
-
-### Ключевые документы (черновик)
-
-| Документ | Назначение |
-|----------|------------|
-| `docs/product/PRD.md` | главный источник правды |
-| `docs/product/PRD_MAP.md` | чеклисты фаз |
-| `docs/product/ARCHITECTURE.md` | решения, DDL, API-план |
-| `docs/operations/` | CHANGELOG · ISSUES · HANDOFF |
-
-<!-- дополни: RUNBOOK, модули, agents -->
+Черновики новых идей — пиши **выше** этого блока; после разбора — в журнал и в канон.
 
 ---
 
@@ -1822,5 +1807,6 @@ Chroma RAG · Docker + Nginx
 
 | Дата | Что разобрали | Куда перенесли |
 |------|---------------|----------------|
+| 2026-06-08 | Стек + карта docs + gaps + гайд ARCHITECTURE (после ~1834) | `ARCHITECTURE.md#справочник-стека` · `docs/README.md` · `BACKLOG.md#документация-фаза-2` · `stack/RAG.md#коллекции-chroma` |
 | 2026-06-07 | PRD_NOTES → чеклисты Фаза 1–3 | `docs/product/PRD_MAP.md` |
 | 2026-06-07 | Техдельта v3 (voice_action, email режимы, Search-to-Q&A, gate тендеров, lookalike, fanout) | `PRD.md` · `ARCHITECTURE.md#контракт-voice_action` · `langgraph.md#пакет-voice_action` · `RAG.md#search-to-qa` · `tenders.md#экономика-и-gate` · `leadgen.md#lookalike` · ссылки в `PRD_MAP.md` |

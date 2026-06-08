@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-08 — PRD_NOTES → канон (стек, docs map, gaps)
+
+**Сделано:** контент после ~1834 перенесён в `ARCHITECTURE.md#справочник-стека`, `docs/README.md`, `BACKLOG.md#документация-фаза-2`, `stack/RAG.md#коллекции-chroma`; дубли в `PRD_NOTES.md` удалены.
+
+**Зачем:** один источник правды, агенты не путают NOTES с каноном.
+
+---
+
 ## 2026-06-08 — AGENTS.md + verify: Project Rules перебивают User Rules
 
 **Сделано:** расследование хранения User Rules (облако Cursor, не файл); `AGENTS.md`; `verify_cursor_rules_precedence.py`; `CURSOR_USER_RULES_STATUS.md`.
