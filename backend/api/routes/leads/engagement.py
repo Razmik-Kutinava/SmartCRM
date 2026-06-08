@@ -81,15 +81,20 @@ async def create_lead_communication(
         raise HTTPException(404, detail="Лид не найден")
     actor = (body.actor or "").strip()[:255] or actor_from_request(request)
     ctype = body.communication_type.strip()[:50]
+    if not ctype:
+        raise HTTPException(400, detail="Тип касания не может быть пустым")
+    text = (body.content or "").strip()
+    if not text:
+        raise HTTPException(400, detail="Описание касания не может быть пустым")
     log = LeadCommunicationLog(
         lead_id=lead_id,
         communication_type=ctype,
-        content=(body.content or "").strip()[:8000],
+        content=text[:8000],
         actor=actor,
         occurred_at=body.occurred_at,
     )
     db.add(log)
-    preview = f"{ctype}: {(body.content or '').strip()}"[:3000]
+    preview = f"{ctype}: {text}"[:3000]
     db.add(
         LeadFieldAudit(
             lead_id=lead_id,

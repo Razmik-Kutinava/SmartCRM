@@ -25,7 +25,12 @@
 		mergeApprovals,
 	} from '$lib/leadApprovals.js';
 	import { detailsDraftFromLead, patchFromDetailsDraft } from '$lib/leads/leadCardEdit.js';
-	import { loadLeadCardActivity, postLeadCommunication } from '$lib/leads/leadCardActivity.js';
+	import { loadLeadCardActivity } from '$lib/leads/leadCardActivity.js';
+	import {
+		COMMUNICATION_TYPES,
+		communicationTypeLabel,
+		createLeadCommunication,
+	} from '$lib/leads/leadCommunications.js';
 	import { createLeadComment } from '$lib/leads/leadComments.js';
 	import { auditFieldLabel } from '$lib/leads/leadAudit.js';
 	import { describeTransitionRule, rulesForTargetStage } from '$lib/leads/stageTransition.js';
@@ -220,7 +225,7 @@
 		if (!lead || !commContent.trim() || commSaving) return;
 		commSaving = true;
 		try {
-			await postLeadCommunication(lead.id, {
+			await createLeadCommunication(lead.id, {
 				communicationType: commType,
 				content: commContent.trim(),
 			});
@@ -753,7 +758,7 @@
 					<div class="max-h-32 overflow-y-auto space-y-1.5 text-[11px] mb-2">
 						{#each leadComms as log (log.id)}
 							<div class="text-gray-400 border-b border-gray-800/80 pb-1">
-								<span class="text-cyan-600/90">{log.communicationType}</span>
+								<span class="text-cyan-600/90">{communicationTypeLabel(log.communicationType)}</span>
 								<span class="text-gray-600"> · {log.actor}</span>
 								<div class="text-gray-300 mt-0.5 whitespace-pre-wrap">{log.content}</div>
 								<div class="text-gray-600">{log.createdAt ? new Date(log.createdAt).toLocaleString('ru-RU') : ''}</div>
@@ -766,10 +771,9 @@
 						bind:value={commType}
 						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200"
 					>
-						<option value="call">Звонок</option>
-						<option value="meeting">Встреча</option>
-						<option value="email">Письмо</option>
-						<option value="other">Другое</option>
+						{#each COMMUNICATION_TYPES as t (t.value)}
+							<option value={t.value}>{t.label}</option>
+						{/each}
 					</select>
 					<textarea
 						bind:value={commContent}
@@ -778,7 +782,7 @@
 					></textarea>
 					<button
 						type="button"
-						disabled={commSaving}
+						disabled={commSaving || !commContent.trim()}
 						onclick={submitCommunication}
 						class="w-full py-1.5 rounded-lg text-xs font-medium bg-cyan-900/40 hover:bg-cyan-800/50 text-cyan-100 disabled:opacity-50"
 					>

@@ -1,14 +1,14 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[PRD_MAP перепроход /leads] | Статус:п.9 закрыт → п.10`
+`Спринт:[Фаза 1] | Задача:[PRD_MAP перепроход /leads] | Статус:п.10 закрыт → п.11`
 
-**Следующий шаг:** **п.10 «Лог касаний»** — перепроход. Ждём `go`.
+**Следующий шаг:** **п.11 «/crm/* → редиректы 308»** — перепроход. Ждём `go`.
 
-**Сделано (п.9):**
-- `stageTransition.js` — подсказки правил, разбор `stage_transition_blocked`
-- `apiUpdateLead` через `apiPatch` (X-API-Key)
-- Карточка: требования на кнопках стадий + tooltip
-- pytest 11 passed
+**Сделано (п.10):**
+- `leadCommunications.js` — fetch/create, типы call/meeting/email/other
+- RU-лейблы в логе касаний на карточке
+- API: 400 на пустой content/тип; запись дублируется в audit
+- pytest 9 passed
 
 **Коммит:** `git log -1`
 

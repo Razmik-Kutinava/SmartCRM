@@ -20,6 +20,12 @@
 
 ---
 
+## 2026-06-08 — PRD_MAP п.10: лог касаний лида
+
+**Сделано:** leadCommunications.js, RU-типы в UI, валидация API, тесты call/meeting/email.
+
+---
+
 ## 2026-06-08 — PRD_MAP п.9: правила переходов стадий
 
 **Сделано:** stageTransition.js, apiPatch для смены стадии, подсказки в UI, тесты API+normalize.

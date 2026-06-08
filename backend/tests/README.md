@@ -44,6 +44,7 @@ pytest tests/api/ -q
 | `api/test_stage_transition_api.py` | CRM config rules, PATCH+поля, ops save |
 | `core/test_crm_settings_stage_rules.py` | normalize_stage_transition_rules |
 | `lib/test_stage_transition_lib.py` | Зеркало stageTransition.js |
+| `api/test_lead_communications_api.py` | Касания: типы call/meeting/email, audit, 404 |
 | `test_lead_score_advisory.py` | Скор-советы |
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |
