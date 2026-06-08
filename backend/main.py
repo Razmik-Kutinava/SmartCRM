@@ -1,6 +1,7 @@
 """
 SmartCRM — FastAPI entry point
 """
+import asyncio
 import logging
 import os
 import time
@@ -46,7 +47,27 @@ async def lifespan(app: FastAPI):
         logger.info("БД инициализирована")
     except Exception as e:
         logger.warning(f"БД недоступна — лиды не сохранятся: {e}")
+
+    bitrix_poll_stop = asyncio.Event()
+    bitrix_poll_task = None
+    if _bx:
+        from integrations.bitrix24_sync import bitrix_poll_loop
+
+        bitrix_poll_task = asyncio.create_task(bitrix_poll_loop(bitrix_poll_stop))
+        logger.info(
+            "Bitrix: входящий вебхук REST OK; исходящий → POST /api/webhooks/bitrix/events; "
+            "авто-опрос BITRIX_AUTO_SYNC_MINUTES (по умолчанию 5)"
+        )
+
     yield
+
+    if bitrix_poll_task is not None:
+        bitrix_poll_stop.set()
+        bitrix_poll_task.cancel()
+        try:
+            await bitrix_poll_task
+        except asyncio.CancelledError:
+            pass
     logger.info("SmartCRM останавливается")
 
 
@@ -90,6 +111,7 @@ from api.routes.news import router as news_router
 from api.routes.usage import router as usage_router
 from api.routes.tenders import router as tenders_router
 from api.routes.crm import router as crm_public_router
+from api.routes.webhooks_bitrix import router as webhooks_bitrix_router
 _auth = [Depends(require_api_key)]
 
 app.include_router(voice_router,            dependencies=_auth)
@@ -107,6 +129,7 @@ app.include_router(news_router,             dependencies=_auth)
 app.include_router(usage_router,            dependencies=_auth)
 app.include_router(tenders_router,          dependencies=_auth)
 app.include_router(crm_public_router,      dependencies=_auth)
+app.include_router(webhooks_bitrix_router)  # Битрикс24 исходящий вебхук — без X-API-Key
 
 
 @app.middleware("http")

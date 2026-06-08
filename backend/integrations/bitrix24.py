@@ -10,6 +10,7 @@ import logging
 import os
 import re
 from datetime import datetime, timezone
+from decimal import Decimal
 from typing import Any, Optional
 
 import httpx
@@ -164,6 +165,19 @@ def _all_phones(val: Any) -> str:
                 parts.append(str(item["VALUE"]).strip())
         return ", ".join(parts) if parts else "—"
     return _first_multi(val)
+
+
+def _amount_rub(row: dict) -> Optional[Decimal]:
+    opp = row.get("OPPORTUNITY")
+    if opp in (None, "", False):
+        return None
+    cur = str(row.get("CURRENCY_ID") or "RUB").upper()
+    if cur not in ("RUB", "RUR"):
+        return None
+    try:
+        return Decimal(str(opp))
+    except Exception:
+        return None
 
 
 def _budget(row: dict) -> str:
@@ -333,6 +347,7 @@ def row_to_lead_fields(
             else "—"
         )[:100],
         "budget": _budget(row)[:100],
+        "amount_rub": _amount_rub(row),
         "position": (str(row.get("POST") or "—"))[:255],
         "website": _first_multi(row.get("WEB"))[:255] if row.get("WEB") else "—",
         "employees": "—",

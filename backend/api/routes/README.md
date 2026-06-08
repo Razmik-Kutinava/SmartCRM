@@ -15,7 +15,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `__init__.py` | Сборка роутера |
 | `crud.py` | Список, создать, прочитать, обновить, удалить лид |
 | `engagement.py` | Комментарии, логи связи, аудит полей, стадии |
-| `bitrix_routes.py` | Импорт лидов из Битрикс24 |
+| `bitrix_routes.py` | Импорт лидов из Битрикс24, статус синка |
 | `presenter.py` | Как отдать лид в JSON для API |
 | `schemas.py` | Pydantic-схемы запросов/ответов |
 
@@ -60,6 +60,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `voice.py` | `/api/voice` | Голос: текст/аудио → Hermes → агенты |
 | `leadgen.py` | `/api/leadgen` | Запуск пайплайна, кластер, портрет |
 | `crm.py` | `/api/crm` | Публичные CRM: стадии, настройки |
+| `webhooks_bitrix.py` | `/api/webhooks/bitrix` | Исходящие события Битрикс24 (ONCRMLEADADD) |
 | `leads/` | `/api/leads` | См. пакет выше |
 | `tasks.py` | `/api/tasks` | Задачи по лидам |
 | `email.py` | `/api/email` | Настройки IMAP/SMTP, синхронизация |

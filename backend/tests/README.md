@@ -36,7 +36,9 @@ pytest tests/api/ -q
 | `test_agents.py` | Агенты |
 | `test_search.py` | Поиск |
 | `test_email_sync.py` | Синхронизация почты |
-| `test_bitrix_integration.py` | Битрикс |
+| `test_bitrix_integration.py` | Битрикс live (REST вебхук) |
+| `integrations/test_bitrix_row_map.py` | Маппинг полей Битрикс → Lead |
+| `integrations/test_bitrix_webhook.py` | Исходящий вебхук ONCRMLEADADD |
 
 ---
 

@@ -133,7 +133,26 @@
 
 ---
 
-## 3. Полезные команды
+## 3. Автосинк (новый лид в Битриксе → SmartCRM)
+
+**Важно:** `BITRIX24_WEBHOOK_URL` — это **входящий** вебхук (мы **звоним** в REST Битрикса). Раньше был только **ручной** импорт кнопкой «Битрикс24».
+
+С **2026-06-08** добавлено два канала:
+
+| Канал | Задержка | Настройка |
+|--------|----------|-----------|
+| **Исходящий вебхук Битрикса** | сразу при создании/изменении | В Битрикс24: разработчикам → **исходящий вебхук**, события `ONCRMLEADADD`, `ONCRMLEADUPDATE`, URL: `https://<ваш-smartcrm>/api/webhooks/bitrix/events` (опционально `?token=` = `BITRIX_OUTBOUND_TOKEN` в `.env`) |
+| **Фоновый опрос** | каждые **5 мин** (по умолчанию) | `BITRIX_AUTO_SYNC_MINUTES=5` в `.env`; тянет `crm.lead.list` с `DATE_CREATE >= сегодня` |
+
+Проверка статуса: **`GET /api/leads/bitrix-sync-status`** (нужен `X-API-Key` если включён).
+
+Состояние последнего опроса/события: `backend/data/bitrix_sync_state.json` (runtime).
+
+Маппинг полей включает `amount_rub` из `OPPORTUNITY` при валюте RUB.
+
+---
+
+## 4. Полезные команды
 
 ```bash
 # Тесты к живому порталу (нужен BITRIX24_WEBHOOK_URL в .env в корне репо)
@@ -148,12 +167,14 @@ curl "http://127.0.0.1:8000/api/leads/bitrix-import-stats?date_from=2023-01-01"
 
 ---
 
-## 4. Файлы (ориентир)
+## 5. Файлы (ориентир)
 
 | Область | Путь |
 |--------|------|
 | Клиент Битрикс | `backend/integrations/bitrix24.py` |
-| Роуты лидов | `backend/api/routes/leads.py` |
+| Синк одного лида / опрос | `backend/integrations/bitrix24_sync.py` |
+| Исходящий вебхук | `backend/api/routes/webhooks_bitrix.py` |
+| Роуты лидов | `backend/api/routes/leads/bitrix_routes.py` |
 | Модель лида | `backend/db/models/lead.py` |
 | Миграции колонок | `backend/db/session.py` |
 | Точка входа, `.env` | `backend/main.py` |

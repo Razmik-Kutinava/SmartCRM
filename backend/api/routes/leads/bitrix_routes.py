@@ -1,5 +1,7 @@
 """Импорт лидов из Битрикс24."""
 import logging
+import os
+from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
@@ -64,3 +66,29 @@ async def import_leads_bitrix(
         logger.exception("import-bitrix")
         raise HTTPException(502, detail="Ошибка при импорте из Битрикс24. Подробности в логах.") from e
     return {"status": "ok", **result}
+
+
+@router.get("/bitrix-sync-status")
+async def bitrix_sync_status():
+    """Как настроен синк: REST-вебхук, авто-опрос, исходящий URL для Битрикса."""
+    from integrations.bitrix24 import webhook_base
+    from integrations.bitrix24_sync import read_sync_state
+
+    bx = webhook_base()
+    minutes = int((os.getenv("BITRIX_AUTO_SYNC_MINUTES") or "5").strip() or "0")
+    outbound_token = bool((os.getenv("BITRIX_OUTBOUND_TOKEN") or "").strip())
+    state = read_sync_state()
+    return {
+        "webhook_configured": bool(bx),
+        "auto_sync_minutes": minutes,
+        "auto_sync_enabled": bool(bx and minutes > 0),
+        "outbound_webhook_path": "/api/webhooks/bitrix/events",
+        "outbound_token_configured": outbound_token,
+        "today_filter": date.today().isoformat(),
+        "sync_state": state,
+        "how_it_works": (
+            "BITRIX24_WEBHOOK_URL — мы вызываем REST Битрикса (crm.lead.list/get). "
+            "Исходящий вебхук в Битриксе → POST /api/webhooks/bitrix/events (мгновенно). "
+            f"Фоновый опрос каждые {minutes} мин — лиды с DATE_CREATE >= сегодня."
+        ),
+    }
