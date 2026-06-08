@@ -20,6 +20,12 @@
 
 ---
 
+## 2026-06-08 — BACKLOG: туннель + исходящий вебхук Битрикса
+
+**Сделано:** запись в `BACKLOG.md`; мгновенный синк отложен (не блокер Ф1); п.3 ждёт `go`.
+
+---
+
 ## 2026-06-08 — PRD_MAP п.2: поля Битрикс + автосинк лидов
 
 **Сделано:** маппинг полей (+ `amount_rub`); `bitrix24_sync.py` (один лид, фоновый опрос); `POST /api/webhooks/bitrix/events`; `GET /api/leads/bitrix-sync-status`; тесты 7 passed; `docs/modules/bitrix.md` § автосинк.

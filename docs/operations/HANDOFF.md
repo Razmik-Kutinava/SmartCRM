@@ -16,12 +16,9 @@
 - `GET /api/leads/bitrix-sync-status`
 - pytest: `test_bitrix_row_map`, `test_bitrix_webhook`, live `test_bitrix_integration` — 7 passed
 
-**Действие пользователя (критично для «сразу»):**
-1. Перезапустить uvicorn (новый код в `main.py` lifespan).
-2. В Битрикс24: **исходящий вебхук** → события `ONCRMLEADADD`, `ONCRMLEADUPDATE` → URL `https://<хост>/api/webhooks/bitrix/events?token=<BITRIX_OUTBOUND_TOKEN>`.
-3. В `.env`: `BITRIX_AUTO_SYNC_MINUTES=5` (уже в `.env.example`).
+**Отложено (бэклог):** туннель + исходящий вебхук Битрикса → [`BACKLOG.md`](BACKLOG.md). Не блокер п.3.
 
-**Блокеры:** без исходящего вебхука в портале — только опрос раз в 5 мин (не мгновенно). 🟡
+**Блокеры:** нет 🔴
 
 **Открытые вопросы:** нет.
 
