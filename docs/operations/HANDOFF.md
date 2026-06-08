@@ -11,9 +11,9 @@
 **User Rules Cursor:** вставлены ✅
 
 **Последние коммиты:**
+- 16c0d86 docs: HANDOFF bcce33c after ops sync
 - bcce33c docs: ops sync RULES_MATRIX, check_agent_step, PRD_MAP cleanup
 - 406871d docs: HANDOFF hash 28ab125 after rules commit
-- 28ab125 docs: remove legacy process refs, always commit+ops, zone regression
 
 **Открытые вопросы:** push `main` — по апруву.
 
