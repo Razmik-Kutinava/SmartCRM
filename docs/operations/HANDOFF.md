@@ -11,6 +11,7 @@
 **Блокеры:** нет 🔴. 🟡 `hermes_eval` 9 failed (ISSUES, отдельно от п.1).
 
 **Последние коммиты:**
+- 438aecf docs: HANDOFF after 4ec4b6a PRD_MAP p.1 CRUD
 - 4ec4b6a fix: PRD_MAP p.1 CRUD leads card edit UI and frontend dev win-arm64
 
 **Открытые вопросы:** нет.
