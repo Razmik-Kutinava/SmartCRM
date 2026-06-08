@@ -28,6 +28,7 @@
 	import { loadLeadCardActivity, postLeadCommunication } from '$lib/leads/leadCardActivity.js';
 	import { createLeadComment } from '$lib/leads/leadComments.js';
 	import { auditFieldLabel } from '$lib/leads/leadAudit.js';
+	import { describeTransitionRule, rulesForTargetStage } from '$lib/leads/stageTransition.js';
 	import { buildMoneyPatch, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
@@ -286,6 +287,8 @@
 	let leadTasksList = $state([]);
 	let leadTasksLoading = $state(false);
 	let leadTaskSaving = $state(false);
+
+	const stageTransitionRules = $derived(getCachedCrmConfig()?.stageTransitionRules ?? []);
 
 	// ─── Агенты ─────────────────────────────────────────────────
 	let agentRunning  = $state('');
@@ -716,22 +719,31 @@
 					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Сменить этап</div>
 					<div class="grid grid-cols-2 gap-1">
 						{#each CRM_STAGES as stage}
+							{@const stageRules = rulesForTargetStage(stageTransitionRules, stage)}
 							<button
 								type="button"
 								disabled={stageSaving}
 								onclick={() => setStage(stage)}
+								title={stageRules.length
+									? `Требования: ${stageRules.map(describeTransitionRule).join('; ')}`
+									: ''}
 								class="px-2 py-1 text-xs rounded-lg text-left transition-colors disabled:opacity-50
 									{lead.stage === stage
 									? 'bg-indigo-600 text-white'
 									: 'bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white'}"
 							>
 								{stage}
+								{#if stageRules.length}
+									<span class="block text-[9px] opacity-70 mt-0.5 line-clamp-1">
+										{describeTransitionRule(stageRules[0])}
+									</span>
+								{/if}
 							</button>
 						{/each}
 					</div>
-					{#if (getCachedCrmConfig()?.stageTransitionRules || []).length}
+					{#if stageTransitionRules.length}
 						<p class="text-[10px] text-gray-600 mt-2 leading-snug">
-							Правила переходов (из CRM): для целевой стадии могут требоваться поля — при блокировке смотри текст ошибки.
+							Правила из CRM/Ops: наведи на стадию — подсказка; при блокировке покажем детали.
 						</p>
 					{/if}
 				</div>

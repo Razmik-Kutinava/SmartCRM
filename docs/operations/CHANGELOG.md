@@ -20,6 +20,12 @@
 
 ---
 
+## 2026-06-08 — PRD_MAP п.9: правила переходов стадий
+
+**Сделано:** stageTransition.js, apiPatch для смены стадии, подсказки в UI, тесты API+normalize.
+
+---
+
 ## 2026-06-08 — PRD_MAP п.8: аудит полей лида
 
 **Сделано:** `leadAudit.js`, RU-лейблы в UI, тесты PATCH→audit и util.

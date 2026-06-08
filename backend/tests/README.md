@@ -40,6 +40,10 @@ pytest tests/api/ -q
 | `api/test_lead_comments_api.py` | Комментарии: 404, пустой body, порядок, x-actor-name |
 | `core/test_lead_field_audit_util.py` | Запись аудита только изменённых полей |
 | `api/test_lead_field_audit_api.py` | GET audit, PATCH→строки, порядок, amountRub |
+| `test_stage_transition.py` | Валидация правил стадий (unit) |
+| `api/test_stage_transition_api.py` | CRM config rules, PATCH+поля, ops save |
+| `core/test_crm_settings_stage_rules.py` | normalize_stage_transition_rules |
+| `lib/test_stage_transition_lib.py` | Зеркало stageTransition.js |
 | `test_lead_score_advisory.py` | Скор-советы |
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |

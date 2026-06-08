@@ -5,7 +5,9 @@
  * (пока не пришёл ответ от API).
  */
 import { browser } from '$app/environment';
+import { apiPatch } from './api.js';
 import { defaultApprovals, mergeApprovals } from './leadApprovals.js';
+import { formatLeadPatchError } from './leads/stageTransition.js';
 
 const CACHE_KEY = 'smartcrm_leads_cache_v2';
 
@@ -129,25 +131,10 @@ export async function fetchLeadById(id) {
 	return lead;
 }
 
-function formatLeadPatchError(status, text, parsed) {
-	const d = parsed?.detail;
-	if (d && typeof d === 'object' && d.code === 'stage_transition_blocked' && Array.isArray(d.messages)) {
-		return d.messages.join('\n');
-	}
-	if (typeof d === 'string') return d;
-	if (Array.isArray(d)) return d.map((x) => x.msg || x).join('; ');
-	if (d && typeof d === 'object') return JSON.stringify(d);
-	return text || `HTTP ${status}`;
-}
-
 export async function apiUpdateLead(id, patch) {
-	const url = `${API()}/${id}`;
-	console.log('[API] PATCH', url, patch);
-	const r = await fetch(url, {
-		method: 'PATCH',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(patch),
-	});
+	const path = `/api/leads/${id}`;
+	console.log('[API] PATCH', path, patch);
+	const r = await apiPatch(path, patch);
 	if (!r.ok) {
 		const text = await r.text().catch(() => '');
 		let parsed = {};
