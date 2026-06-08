@@ -37,6 +37,7 @@ pytest tests/api/ -q
 | `api/test_lead_engagement.py` | Комментарии, касания, апрувы |
 | `core/test_task_dates.py` | Даты и SLA задач |
 | `api/test_tasks_api.py` | CRUD задач, lead_id, overdue |
+| `api/test_lead_comments_api.py` | Комментарии: 404, пустой body, порядок, x-actor-name |
 | `test_lead_score_advisory.py` | Скор-советы |
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |

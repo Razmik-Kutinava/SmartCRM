@@ -40,8 +40,11 @@ async def create_lead_comment(
     lead = await db.get(Lead, lead_id)
     if not lead:
         raise HTTPException(404, detail="Лид не найден")
+    text = body.body.strip()
+    if not text:
+        raise HTTPException(400, detail="Текст комментария не может быть пустым")
     author = (body.author or "").strip()[:255] or actor_from_request(request)
-    comment = LeadComment(lead_id=lead_id, author=author, body=body.body.strip()[:8000])
+    comment = LeadComment(lead_id=lead_id, author=author, body=text[:8000])
     db.add(comment)
     await db.commit()
     await db.refresh(comment)

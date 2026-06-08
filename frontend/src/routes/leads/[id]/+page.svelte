@@ -25,11 +25,8 @@
 		mergeApprovals,
 	} from '$lib/leadApprovals.js';
 	import { detailsDraftFromLead, patchFromDetailsDraft } from '$lib/leads/leadCardEdit.js';
-	import {
-		loadLeadCardActivity,
-		postLeadComment,
-		postLeadCommunication,
-	} from '$lib/leads/leadCardActivity.js';
+	import { loadLeadCardActivity, postLeadCommunication } from '$lib/leads/leadCardActivity.js';
+	import { createLeadComment } from '$lib/leads/leadComments.js';
 	import { buildMoneyPatch, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
@@ -179,11 +176,11 @@
 		}
 	}
 
-	async function postLeadComment() {
+	async function submitComment() {
 		if (!lead || !commentDraft.trim() || commentPosting) return;
 		commentPosting = true;
 		try {
-			await postLeadComment(lead.id, commentDraft.trim());
+			await createLeadComment(lead.id, commentDraft.trim());
 			commentDraft = '';
 			await loadLeadActivity();
 		} catch (e) {
@@ -795,8 +792,8 @@
 					></textarea>
 					<button
 						type="button"
-						disabled={commentPosting}
-						onclick={postLeadComment}
+						disabled={commentPosting || !commentDraft.trim()}
+						onclick={submitComment}
 						class="w-full py-1.5 rounded-lg text-xs font-medium bg-indigo-900/50 hover:bg-indigo-800/60 text-indigo-100 disabled:opacity-50"
 					>
 						{commentPosting ? 'Отправка…' : 'Добавить комментарий'}

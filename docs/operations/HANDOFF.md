@@ -1,16 +1,16 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[PRD_MAP перепроход /leads] | Статус:п.6 закрыт → п.7`
+`Спринт:[Фаза 1] | Задача:[PRD_MAP перепроход /leads] | Статус:п.7 закрыт → п.8`
 
-**Следующий шаг:** **п.7 «Комментарии»** — перепроход. Ждём `go`.
+**Следующий шаг:** **п.8 «Аудит полей»** — перепроход. Ждём `go`.
 
-**Сделано (п.6):**
-- API: `GET /api/tasks?lead_id=`, фильтры `overdue`/`today`
-- `taskApi.js`, `taskSla.js`, `core/task_dates.py`
-- Вкладка «Задачи» на карточке лида — загрузка, создание, done, SLA
-- pytest 6 passed
+**Сделано (п.7):**
+- Баг: локальная `postLeadComment` вызывала себя (рекурсия) — переименована в `submitComment`
+- `frontend/src/lib/leads/leadComments.js` — fetch/create через apiFetch
+- API: 400 на пустой/пробельный body после strip
+- pytest 7 passed (comments + engagement)
 
-**Коммиты:** `6299b3c` feat (задачи/SLA), `4093b23` chore ops
+**Коммит:** `ef67ed8`
 
 **Блокеры:** нет 🔴
 
