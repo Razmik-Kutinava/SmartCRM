@@ -94,4 +94,6 @@
 
 2026-06-08 | Действие: ops sync — RULES_MATRIX, check_agent_step.py, fix agent-workflow.mdc, BACKLOG/PRD_MAP, зачистка журналов, archive rename. | Следующий шаг: commit; Фаза 1 PRD_MAP (интенты Hermes) + go. | Тесты: p6 PASS, check_agent_step | Статус: done
 
+2026-06-08 | Действие: коммит `bcce33c` (ops sync). Регрессия p6: All zones passed (121 tests). | Следующий шаг: Фаза 1 PRD_MAP + go. | push по апруву | Статус: done
+
 ---

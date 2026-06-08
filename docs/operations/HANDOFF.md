@@ -10,7 +10,10 @@
 
 **User Rules Cursor:** вставлены ✅
 
-**Последние коммиты:** *(обновить после commit этого шага)*
+**Последние коммиты:**
+- bcce33c docs: ops sync RULES_MATRIX, check_agent_step, PRD_MAP cleanup
+- 406871d docs: HANDOFF hash 28ab125 after rules commit
+- 28ab125 docs: remove legacy process refs, always commit+ops, zone regression
 
 **Открытые вопросы:** push `main` — по апруву.
 
