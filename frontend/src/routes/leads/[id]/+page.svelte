@@ -31,6 +31,8 @@
 		postLeadCommunication,
 	} from '$lib/leads/leadCardActivity.js';
 	import { buildMoneyPatch, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
+	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
+	import { slaStatus } from '$lib/tasks/taskSla.js';
 
 	let lead    = $state(null);
 	let notFound = $state(false);
@@ -69,6 +71,7 @@
 			syncMoneyInputsFromLead();
 			syncDetailsDraftFromLead();
 			await loadLeadActivity();
+			await loadLeadTasks();
 		}
 		pullLead();
 		return page.subscribe(pullLead);
@@ -128,6 +131,52 @@
 		leadComments = activity.comments;
 		leadAudit = activity.audit;
 		leadComms = activity.communications;
+	}
+
+	async function loadLeadTasks() {
+		if (!lead?.id) {
+			leadTasksList = [];
+			return;
+		}
+		leadTasksLoading = true;
+		try {
+			leadTasksList = await fetchTasks({ leadId: lead.id });
+		} catch {
+			leadTasksList = [];
+		} finally {
+			leadTasksLoading = false;
+		}
+	}
+
+	async function addLeadTask() {
+		if (!lead || leadTaskSaving) return;
+		const title = prompt('Название задачи:');
+		if (!title?.trim()) return;
+		const sla = prompt('SLA до (ДД.ММ.ГГГГ, необязательно):') || '';
+		leadTaskSaving = true;
+		try {
+			await createTask({
+				title: title.trim(),
+				lead_id: lead.id,
+				related_lead: lead.company,
+				sla_due: sla.trim() || null,
+				due: '—',
+			});
+			await loadLeadTasks();
+		} catch (e) {
+			alert('Не удалось создать задачу: ' + (e?.message || e));
+		} finally {
+			leadTaskSaving = false;
+		}
+	}
+
+	async function toggleLeadTaskDone(task) {
+		try {
+			await patchTask(task.id, { status: task.status === 'done' ? 'open' : 'done' });
+			await loadLeadTasks();
+		} catch (e) {
+			alert('Ошибка: ' + (e?.message || e));
+		}
 	}
 
 	async function postLeadComment() {
@@ -236,7 +285,9 @@
 	let noteText  = $state('');
 
 	const activityHistory = $derived(lead?.history ?? []);
-	const leadTasks       = $derived(lead?.tasks   ?? []);
+	let leadTasksList = $state([]);
+	let leadTasksLoading = $state(false);
+	let leadTaskSaving = $state(false);
 
 	// ─── Агенты ─────────────────────────────────────────────────
 	let agentRunning  = $state('');
@@ -821,20 +872,41 @@
 				<!-- ── ЗАДАЧИ ── -->
 				{:else if activeTab === 'tasks'}
 					<div class="space-y-2">
-						{#each leadTasks as task}
+						{#if leadTasksLoading}
+							<p class="text-gray-500 text-sm">Загрузка задач…</p>
+						{:else if leadTasksList.length === 0}
+							<p class="text-gray-600 text-sm">Задач по этому лиду пока нет.</p>
+						{/if}
+						{#each leadTasksList as task (task.id)}
 							<div class="flex items-center gap-3 p-3 bg-gray-900 border border-gray-800 rounded-lg">
-								<div class="w-4 h-4 rounded border {task.status === 'done' ? 'bg-green-500 border-green-500' : 'border-gray-600'} flex items-center justify-center shrink-0">
+								<button
+									type="button"
+									class="w-4 h-4 rounded border {task.status === 'done' ? 'bg-green-500 border-green-500' : 'border-gray-600'} flex items-center justify-center shrink-0"
+									onclick={() => toggleLeadTaskDone(task)}
+									aria-label="Отметить выполненной"
+								>
 									{#if task.status === 'done'}<span class="text-white text-xs">✓</span>{/if}
-								</div>
-								<div class="flex-1">
+								</button>
+								<div class="flex-1 min-w-0">
 									<div class="text-sm {task.status === 'done' ? 'line-through text-gray-500' : 'text-gray-200'}">{task.title}</div>
-									<div class="text-xs text-gray-600">{task.due}</div>
+									<div class="text-xs text-gray-600 flex flex-wrap gap-2 mt-0.5">
+										<span>Срок: {task.due || '—'}</span>
+										{#if task.slaDue}
+											<span class={slaStatus(task).cls}>SLA: {slaStatus(task).label}</span>
+										{/if}
+									</div>
 								</div>
 							</div>
 						{/each}
-						<button class="w-full p-3 border border-dashed border-gray-700 rounded-lg text-sm text-gray-500 hover:text-gray-300 hover:border-gray-500 transition-colors">
-							+ Добавить задачу
+						<button
+							type="button"
+							disabled={leadTaskSaving}
+							onclick={addLeadTask}
+							class="w-full p-3 border border-dashed border-gray-700 rounded-lg text-sm text-gray-500 hover:text-gray-300 hover:border-gray-500 transition-colors disabled:opacity-50"
+						>
+							{leadTaskSaving ? 'Создание…' : '+ Добавить задачу'}
 						</button>
+						<a href="/leads/tasks" class="block text-xs text-indigo-400 hover:underline">Все задачи и SLA →</a>
 					</div>
 
 				<!-- ── ПИСЬМА ── -->

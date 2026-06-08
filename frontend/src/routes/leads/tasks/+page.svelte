@@ -1,9 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
-	import { getApiUrl } from '$lib/websocket.js';
 	import { fetchLeads } from '$lib/leadsStorage.js';
-
-	const API = getApiUrl();
+	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
+	import { slaStatus } from '$lib/tasks/taskSla.js';
 
 	let tasks = $state([]);
 	let leads = $state([]);
@@ -23,9 +22,7 @@
 		loading = true;
 		err = '';
 		try {
-			const r = await fetch(`${API}/api/tasks`);
-			if (!r.ok) throw new Error(await r.text());
-			tasks = await r.json();
+			tasks = await fetchTasks();
 			leads = await fetchLeads().catch(() => []);
 		} catch (e) {
 			err = e?.message || String(e);
@@ -51,12 +48,7 @@
 				sla_due: slaDue.trim() || null,
 				escalated: false,
 			};
-			const r = await fetch(`${API}/api/tasks`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(body),
-			});
-			if (!r.ok) throw new Error(await r.text());
+			await createTask(body);
 			title = '';
 			due = '';
 			slaDue = '';
@@ -71,38 +63,10 @@
 		}
 	}
 
-	function parseDue(d) {
-		if (!d || d === '—') return null;
-		const m = d.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
-		if (m) {
-			const [, dd, mm, yyyy] = m;
-			return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-		}
-		return null;
-	}
-
-	function slaStatus(t) {
-		if (t.status === 'done') return { label: 'Готово', cls: 'text-gray-500' };
-		const sla = t.slaDue || t.sla_due;
-		if (!sla) return { label: 'SLA не задан', cls: 'text-gray-600' };
-		const dt = parseDue(sla);
-		if (!dt) return { label: `SLA: ${sla}`, cls: 'text-gray-400' };
-		const now = new Date();
-		now.setHours(0, 0, 0, 0);
-		dt.setHours(0, 0, 0, 0);
-		if (dt < now) return { label: 'Просрочено', cls: 'text-red-400 font-medium' };
-		if (dt.getTime() === now.getTime()) return { label: 'Сегодня', cls: 'text-yellow-400' };
-		return { label: 'В срок', cls: 'text-green-400' };
-	}
-
 	async function toggleDone(t) {
 		const next = t.status === 'done' ? 'open' : 'done';
 		try {
-			await fetch(`${API}/api/tasks/${t.id}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ status: next }),
-			});
+			await patchTask(t.id, { status: next });
 			await load();
 		} catch (e) {
 			err = e?.message || String(e);
@@ -111,11 +75,7 @@
 
 	async function toggleEscalation(t) {
 		try {
-			await fetch(`${API}/api/tasks/${t.id}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ escalated: !t.escalated }),
-			});
+			await patchTask(t.id, { escalated: !t.escalated });
 			await load();
 		} catch (e) {
 			err = e?.message || String(e);

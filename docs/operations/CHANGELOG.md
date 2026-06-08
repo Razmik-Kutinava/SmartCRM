@@ -20,6 +20,12 @@
 
 ---
 
+## 2026-06-08 — PRD_MAP п.6: задачи по лиду и SLA
+
+**Сделано:** lead_id фильтр, overdue/today, задачи на карточке лида, taskApi с apiFetch, тесты.
+
+---
+
 ## 2026-06-08 — PRD_MAP п.5: карточка лида (поля, ₽, апрувы, касания)
 
 **Сделано:** apiFetch для activity; leadCardMoney/Activity; поле должность; тесты engagement API.

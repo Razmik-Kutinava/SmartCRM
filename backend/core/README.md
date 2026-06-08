@@ -64,3 +64,4 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_score_advisory.py` | Подсказки по скору лида |
 | `lead_field_audit_util.py` | Аудит изменений полей лида |
 | `stage_transition.py` | Правила перехода между стадиями |
+| `task_dates.py` | Парсинг дат задач и статус SLA |

@@ -10,7 +10,6 @@ REST API для задач:
 import calendar
 import datetime as dt
 import logging
-import re
 from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -18,33 +17,12 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.task_dates import parse_task_date
 from db.session import get_db
 from db.models import Task
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/tasks", tags=["tasks"])
-
-
-def _parse_task_date(s: Optional[str]) -> Optional[dt.date]:
-    """Дата из поля due / sla_due: DD.MM.YYYY или YYYY-MM-DD."""
-    if not s or not str(s).strip() or str(s).strip() == "—":
-        return None
-    s = str(s).strip()
-    m = re.match(r"^(\d{1,2})\.(\d{1,2})\.(\d{4})(\s|$)", s)
-    if m:
-        d, mo, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
-        try:
-            return dt.date(y, mo, d)
-        except ValueError:
-            return None
-    m2 = re.match(r"^(\d{4})-(\d{2})-(\d{2})", s)
-    if m2:
-        y, mo, d = int(m2.group(1)), int(m2.group(2)), int(m2.group(3))
-        try:
-            return dt.date(y, mo, d)
-        except ValueError:
-            return None
-    return None
 
 
 # ── Схемы ──────────────────────────────────────────────────────────
@@ -79,23 +57,38 @@ class TaskPatch(BaseModel):
 async def list_tasks(
     status: Optional[str] = Query(None),
     lead: Optional[str] = Query(None),
+    lead_id: Optional[int] = Query(None),
     db: AsyncSession = Depends(get_db),
 ):
     q = select(Task).order_by(Task.created_at.desc())
     result = await db.execute(q)
-    tasks = result.scalars().all()
+    tasks = list(result.scalars().all())
+    today = dt.date.today()
 
-    # Фильтрация
     if status == "done":
         tasks = [t for t in tasks if t.status == "done"]
     elif status == "open":
         tasks = [t for t in tasks if t.status == "open"]
     elif status == "today":
-        import datetime
-        today = datetime.date.today().strftime("%d.%m.%Y")
-        tasks = [t for t in tasks if t.status == "open"]  # TODO: parse due date
+        tasks = [
+            t
+            for t in tasks
+            if t.status == "open"
+            and any(parse_task_date(raw) == today for raw in (t.due, t.sla_due))
+        ]
     elif status == "overdue":
-        tasks = [t for t in tasks if t.status == "open"]  # TODO: parse due date
+        tasks = [
+            t
+            for t in tasks
+            if t.status == "open"
+            and any(
+                (d := parse_task_date(raw)) is not None and d < today
+                for raw in (t.due, t.sla_due)
+            )
+        ]
+
+    if lead_id is not None:
+        tasks = [t for t in tasks if t.lead_id == lead_id]
 
     if lead:
         lead_lower = lead.lower()
@@ -123,7 +116,7 @@ async def tasks_calendar_month(
 
     for t in tasks:
         for raw in (t.due, t.sla_due):
-            d = _parse_task_date(raw)
+            d = parse_task_date(raw)
             if d and d.year == year and d.month == month:
                 key = (t.id, d.day)
                 if key in seen:
