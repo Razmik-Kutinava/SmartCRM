@@ -10,7 +10,8 @@
 
 **Блокеры:** нет 🔴. 🟡 `hermes_eval` 9 failed (ISSUES, отдельно от п.1).
 
-**Последние коммиты:** *(после коммита PRD_MAP journal)*
+**Последние коммиты:**
+- 0605542 docs: PRD_MAP journal — p.1 CRUD re-pass OK, next p.2 Bitrix fields
 
 **Открытые вопросы:** нет.
 
