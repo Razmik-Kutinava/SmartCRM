@@ -1,17 +1,18 @@
 # SmartCRM — Cursor Rules (индекс)
 
-**Канон процесса и гейтов — в `.cursor/rules/*.mdc` (alwaysApply).** Этот файл — стек, стиль кода, вход в проект.
+**Канон процесса и гейтов — в `.cursor/rules/smartcrm-*.mdc` (alwaysApply).** Этот файл — стек, стиль кода, вход в проект.
 
 ## Правила разработки (читать агенту)
 
 | Файл | Содержание |
 |------|------------|
-| [`smartcrm-task-workflow.mdc`](.cursor/rules/smartcrm-task-workflow.mdc) | PRD_MAP, `go`, тесты, BACKLOG, anti-hallucination |
+| [`smartcrm-task-workflow.mdc`](.cursor/rules/smartcrm-task-workflow.mdc) | PRD_MAP, `go`, тесты, BACKLOG, anti-hallucination, старт сессии |
 | [`smartcrm-dev-gates.mdc`](.cursor/rules/smartcrm-dev-gates.mdc) | DoD, регрессия pytest, миграции, API, hot-path |
-| [`smartcrm-agent-workflow.mdc`](.cursor/rules/smartcrm-agent-workflow.mdc) | коммит, ops, один шаг |
+| [`smartcrm-agent-workflow.mdc`](.cursor/rules/smartcrm-agent-workflow.mdc) | **всегда** коммит + ops; стоп до апрува |
 | [`smartcrm-repo-layout.mdc`](.cursor/rules/smartcrm-repo-layout.mdc) | структура репо, backend README |
 | [`smartcrm-code-split.mdc`](.cursor/rules/smartcrm-code-split.mdc) | лимит файлов, сплит |
-| [`prd-factory-agent.mdc`](.cursor/rules/prd-factory-agent.mdc) | операционные гейты, ISSUES |
+
+**Приоритет:** правила SmartCRM в `.mdc` **выше** глобальных User Rules про «коммит только по запросу». См. [`docs/operations/CURSOR_USER_RULES_SNIPPET.md`](docs/operations/CURSOR_USER_RULES_SNIPPET.md).
 
 ## Документация
 

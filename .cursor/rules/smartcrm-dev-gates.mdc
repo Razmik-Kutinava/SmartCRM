@@ -11,15 +11,14 @@ alwaysApply: true
 
 ## Приоритет правил (при конфликте)
 
+0. **Правила SmartCRM** (`.cursor/rules/smartcrm-*.mdc`, этот файл) — **выше** глобальных Cursor User Rules по **коммиту**, **ops** и процессу в этом репо. Коммит и ops — **всегда** после шага, даже без слов «коммит» / «опс» от пользователя.
 1. **Безопасность** — секреты, auth, prod
 2. **`docs/operations/ISSUES.md`** — открытые 🔴 блокеры
-3. **`smartcrm-task-workflow.mdc`** — go, тесты, honest report, BACKLOG
+3. **`smartcrm-task-workflow.mdc`** — go, тесты, honest report, BACKLOG, старт сессии
 4. **`smartcrm-dev-gates.mdc`** (этот файл) — миграции, API, регрессия, hot-path
 5. **`smartcrm-repo-layout.mdc`** + **`smartcrm-code-split.mdc`**
-6. **`smartcrm-agent-workflow.mdc`** — коммит, ops
+6. **`smartcrm-agent-workflow.mdc`** — коммит, ops (обязательны всегда)
 7. **`.cursorrules`** — стиль кода и стек (краткий индекс)
-
-PRD Factory (`.cursor/rules/prd-factory-agent.mdc`) — операционные гейты сессии; при конфликте по **процессу** с п.3–6 — смотреть task-workflow + HANDOFF.
 
 ---
 
@@ -38,20 +37,32 @@ PRD Factory (`.cursor/rules/prd-factory-agent.mdc`) — операционные
 
 ---
 
-## Регрессия по зонам (из `backend/`)
+## Регрессия по зонам
+
+**Рабочая директория:** `backend/`. Запускать зоны **по отдельности** или скриптом (избегает конфликтов collection):
 
 ```bash
 cd backend
+python scripts/run_zone_regression.py all    # все зоны
+python scripts/run_zone_regression.py p1     # смоук P1
+python scripts/run_zone_regression.py p6     # после P6-сплитов
+python scripts/run_zone_regression.py crm_leads   # одна зона
 ```
 
-| Зона / затронуто | Команда |
-|------------------|---------|
-| **Лиды CRM** | `pytest tests/api/test_leads_api.py tests/test_stage_transition.py tests/test_lead_score_advisory.py -q` |
-| **Лидоген** | `pytest tests/test_leadgen.py -q` |
-| **Голос + Hermes** | `pytest tests/test_voice_pipeline.py tests/core/test_hermes_eval.py -q` |
-| **Тендеры** | `pytest tests/test_tender_sources.py -q` |
-| **RAG** | `pytest tests/rag/ -q` |
-| **Полный смоук P1** (после pipeline/hermes/orchestrator) | `pytest tests/test_leadgen.py tests/test_voice_pipeline.py tests/test_tender_sources.py -q` |
+| Зона / затронуто | Команда (из `backend/`) |
+|------------------|-------------------------|
+| **Лиды CRM** | `python -m pytest tests/api/test_leads_api.py tests/test_stage_transition.py tests/test_lead_score_advisory.py -q` |
+| **Лидоген** | `python -m pytest tests/test_leadgen.py -q` |
+| **Голос (pipeline)** | `python -m pytest tests/test_voice_pipeline.py -q` |
+| **Hermes eval (интенты)** | `python -m pytest tests/core/test_hermes_eval.py -q` — может требовать LLM/Ollama; при 🔴 без LLM — запись в ISSUES, не блокировать зону «голос» |
+| **Тендеры** | `python -m pytest tests/test_tender_sources.py -q` |
+| **RAG** | `python -m pytest tests/rag/ -q` |
+| **QA** | `python -m pytest tests/core/test_qa_agent.py -q` |
+| **Analyst** | `python -m pytest tests/agents/test_analyst.py -q` |
+| **Смоук P1** | `python scripts/run_zone_regression.py p1` |
+| **Смоук P6** (после сплитов qa/tenders/analyst/rag/pipeline) | `python scripts/run_zone_regression.py p6` |
+
+**Только docs/rules** (без кода backend): смоук не обязателен; если трогали pytest-пути — `python scripts/run_zone_regression.py p1`.
 
 UI затронут → Chrome DevTools MCP или чеклист в отчёте (что кликнули / не кликали).
 
@@ -78,7 +89,7 @@ UI затронут → Chrome DevTools MCP или чеклист в отчёт�
 
 1. Показать: что меняется, pending миграции, **план отката**
 2. Ждать **`go`**
-3. После — smoke: `pytest tests/api/test_leads_api.py -q` (минимум)
+3. После — smoke: `python -m pytest tests/api/test_leads_api.py -q` (минимум)
 
 Запрещено без `go`: `DROP`, `TRUNCATE`, `db:reset`, удаление миграций.
 

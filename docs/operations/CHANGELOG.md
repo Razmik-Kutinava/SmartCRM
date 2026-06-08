@@ -4,6 +4,21 @@
 
 ---
 
+## 2026-06-07 — Правила: убран PRD Factory, всегда коммит+ops, регрессия по зонам
+
+**Сделано:**
+
+| Артефакт | Суть |
+|----------|------|
+| `.cursor/rules/smartcrm-*.mdc`, `.cursorrules` | Удалены ссылки на PRD Factory; п.0 приоритета — SmartCRM выше User Rules по коммиту/ops; старт сессии; honest report обязателен; стоп после каждого шага |
+| `docs/archive/PRD_FACTORY_DEPRECATED.md` | Архив устаревшего процесса |
+| `docs/operations/CURSOR_USER_RULES_SNIPPET.md` | Текст для вставки в Cursor User Rules |
+| `backend/scripts/run_zone_regression.py` | Регрессия по зонам (p1/p6/all), зоны по отдельности |
+
+**Причина:** апрув пользователя на аудит правил и выравнивание процесса.
+
+---
+
 ## 2026-06-07 — Dev gates (DoD, регрессия, миграции, API, hot-path)
 
 **Сделано:** `smartcrm-dev-gates.mdc` — приоритет правил, DoD пункта PRD_MAP, таблица pytest по зонам, Migration/API gates, hot-path список. Синхрон: `agent-workflow`, `repo-layout` §6, `.cursorrules` как индекс.
@@ -235,39 +250,15 @@
 
 | Артефакт | Содержание |
 |----------|------------|
-| `docs/product/PRD.md` | Роли; фича «балльная воронка лидов» (проблема, ценность, scope, P1–P3, не-скоуп, метрики, риски, зависимости); приложения A–G; объём приведён к требованию PRD Factory (≥250 строк). |
+| `docs/product/PRD.md` | Роли; фича «балльная воронка лидов» (проблема, ценность, scope, P1–P3, не-скоуп, метрики, риски, зависимости); приложения A–G; объём ≥250 строк. |
 | `docs/product/ARCHITECTURE.md` | Раздел домена лидов и скоринга: as-is/to-be, решения по умолчанию, план DDL/API/модулей, безопасность, порядок внедрения, матрица агентов, traceability к Rails-референсу; ≥250 строк. |
 
 **Причина:** пользовательский **`go`** на шаг PM и Architect без кода.
 
 ---
 
-## 2026-05-03 — Аудит документации + фиксация внедрения PRD Factory v10 (go пользователя)
+## 2026-05-03 — Аудит документации + операционные журналы (go пользователя)
 
-**Сделано в репозитории (сессия внедрения процесса, без изменения продуктового кода):**
-
-| Артефакт | Назначение |
-|----------|------------|
-| `.cursor/rules/prd-factory-agent.mdc` | Полный текст PRD Factory v10, `alwaysApply: true`; блок «Применение в репо с кодом» и fallback `docs/product/PRD.md` / `docs/product/ARCHITECTURE.md` вместо `docs/product/*`. |
-| `.cursorrules` (секция сверху) | Ссылка на `.mdc`, приоритет операционки над локальными формулировками, текущие пути продуктовых доков. |
-| `docs/agents/AGENTS.md` | Точка входа: PRD Factory + ссылка на `docs/agents/langgraph.md` (LangGraph/Hermes). |
-| `docs/agents/langgraph.md` | В начале — ссылка на `docs/agents/AGENTS.md` для онбординга. |
-| `docs/operations/ISSUES.md`, `SESSION_STATE.md`, `HANDOFF.md`, `CHANGELOG.md` | Заготовки журналов; после этого апдейта — первые содержательные записи. |
-
-**Инвентаризация `docs/` (основное, не исчерпывающе):**
-
-- Продукт/архитектура: `PRD.md`, `ARCHITECTURE.md`, `RUNBOOK.md`, `API.md`, `SETUP.md`.
-- Агенты и стек: `AGENTS.md`, `stack/LLM.md`, `stack/RAG.md`, `stack/LANGGRAPH.md`, `stack/SVELTEKIT.md`.
-- Домены: `CRM_ROUTES.md`, `LEADGEN.md`, `TENDERS.md`, `EMAIL*.md`, `BITRIX24_IMPORT.md`, `SEARCH.md`, `VOICE_*.md`.
-- Процесс/качество: `dev/CONTRIBUTING.md`, `dev/WORKFLOW.md`, `CODE_REVIEW.md`, `code-reviewer-agent.md`, `security-audit-2026-04.md`, `AGENTS_TEST_RESULTS.md`.
-
-**Разрывы с каноном PRD Factory (зафиксировано, без автоматического исправления):**
-
-- Нет каталога `docs/product/` (`PRD.md` / `ARCHITECTURE.md` остаются в корне `docs/` — согласовано fallback в `.mdc` и `.cursorrules`).
-- `docs/product/PRD.md`: чекбоксы MVP «Фаза 1» не отражают текущий объём (тендеры, зеркальные маршруты CRM и т.д.) — риск недоговорённости scope.
-- Нет отдельных ролевых промптов `docs/agents/AGENTS/*` (200+ строк) — в процессе PRD Factory Режим A; для SmartCRM пока описание в `docs/agents/langgraph.md`.
-- Тесты разнесены по `tests/` и `backend/tests/` — для QA-матрицы нужна явная сводка (задача на спринт, не блокер записи).
-
-**Причина записи:** пользовательский **`go`** на аудит и запись во все нужные операционные файлы.
+**Сделано:** заготовки `docs/operations/*`, реорганизация доков. Историческая деталь устаревшего процесса PRD Factory → [`docs/archive/PRD_FACTORY_DEPRECATED.md`](../archive/PRD_FACTORY_DEPRECATED.md).
 
 ---

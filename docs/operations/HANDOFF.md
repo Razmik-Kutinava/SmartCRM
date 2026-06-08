@@ -8,23 +8,19 @@
 `Последние коммиты:[3 последних]`  
 `Открытые вопросы:[список или "нет"]`
 
-Спринт:[Фаза 1] | Задача:[Проход PRD_MAP + порядок в репо] | Статус:в работе
+Спринт:[Фаза 1] | Задача:[Проход PRD_MAP] | Статус:в работе
 
-Следующий шаг: **Фаза 1 PRD_MAP** — ждём явный пункт + `go`. Правила: README §5 + **task-workflow** (тесты, авто-коммит/ops, push только по апруву).
+Следующий шаг: **Фаза 1 PRD_MAP** — явный пункт + `go`. Процесс: `smartcrm-task-workflow.mdc` (старт сессии, honest report, стоп после шага) + **всегда** коммит+ops + `run_zone_regression.py` по зоне.
 
-Блокеры: нет
+Блокеры: `tests/core/test_hermes_eval.py` — 9 failed без LLM/Ollama (см. ISSUES при необходимости)
 
-Последние коммиты (на ветке, последние известные):
-- d2557ad docs: Backend README Sync rule in smartcrm-repo-layout.mdc
-- 351fc23 docs: add backend zone READMEs and README sync draft
-- 725b284 refactor: complete P6 monolith splits and CRM/tender stack
-- 9c6ef13 chore: P3 remove backend/backend/data nesting
-- 7432d2b chore: P2 clean repo root, openapi in docs/api, artifact gitignore
-- 2e0cd60 refactor: move root tests/ to backend/tests/ (P1 layout)
-- 637941c chore: repo layout rules, code split limits, structure audit
-- a619ee8 docs: update HANDOFF with v3 delta commit hash
-- 67150fc docs: integrate PRD tech delta v3
+Последние коммиты:
+- (ожидается) docs: rules cleanup PRD Factory, always commit+ops, zone regression
+- 9e40e19 docs: add smartcrm-dev-gates
+- 1815598 docs: BACKLOG + PRD_MAP backlog rule
 
-Открытые вопросы: какой пакет аудита апрувить первым (P1 тесты / P2 мусор в корне / P6 сплит кода).
+Открытые вопросы:
+- Вставить `CURSOR_USER_RULES_SNIPPET.md` в Cursor Settings → User Rules (вручную)
+- Push `main` — только по апруву
 
 ---

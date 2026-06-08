@@ -10,6 +10,20 @@
 
 ---
 
+[2026-06-07] — `test_hermes_eval.py`: 9 failed (интенты create/update/noop)
+
+Приоритет: 🟡 | Статус: открыта
+
+Описание: `python scripts/run_zone_regression.py all` — зона `hermes_eval` падает: `TestHermesIntents` case0–3 create/update, noop case2. P1/P6 смоук без hermes_eval — зелёные.
+
+Влияние: регрессия зоны «Hermes eval» не проходит локально; голос (`test_voice_pipeline`) — OK.
+
+Решение: проверить Ollama/LLM env, обновить фикстуры/ожидания после сплита `core/hermes/`; не смешивать hermes_eval с p1/p6 смоуком.
+
+Агент: rules-audit session
+
+---
+
 [2026-05-04] — GET /api/leads → 500: обрыв соединения с Postgres, не бизнес-логика
 
 Приоритет: 🟡 | Статус: закрыта ✅

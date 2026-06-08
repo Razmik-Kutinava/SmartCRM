@@ -88,4 +88,6 @@
 
 2026-06-07 | Действие: smartcrm-dev-gates.mdc (DoD, регрессия, миграции, API, hot-path); .cursorrules→индекс; agent-workflow+BACKLOG. | Следующий шаг: commit; ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
 
+2026-06-07 | Действие: Аудит правил — убран PRD Factory из `.cursorrules` и `smartcrm-*.mdc`; архив `docs/archive/PRD_FACTORY_DEPRECATED.md`; п.0 приоритета коммит+ops всегда; старт сессии + обязательный honest report; `run_zone_regression.py`; CURSOR_USER_RULES_SNIPPET. | Следующий шаг: commit; Фаза 1 PRD_MAP + go. | Вопросы: User Rules в Cursor вручную | Статус: done
+
 ---
