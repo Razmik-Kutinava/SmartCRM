@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fetchLeads } from '$lib/leadsStorage.js';
-	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
+	import { createTask as apiCreateTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 
 	let tasks = $state([]);
@@ -33,7 +33,7 @@
 
 	onMount(load);
 
-	async function createTask(ev) {
+	async function submitTaskForm(ev) {
 		ev?.preventDefault();
 		if (!title.trim()) return;
 		saving = true;
@@ -48,7 +48,7 @@
 				sla_due: slaDue.trim() || null,
 				escalated: false,
 			};
-			await createTask(body);
+			await apiCreateTask(body);
 			title = '';
 			due = '';
 			slaDue = '';
@@ -96,7 +96,7 @@
 			<div class="text-red-400 text-sm">{err}</div>
 		{/if}
 
-		<form onsubmit={createTask} class="rounded-xl border border-gray-800 bg-gray-900/80 p-4 space-y-3 max-w-3xl">
+		<form onsubmit={submitTaskForm} class="rounded-xl border border-gray-800 bg-gray-900/80 p-4 space-y-3 max-w-3xl">
 			<div class="text-sm font-medium text-white">Новая задача</div>
 			<div class="grid sm:grid-cols-2 gap-3">
 				<input

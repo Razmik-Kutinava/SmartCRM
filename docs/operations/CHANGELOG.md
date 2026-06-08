@@ -20,6 +20,12 @@
 
 ---
 
+## 2026-06-08 — Acceptance блока «Лиды»: 81 pytest + DevTools + фикс tasks
+
+**Сделано:** acceptance suite, smoke localhost:5174, фикс `/leads/tasks`, LEADS_BLOCK_ACCEPTANCE.md.
+
+---
+
 ## 2026-06-08 — PRD_MAP п.12 + блок «Лиды» закрыт
 
 **Сделано:** smoke_leads_block.py (71 pytest), leadsRouteManifest, расширена зона crm_leads; перепроход п.1–12 завершён.

@@ -48,6 +48,7 @@ pytest tests/api/ -q
 | `lib/test_crm_redirect_map.py` | Зеркало crmRedirectMap.js (308 /crm→/leads) |
 | `lib/test_leads_route_manifest.py` | Зеркало leadsRouteManifest.js |
 | `smoke/test_leads_block_smoke.py` | E2E смоук API блока Лиды |
+| `smoke/test_leads_block_acceptance.py` | Acceptance PRD_MAP п.1–12 (API) |
 | `test_lead_score_advisory.py` | Скор-советы |
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |

@@ -10,6 +10,18 @@
 
 ---
 
+[2026-06-08] — `/leads/tasks`: 500 compile (shadow `createTask`)
+
+Приоритет: 🔴 | Статус: закрыта ✅
+
+Описание: DevTools смоук п.12 — `+page.svelte` 500, рекурсия импорта `createTask`.
+
+Решение: `apiCreateTask` + `submitTaskForm` в `frontend/src/routes/leads/tasks/+page.svelte`.
+
+Агент: PRD_MAP п.12 acceptance
+
+---
+
 [2026-06-08] — Битрикс: мгновенный синк (вебхук + публичный URL)
 
 Приоритет: 🟡 | Статус: отложена → [`BACKLOG.md`](BACKLOG.md)

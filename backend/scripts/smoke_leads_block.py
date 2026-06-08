@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Смоук блока «Лиды» (Фаза 1): pytest-регрессия + опционально HTTP фронта."""
+"""Смоук блока «Лиды» (Фаза 1): pytest-регрессия + HTTP фронта (localhost)."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ BACKEND_ROOT = Path(__file__).resolve().parents[1]
 
 LEADS_PYTEST_PATHS = [
     "tests/smoke/test_leads_block_smoke.py",
+    "tests/smoke/test_leads_block_acceptance.py",
     "tests/lib/test_leads_route_manifest.py",
     "tests/lib/test_crm_redirect_map.py",
     "tests/lib/test_funnel_dnd.py",
@@ -35,15 +36,36 @@ LEADS_PYTEST_PATHS = [
 ]
 
 FRONTEND_SMOKE_PATHS = [
+    "/leads",
     "/leads/list",
     "/leads/funnel",
     "/leads/calendar",
     "/leads/tasks",
     "/leads/focus",
     "/leads/analytics",
+    "/crm",
     "/crm/list",
     "/crm/funnel",
+    "/crm/calendar",
+    "/crm/tasks",
+    "/crm/focus",
+    "/crm/analytics",
 ]
+
+
+def _frontend_base_url() -> str:
+    if os.environ.get("LEADS_SMOKE_FRONTEND_URL"):
+        base = os.environ["LEADS_SMOKE_FRONTEND_URL"].rstrip("/")
+        return base.replace("127.0.0.1", "localhost")
+    for port in (5174, 5173, 4173):
+        base = f"http://localhost:{port}"
+        try:
+            with urlopen(f"{base}/leads/list", timeout=2) as resp:
+                if resp.status < 400:
+                    return base
+        except URLError:
+            continue
+    return "http://localhost:5174"
 
 
 def run_pytest() -> tuple[bool, str]:
@@ -60,7 +82,7 @@ def probe_frontend(base: str) -> tuple[bool, list[str]]:
         url = f"{base.rstrip('/')}{path}"
         try:
             req = Request(url, method="GET")
-            with urlopen(req, timeout=8) as resp:
+            with urlopen(req, timeout=10) as resp:
                 if resp.status >= 400:
                     failed.append(f"{path} -> HTTP {resp.status}")
         except URLError as e:
@@ -69,6 +91,7 @@ def probe_frontend(base: str) -> tuple[bool, list[str]]:
 
 
 def main() -> int:
+    strict_front = os.environ.get("LEADS_SMOKE_STRICT_FRONTEND", "").lower() in ("1", "true", "yes")
     print("SmartCRM smoke — блок «Лиды» (Фаза 1)\n")
     ok, tail = run_pytest()
     status = "PASS" if ok else "FAIL"
@@ -76,19 +99,21 @@ def main() -> int:
     if tail:
         print(tail)
 
-    front_base = os.environ.get("LEADS_SMOKE_FRONTEND_URL", "http://127.0.0.1:5173")
+    front_base = _frontend_base_url()
     f_ok, f_errs = probe_frontend(front_base)
     if f_ok:
         print(f"\n[PASS] frontend GET {front_base} ({len(FRONTEND_SMOKE_PATHS)} paths)")
     else:
-        print(f"\n[WARN] frontend smoke skipped/failed ({front_base}):")
-        for line in f_errs[:8]:
+        print(f"\n[WARN] frontend smoke ({front_base}):")
+        for line in f_errs[:12]:
             print(f"  {line}")
-        print("  (запусти `npm run dev` в frontend/ и повтори)")
+        print("  (запусти `npm run dev` в frontend/; Vite часто на :5174)")
 
     if not ok:
         return 1
-    print("\nLeads block regression: OK (pytest).")
+    if strict_front and not f_ok:
+        return 1
+    print("\nLeads block regression: OK.")
     return 0
 
 

@@ -1,22 +1,26 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[PRD_MAP блок «Лиды»] | Статус:ЗАКРЫТ`
+`Спринт:[Фаза 1] | Задача:[блок «Лиды»] | Статус:ACCEPTANCE DONE — ждём апрув`
 
-**Блок «Лиды `/leads`» (п.1–12) — перепроход завершён 2026-06-08.**
+**Блок «Лиды» готов к закрытию.** Перепроход п.1–12 + финальный acceptance 2026-06-08.
 
-**Следующий шаг:** Фаза 1 — следующий модуль по PRD_MAP (балльная воронка смоук / голос / поиск). Ждём `go` от пользователя.
+## Прогоны (все зелёные)
 
-**П.12 смоук:**
-- `backend/scripts/smoke_leads_block.py` — 19 модулей pytest, **71 passed**
-- `leadsRouteManifest.js` — канон 6 вкладок + card/campaign
-- `run_zone_regression.py crm_leads` — зона расширена
-- Frontend HTTP: WARN (dev-сервер не был запущен); при смоук UI — `npm run dev` + повтор скрипта
+| Проверка | Результат |
+|----------|-----------|
+| `python scripts/smoke_leads_block.py` | **81 pytest PASS** + **14 HTTP frontend PASS** (`localhost:5174`) |
+| `python scripts/run_zone_regression.py crm_leads` | PASS |
+| DevTools UI | list, funnel, calendar, **tasks (после фикса)**, focus, analytics, card, /crm redirects |
 
-**Команда регрессии:**
-```bash
-cd backend && python scripts/smoke_leads_block.py
-cd backend && python scripts/run_zone_regression.py crm_leads
-```
+Детали: `docs/operations/LEADS_BLOCK_ACCEPTANCE.md`
+
+## Фикс в этом шаге
+
+- `/leads/tasks` — shadow `createTask` → `submitTaskForm` / `apiCreateTask` (ISSUES закрыт)
+
+## Следующий шаг (после апрува)
+
+Фаза 1 → следующий модуль PRD_MAP: **балльная воронка (смоук формулы)** или **голос → лиды**.
 
 **Блокеры:** нет 🔴
 

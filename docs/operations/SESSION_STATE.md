@@ -30,6 +30,8 @@
 
 2026-06-08 | Действие: п.12 смоук /leads/* — `smoke_leads_block.py`, `leadsRouteManifest.js`, E2E smoke; 71 pytest passed; блок Лиды закрыт. | Следующий шаг: Фаза 1 — следующий модуль PRD_MAP. | Статус: done
 
+2026-06-08 | Действие: acceptance блока Лиды — 81 pytest + 14 HTTP + DevTools все экраны; фикс `/leads/tasks` createTask shadow; `test_leads_block_acceptance.py`, `LEADS_BLOCK_ACCEPTANCE.md`. | Следующий шаг: апрув пользователя → следующий модуль Фазы 1. | Статус: done
+
 2026-06-08 | Действие: Единое правило `smartcrm-commit-ops.mdc` — всегда commit+ops, push по апруву; убраны дубли/конфликты в `.mdc`, `.cursorrules`, RULES_MATRIX, SESSION_STATE; `check_rules_commit_conflict.py`. | Следующий шаг: Фаза 1 PRD_MAP п.3 + `go`. | Статус: done
 
 2026-06-08 | Действие: User Rules — проверка: в локальных файлах Cursor нет (облако); добавлены `AGENTS.md`, `verify_cursor_rules_precedence.py`, `CURSOR_USER_RULES_STATUS.md` — Project Rules перебивают User Rules. | Следующий шаг: PRD_MAP п.3 + `go`. | Статус: done

@@ -12,6 +12,7 @@ BACKEND_ROOT = Path(__file__).resolve().parents[1]
 ZONES: dict[str, list[str]] = {
     "crm_leads": [
         "tests/smoke/test_leads_block_smoke.py",
+        "tests/smoke/test_leads_block_acceptance.py",
         "tests/lib/test_leads_route_manifest.py",
         "tests/lib/test_crm_redirect_map.py",
         "tests/lib/test_funnel_dnd.py",
