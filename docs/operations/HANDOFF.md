@@ -10,7 +10,8 @@
 
 **Блокеры:** нет 🔴. 🟡 `hermes_eval` 9 failed (ISSUES, отдельно от п.1).
 
-**Последние коммиты:** *(обновится после коммита этого шага)*
+**Последние коммиты:**
+- 4ec4b6a fix: PRD_MAP p.1 CRUD leads card edit UI and frontend dev win-arm64
 
 **Открытые вопросы:** нет.
 
