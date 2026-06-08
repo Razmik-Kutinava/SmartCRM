@@ -29,7 +29,7 @@
 | `/leads/{id}` | Карточка сделки |
 | `/leads/campaign/{id}` | Черновик кампании по лиду |
 
-Таб-навигация: `frontend/src/routes/leads/+layout.svelte`.
+Таб-навигация: `frontend/src/routes/leads/+layout.svelte`. Канон маршрутов для смоука: `frontend/src/lib/leads/leadsRouteManifest.js`; регрессия: `cd backend && python scripts/smoke_leads_block.py`.
 
 Общий лейаут приложения (`+layout.svelte`) для интентов голоса считает зону «лиды» и по **`/leads`**, и по **`/crm`**, чтобы редирект не ломал сценарии «покажи лиды».
 

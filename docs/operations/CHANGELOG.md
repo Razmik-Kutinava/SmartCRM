@@ -20,6 +20,12 @@
 
 ---
 
+## 2026-06-08 — PRD_MAP п.12 + блок «Лиды» закрыт
+
+**Сделано:** smoke_leads_block.py (71 pytest), leadsRouteManifest, расширена зона crm_leads; перепроход п.1–12 завершён.
+
+---
+
 ## 2026-06-08 — PRD_MAP п.11: редиректы /crm → /leads
 
 **Сделано:** crmRedirectMap.js, рефактор 9 route loaders, campaign redirect, тесты.

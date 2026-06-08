@@ -1,15 +1,22 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[PRD_MAP перепроход /leads] | Статус:п.11 закрыт → п.12`
+`Спринт:[Фаза 1] | Задача:[PRD_MAP блок «Лиды»] | Статус:ЗАКРЫТ`
 
-**Следующий шаг:** **п.12 «Смоук всех экранов `/leads/*`»** — регрессия. Ждём `go`.
+**Блок «Лиды `/leads`» (п.1–12) — перепроход завершён 2026-06-08.**
 
-**Сделано (п.11):**
-- Единая карта `crmRedirectMap.js` (308)
-- Все `/crm/*` + новый `/crm/campaign/{id}` → `/leads/*`
-- pytest 3 passed (mirror lib)
+**Следующий шаг:** Фаза 1 — следующий модуль по PRD_MAP (балльная воронка смоук / голос / поиск). Ждём `go` от пользователя.
 
-**Коммит:** `git log -1`
+**П.12 смоук:**
+- `backend/scripts/smoke_leads_block.py` — 19 модулей pytest, **71 passed**
+- `leadsRouteManifest.js` — канон 6 вкладок + card/campaign
+- `run_zone_regression.py crm_leads` — зона расширена
+- Frontend HTTP: WARN (dev-сервер не был запущен); при смоук UI — `npm run dev` + повтор скрипта
+
+**Команда регрессии:**
+```bash
+cd backend && python scripts/smoke_leads_block.py
+cd backend && python scripts/run_zone_regression.py crm_leads
+```
 
 **Блокеры:** нет 🔴
 
