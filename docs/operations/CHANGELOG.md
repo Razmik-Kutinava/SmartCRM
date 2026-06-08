@@ -20,6 +20,12 @@
 
 ---
 
+## 2026-06-08 — PRD_MAP п.11: редиректы /crm → /leads
+
+**Сделано:** crmRedirectMap.js, рефактор 9 route loaders, campaign redirect, тесты.
+
+---
+
 ## 2026-06-08 — PRD_MAP п.10: лог касаний лида
 
 **Сделано:** leadCommunications.js, RU-типы в UI, валидация API, тесты call/meeting/email.

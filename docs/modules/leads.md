@@ -49,6 +49,7 @@
 | `/crm/focus` | `/leads/focus` |
 | `/crm/analytics` | `/leads/analytics` |
 | `/crm/{id}` | `/leads/{id}` |
+| `/crm/campaign/{id}` | `/leads/campaign/{id}` |
 
 ---
 

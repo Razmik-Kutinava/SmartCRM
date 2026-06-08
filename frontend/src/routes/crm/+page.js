@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
+import { CRM_REDIRECT_STATUS, CRM_STATIC_REDIRECTS } from '$lib/leads/crmRedirectMap.js';
 
 /** Совместимость: /crm → лиды */
 export function load() {
-	throw redirect(308, '/leads/list');
+	throw redirect(CRM_REDIRECT_STATUS, CRM_STATIC_REDIRECTS['/crm']);
 }

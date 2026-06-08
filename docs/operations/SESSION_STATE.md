@@ -26,6 +26,8 @@
 
 2026-06-08 | Действие: п.10 лог касаний — `leadCommunications.js`, RU-лейблы типов, валидация content; pytest 9 passed. | Следующий шаг: `go` п.11 /crm редиректы. | Статус: done
 
+2026-06-08 | Действие: п.11 /crm редиректы — `crmRedirectMap.js`, +/crm/campaign/{id}; pytest 3 passed. | Следующий шаг: `go` п.12 смоук /leads/*. | Статус: done
+
 2026-06-08 | Действие: Единое правило `smartcrm-commit-ops.mdc` — всегда commit+ops, push по апруву; убраны дубли/конфликты в `.mdc`, `.cursorrules`, RULES_MATRIX, SESSION_STATE; `check_rules_commit_conflict.py`. | Следующий шаг: Фаза 1 PRD_MAP п.3 + `go`. | Статус: done
 
 2026-06-08 | Действие: User Rules — проверка: в локальных файлах Cursor нет (облако); добавлены `AGENTS.md`, `verify_cursor_rules_precedence.py`, `CURSOR_USER_RULES_STATUS.md` — Project Rules перебивают User Rules. | Следующий шаг: PRD_MAP п.3 + `go`. | Статус: done
