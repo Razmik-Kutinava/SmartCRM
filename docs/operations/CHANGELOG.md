@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-07 — BACKLOG + правило хвоста (PRD_MAP)
+
+**Сделано:** `docs/operations/BACKLOG.md`; § бэклог в `smartcrm-task-workflow.mdc` — привязка **только к пунктам PRD_MAP**, фаза MAP опционально («когда закрывать»).
+
+---
+
 ## 2026-06-07 — Anti-hallucination в task-workflow
 
 **Сделано:** в `smartcrm-task-workflow.mdc` § «Честный отчёт» — обязательная секция «Не сделано / не проверено» после каждого шага; запрет на ложный done без факта тестов.

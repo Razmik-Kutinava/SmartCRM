@@ -29,7 +29,7 @@
 | **[voice/](voice/)** | Голосовые команды и фразы для лидов |
 | **[agents/](agents/)** | AI-агенты LangGraph и Hermes |
 | **[stack/](stack/)** | Технологии: LLM, RAG, SvelteKit, LangGraph |
-| **[operations/](operations/)** | Журнал работы: HANDOFF, ISSUES, CHANGELOG |
+| **[operations/](operations/)** | Журнал работы: HANDOFF, ISSUES, BACKLOG, CHANGELOG |
 | **[dev/](dev/)** | Для разработчиков: workflow, [REPO_LAYOUT](dev/REPO_LAYOUT.md), [LAYOUT_AUDIT](dev/LAYOUT_AUDIT.md), code review |
 | **[archive/](archive/)** | Старые отчёты и тест-планы (не актуальный канон) |
 | **[reference/](reference/)** | Клон референс-проекта CRM Points (только для сравнения) |
