@@ -10,6 +10,30 @@
 
 ---
 
+[2026-06-08] — PRD_MAP п.1: UI Update лидов неполный (контакты read-only)
+
+Приоритет: 🟡 | Статус: закрыта ✅
+
+Описание: На `/leads/{id}` не было формы правки контактов/деталей.
+
+Решение: `leadCardEdit.js` + «Сохранить карточку»; убран `editingLead` в list. DevTools: PATCH contact/industry OK.
+
+Агент: PRD_MAP Фаза 1 pass
+
+---
+
+[2026-06-08] — Frontend dev: native bindings win32-arm64 (rollup/lightningcss)
+
+Приоритет: 🟡 | Статус: закрыта ✅
+
+Описание: `npm run dev` падал на rollup/lightningcss (npm/cli#4828).
+
+Решение: Vite 6 + rollup wasm override + `scripts/ensure-native-deps.cjs`. Dev server OK.
+
+Агент: PRD_MAP Фаза 1 pass
+
+---
+
 [2026-06-07] — `test_hermes_eval.py`: 9 failed (интенты create/update/noop)
 
 Приоритет: 🟡 | Статус: открыта

@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-08 — PRD_MAP п.1: CRUD лидов UI + frontend dev (win-arm64)
+
+**Сделано:** форма редактирования карточки лида (`leadCardEdit.js`, `/leads/{id}`); фикс `npm run dev` (Vite 6, rollup wasm, lightningcss binding script); тесты `test_leads_api` + `test_lead_card_edit`; DevTools-смоук CRUD.
+
+**Зачем:** закрыть хвост п.1 «CRUD лидов (API + UI)» перед переходом к п.2 PRD_MAP.
+
+---
+
 ## 2026-06-08 — Правила: коммит+ops безусловно (запрет «скажи если нужен»)
 
 **Сделано:** `agent-workflow` §0 железное правило; `task-workflow`, `dev-gates`, `.cursorrules`, `RULES_MATRIX`, `CURSOR_USER_RULES_SNIPPET`; `check_agent_step.py` — незакоммиченное = FAIL.

@@ -78,6 +78,25 @@ async def test_update_lead_email(client):
 
 
 @pytest.mark.asyncio
+async def test_update_lead_amount_rub_camelcase(client):
+    """PATCH с amountRub/paidAmountRub (как карточка /leads/{id}) сохраняется в БД."""
+    create_r = await client.post("/api/leads", json={"company": "Суммы CRUD"})
+    lead_id = create_r.json()["id"]
+
+    patch_r = await client.patch(
+        f"/api/leads/{lead_id}",
+        json={"amountRub": 125000.5, "paidAmountRub": 50000},
+    )
+    assert patch_r.status_code == 200
+    assert patch_r.json()["amountRub"] == 125000.5
+    assert patch_r.json()["paidAmountRub"] == 50000.0
+
+    get_r = await client.get(f"/api/leads/{lead_id}")
+    assert get_r.json()["amountRub"] == 125000.5
+    assert get_r.json()["paidAmountRub"] == 50000.0
+
+
+@pytest.mark.asyncio
 async def test_update_lead_stage(client):
     """PATCH обновляет этап воронки."""
     create_r = await client.post("/api/leads", json={"company": "Сменить этап"})

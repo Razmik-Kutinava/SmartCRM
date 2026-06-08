@@ -1,22 +1,17 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Проход PRD_MAP] | Статус:в работе`
+`Спринт:[Фаза 1] | Задача:[PRD_MAP п.1 CRUD лидов] | Статус:ждём апрув п.1`
 
-**Следующий шаг:** Фаза 1 — явный пункт PRD_MAP + `go`. Рекомендуется: 🔴 «Расширить интенты Hermes» / `test_hermes_eval.py`.
+**Следующий шаг:** апрув п.1 → **п.2 «Поля уровня Битрикс»** (перепроход по PRD_MAP).
 
 **Процесс:** `RULES_MATRIX.md` → тесты → коммит → ops → `check_agent_step.py` → стоп.
 
-**Блокеры:** нет 🔴. 🟡 `hermes_eval` 9 failed (ISSUES).
+**Сделано в шаге:** UI edit карточки; frontend dev на win-arm64; pytest crm_leads 22 passed; DevTools CRUD OK.
 
-**User Rules Cursor:** вставлены ✅
+**Блокеры:** нет 🔴. 🟡 `hermes_eval` 9 failed (ISSUES, отдельно от п.1).
 
-**Последние коммиты:**
-- bf619af docs: HANDOFF 86a8e7a mandatory commit rules
-- 86a8e7a docs: mandatory commit+ops, forbid asking user for commit
-- 16c0d86 docs: HANDOFF bcce33c after ops sync
-- bcce33c docs: ops sync RULES_MATRIX, check_agent_step, PRD_MAP cleanup
-- 406871d docs: HANDOFF hash 28ab125 after rules commit
+**Последние коммиты:** *(обновится после коммита этого шага)*
 
-**Открытые вопросы:** нет. `main` запушен в origin.
+**Открытые вопросы:** нет.
 
 ---

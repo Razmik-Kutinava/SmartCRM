@@ -27,7 +27,6 @@
 	let filterStage = $state('all');
 	let showVoice = $state(false); // голос теперь глобальный — в layout
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
-	let editingLead = $state(null); // лид в режиме редактирования
 	let apiError = $state(false); // флаг недоступности API
 	let bitrixImporting = $state(false);
 	/** @type {{ bitrix_total: number | null, local_bitrix_leads_count: number, date_from?: string } | null} */

@@ -24,6 +24,7 @@
 		defaultApprovals,
 		mergeApprovals,
 	} from '$lib/leadApprovals.js';
+	import { detailsDraftFromLead, patchFromDetailsDraft } from '$lib/leads/leadCardEdit.js';
 
 	let lead    = $state(null);
 	let notFound = $state(false);
@@ -60,6 +61,7 @@
 			}
 			sync();
 			syncMoneyInputsFromLead();
+			syncDetailsDraftFromLead();
 			await loadLeadActivity();
 		}
 		pullLead();
@@ -80,6 +82,39 @@
 	let commContent = $state('');
 	let commSaving = $state(false);
 	let approvalsSaving = $state(false);
+	let detailsDraft = $state(detailsDraftFromLead(null));
+	let detailsSaving = $state(false);
+
+	function syncDetailsDraftFromLead() {
+		detailsDraft = detailsDraftFromLead(lead);
+	}
+
+	async function saveDetailsFields() {
+		if (!lead || detailsSaving) return;
+		let patch;
+		try {
+			patch = patchFromDetailsDraft(detailsDraft);
+		} catch (e) {
+			alert(e?.message || String(e));
+			return;
+		}
+		detailsSaving = true;
+		try {
+			await apiUpdateLead(lead.id, patch);
+			await fetchLeadById(lead.id);
+			const fresh = await fetchLeads();
+			writeLeadsCache(fresh);
+			sync();
+			syncDetailsDraftFromLead();
+			syncMoneyInputsFromLead();
+			await loadLeadActivity();
+		} catch (e) {
+			console.error(e);
+			alert('Не удалось сохранить поля: ' + (e?.message || e));
+		} finally {
+			detailsSaving = false;
+		}
+	}
 
 	async function loadLeadActivity() {
 		const id = String(get(page).params.id ?? '');
@@ -500,25 +535,71 @@
 				</div>
 
 				<div class="space-y-2">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Контакты</div>
-					<div class="space-y-1.5 text-sm">
-						<div class="flex items-center gap-2 text-gray-300">
-							<span class="text-gray-600 w-4">✉</span>
-							{#if lead.email && lead.email !== '—'}
-								<button class="text-indigo-400 hover:text-indigo-300 transition-colors text-left"
-									onclick={() => { onTabChange('emails'); openCompose(lead.email); }}>
-									{lead.email}
-								</button>
-							{:else}
-								<span class="text-gray-500">—</span>
-							{/if}
-						</div>
-						<div class="flex items-center gap-2 text-gray-300">
-							<span class="text-gray-600 w-4">✆</span> {lead.phone}
-						</div>
-						<div class="flex items-center gap-2 text-gray-300">
-							<span class="text-gray-600 w-4">🌐</span> {lead.website}
-						</div>
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Карточка (редактирование)</div>
+					<div class="space-y-2 text-sm">
+						<label class="block">
+							<span class="text-gray-500 text-xs">Компания</span>
+							<input bind:value={detailsDraft.company} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Контакт</span>
+							<input bind:value={detailsDraft.contact} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Email</span>
+							<input bind:value={detailsDraft.email} type="email" class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Телефон</span>
+							<input bind:value={detailsDraft.phone} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Сайт</span>
+							<input bind:value={detailsDraft.website} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Скоринг (0–100)</span>
+							<input bind:value={detailsDraft.scoreStr} inputmode="numeric" class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Отрасль</span>
+							<input bind:value={detailsDraft.industry} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Город</span>
+							<input bind:value={detailsDraft.city} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Сотрудники</span>
+							<input bind:value={detailsDraft.employees} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Бюджет (текст)</span>
+							<input bind:value={detailsDraft.budget} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Следующий звонок</span>
+							<input bind:value={detailsDraft.nextCall} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Описание / заметка</span>
+							<textarea bind:value={detailsDraft.description} rows="3" class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm resize-y"></textarea>
+						</label>
+						{#if detailsDraft.email.trim()}
+							<button
+								type="button"
+								class="text-xs text-indigo-400 hover:text-indigo-300 text-left"
+								onclick={() => { onTabChange('emails'); openCompose(detailsDraft.email.trim()); }}
+							>✉ Написать на {detailsDraft.email}</button>
+						{/if}
+						<button
+							type="button"
+							disabled={detailsSaving}
+							onclick={saveDetailsFields}
+							class="w-full py-1.5 rounded-lg text-xs font-medium bg-indigo-900/60 hover:bg-indigo-800/70 text-indigo-100 disabled:opacity-50"
+						>
+							{detailsSaving ? 'Сохранение…' : 'Сохранить карточку'}
+						</button>
 					</div>
 				</div>
 
@@ -588,32 +669,20 @@
 				</div>
 
 				<div class="space-y-2">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Детали</div>
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Системные поля</div>
 					<div class="space-y-2 text-sm">
 						{#each [
-							['Отрасль',        lead.industry],
-							['Сотрудники',     lead.employees],
-							['Город',          lead.city],
-							['Источник',       lead.source],
-							['Бюджет (текст)', lead.budget],
-							['Ответственный',  lead.responsible],
-							['Создан',         lead.created],
-							['Следующий звонок', lead.nextCall],
+							['Источник', lead.source],
+							['Ответственный', lead.responsible],
+							['Создан', lead.created],
 						] as [label, value]}
-							<div class="flex justify-between">
-								<span class="text-gray-500">{label}</span>
-								<span class="text-gray-300">{value}</span>
+							<div class="flex justify-between gap-2">
+								<span class="text-gray-500 shrink-0">{label}</span>
+								<span class="text-gray-300 text-right">{value}</span>
 							</div>
 						{/each}
 					</div>
 				</div>
-
-				{#if lead.description}
-					<div class="space-y-1.5">
-						<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Описание</div>
-						<p class="text-sm text-gray-300 leading-relaxed">{lead.description}</p>
-					</div>
-				{/if}
 
 				<div class="space-y-2">
 					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Сменить этап</div>

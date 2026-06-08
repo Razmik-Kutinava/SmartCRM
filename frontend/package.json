@@ -7,18 +7,22 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''"
+		"postinstall": "node scripts/ensure-native-deps.cjs",
+		"prepare": "node scripts/ensure-native-deps.cjs && svelte-kit sync || echo ''"
 	},
 	"devDependencies": {
-		"@types/node": "^22.10.0",
-		"@sveltejs/adapter-auto": "^7.0.1",
+		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/kit": "^2.57.0",
-		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"@sveltejs/vite-plugin-svelte": "^5.1.0",
+		"@types/node": "^22.10.0",
 		"svelte": "^5.55.2",
-		"vite": "^8.0.7"
+		"vite": "^6.3.5"
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.2.2",
 		"tailwindcss": "^4.2.2"
+	},
+	"overrides": {
+		"rollup": "npm:@rollup/wasm-node@4.61.1"
 	}
 }
