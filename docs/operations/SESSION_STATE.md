@@ -10,6 +10,8 @@
 
 2026-06-08 | Действие: коммит п.2 — `f2727a3` feat: автосинк Битрикс (webhooks_bitrix, bitrix24_sync, amount_rub, опрос 5 мин); pytest integrations 4 passed. | Следующий шаг: `go` п.3 Kanban DnD. | Статус: done
 
+2026-06-08 | Действие: п.3 Kanban DnD — `funnelDnD.js`, drag-drop на `/leads/funnel`, rollback при блоке стадии; pytest 16 passed (funnel_dnd + leads_api). | Следующий шаг: `go` п.4 список/фильтры. | Статус: done
+
 2026-06-08 | Действие: Единое правило `smartcrm-commit-ops.mdc` — всегда commit+ops, push по апруву; убраны дубли/конфликты в `.mdc`, `.cursorrules`, RULES_MATRIX, SESSION_STATE; `check_rules_commit_conflict.py`. | Следующий шаг: Фаза 1 PRD_MAP п.3 + `go`. | Статус: done
 
 2026-06-08 | Действие: User Rules — проверка: в локальных файлах Cursor нет (облако); добавлены `AGENTS.md`, `verify_cursor_rules_precedence.py`, `CURSOR_USER_RULES_STATUS.md` — Project Rules перебивают User Rules. | Следующий шаг: PRD_MAP п.3 + `go`. | Статус: done

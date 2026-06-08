@@ -20,6 +20,12 @@
 
 ---
 
+## 2026-06-08 — PRD_MAP п.3: Kanban drag & drop на воронке
+
+**Сделано:** DnD карточек между колонками, оптимистичный PATCH, rollback при `stage_transition_blocked`; тесты lib + API.
+
+---
+
 ## 2026-06-08 — feat: автосинк лидов из Битрикс24 (`f2727a3`)
 
 **Сделано:** `webhooks_bitrix.py`, `bitrix24_sync.py`, `amount_rub`, `GET bitrix-sync-status`, фоновый опрос, тесты integrations.

@@ -31,6 +31,7 @@ pytest tests/api/ -q
 | `test_voice_pipeline.py` | Hermes интенты, orchestrator, голос |
 | `test_tender_sources.py` | Источники тендеров |
 | `test_stage_transition.py` | Переходы стадий CRM |
+| `lib/test_funnel_dnd.py` | Воронка Kanban DnD (зеркало funnelDnD.js) |
 | `test_lead_score_advisory.py` | Скор-советы |
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |

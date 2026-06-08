@@ -108,6 +108,34 @@ async def test_update_lead_stage(client):
 
 
 @pytest.mark.asyncio
+async def test_update_lead_stage_blocked(client, monkeypatch):
+    """PATCH stage → 400 stage_transition_blocked при правилах CRM."""
+    from core import crm_settings_store
+
+    monkeypatch.setattr(
+        crm_settings_store,
+        "load_settings",
+        lambda: {
+            "stages": ["Новый", "Выигран"],
+            "stage_transition_rules": [
+                {"to_stage": "Выигран", "require_non_empty": ["email"]},
+            ],
+        },
+    )
+    create_r = await client.post(
+        "/api/leads",
+        json={"company": "Блок стадии", "email": "—"},
+    )
+    lead_id = create_r.json()["id"]
+
+    patch_r = await client.patch(f"/api/leads/{lead_id}", json={"stage": "Выигран"})
+    assert patch_r.status_code == 400
+    detail = patch_r.json()["detail"]
+    assert detail["code"] == "stage_transition_blocked"
+    assert detail["messages"]
+
+
+@pytest.mark.asyncio
 async def test_update_lead_not_found(client):
     """PATCH несуществующего → 404."""
     r = await client.patch("/api/leads/99999", json={"stage": "Выигран"})
