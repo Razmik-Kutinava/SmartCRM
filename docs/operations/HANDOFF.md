@@ -6,7 +6,7 @@
 
 **Процесс:** `smartcrm-commit-ops.mdc` → тесты → **всегда** commit + ops → стоп до `go`. Push — только по апруву.
 
-**Последние коммиты:** см. `git log -3` (правила + AGENTS.md override)
+**Последние коммиты:** `f9b0f77` docs: backlog туннель и исходящий вебхук Битрикса
 
 **User Rules:** не в репо — `CURSOR_USER_RULES_STATUS.md`; для SmartCRM достаточно `AGENTS.md` + `commit-ops.mdc`.
 
