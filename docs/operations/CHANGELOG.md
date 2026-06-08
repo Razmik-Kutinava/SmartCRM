@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-08 — PRD_MAP: журнал перепрохода, п.1 CRUD ✅
+
+**Сделано:** в `PRD_MAP.md` (§ Лиды) — таблица перепрохода 2026-06-08; п.1 CRUD отмечен OK; текущий шаг → п.2 «Поля уровня Битрикс».
+
+---
+
 ## 2026-06-08 — PRD_MAP п.1: CRUD лидов UI + frontend dev (win-arm64)
 
 **Сделано:** форма редактирования карточки лида (`leadCardEdit.js`, `/leads/{id}`); фикс `npm run dev` (Vite 6, rollup wasm, lightningcss binding script); тесты `test_leads_api` + `test_lead_card_edit`; DevTools-смоук CRUD.

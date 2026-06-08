@@ -10,6 +10,8 @@
 
 2026-06-08 | Действие: Вариант B п.1 CRUD — UI edit форма на `/leads/{id}` (`leadCardEdit.js`); frontend Vite 6 + rollup wasm + `ensure-native-deps.cjs`; убран `editingLead`; тесты 15 passed + `crm_leads` 22 passed; DevTools CRUD+карточка OK. | Следующий шаг: коммит → апрув п.1 → п.2 PRD_MAP. | QA: crm_leads PASS, DevTools contact/industry PATCH OK | Статус: done
 
+2026-06-08 | Действие: PRD_MAP §Лиды — таблица перепрохода: п.1 CRUD ✅ OK (2026-06-08); указатель на п.2 «Поля Битрикс». | Следующий шаг: `go` на п.2. | Статус: done
+
 2026-05-04 | Действие: ROOT CAUSE найден и устранён — база `smartcrm` и юзер `smartcrm` отсутствовали в Postgres; созданы через psql; uvicorn перезапущен → `init_db` применил схему; проверено: `/api/leads` → 200 OK, `/api/leads/1791` → 404 (база пустая). Ошибок 500 нет. | Следующий шаг: импорт/сид данных (Bitrix или `seed_eval_benchmark_leads.py`) при необходимости; коммит фиксов. | Вопросы: нет | Статус: done
 
 2026-05-04 | Действие: Доп. фикс RST при connect — в `db/session.py`: нормализация `@localhost`→`127.0.0.1` (env `DATABASE_FORCE_IPV4`), дефолт URL на `127.0.0.1`, `connect_args` timeout + опционально `DATABASE_SSL=disable`; `.env.example` обновлён. | Следующий шаг: перезапуск uvicorn; при своём `.env` с localhost — перезагрузить без смены файла (нормализация сработает). | Вопросы: нет | Статус: done

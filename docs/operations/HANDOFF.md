@@ -1,8 +1,8 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[PRD_MAP п.1 CRUD лидов] | Статус:ждём апрув п.1`
+`Спринт:[Фаза 1] | Задача:[PRD_MAP перепроход /leads] | Статус:п.1 закрыт → п.2`
 
-**Следующий шаг:** апрув п.1 → **п.2 «Поля уровня Битрикс»** (перепроход по PRD_MAP).
+**Следующий шаг:** **п.2 «Поля уровня Битрикс»** — перепроход (pytest + код + DevTools). Ждём `go`.
 
 **Процесс:** `RULES_MATRIX.md` → тесты → коммит → ops → `check_agent_step.py` → стоп.
 
@@ -10,9 +10,7 @@
 
 **Блокеры:** нет 🔴. 🟡 `hermes_eval` 9 failed (ISSUES, отдельно от п.1).
 
-**Последние коммиты:**
-- 438aecf docs: HANDOFF after 4ec4b6a PRD_MAP p.1 CRUD
-- 4ec4b6a fix: PRD_MAP p.1 CRUD leads card edit UI and frontend dev win-arm64
+**Последние коммиты:** *(после коммита PRD_MAP journal)*
 
 **Открытые вопросы:** нет.
 
