@@ -11,7 +11,9 @@
 | `git commit` + ops | **Всегда**, если шаг менял файлы |
 | `git push` | **Только** явный апрув пользователя |
 
-Проверки: `check_agent_step.py`, `check_rules_commit_conflict.py`.
+Проверки: `verify_cursor_rules_precedence.py`, `check_agent_step.py`, `check_rules_commit_conflict.py`.
+
+`AGENTS.md` в корне — дубль для приоритета над User Rules (см. `CURSOR_USER_RULES_STATUS.md`).
 
 ## Сводка правил
 

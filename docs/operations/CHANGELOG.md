@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-08 — AGENTS.md + verify: Project Rules перебивают User Rules
+
+**Сделано:** расследование хранения User Rules (облако Cursor, не файл); `AGENTS.md`; `verify_cursor_rules_precedence.py`; `CURSOR_USER_RULES_STATUS.md`.
+
+**Зачем:** агент не может править Settings → Rules; project-level override без ручной правки UI.
+
+---
+
 ## 2026-06-08 — Процесс: единое правило commit + ops
 
 **Сделано:** `smartcrm-commit-ops.mdc` — канон (всегда `git commit` + ops; `git push` только по апруву). Остальные `.mdc` ссылаются на него без дублей. `check_rules_commit_conflict.py` — автопроверка конфликтов в rules/ops. Очищены формулировки «коммит по запросу» / «стоп до апрува» в SESSION_STATE.

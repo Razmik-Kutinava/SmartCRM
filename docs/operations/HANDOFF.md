@@ -6,7 +6,9 @@
 
 **Процесс:** `smartcrm-commit-ops.mdc` → тесты → **всегда** commit + ops → стоп до `go`. Push — только по апруву.
 
-**Последние коммиты:** `850992c` (единое правило commit+ops), `bcce33c`, `28ab125`
+**Последние коммиты:** см. `git log -3` (правила + AGENTS.md override)
+
+**User Rules:** не в репо — `CURSOR_USER_RULES_STATUS.md`; для SmartCRM достаточно `AGENTS.md` + `commit-ops.mdc`.
 
 **Сделано в шаге (п.2):**
 - Маппинг полей Битрикс → Lead (+ `amount_rub` из OPPORTUNITY/RUB)

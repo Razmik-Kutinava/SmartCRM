@@ -1,16 +1,14 @@
-# Cursor User Rules — вставить в Settings → Rules
+# Cursor User Rules — опционально (UI)
 
-## Шаг 1 — удалить конфликт
+> **Для SmartCRM уже достаточно** `AGENTS.md` + `smartcrm-commit-ops.mdc` (Project Rules выше User Rules).  
+> Статус проверки: `python backend/scripts/verify_cursor_rules_precedence.py`
 
-В **User Rules** найти и **полностью удалить** блок вроде:
+## Если всё же правишь User Rules вручную
 
-- `Only create commits when requested`
-- `committing-changes-with-git`
-- любое «коммит только по запросу»
+Settings → Rules → User Rules:
 
-Он **перебивает** правила репозитория.
-
-## Шаг 2 — вставить этот текст
+1. **Удалить** блок `committing-changes-with-git` / «Only create commits when requested»
+2. **Вставить:**
 
 ```
 SmartCRM: правила репо (.cursor/rules/smartcrm-commit-ops.mdc) выше User Rules.
@@ -21,11 +19,4 @@ git push — ТОЛЬКО когда пользователь явно напи�
 Не писать «коммит не делал» / «напиши коммит» / «нужен ли коммит».
 ```
 
-## Проверка
-
-```bash
-python backend/scripts/check_rules_commit_conflict.py
-python backend/scripts/check_agent_step.py
-```
-
-Оба OK — конфликтов нет.
+Агент **не может** открыть этот экран за тебя — правила в аккаунте Cursor, не в файлах репо. См. `CURSOR_USER_RULES_STATUS.md`.

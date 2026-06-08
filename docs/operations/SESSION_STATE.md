@@ -8,6 +8,8 @@
 
 2026-06-08 | Действие: Единое правило `smartcrm-commit-ops.mdc` — всегда commit+ops, push по апруву; убраны дубли/конфликты в `.mdc`, `.cursorrules`, RULES_MATRIX, SESSION_STATE; `check_rules_commit_conflict.py`. | Следующий шаг: Фаза 1 PRD_MAP п.3 + `go`. | Статус: done
 
+2026-06-08 | Действие: User Rules — проверка: в локальных файлах Cursor нет (облако); добавлены `AGENTS.md`, `verify_cursor_rules_precedence.py`, `CURSOR_USER_RULES_STATUS.md` — Project Rules перебивают User Rules. | Следующий шаг: PRD_MAP п.3 + `go`. | Статус: done
+
 2026-06-08 | Действие: PRD_MAP Фаза 1 п.1 «CRUD лидов» — перепроход: pytest `test_leads_api` 12 passed (+ amountRub camelCase); live Postgres CRUD OK; код API `leads/crud.py` + UI list/card — review; UI смоук DevTools заблокирован (frontend rolldown). ISSUES: UI update неполный, rolldown. | Следующий шаг: апрув п.1 → п.2 «Поля уровня Битрикс» или фикс UI edit по go. | Вопросы: фиксить контакты в карточке в этом шаге? | Статус: ждём апрув
 
 2026-06-08 | Действие: Вариант B п.1 CRUD — UI edit форма на `/leads/{id}` (`leadCardEdit.js`); frontend Vite 6 + rollup wasm + `ensure-native-deps.cjs`; убран `editingLead`; тесты 15 passed + `crm_leads` 22 passed; DevTools CRUD+карточка OK. | Следующий шаг: `go` на п.2 PRD_MAP. | QA: crm_leads PASS, DevTools contact/industry PATCH OK | Статус: done
