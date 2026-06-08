@@ -151,5 +151,6 @@ alwaysApply: true
 
 ## 6. Связь с workflow
 
-После шага по структуре: коммит + `SESSION_STATE` + при смене статуса `HANDOFF` (см. `smartcrm-agent-workflow.mdc`).  
-Изменения в `backend/` — также §5 Backend README Sync.
+- **Задачи PRD_MAP / фичи / фиксы:** `.cursor/rules/smartcrm-task-workflow.mdc` (апрув `go`, тест на каждое изменение, коммит+ops всегда, push/deploy только по апруву).
+- **Структура репо:** коммит + `SESSION_STATE` + при смене статуса `HANDOFF`.
+- **`backend/`:** также §5 Backend README Sync.

@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-07 — Правило workflow задач (PRD_MAP)
+
+**Сделано:** `.cursor/rules/smartcrm-task-workflow.mdc` — явный пункт + `go`, тест на каждое изменение, коммит/ops без напоминания, push/deploy только по апруву. Ссылка в `smartcrm-repo-layout.mdc` §6.
+
+---
+
 ## 2026-06-07 — Backend README pack + правило синхронизации
 
 **Сделано:**

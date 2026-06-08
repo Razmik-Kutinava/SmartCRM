@@ -80,4 +80,6 @@
 
 2026-06-07 | Действие: правило §5 Backend README Sync в `smartcrm-repo-layout.mdc`; DRAFT → применено; CHANGELOG+HANDOFF. | Следующий шаг: commit+push; ждём задачу пользователя (Фаза 1 PRD_MAP). | Вопросы: нет | Статус: done
 
+2026-06-07 | Действие: `smartcrm-task-workflow.mdc` (go, тесты, авто commit/ops, push/deploy по апруву); ссылка в repo-layout §6. | Следующий шаг: commit; ждём пункт PRD_MAP от пользователя. | Вопросы: нет | Статус: done
+
 ---
