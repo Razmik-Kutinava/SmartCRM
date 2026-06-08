@@ -62,6 +62,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `crm_settings_store.py` | Настройки CRM (стадии, воронка) |
 | `lead_approvals.py` | Согласования смены стадии лида |
 | `lead_score_advisory.py` | Подсказки по скору лида |
+| `lead_priority_tier.py` | Приоритет лида по порогам CRM (зеркало `crmStages.js`) |
 | `lead_field_audit_util.py` | Аудит изменений полей лида |
 | `stage_transition.py` | Правила перехода между стадиями |
 | `task_dates.py` | Парсинг дат задач и статус SLA |

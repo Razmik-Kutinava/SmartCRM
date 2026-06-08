@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-08 — Балльная воронка: смоук формулы и приоритетов
+
+**Сделано:** `lead_priority_tier.py`, `smoke_scoring_funnel.py`, 21 pytest (формула scoreAdvisory, API, фильтр critical в списке); `SCORING_FUNNEL_ACCEPTANCE.md`; PRD_MAP пункт закрыт.
+
+**Зачем:** закрыть хвост PRD_MAP «смоук формулы и приоритетов в списке» без регрессии лидов.
+
+---
+
 ## 2026-06-08 — PRD_NOTES → канон (стек, docs map, gaps)
 
 **Сделано:** контент после ~1834 перенесён в `ARCHITECTURE.md#справочник-стека`, `docs/README.md`, `BACKLOG.md#документация-фаза-2`, `stack/RAG.md#коллекции-chroma`; дубли в `PRD_NOTES.md` удалены.

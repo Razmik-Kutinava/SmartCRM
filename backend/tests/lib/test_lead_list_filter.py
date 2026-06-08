@@ -1,6 +1,9 @@
 """Зеркало frontend/src/lib/leads/leadListFilter.js."""
 from __future__ import annotations
 
+from core.crm_settings_store import DEFAULT_SETTINGS
+from core.lead_priority_tier import lead_priority_tier
+
 PRIORITY_RANK = {"critical": 4, "high": 3, "medium": 2, "low": 1}
 
 
@@ -88,3 +91,17 @@ def test_sort_priority_desc():
     ]
     out = sort_leads(leads, "priority_desc", tier_fn=_tier_stub)
     assert [x["score"] for x in out] == [90, 75, 50]
+
+
+def test_filter_priority_uses_crm_thresholds():
+    cfg = {
+        "priority_thresholds": DEFAULT_SETTINGS["priority_thresholds"],
+        "score_range": DEFAULT_SETTINGS["score_range"],
+    }
+    tier_fn = lambda l: lead_priority_tier(l.get("score"), cfg)
+    leads = [
+        {"id": 1, "score": 90, "stage": "Новый", "company": "A"},
+        {"id": 2, "score": 50, "stage": "Новый", "company": "B"},
+    ]
+    out = filter_leads(leads, filter_priority="critical", tier_fn=tier_fn)
+    assert [x["id"] for x in out] == [1]

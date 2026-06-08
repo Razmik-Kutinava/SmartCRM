@@ -58,3 +58,19 @@ def test_approval_bonus_respects_cap():
     settings = {"scoring_advisory_enabled": True, "scoring_advisory": {"approval_bonus_cap": 10}}
     out = compute_lead_score_advisory(lead, [], settings)
     assert out["breakdown"]["approvalBonus"] == 10
+
+
+def test_divergence_warning_when_manager_far_from_suggested():
+    lead = {"stage": "Проигран", "score": 95, "amountRub": None, "paidAmountRub": None}
+    settings = {"scoring_advisory_enabled": True}
+    out = compute_lead_score_advisory(lead, [], settings)
+    assert any("отличается" in w.lower() for w in out["warnings"])
+
+
+def test_breakdown_includes_all_components():
+    lead = {"stage": "Квалифицирован", "score": 50, "amountRub": 100_000}
+    settings = {"scoring_advisory_enabled": True}
+    out = compute_lead_score_advisory(lead, [], settings)
+    b = out["breakdown"]
+    for key in ("baseFromStage", "amountBonus", "approvalBonus", "overduePenalty", "suggestedScore"):
+        assert key in b

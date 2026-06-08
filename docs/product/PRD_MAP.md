@@ -59,6 +59,16 @@
 
 ### Балльная воронка (P1+P2+P3 код)
 
+> **Перепроход (2026-06-08):** смоук формулы + приоритеты; `smoke_scoring_funnel.py` 21 pytest.
+
+| # | Пункт | Перепроход | Итог |
+|---|--------|------------|------|
+| 1 | `scoreAdvisory` + warnings + breakdown | 2026-06-08 | ✅ API GET/PATCH лида, юнит-тесты формулы |
+| 2 | Суммы ₽, апрувы, касания в формуле | 2026-06-08 | ✅ golden-тест base+bonus+penalty |
+| 3 | Балл менеджера, агенты не пишут score | 2026-06-08 | ✅ `agentsMayUpdateScore=false` в `/api/crm/config` |
+| 4 | Приоритеты в списке `/leads/list` | 2026-06-08 | ✅ `lead_priority_tier` = зеркало `crmStages.js`, фильтр critical |
+| 5 | Смоук регрессия | 2026-06-08 | ✅ `python scripts/smoke_scoring_funnel.py` — **блок закрыт** |
+
 - [x] `scoreAdvisory` + `warnings` + `breakdown`
 - [x] Суммы `amountRub` / `paidAmountRub`
 - [x] Балл задаёт менеджер; `agents_may_update_score=false`
@@ -67,7 +77,7 @@
 - [x] Апрувы + `approval_weights`
 - [x] `lead_communication_logs`
 - [ ] Экспорт по баллам / SLA-протоколы расширенные → **Фаза 3**
-- [ ] Смоук формулы и приоритетов в списке
+- [x] Смоук формулы и приоритетов в списке — **2026-06-08 ✅** (`SCORING_FUNNEL_ACCEPTANCE.md`)
 
 ### Голос → лиды (базово)
 

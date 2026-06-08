@@ -50,6 +50,8 @@ pytest tests/api/ -q
 | `smoke/test_leads_block_smoke.py` | E2E смоук API блока Лиды |
 | `smoke/test_leads_block_acceptance.py` | Acceptance PRD_MAP п.1–12 (API) |
 | `test_lead_score_advisory.py` | Скор-советы |
+| `core/test_lead_priority_tier.py` | Приоритет лида (зеркало crmStages.js) |
+| `smoke/test_scoring_funnel_smoke.py` | Смоук балльной воронки (API + формула) |
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |
 | `test_search.py` | Поиск |

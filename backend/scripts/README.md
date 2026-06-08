@@ -37,6 +37,7 @@
 | Скрипт | За что |
 |--------|--------|
 | `smoke_leads_block.py` | Смоук блока «Лиды»: pytest-регрессия + опц. GET фронта |
+| `smoke_scoring_funnel.py` | Смоук балльной воронки: формула scoreAdvisory + приоритеты |
 | `run_zone_regression.py` | Регрессия по зонам (crm_leads, leadgen, …) |
 | `_resplit_leadgen_pkgs.py` | One-off: пересборка pipeline/checko пакетов |
 
