@@ -64,6 +64,8 @@ docs/
 
 **Карта папок простыми словами:** [`backend/README.md`](../../backend/README.md) и README в каждой зоне (`api/`, `core/`, `leadgen/`, …).
 
+**Правила разработки агента:** `.cursor/rules/smartcrm-*.mdc` (workflow, dev-gates, layout, code-split).
+
 ```
 backend/
 ├── main.py                 # Точка входа FastAPI

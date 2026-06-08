@@ -1,104 +1,49 @@
-# SmartCRM — Cursor Rules
+# SmartCRM — Cursor Rules (индекс)
 
-## Рабочий процесс агента (обязательно)
+**Канон процесса и гейтов — в `.cursor/rules/*.mdc` (alwaysApply).** Этот файл — стек, стиль кода, вход в проект.
 
-См. [`.cursor/rules/smartcrm-agent-workflow.mdc`](.cursor/rules/smartcrm-agent-workflow.mdc):
+## Правила разработки (читать агенту)
 
-1. **Коммит** после каждого сделанного шага (пуш не обязателен).
-2. **Операционка** — `docs/operations/` после каждого действия, чтобы другой агент мог продолжить.
-3. **Один шаг → запись → стоп** до явного апрува на следующий шаг.
+| Файл | Содержание |
+|------|------------|
+| [`smartcrm-task-workflow.mdc`](.cursor/rules/smartcrm-task-workflow.mdc) | PRD_MAP, `go`, тесты, BACKLOG, anti-hallucination |
+| [`smartcrm-dev-gates.mdc`](.cursor/rules/smartcrm-dev-gates.mdc) | DoD, регрессия pytest, миграции, API, hot-path |
+| [`smartcrm-agent-workflow.mdc`](.cursor/rules/smartcrm-agent-workflow.mdc) | коммит, ops, один шаг |
+| [`smartcrm-repo-layout.mdc`](.cursor/rules/smartcrm-repo-layout.mdc) | структура репо, backend README |
+| [`smartcrm-code-split.mdc`](.cursor/rules/smartcrm-code-split.mdc) | лимит файлов, сплит |
+| [`prd-factory-agent.mdc`](.cursor/rules/prd-factory-agent.mdc) | операционные гейты, ISSUES |
 
 ## Документация
 
 - Карта: [`docs/README.md`](docs/README.md)
-- Продукт: [`docs/product/PRD_MAP.md`](docs/product/PRD_MAP.md) (карта), [`docs/product/PRD.md`](docs/product/PRD.md), [`docs/product/ARCHITECTURE.md`](docs/product/ARCHITECTURE.md)
-- Журнал работы: `docs/operations/`
+- Чеклисты: [`docs/product/PRD_MAP.md`](docs/product/PRD_MAP.md)
+- Продукт: [`docs/product/PRD.md`](docs/product/PRD.md), [`docs/product/ARCHITECTURE.md`](docs/product/ARCHITECTURE.md)
+- Операционка: `docs/operations/` (HANDOFF, SESSION_STATE, ISSUES, BACKLOG, CHANGELOG)
+- Backend-карта: [`backend/README.md`](backend/README.md)
 
-## Контекст проекта
+## Контекст
 
-SmartCRM — мультиагентная CRM-система. Один оператор управляет 5 AI-агентами через голосовой интерфейс. Заменяет отдел продаж.
-
-Читай docs/product/PRD.md для понимания продукта.
-Читай docs/product/ARCHITECTURE.md для понимания системы.
-Читай docs/start/RUNBOOK.md для потока данных, путей и LLM.
-
----
+SmartCRM — мультиагентная CRM. Один оператор + 5 AI-агентов + голос. См. PRD и RUNBOOK (`docs/start/RUNBOOK.md`).
 
 ## Стек
 
-- **Backend:** Python 3.11+, FastAPI, asyncio, SQLAlchemy (async), PostgreSQL, Redis
-- **Агенты:** LangGraph (параллельные графы)
-- **LLM:** Groq API → Ollama/Qwen fallback (`core/llm.py`)
-- **Роутер:** Hermes — Groq и/или Ollama по политике (`core/hermes.py`, см. `docs/stack/LLM.md`)
-- **Голос:** Groq Whisper (STT)
-- **RAG:** Chroma + Brave/Tavily/Serper
-- **Frontend:** SvelteKit + Tailwind CSS + Vite
-- **Инфра:** Docker + Nginx
+- **Backend:** Python 3.11+, FastAPI, SQLAlchemy async, PostgreSQL, Redis
+- **Агенты:** LangGraph · **Hermes:** `backend/core/hermes/` · **LLM:** `core/llm.py`
+- **Голос:** `voice/` → Hermes → `agents/orchestrator.py`
+- **Лидоген:** `leadgen/pipeline/`
+- **Frontend:** SvelteKit + Tailwind
 
----
+## Правила кода (кратко)
 
-## Правила кода
+- Python: `async` handlers, типы, Pydantic, без raw SQL от LLM
+- Svelte: UI на русском, Tailwind
+- Секреты только `.env`; новые ключи → `.env.example`
+- Комментарии и ops-логи — русский
 
-### Python
-- Всегда `async def` и `await` — синхронный код запрещён в handlers
-- Типизация обязательна: `def foo(x: str) -> dict:`
-- Pydantic для всех входящих данных
-- SQLAlchemy async ORM — никаких raw SQL от LLM
-- LLM не выполняет произвольный код — только строгие intent handlers
-- Обработка fallback: Groq недоступен → Ollama
-
-### Svelte
-- Язык интерфейса — **русский**
-- Компоненты в `PascalCase.svelte`
-- WebSocket для голосового пайплайна — через `src/lib/websocket.js`
-- Tailwind для стилей — никаких inline styles
-
-### Общие
-- Комментарии на русском языке
-- Никаких TODO без описания задачи
-- Логи на русском для читаемости
-
----
-
-## Структура агентов
-
-Каждый агент (`backend/agents/*.py`) должен:
-1. Иметь системный промпт уровня PhD эксперта на русском языке
-2. Принимать `AgentState` из LangGraph
-3. Возвращать обновлённый `AgentState`
-4. Иметь чёткий список инструментов (tools)
-5. Быть зарегистрирован в `orchestrator.py`
-
----
-
-## LLM вызовы
-
-```python
-# Агенты — через core/llm.py
-from core.llm import chat
-
-response = await chat(messages, model="auto")
-# "auto" = Groq если доступен, иначе Ollama
-```
-
----
-
-## Голосовой пайплайн
+## Голосовой пайплайн (не ломать порядок)
 
 ```
-Аудио → voice/whisper.py → текст
-текст → core/hermes.py → intent JSON
-intent → agents/orchestrator.py → LangGraph
+Аудио → voice/whisper.py → voice/pipeline.py → core/hermes/ → agents/orchestrator.py
 ```
 
-Не менять этот порядок без обновления docs/product/ARCHITECTURE.md.
-
----
-
-## Запрещено
-
-- Синхронные блокирующие вызовы в async функциях
-- Прямые SQL запросы от LLM
-- Произвольное выполнение кода от LLM
-- Хардкод API ключей (только через .env)
-- Английский язык в UI компонентах
+Изменения hot-path — см. `smartcrm-dev-gates.mdc`.

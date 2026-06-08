@@ -151,6 +151,6 @@ alwaysApply: true
 
 ## 6. Связь с workflow
 
-- **Задачи PRD_MAP / фичи / фиксы:** `.cursor/rules/smartcrm-task-workflow.mdc` (апрув `go`, тест на каждое изменение, коммит+ops всегда, push/deploy только по апруву).
+- **Задачи PRD_MAP / фичи / фиксы:** `smartcrm-task-workflow.mdc` + `smartcrm-dev-gates.mdc` (DoD, регрессия, миграции, API, hot-path).
 - **Структура репо:** коммит + `SESSION_STATE` + при смене статуса `HANDOFF`.
 - **`backend/`:** также §5 Backend README Sync.

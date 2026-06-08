@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-06-07 — Dev gates (DoD, регрессия, миграции, API, hot-path)
+
+**Сделано:** `smartcrm-dev-gates.mdc` — приоритет правил, DoD пункта PRD_MAP, таблица pytest по зонам, Migration/API gates, hot-path список. Синхрон: `agent-workflow`, `repo-layout` §6, `.cursorrules` как индекс.
+
+---
+
 ## 2026-06-07 — BACKLOG + правило хвоста (PRD_MAP)
 
 **Сделано:** `docs/operations/BACKLOG.md`; § бэклог в `smartcrm-task-workflow.mdc` — привязка **только к пунктам PRD_MAP**, фаза MAP опционально («когда закрывать»).

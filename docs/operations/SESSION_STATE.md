@@ -86,4 +86,6 @@
 
 2026-06-07 | Действие: BACKLOG.md + § бэклог в task-workflow (связь с пунктами PRD_MAP, фаза опционально). | Следующий шаг: commit; ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
 
+2026-06-07 | Действие: smartcrm-dev-gates.mdc (DoD, регрессия, миграции, API, hot-path); .cursorrules→индекс; agent-workflow+BACKLOG. | Следующий шаг: commit; ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
+
 ---

@@ -1,0 +1,103 @@
+---
+description: SmartCRM — технические гейты (DoD, регрессия, миграции, API, hot-path)
+alwaysApply: true
+---
+
+# SmartCRM — dev gates
+
+Дополняет `smartcrm-task-workflow.mdc`, `smartcrm-repo-layout.mdc`, `smartcrm-code-split.mdc`.
+
+---
+
+## Приоритет правил (при конфликте)
+
+1. **Безопасность** — секреты, auth, prod
+2. **`docs/operations/ISSUES.md`** — открытые 🔴 блокеры
+3. **`smartcrm-task-workflow.mdc`** — go, тесты, honest report, BACKLOG
+4. **`smartcrm-dev-gates.mdc`** (этот файл) — миграции, API, регрессия, hot-path
+5. **`smartcrm-repo-layout.mdc`** + **`smartcrm-code-split.mdc`**
+6. **`smartcrm-agent-workflow.mdc`** — коммит, ops
+7. **`.cursorrules`** — стиль кода и стек (краткий индекс)
+
+PRD Factory (`.cursor/rules/prd-factory-agent.mdc`) — операционные гейты сессии; при конфликте по **процессу** с п.3–6 — смотреть task-workflow + HANDOFF.
+
+---
+
+## Definition of Done — пункт PRD_MAP
+
+Пункт MAP **не закрыт**, пока не выполнено всё:
+
+| # | Критерий |
+|---|----------|
+| 1 | Тест **на изменение** (unit/integration) — зелёный |
+| 2 | **Регрессия зоны** — команды из таблицы ниже (если зона затронута) |
+| 3 | **BACKLOG / ISSUES** — отложенное и баги записаны |
+| 4 | **Ops** — SESSION_STATE; CHANGELOG+HANDOFF в конце шага |
+| 5 | **README** `backend/` — если менялся backend |
+| 6 | **`[x]` в PRD_MAP** — только после **«ок»** пользователя |
+
+---
+
+## Регрессия по зонам (из `backend/`)
+
+```bash
+cd backend
+```
+
+| Зона / затронуто | Команда |
+|------------------|---------|
+| **Лиды CRM** | `pytest tests/api/test_leads_api.py tests/test_stage_transition.py tests/test_lead_score_advisory.py -q` |
+| **Лидоген** | `pytest tests/test_leadgen.py -q` |
+| **Голос + Hermes** | `pytest tests/test_voice_pipeline.py tests/core/test_hermes_eval.py -q` |
+| **Тендеры** | `pytest tests/test_tender_sources.py -q` |
+| **RAG** | `pytest tests/rag/ -q` |
+| **Полный смоук P1** (после pipeline/hermes/orchestrator) | `pytest tests/test_leadgen.py tests/test_voice_pipeline.py tests/test_tender_sources.py -q` |
+
+UI затронут → Chrome DevTools MCP или чеклист в отчёте (что кликнули / не кликали).
+
+---
+
+## Hot-path — не трогать без причины в плане
+
+Изменения только если пункт MAP/баг **явно** требует; иначе — минимальный diff, регрессия **обязательна**:
+
+| Путь | Риск |
+|------|------|
+| `backend/agents/orchestrator.py` | голос → все интенты |
+| `backend/voice/pipeline.py` | WS / process_text |
+| `backend/core/hermes/parse.py` | разбор интентов |
+| `backend/leadgen/pipeline/run_pipeline.py` | карточка лида |
+| `backend/leadgen/pipeline/__init__.py` | публичный API pipeline |
+| `backend/db/session.py` | подключение БД |
+
+---
+
+## Migration Gate (БД)
+
+Перед **любым** DDL / миграцией / изменением `db/models/`:
+
+1. Показать: что меняется, pending миграции, **план отката**
+2. Ждать **`go`**
+3. После — smoke: `pytest tests/api/test_leads_api.py -q` (минимум)
+
+Запрещено без `go`: `DROP`, `TRUNCATE`, `db:reset`, удаление миграций.
+
+---
+
+## API и контракт
+
+| Изменение | Обязательно |
+|-----------|-------------|
+| Новый/изменённый роут, схема Pydantic | `backend/api/routes/README.md` + при смене контракта `docs/api/` |
+| Поля лида / CRM config | smoke `test_leads_api` + фронт-роут если есть UI |
+| WebSocket голос | `test_voice_pipeline` |
+
+Breaking change без версии/миграции фронта → **стоп**, запись в ISSUES, ждать решения.
+
+---
+
+## Секреты и ENV
+
+- Ключи только в `.env` (локально); шаблон — `.env.example` с комментарием
+- **Не коммитить** `.env`, кэши с ключами, sqlite с прод-данными
+- Новая переменная → сразу `.env.example`
