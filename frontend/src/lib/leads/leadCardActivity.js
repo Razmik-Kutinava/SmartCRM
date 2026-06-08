@@ -1,5 +1,6 @@
 /** Аудит и касания карточки лида (через apiFetch + X-API-Key). */
 import { apiFetch, apiPost } from '$lib/api.js';
+import { fetchLeadAudit } from '$lib/leads/leadAudit.js';
 import { fetchLeadComments } from '$lib/leads/leadComments.js';
 
 export async function loadLeadCardActivity(leadId) {
@@ -8,14 +9,14 @@ export async function loadLeadCardActivity(leadId) {
 		return { comments: [], audit: [], communications: [] };
 	}
 	try {
-		const [comments, ra, rc] = await Promise.all([
+		const [comments, audit, rc] = await Promise.all([
 			fetchLeadComments(n, 40).catch(() => []),
-			apiFetch(`/api/leads/${n}/audit?limit=35`),
+			fetchLeadAudit(n, 35).catch(() => []),
 			apiFetch(`/api/leads/${n}/communications?limit=40`),
 		]);
 		return {
 			comments,
-			audit: ra.ok ? await ra.json() : [],
+			audit,
 			communications: rc.ok ? await rc.json() : [],
 		};
 	} catch {

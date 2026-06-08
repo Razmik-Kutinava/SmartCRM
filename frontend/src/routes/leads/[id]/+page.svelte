@@ -27,6 +27,7 @@
 	import { detailsDraftFromLead, patchFromDetailsDraft } from '$lib/leads/leadCardEdit.js';
 	import { loadLeadCardActivity, postLeadCommunication } from '$lib/leads/leadCardActivity.js';
 	import { createLeadComment } from '$lib/leads/leadComments.js';
+	import { auditFieldLabel } from '$lib/leads/leadAudit.js';
 	import { buildMoneyPatch, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
@@ -808,7 +809,7 @@
 								{#if row.eventType && row.eventType !== 'field_change'}
 									<span class="text-[10px] text-cyan-500/90 mr-1">[{row.eventType}]</span>
 								{/if}
-								<span class="text-amber-600/90">{row.field}</span>
+								<span class="text-amber-600/90">{auditFieldLabel(row.field)}</span>
 								<span class="text-gray-600"> ← </span>
 								<span class="text-gray-500 line-clamp-1">{row.oldValue || '—'}</span>
 								<span class="text-gray-600"> → </span>
