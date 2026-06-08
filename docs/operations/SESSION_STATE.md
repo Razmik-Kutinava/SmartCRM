@@ -90,4 +90,6 @@
 
 2026-06-07 | Действие: Аудит правил — убран PRD Factory из `.cursorrules` и `smartcrm-*.mdc`; архив `docs/archive/PRD_FACTORY_DEPRECATED.md`; п.0 приоритета коммит+ops всегда; старт сессии + обязательный honest report; `run_zone_regression.py`; CURSOR_USER_RULES_SNIPPET. | Следующий шаг: commit; Фаза 1 PRD_MAP + go. | Вопросы: User Rules в Cursor вручную | Статус: done
 
+2026-06-07 | Действие: коммит `28ab125`; регрессия p1/p6 PASS, hermes_eval 9 FAIL → ISSUES+BACKLOG. | Следующий шаг: Фаза 1 PRD_MAP + go; вставить CURSOR_USER_RULES_SNIPPET в Cursor. | Вопросы: push по апруву | Статус: done
+
 ---

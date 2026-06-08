@@ -15,7 +15,7 @@
 Блокеры: `tests/core/test_hermes_eval.py` — 9 failed без LLM/Ollama (см. ISSUES при необходимости)
 
 Последние коммиты:
-- (ожидается) docs: rules cleanup PRD Factory, always commit+ops, zone regression
+- 28ab125 docs: remove PRD Factory refs, always commit+ops, zone regression
 - 9e40e19 docs: add smartcrm-dev-gates
 - 1815598 docs: BACKLOG + PRD_MAP backlog rule
 
