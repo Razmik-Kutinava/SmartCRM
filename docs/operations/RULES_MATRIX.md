@@ -7,8 +7,9 @@
 | # | Правило | Где в репо | Enforcement | Статус |
 |---|---------|------------|-------------|--------|
 | R0 | SmartCRM `.mdc` выше глобальных User Rules (коммит/ops) | `dev-gates` п.0, `agent-workflow` §0, User Rules snippet | User Rules в Cursor (вставлено ✅) | ✅ |
-| R1 | Всегда `git commit` после шага | `agent-workflow` §1, `task-workflow` финиш | `scripts/check_agent_step.py` | ✅ |
-| R2 | Всегда ops (SESSION_STATE + CHANGELOG/HANDOFF) | `agent-workflow` §2 | `check_agent_step.py` | ✅ |
+| R1 | **`git commit` безусловно** (если менялись файлы) | `agent-workflow` §0–1 | `check_agent_step.py` → **FAIL** | ✅ |
+| R1b | **Запрещено** «коммит не делал / скажи если нужен» | `agent-workflow` §0, `task-workflow` | — | ✅ |
+| R2 | **Ops безусловно** | `agent-workflow` §2 | `check_agent_step.py` → **FAIL** | ✅ |
 | R3 | Старт сессии: 3 строки | `task-workflow` § Старт сессии | дисциплина + матрица | ✅ |
 | R4 | `go` на новую задачу; стоп после шага | `task-workflow`, `agent-workflow` §3 | дисциплина | ✅ |
 | R5 | Тест на изменение + регрессия зоны | `task-workflow`, `dev-gates` | `run_zone_regression.py` | ✅ |

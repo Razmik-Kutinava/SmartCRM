@@ -72,14 +72,14 @@ def main() -> int:
     warnings: list[str] = []
 
     if has_uncommitted_changes():
-        warnings.append(
-            "Есть незакоммиченные изменения — после шага нужен git commit "
-            "(smartcrm-agent-workflow §1)."
+        errors.append(
+            "FAIL: есть незакоммиченные изменения — git commit обязателен "
+            "(smartcrm-agent-workflow §0). Запрещено отчитываться «done» без коммита."
         )
 
     if file_modified_in_worktree(SESSION_STATE):
-        warnings.append(
-            "SESSION_STATE.md изменён, но не закоммичен — включи в коммит шага."
+        errors.append(
+            "FAIL: SESSION_STATE.md изменён, но не закоммичен — включи в коммит шага."
         )
     elif not session_state_has_recent_entry():
         errors.append(
@@ -88,7 +88,7 @@ def main() -> int:
 
     for name, path in [("HANDOFF.md", HANDOFF), ("CHANGELOG.md", CHANGELOG)]:
         if file_modified_in_worktree(path):
-            warnings.append(f"{name} изменён, но не закоммичен.")
+            errors.append(f"FAIL: {name} изменён, но не закоммичен.")
 
     if not handoff_lists_recent_commit():
         warnings.append(
@@ -108,7 +108,7 @@ def main() -> int:
     if errors:
         print("\nFAIL: исправь ERROR перед отчётом «done».")
         return 1
-    print("\nWARN only: можно коммитить и закрывать шаг.")
+    print("\nWARN only: обнови HANDOFF (хеш HEAD) и закрой шаг.")
     return 0
 
 

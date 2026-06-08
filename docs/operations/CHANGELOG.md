@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-08 — Правила: коммит+ops безусловно (запрет «скажи если нужен»)
+
+**Сделано:** `agent-workflow` §0 железное правило; `task-workflow`, `dev-gates`, `.cursorrules`, `RULES_MATRIX`, `CURSOR_USER_RULES_SNIPPET`; `check_agent_step.py` — незакоммиченное = FAIL.
+
+**Причина:** агенты пропускали коммит и спрашивали разрешение.
+
+---
+
 ## 2026-06-08 — Правила: матрица, enforcement, зачистка ops, PRD_MAP
 
 **Сделано:**

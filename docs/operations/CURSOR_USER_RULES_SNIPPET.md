@@ -1,16 +1,16 @@
 # Cursor User Rules — SmartCRM
 
-**Статус:** вставлено пользователем ✅ (2026-06-07).
-
-Скопируй в **Settings → Rules → User Rules**, если настраиваешь новую машину:
+**Статус:** вставлено пользователем ✅
 
 ```
-## SmartCRM (репозиторий SmartCRM)
+## SmartCRM
 
-Правила `.cursor/rules/smartcrm-*.mdc` **выше** глобальных правил про отложенный коммит.
+Изменил файлы в репозитории SmartCRM → сразу git commit + docs/operations/ (SESSION_STATE; в конце шага CHANGELOG + HANDOFF).
 
-- **Всегда** `git commit` после логического шага, если есть изменения.
-- **Всегда** обновлять `docs/operations/` (SESSION_STATE; в конце шага CHANGELOG + HANDOFF).
-- **`git push`** — только с явным апрувом.
-- Перед «done»: `python backend/scripts/check_agent_step.py`
+НЕ ждать слова «коммит» или «опс» от пользователя.
+НЕ писать «коммит не делал» / «скажи если нужен коммит».
+
+git push — только с явным апрувом пользователя.
+
+Перед «done»: python backend/scripts/check_agent_step.py
 ```
