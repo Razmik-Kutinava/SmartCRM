@@ -19,10 +19,15 @@ def patch_from_details_draft(draft: dict) -> dict:
 	patch = {
 		"company": company,
 		"contact": draft.get("contact", "").strip() or DASH,
+		"position": draft.get("position", "").strip() or DASH,
 		"email": draft.get("email", "").strip() or DASH,
 		"phone": draft.get("phone", "").strip() or DASH,
+		"website": draft.get("website", "").strip() or DASH,
 		"industry": draft.get("industry", "").strip() or DASH,
 		"city": draft.get("city", "").strip() or DASH,
+		"employees": draft.get("employees", "").strip() or DASH,
+		"budget": draft.get("budget", "").strip() or DASH,
+		"next_call": draft.get("nextCall", "").strip() or DASH,
 		"description": draft.get("description", "").strip(),
 	}
 	if score is not None:
@@ -53,6 +58,7 @@ async def test_api_patch_details_fields(client):
 		{
 			"company": "Карточка UI",
 			"contact": "Иван",
+			"position": "Директор",
 			"email": "ivan@test.local",
 			"phone": "+7900",
 			"industry": "IT",
@@ -65,6 +71,7 @@ async def test_api_patch_details_fields(client):
 	assert r.status_code == 200
 	data = r.json()
 	assert data["contact"] == "Иван"
+	assert data["position"] == "Директор"
 	assert data["email"] == "ivan@test.local"
 	assert data["score"] == 72
 	assert data["description"] == "заметка"

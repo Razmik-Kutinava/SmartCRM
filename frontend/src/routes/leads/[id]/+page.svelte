@@ -25,6 +25,12 @@
 		mergeApprovals,
 	} from '$lib/leadApprovals.js';
 	import { detailsDraftFromLead, patchFromDetailsDraft } from '$lib/leads/leadCardEdit.js';
+	import {
+		loadLeadCardActivity,
+		postLeadComment,
+		postLeadCommunication,
+	} from '$lib/leads/leadCardActivity.js';
+	import { buildMoneyPatch, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
 
 	let lead    = $state(null);
 	let notFound = $state(false);
@@ -118,37 +124,17 @@
 
 	async function loadLeadActivity() {
 		const id = String(get(page).params.id ?? '');
-		const n = Number(id);
-		if (!id || Number.isNaN(n)) return;
-		try {
-			const [cr, ra, rc] = await Promise.all([
-				fetch(`/api/leads/${n}/comments?limit=40`),
-				fetch(`/api/leads/${n}/audit?limit=35`),
-				fetch(`/api/leads/${n}/communications?limit=40`),
-			]);
-			if (cr.ok) leadComments = await cr.json();
-			else leadComments = [];
-			if (ra.ok) leadAudit = await ra.json();
-			else leadAudit = [];
-			if (rc.ok) leadComms = await rc.json();
-			else leadComms = [];
-		} catch {
-			leadComments = [];
-			leadAudit = [];
-			leadComms = [];
-		}
+		const activity = await loadLeadCardActivity(id);
+		leadComments = activity.comments;
+		leadAudit = activity.audit;
+		leadComms = activity.communications;
 	}
 
 	async function postLeadComment() {
 		if (!lead || !commentDraft.trim() || commentPosting) return;
 		commentPosting = true;
 		try {
-			const r = await fetch(`/api/leads/${lead.id}/comments`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ body: commentDraft.trim(), author: 'Менеджер' }),
-			});
-			if (!r.ok) throw new Error(await r.text());
+			await postLeadComment(lead.id, commentDraft.trim());
 			commentDraft = '';
 			await loadLeadActivity();
 		} catch (e) {
@@ -160,9 +146,9 @@
 	}
 
 	function syncMoneyInputsFromLead() {
-		if (!lead) return;
-		moneyAmountStr = lead.amountRub != null && lead.amountRub !== '' ? String(lead.amountRub) : '';
-		moneyPaidStr = lead.paidAmountRub != null && lead.paidAmountRub !== '' ? String(lead.paidAmountRub) : '';
+		const { amount, paid } = moneyStringsFromLead(lead);
+		moneyAmountStr = amount;
+		moneyPaidStr = paid;
 	}
 
 	async function saveApprovalsChecklist() {
@@ -186,16 +172,10 @@
 		if (!lead || !commContent.trim() || commSaving) return;
 		commSaving = true;
 		try {
-			const r = await fetch(`/api/leads/${lead.id}/communications`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					communicationType: commType,
-					content: commContent.trim(),
-					actor: 'Менеджер',
-				}),
+			await postLeadCommunication(lead.id, {
+				communicationType: commType,
+				content: commContent.trim(),
 			});
-			if (!r.ok) throw new Error(await r.text());
 			commContent = '';
 			await loadLeadActivity();
 		} catch (e) {
@@ -208,21 +188,16 @@
 
 	async function saveMoneyFields() {
 		if (!lead || moneySaving) return;
-		const parseNum = (s) => {
-			const t = String(s).trim().replace(/\s/g, '').replace(',', '.');
-			if (t === '') return null;
-			const n = Number(t);
-			return Number.isFinite(n) ? n : NaN;
-		};
-		const a = parseNum(moneyAmountStr);
-		const p = parseNum(moneyPaidStr);
-		if (Number.isNaN(a) || Number.isNaN(p)) {
-			alert('Введите суммы числами (можно с десятичной точкой).');
+		let patch;
+		try {
+			patch = buildMoneyPatch(moneyAmountStr, moneyPaidStr);
+		} catch (e) {
+			alert(e?.message || String(e));
 			return;
 		}
 		moneySaving = true;
 		try {
-			await apiUpdateLead(lead.id, { amountRub: a, paidAmountRub: p });
+			await apiUpdateLead(lead.id, patch);
 			await fetchLeadById(lead.id);
 			sync();
 			syncMoneyInputsFromLead();
@@ -544,6 +519,10 @@
 						<label class="block">
 							<span class="text-gray-500 text-xs">Контакт</span>
 							<input bind:value={detailsDraft.contact} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+						</label>
+						<label class="block">
+							<span class="text-gray-500 text-xs">Должность</span>
+							<input bind:value={detailsDraft.position} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
 						</label>
 						<label class="block">
 							<span class="text-gray-500 text-xs">Email</span>

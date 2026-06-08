@@ -13,6 +13,7 @@ export function detailsDraftFromLead(lead) {
 		return {
 			company: '',
 			contact: '',
+			position: '',
 			email: '',
 			phone: '',
 			website: '',
@@ -28,6 +29,7 @@ export function detailsDraftFromLead(lead) {
 	return {
 		company: normDisplay(lead.company),
 		contact: normDisplay(lead.contact),
+		position: normDisplay(lead.position),
 		email: normDisplay(lead.email),
 		phone: normDisplay(lead.phone),
 		website: normDisplay(lead.website),
@@ -61,6 +63,7 @@ export function patchFromDetailsDraft(draft) {
 	const patch = {
 		company,
 		contact: draft.contact.trim() || DASH,
+		position: draft.position.trim() || DASH,
 		email: draft.email.trim() || DASH,
 		phone: draft.phone.trim() || DASH,
 		website: draft.website.trim() || DASH,

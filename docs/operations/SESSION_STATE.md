@@ -14,6 +14,8 @@
 
 2026-06-08 | Действие: п.4 список — `leadListFilter.js`: фильтр приоритета, сортировка балл/приоритет/компания; UI select + клик по заголовку; pytest 3 passed. | Следующий шаг: `go` п.5 карточка. | Статус: done
 
+2026-06-08 | Действие: п.5 карточка — `leadCardActivity.js` (apiFetch), `leadCardMoney.js`, поле должность; `test_lead_engagement` + card tests 10 passed. | Следующий шаг: `go` п.6 задачи. | Статус: done
+
 2026-06-08 | Действие: Единое правило `smartcrm-commit-ops.mdc` — всегда commit+ops, push по апруву; убраны дубли/конфликты в `.mdc`, `.cursorrules`, RULES_MATRIX, SESSION_STATE; `check_rules_commit_conflict.py`. | Следующий шаг: Фаза 1 PRD_MAP п.3 + `go`. | Статус: done
 
 2026-06-08 | Действие: User Rules — проверка: в локальных файлах Cursor нет (облако); добавлены `AGENTS.md`, `verify_cursor_rules_precedence.py`, `CURSOR_USER_RULES_STATUS.md` — Project Rules перебивают User Rules. | Следующий шаг: PRD_MAP п.3 + `go`. | Статус: done
