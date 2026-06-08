@@ -32,6 +32,7 @@ pytest tests/api/ -q
 | `test_tender_sources.py` | Источники тендеров |
 | `test_stage_transition.py` | Переходы стадий CRM |
 | `lib/test_funnel_dnd.py` | Воронка Kanban DnD (зеркало funnelDnD.js) |
+| `lib/test_lead_list_filter.py` | Фильтры и сортировка списка лидов |
 | `test_lead_score_advisory.py` | Скор-советы |
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |

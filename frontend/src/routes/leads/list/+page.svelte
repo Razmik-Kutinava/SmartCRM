@@ -20,11 +20,18 @@
 		leadPriorityTier,
 		priorityTierBadgeClass,
 	} from '$lib/crmStages.js';
+	import {
+		applyLeadListView,
+		PRIORITY_FILTERS,
+		SORT_OPTIONS,
+	} from '$lib/leads/leadListFilter.js';
 
 	const API = getApiUrl();
 
 	let search = $state('');
 	let filterStage = $state('all');
+	let filterPriority = $state('all');
+	let sortBy = $state('score_desc');
 	let showVoice = $state(false); // голос теперь глобальный — в layout
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
 	let apiError = $state(false); // флаг недоступности API
@@ -65,21 +72,13 @@
 		return unsub;
 	});
 
-	let filtered = $derived(leads.filter(l => {
-		const q = search.toLowerCase();
-		const desc = (l.description || '').toLowerCase();
-		const city = (l.city || '').toLowerCase();
-		const industry = (l.industry || '').toLowerCase();
-		const matchSearch =
-			!q ||
-			l.company.toLowerCase().includes(q) ||
-			l.contact.toLowerCase().includes(q) ||
-			desc.includes(q) ||
-			city.includes(q) ||
-			industry.includes(q);
-		const matchStage = filterStage === 'all' || l.stage === filterStage;
-		return matchSearch && matchStage;
-	}));
+	let filtered = $derived(
+		applyLeadListView(
+			leads,
+			{ search, filterStage, filterPriority, sortBy },
+			getCachedCrmConfig(),
+		),
+	);
 
 	function notify(text, type = 'success') {
 		notification = { text, type };
@@ -347,11 +346,13 @@
 			const f = slots?.filter;
 			const q = slots?.query ? String(slots.query).trim() : '';
 			if (f === 'hot' || f === 'горячих') {
-				filterStage = 'Квалифицирован';
-				notify('Показываю горячих лидов');
+				filterPriority = 'high';
+				sortBy = 'priority_desc';
+				notify('Показываю горячих лидов (высокий приоритет)');
 			} else if (f === 'cold' || f === 'холодных') {
-				filterStage = 'Новый';
-				notify('Показываю холодных лидов');
+				filterPriority = 'low';
+				sortBy = 'score_asc';
+				notify('Показываю холодных лидов (низкий приоритет)');
 			} else if (f === 'new' || f === 'новых') {
 				filterStage = 'Новый';
 				notify('Показываю новых лидов');
@@ -360,6 +361,8 @@
 				notify('Показываю выигранные сделки');
 			} else {
 				filterStage = 'all';
+				filterPriority = 'all';
+				sortBy = 'score_desc';
 				notify('Показываю всех лидов');
 			}
 			if (q) {
@@ -506,19 +509,39 @@
 {/if}
 
 <!-- Filters -->
-<div class="flex items-center gap-3 px-6 py-3 border-b border-gray-800 bg-gray-900 shrink-0">
-	<input
-		bind:value={search}
-		placeholder="Поиск..."
-		class="flex-1 max-w-xs bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-1.5 placeholder-gray-500 focus:outline-none focus:border-indigo-500"
-	/>
+<div class="flex flex-col gap-2 px-6 py-3 border-b border-gray-800 bg-gray-900 shrink-0">
+	<div class="flex items-center gap-3 flex-wrap">
+		<input
+			bind:value={search}
+			placeholder="Поиск: компания, контакт, город…"
+			class="flex-1 min-w-[12rem] max-w-xs bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-1.5 placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+		/>
+		<select
+			bind:value={sortBy}
+			class="bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-indigo-500"
+			aria-label="Сортировка"
+		>
+			{#each SORT_OPTIONS as opt}
+				<option value={opt.id}>{opt.label}</option>
+			{/each}
+		</select>
+		<select
+			bind:value={filterPriority}
+			class="bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-indigo-500"
+			aria-label="Фильтр приоритета"
+		>
+			{#each PRIORITY_FILTERS as opt}
+				<option value={opt.id}>{opt.label}</option>
+			{/each}
+		</select>
+	</div>
 	<div class="flex gap-1 flex-wrap">
 		{#each stages as stage}
 			<button
 				onclick={() => filterStage = stage}
 				class="px-2.5 py-1 text-xs rounded-lg transition-colors
 					{filterStage === stage ? 'bg-indigo-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'}"
-			>{stage === 'all' ? 'Все' : stage}</button>
+			>{stage === 'all' ? 'Все этапы' : stage}</button>
 		{/each}
 	</div>
 </div>
@@ -532,8 +555,14 @@
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Компания</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Контакт</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Этап</th>
-				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Скоринг</th>
-				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Приоритет</th>
+				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">
+					<button type="button" class="hover:text-gray-300" onclick={() => sortBy = sortBy === 'score_desc' ? 'score_asc' : 'score_desc'}>
+						Скоринг {sortBy === 'score_asc' ? '↑' : '↓'}
+					</button>
+				</th>
+				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">
+					<button type="button" class="hover:text-gray-300" onclick={() => sortBy = 'priority_desc'}>Приоритет</button>
+				</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Бюджет</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Источник</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium max-w-[14rem]">Заметка</th>
