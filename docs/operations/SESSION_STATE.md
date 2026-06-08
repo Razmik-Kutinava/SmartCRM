@@ -48,9 +48,9 @@
 
 2026-05-04 | Действие: Разбор референса `https://github.com/Razmik-Kutinava/CRM---points-system` — shallow clone в `docs/reference/CRM-points-system`; прочитаны `Lead`, `ScoreCalculator`, `LeadStateMachine`, `db/schema.rb` (булевы «апрувы»/доки на `leads`, `lead_histories`, `communication_logs`, авто-`score` после save). | Следующий шаг: по `go` — матрица переноса в PRD/ARCH или очередь фич (булевы флаги, communication log, формула как опция поверх advisory). | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: Реорганизация `docs/` — папки product, start, api, modules, email, voice, agents, stack, operations, dev, archive, reference; `docs/README.md` карта; обновлены README, `.cursorrules`, prd-factory пути. | Следующий шаг: пользователь — полировка лидов по экранам. | Вопросы: нет | Статус: done
+2026-06-07 | Действие: Реорганизация `docs/` — папки product, start, api, modules, email, voice, agents, stack, operations, dev, archive, reference; `docs/README.md` карта; обновлены README, `.cursorrules`. | Следующий шаг: пользователь — полировка лидов по экранам. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: Удалены PRD Factory из правил — `prd-factory-agent.mdc`, `cursor-process.md`, ссылки в `.cursorrules` и шапках `operations/*`. | Следующий шаг: вехи/доки по апруву пользователя. | Вопросы: нет | Статус: done
+2026-06-07 | Действие: Удалён устаревший alwaysApply-процесс; канон перенесён в `smartcrm-*.mdc`; ссылки в `.cursorrules` и operations. | Следующий шаг: вехи/доки по апруву пользователя. | Вопросы: нет | Статус: done
 
 2026-06-07 | Действие: Добавлено правило агента `.cursor/rules/smartcrm-agent-workflow.mdc` (коммиты, операционка, стоп до апрува); ссылка в `.cursorrules`. | Следующий шаг: ждать go пользователя (вехи/доки). | Вопросы: нет | Статус: done
 
@@ -88,8 +88,10 @@
 
 2026-06-07 | Действие: smartcrm-dev-gates.mdc (DoD, регрессия, миграции, API, hot-path); .cursorrules→индекс; agent-workflow+BACKLOG. | Следующий шаг: commit; ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: Аудит правил — убран PRD Factory из `.cursorrules` и `smartcrm-*.mdc`; архив `docs/archive/PRD_FACTORY_DEPRECATED.md`; п.0 приоритета коммит+ops всегда; старт сессии + обязательный honest report; `run_zone_regression.py`; CURSOR_USER_RULES_SNIPPET. | Следующий шаг: commit; Фаза 1 PRD_MAP + go. | Вопросы: User Rules в Cursor вручную | Статус: done
+2026-06-07 | Действие: Аудит правил — канон в `smartcrm-*.mdc`; п.0 коммит+ops; honest report; `run_zone_regression.py`; CURSOR_USER_RULES_SNIPPET. | Следующий шаг: Фаза 1 PRD_MAP + go. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: коммит `28ab125`; регрессия p1/p6 PASS, hermes_eval 9 FAIL → ISSUES+BACKLOG. | Следующий шаг: Фаза 1 PRD_MAP + go; вставить CURSOR_USER_RULES_SNIPPET в Cursor. | Вопросы: push по апруву | Статус: done
+2026-06-07 | Действие: коммит `28ab125`; регрессия p1/p6 PASS, hermes_eval 9 FAIL → ISSUES+BACKLOG. | Следующий шаг: Фаза 1 PRD_MAP + go. | Вопросы: push по апруву | Статус: done
+
+2026-06-08 | Действие: ops sync — RULES_MATRIX, check_agent_step.py, fix agent-workflow.mdc, BACKLOG/PRD_MAP, зачистка журналов, archive rename. | Следующий шаг: commit; Фаза 1 PRD_MAP (интенты Hermes) + go. | Тесты: p6 PASS, check_agent_step | Статус: done
 
 ---

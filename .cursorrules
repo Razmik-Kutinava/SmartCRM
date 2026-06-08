@@ -12,7 +12,7 @@
 | [`smartcrm-repo-layout.mdc`](.cursor/rules/smartcrm-repo-layout.mdc) | структура репо, backend README |
 | [`smartcrm-code-split.mdc`](.cursor/rules/smartcrm-code-split.mdc) | лимит файлов, сплит |
 
-**Приоритет:** правила SmartCRM в `.mdc` **выше** глобальных User Rules про «коммит только по запросу». См. [`docs/operations/CURSOR_USER_RULES_SNIPPET.md`](docs/operations/CURSOR_USER_RULES_SNIPPET.md).
+**Приоритет:** правила SmartCRM в `.mdc` **выше** глобальных User Rules. Матрица: [`docs/operations/RULES_MATRIX.md`](docs/operations/RULES_MATRIX.md). User Rules: [`CURSOR_USER_RULES_SNIPPET.md`](docs/operations/CURSOR_USER_RULES_SNIPPET.md).
 
 ## Документация
 

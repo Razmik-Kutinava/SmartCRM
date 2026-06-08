@@ -1,14 +1,16 @@
-# Cursor User Rules — вставить в Settings → Rules → User Rules
+# Cursor User Rules — SmartCRM
 
-Скопируй блок ниже в **глобальные User Rules** Cursor (для работы в SmartCRM):
+**Статус:** вставлено пользователем ✅ (2026-06-07).
+
+Скопируй в **Settings → Rules → User Rules**, если настраиваешь новую машину:
 
 ```
 ## SmartCRM (репозиторий SmartCRM)
 
-В репозитории SmartCRM правила из `.cursor/rules/smartcrm-*.mdc` **выше** любых глобальных правил про «коммит только по запросу».
+Правила `.cursor/rules/smartcrm-*.mdc` **выше** глобальных правил про отложенный коммит.
 
-- **Всегда** `git commit` после завершённого логического шага, если есть изменения — даже если пользователь не написал «коммит».
-- **Всегда** обновлять `docs/operations/` (минимум SESSION_STATE; в конце шага CHANGELOG + HANDOFF) — даже если пользователь не написал «опс».
-- **`git push`** — только с явным апрувом пользователя.
-- Деструктивный git (force push, reset --hard) — только по явному запросу.
+- **Всегда** `git commit` после логического шага, если есть изменения.
+- **Всегда** обновлять `docs/operations/` (SESSION_STATE; в конце шага CHANGELOG + HANDOFF).
+- **`git push`** — только с явным апрувом.
+- Перед «done»: `python backend/scripts/check_agent_step.py`
 ```

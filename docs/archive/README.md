@@ -1,7 +1,8 @@
 # Архив
 
-Старые отчёты, тест-планы и промпты. **Не** основной канон — для истории и справки.
+Старые отчёты, тест-планы и устаревшие процессы. **Не** основной канон — для истории.
 
-- [PRD_FACTORY_DEPRECATED.md](PRD_FACTORY_DEPRECATED.md) — устаревший процесс PRD Factory (заменён `smartcrm-*.mdc`)
+- [deprecated-process-2025-05.md](deprecated-process-2025-05.md) — устаревший процесс агента (май 2025)
 
-Актуальная документация: [../README.md](../README.md).
+Актуальная документация: [../README.md](../README.md).  
+Процесс разработки: [../operations/RULES_MATRIX.md](../operations/RULES_MATRIX.md).

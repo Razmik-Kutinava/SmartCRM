@@ -4,18 +4,35 @@
 
 ---
 
-## 2026-06-07 — Правила: убран PRD Factory, всегда коммит+ops, регрессия по зонам
+## 2026-06-08 — Правила: матрица, enforcement, зачистка ops, PRD_MAP
 
 **Сделано:**
 
 | Артефакт | Суть |
 |----------|------|
-| `.cursor/rules/smartcrm-*.mdc`, `.cursorrules` | Удалены ссылки на PRD Factory; п.0 приоритета — SmartCRM выше User Rules по коммиту/ops; старт сессии; honest report обязателен; стоп после каждого шага |
-| `docs/archive/PRD_FACTORY_DEPRECATED.md` | Архив устаревшего процесса |
-| `docs/operations/CURSOR_USER_RULES_SNIPPET.md` | Текст для вставки в Cursor User Rules |
-| `backend/scripts/run_zone_regression.py` | Регрессия по зонам (p1/p6/all), зоны по отдельности |
+| `docs/operations/RULES_MATRIX.md` | Живая матрица правил + таблицы старта/регрессии/финиша |
+| `backend/scripts/check_agent_step.py` | Проверка ops перед «done» |
+| `smartcrm-*.mdc` | Таблица старта сессии; регрессия → что писать в отчёт; fix agent-workflow |
+| `PRD_MAP.md` | п.118 закрыт (P6 в git); убран устаревший хвост «коммит локальных» |
+| `BACKLOG.md` | Таблица хвоста синхронизирована |
+| `docs/archive/deprecated-process-2025-05.md` | Архив устаревшего процесса (нейтральное имя) |
+| ops | Убраны устаревшие формулировки из журналов |
 
-**Причина:** апрув пользователя на аудит правил и выравнивание процесса.
+**Причина:** `go ops sync` — готовность к работе по полной.
+
+---
+
+## 2026-06-07 — Правила: smartcrm-канон, всегда коммит+ops, регрессия по зонам
+
+**Сделано:**
+
+| Артефакт | Суть |
+|----------|------|
+| `.cursor/rules/smartcrm-*.mdc`, `.cursorrules` | Единый канон процесса; п.0 приоритета; старт сессии; honest report; стоп после шага |
+| `docs/operations/CURSOR_USER_RULES_SNIPPET.md` | Текст для Cursor User Rules |
+| `backend/scripts/run_zone_regression.py` | Регрессия по зонам (p1/p6/all) |
+
+**Причина:** аудит правил и выравнивание процесса.
 
 ---
 
@@ -259,6 +276,6 @@
 
 ## 2026-05-03 — Аудит документации + операционные журналы (go пользователя)
 
-**Сделано:** заготовки `docs/operations/*`, реорганизация доков. Историческая деталь устаревшего процесса PRD Factory → [`docs/archive/PRD_FACTORY_DEPRECATED.md`](../archive/PRD_FACTORY_DEPRECATED.md).
+**Сделано:** заготовки `docs/operations/*`, реорганизация доков. Архив устаревшего процесса → [`docs/archive/deprecated-process-2025-05.md`](../archive/deprecated-process-2025-05.md).
 
 ---

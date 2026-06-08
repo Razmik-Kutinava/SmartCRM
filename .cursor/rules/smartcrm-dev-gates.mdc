@@ -62,7 +62,17 @@ python scripts/run_zone_regression.py crm_leads   # одна зона
 | **Смоук P1** | `python scripts/run_zone_regression.py p1` |
 | **Смоук P6** (после сплитов qa/tenders/analyst/rag/pipeline) | `python scripts/run_zone_regression.py p6` |
 
-**Только docs/rules** (без кода backend): смоук не обязателен; если трогали pytest-пути — `python scripts/run_zone_regression.py p1`.
+**Только docs/rules** (без кода backend): смоук не обязателен; закрытие шага — `python backend/scripts/check_agent_step.py`.
+
+### Что записать после регрессии
+
+| Куда | Обязательно |
+|------|-------------|
+| **Отчёт пользователю** | команда + PASS/FAIL + последние 2–3 строки вывода pytest |
+| **SESSION_STATE.md** | зона (`p1`/`p6`/`crm_leads`/…) + результат |
+| **ISSUES.md** | если FAIL и не чиним в этом шаге |
+
+Полная таблица зон: `docs/operations/RULES_MATRIX.md` § Регрессия.
 
 UI затронут → Chrome DevTools MCP или чеклист в отчёте (что кликнули / не кликали).
 
