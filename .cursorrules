@@ -2,7 +2,7 @@
 
 **Канон процесса — `.cursor/rules/smartcrm-*.mdc` (alwaysApply).**
 
-**АБСОЛЮТНО:** шаг изменил репо → `git commit` + ops — **всегда**, без слов «коммит»/«опс». **Запрещено:** «коммит не делал, скажи если нужен». Push — только по апруву.
+**Единственное правило коммита:** [`smartcrm-commit-ops.mdc`](.cursor/rules/smartcrm-commit-ops.mdc) — **всегда** `git commit` + ops; **`git push`** — только по явному апруву.
 
 Этот файл — стек, стиль кода, вход в проект.
 
@@ -10,13 +10,14 @@
 
 | Файл | Содержание |
 |------|------------|
-| [`smartcrm-task-workflow.mdc`](.cursor/rules/smartcrm-task-workflow.mdc) | PRD_MAP, `go`, тесты, BACKLOG, anti-hallucination, старт сессии |
-| [`smartcrm-dev-gates.mdc`](.cursor/rules/smartcrm-dev-gates.mdc) | DoD, регрессия pytest, миграции, API, hot-path |
-| [`smartcrm-agent-workflow.mdc`](.cursor/rules/smartcrm-agent-workflow.mdc) | **всегда** коммит + ops; стоп до апрува |
+| [`smartcrm-commit-ops.mdc`](.cursor/rules/smartcrm-commit-ops.mdc) | **всегда** commit + ops; push по апруву |
+| [`smartcrm-task-workflow.mdc`](.cursor/rules/smartcrm-task-workflow.mdc) | PRD_MAP, `go`, тесты, BACKLOG |
+| [`smartcrm-dev-gates.mdc`](.cursor/rules/smartcrm-dev-gates.mdc) | DoD, регрессия pytest, миграции |
+| [`smartcrm-agent-workflow.mdc`](.cursor/rules/smartcrm-agent-workflow.mdc) | порядок шага, ops-файлы |
 | [`smartcrm-repo-layout.mdc`](.cursor/rules/smartcrm-repo-layout.mdc) | структура репо, backend README |
 | [`smartcrm-code-split.mdc`](.cursor/rules/smartcrm-code-split.mdc) | лимит файлов, сплит |
 
-**Приоритет:** правила SmartCRM в `.mdc` **выше** глобальных User Rules. Матрица: [`docs/operations/RULES_MATRIX.md`](docs/operations/RULES_MATRIX.md). User Rules: [`CURSOR_USER_RULES_SNIPPET.md`](docs/operations/CURSOR_USER_RULES_SNIPPET.md).
+**Приоритет:** `.mdc` **выше** глобальных User Rules. Матрица: [`RULES_MATRIX.md`](docs/operations/RULES_MATRIX.md). Cursor User Rules: [`CURSOR_USER_RULES_SNIPPET.md`](docs/operations/CURSOR_USER_RULES_SNIPPET.md).
 
 ## Документация
 

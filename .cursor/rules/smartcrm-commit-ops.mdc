@@ -1,0 +1,36 @@
+---
+description: SmartCRM — ВСЕГДА git commit + ops; push только по апруву (единственное правило)
+alwaysApply: true
+---
+
+# Коммит и ops — единственное правило
+
+## Всегда (без исключений, без вопроса пользователю)
+
+Шаг **изменил любой файл** в репозитории → до отчёта пользователю:
+
+1. `git commit`
+2. `docs/operations/SESSION_STATE.md`
+3. В конце шага: `CHANGELOG.md` + `HANDOFF.md`
+4. При баге: `ISSUES.md` | при хвосте: `BACKLOG.md`
+
+**Не спрашивать** разрешения. **Не писать** в отчёте: «коммит не делал», «напиши коммит», «нужен ли коммит».
+
+В отчёте только: **`Коммит: <хеш>`** или **«read-only, файлы не менялись»**.
+
+## Только с явным апрувом пользователя
+
+- **`git push`**
+- deploy / prod
+- деструктивный git
+
+**`git push` ≠ `git commit`.** Коммит локальный — всегда. Push — только когда пользователь явно написал push.
+
+## Проверка перед «done»
+
+```bash
+python backend/scripts/check_agent_step.py
+python backend/scripts/check_rules_commit_conflict.py
+```
+
+Оба должны быть OK.

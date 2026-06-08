@@ -1,16 +1,20 @@
 ﻿# SESSION_STATE
 
-Краткий прогресс сессии (по желанию, 1–2 строки на действие).
+Краткий прогресс сессии — **обязательно** после каждого действия (1–2 строки). Канон: `smartcrm-commit-ops.mdc`.
 
 Шаблон строки:
 
 `[время] | Действие:[что сделал] | Следующий шаг:[что дальше] | Вопросы:[если есть]`
 
+2026-06-08 | Действие: Единое правило `smartcrm-commit-ops.mdc` — всегда commit+ops, push по апруву; убраны дубли/конфликты в `.mdc`, `.cursorrules`, RULES_MATRIX, SESSION_STATE; `check_rules_commit_conflict.py`. | Следующий шаг: Фаза 1 PRD_MAP п.3 + `go`. | Статус: done
+
 2026-06-08 | Действие: PRD_MAP Фаза 1 п.1 «CRUD лидов» — перепроход: pytest `test_leads_api` 12 passed (+ amountRub camelCase); live Postgres CRUD OK; код API `leads/crud.py` + UI list/card — review; UI смоук DevTools заблокирован (frontend rolldown). ISSUES: UI update неполный, rolldown. | Следующий шаг: апрув п.1 → п.2 «Поля уровня Битрикс» или фикс UI edit по go. | Вопросы: фиксить контакты в карточке в этом шаге? | Статус: ждём апрув
 
-2026-06-08 | Действие: Вариант B п.1 CRUD — UI edit форма на `/leads/{id}` (`leadCardEdit.js`); frontend Vite 6 + rollup wasm + `ensure-native-deps.cjs`; убран `editingLead`; тесты 15 passed + `crm_leads` 22 passed; DevTools CRUD+карточка OK. | Следующий шаг: коммит → апрув п.1 → п.2 PRD_MAP. | QA: crm_leads PASS, DevTools contact/industry PATCH OK | Статус: done
+2026-06-08 | Действие: Вариант B п.1 CRUD — UI edit форма на `/leads/{id}` (`leadCardEdit.js`); frontend Vite 6 + rollup wasm + `ensure-native-deps.cjs`; убран `editingLead`; тесты 15 passed + `crm_leads` 22 passed; DevTools CRUD+карточка OK. | Следующий шаг: `go` на п.2 PRD_MAP. | QA: crm_leads PASS, DevTools contact/industry PATCH OK | Статус: done
 
 2026-06-08 | Действие: PRD_MAP §Лиды — таблица перепрохода: п.1 CRUD ✅ OK (2026-06-08); указатель на п.2 «Поля Битрикс». | Следующий шаг: `go` на п.2. | Статус: done
+
+2026-06-08 | Действие: п.2 «Поля Битрикс» — маппинг + `amount_rub`; автосинк: `POST /api/webhooks/bitrix/events` + фон `BITRIX_AUTO_SYNC_MINUTES=5`; `GET /api/leads/bitrix-sync-status`; pytest bitrix 7 passed (3 live). Файлы: `bitrix24_sync.py`, `webhooks_bitrix.py`, `bitrix.md`. | Следующий шаг: перезапуск uvicorn; вебхук ONCRMLEADADD; `go` на п.3 Kanban DnD. | Статус: done (код), ждёт настройку портала
 
 2026-05-04 | Действие: ROOT CAUSE найден и устранён — база `smartcrm` и юзер `smartcrm` отсутствовали в Postgres; созданы через psql; uvicorn перезапущен → `init_db` применил схему; проверено: `/api/leads` → 200 OK, `/api/leads/1791` → 404 (база пустая). Ошибок 500 нет. | Следующий шаг: импорт/сид данных (Bitrix или `seed_eval_benchmark_leads.py`) при необходимости; коммит фиксов. | Вопросы: нет | Статус: done
 
@@ -58,7 +62,7 @@
 
 2026-06-07 | Действие: Удалён устаревший alwaysApply-процесс; канон перенесён в `smartcrm-*.mdc`; ссылки в `.cursorrules` и operations. | Следующий шаг: вехи/доки по апруву пользователя. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: Добавлено правило агента `.cursor/rules/smartcrm-agent-workflow.mdc` (коммиты, операционка, стоп до апрува); ссылка в `.cursorrules`. | Следующий шаг: ждать go пользователя (вехи/доки). | Вопросы: нет | Статус: done
+2026-06-07 | Действие: Добавлено правило агента `.cursor/rules/smartcrm-agent-workflow.mdc` (коммиты, операционка, стоп до `go`); ссылка в `.cursorrules`. | Следующий шаг: ждать go пользователя (вехи/доки). | Вопросы: нет | Статус: done
 
 2026-06-07 | Действие: Создан `docs/product/PRD_DELTA_v2.md` — дельта PRD v2 (Voice Layer, Email-агент, Self-improvement, Оркестрация, Тендеры, Аналитика v2). | Следующий шаг: по go — ревью/слияние в основной PRD или вехи. | Вопросы: нет | Статус: done
 
