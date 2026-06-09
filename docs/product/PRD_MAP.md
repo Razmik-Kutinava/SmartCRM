@@ -102,13 +102,14 @@
 > **Перепроход п.1 (2026-06-08):** Serper + Brave + Tavily — `smoke_search_providers.py`, 11 pytest, DevTools `/search`.  
 > **Перепроход п.2 (2026-06-08):** 6 режимов — `smoke_search_modes.py`, 19 pytest, DevTools 6 табов.  
 > **Перепроход п.3 (2026-06-08):** Chroma RAG — `smoke_rag_chroma.py`, 11 pytest, 1592 чанка по агентам.  
-> **Перепроход п.4 (2026-06-08):** upload PDF/txt — `smoke_rag_upload.py`, 8 pytest, DevTools `/rag`.
+> **Перепроход п.4 (2026-06-08):** upload PDF/txt — `smoke_rag_upload.py`, 8 pytest, DevTools `/rag`.  
+> **Перепроход п.5 (2026-06-08):** save из поиска — `smoke_rag_save_from_search.py`, 6 pytest, DevTools `/search` таб RAG.
 
 - [x] Serper + Brave + Tavily — перепроход **2026-06-08 ✅** (`SEARCH_PROVIDERS_ACCEPTANCE.md`)
 - [x] 6 режимов поиска — перепроход **2026-06-08 ✅** (`SEARCH_MODES_ACCEPTANCE.md`)
 - [x] Chroma RAG (~1592 чанка), разделение по агентам — перепроход **2026-06-08 ✅** (`SEARCH_CHROMA_ACCEPTANCE.md`)
 - [x] Загрузка PDF/текста в `/rag` — перепроход **2026-06-08 ✅** (`SEARCH_RAG_UPLOAD_ACCEPTANCE.md`)
-- [x] Кнопка «сохранить в базу» (базово)
+- [x] Кнопка «сохранить в базу» (базово) — перепроход **2026-06-08 ✅** (`SEARCH_RAG_SAVE_ACCEPTANCE.md`)
 - [ ] Авто-чанки из поиска / диалога → **Фаза 2** ([`RAG.md`](../stack/RAG.md#search-to-qa-фаза-2))
 - [ ] Смоук обогащения лида из поиска
 

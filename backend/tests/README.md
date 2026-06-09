@@ -19,8 +19,8 @@ pytest tests/api/ -q
 | `core/` | `test_hermes_eval.py`, `test_qa_agent.py` |
 | `agents/` | `test_analyst.py` |
 | `rag/` | `test_search_providers.py`, `test_search_pkg.py`, `test_rag_chunks.py`, `test_search_modes.py` |
-| `api/` | `test_rag_api.py`, `test_rag_upload_api.py` — Chroma ingest/query/upload |
-| `rag/` | + `test_rag_upload.py` — ingest_bytes txt/pdf |
+| `api/` | `test_rag_api.py`, `test_rag_upload_api.py`, `test_rag_ingest_batch_api.py` — Chroma ingest/query/upload/batch |
+| `rag/` | + `test_rag_upload.py`, `test_rag_ingest_batch.py` — ingest_bytes, metadata batch |
 | `integration/` | `test_email_integration.py` — смоук почты |
 
 ---

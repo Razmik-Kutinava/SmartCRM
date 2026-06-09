@@ -157,7 +157,10 @@ async def rag_ingest_batch(body: IngestBatchBody):
     if not body.documents:
         raise HTTPException(400, detail="documents не может быть пустым")
     fa = normalize_for_agent(body.for_agent)
+    from rag.ingest import _metadata_from_search_doc
+
     ingested = 0
+    total_chunks = 0
     errors: list[str] = []
     previews: list[dict] = []
 
@@ -166,6 +169,7 @@ async def rag_ingest_batch(body: IngestBatchBody):
         if not text:
             continue
         title = doc.metadata.get("title") or f"web-doc-{i+1}"
+        extra = _metadata_from_search_doc(doc.metadata)
         try:
             result = await asyncio.to_thread(
                 ingest_manual_text,
@@ -174,11 +178,13 @@ async def rag_ingest_batch(body: IngestBatchBody):
                 body.tags,
                 fa,
                 body.dry_run,
+                extra,
             )
             if result.get("error"):
                 errors.append(f"[{i}] {result['error']}")
             else:
                 ingested += 1
+                total_chunks += int(result.get("chunks") or 0)
                 if body.dry_run:
                     previews.append({
                         "index":    i,
@@ -190,16 +196,16 @@ async def rag_ingest_batch(body: IngestBatchBody):
             errors.append(f"[{i}] {e}")
 
     resp: dict = {
-        "ok":        True,
-        "ingested":  ingested,
-        "total":     len(body.documents),
-        "errors":    errors,
-        "for_agent": fa,
-        "dry_run":   body.dry_run,
+        "ok":           True,
+        "ingested":     ingested,
+        "total":        len(body.documents),
+        "total_chunks": total_chunks,
+        "errors":       errors,
+        "for_agent":    fa,
+        "dry_run":      body.dry_run,
     }
     if body.dry_run:
         resp["previews"] = previews
-        resp["total_chunks"] = sum(p["chunks"] for p in previews)
     return resp
 
 

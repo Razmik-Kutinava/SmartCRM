@@ -25,6 +25,14 @@
 
 **Зачем:** агенты не откладывали коммит и не спрашивали разрешение.
 
+## [2026-06-08] — RAG п.5: «сохранить в базу» из /search (`go`)
+
+**Сделано:** проброс `source_url` в метаданные чанков при `ingest-batch`; `total_chunks` в ответе save; UI «✓ Сохранить в базу» + testid; 6 pytest; `smoke_rag_save_from_search.py`; DevTools E2E (поиск → превью → save); `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
+
+**Зачем:** агенты при retrieval видят URL источника; flow из поиска в Chroma работает без ручных обходных путей.
+
+**Не в scope:** enrich-lead smoke, авто-чанки Ф2, full-page fetch по URL.
+
 ## [2026-06-08] — RAG п.4: upload PDF/текста в /rag (`go`)
 
 **Сделано:** pytest ingest/upload/preview; `smoke_rag_upload.py`; testid на UI; DevTools ручной текст + живые PDF в списке; `SEARCH_RAG_UPLOAD_ACCEPTANCE.md`.

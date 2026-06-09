@@ -49,7 +49,7 @@ cd backend && python scripts/smoke_rag_upload.py
 
 | Что | Куда |
 |-----|------|
-| Кнопка «сохранить в базу» из `/search` (ingest-batch E2E) | **п.5** |
+| Кнопка «сохранить в базу» из `/search` | ✅ `SEARCH_RAG_SAVE_ACCEPTANCE.md` |
 | Смоук enrich-lead | MAP / BACKLOG |
 | Авто-чанки из поиска/диалога | **Фаза 2** |
 | Live E2E загрузки PDF через file picker в DevTools | 👤 опционально (ручной клик) |
@@ -71,4 +71,4 @@ cd backend && python scripts/smoke_rag_upload.py
 
 ## Следующий пункт MAP
 
-**п.5 — кнопка «сохранить в базу»** (таб RAG в `/search` → ingest-batch).
+**п.5 закрыт** → `SEARCH_RAG_SAVE_ACCEPTANCE.md`. Дальше enrich-lead или Ф2 авто-чанки.

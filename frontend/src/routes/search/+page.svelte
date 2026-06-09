@@ -188,7 +188,7 @@
 	function ragDocs() {
 		const items = (rg_result?.results || []).filter((_, i) => rg_approved.has(i));
 		return items.map(r => ({
-			text: [r.title, r.snippet].filter(Boolean).join('\n\n'),
+			text: [r.title, r.snippet, r.url ? `Источник: ${r.url}` : ''].filter(Boolean).join('\n\n'),
 			metadata: { source: r.url || r.source || '', title: r.title || '' },
 		}));
 	}
@@ -229,8 +229,8 @@
 			const data = await resp.json();
 			if (resp.ok && data.ok) {
 				rg_ingest_ok = true;
-				const total_chunks = rg_preview?.total_chunks ?? '?';
-				rg_ingest_msg = `Загружено ${data.ingested} документов · ~${total_chunks} чанков → RAG (агент: ${rg_agent})`;
+				const total_chunks = data.total_chunks ?? rg_preview?.total_chunks ?? '?';
+				rg_ingest_msg = `Загружено ${data.ingested} документов · ${total_chunks} чанков → RAG (агент: ${rg_agent})`;
 				if (data.errors?.length) rg_ingest_msg += `. Ошибки: ${data.errors.join('; ')}`;
 				rg_step = 'done';
 				rg_approved = new Set();
@@ -717,6 +717,8 @@
 					{/if}
 				</div>
 				<button
+					type="button"
+					data-testid="search-rag-preview"
 					onclick={previewChunks}
 					disabled={!rg_approved.size || rg_previewing}
 					class="px-4 py-1.5 text-xs bg-indigo-700 hover:bg-indigo-600 disabled:opacity-40 text-white rounded-lg font-medium"
@@ -788,11 +790,13 @@
 							← Назад
 						</button>
 						<button
+							type="button"
+							data-testid="search-rag-save"
 							onclick={ingestApproved}
 							disabled={rg_ingesting}
 							class="px-4 py-1.5 text-xs bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-white rounded-lg font-medium"
 						>
-							{rg_ingesting ? '⟳ Загружаю...' : `✓ Загрузить в RAG`}
+							{rg_ingesting ? '⟳ Загружаю...' : `✓ Сохранить в базу`}
 						</button>
 					</div>
 				</div>

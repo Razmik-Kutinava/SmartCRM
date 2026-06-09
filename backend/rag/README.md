@@ -26,7 +26,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 |------|--------|
 | `chroma_store.py` | Работа с ChromaDB |
 | `chroma.py` | Низкоуровневый клиент |
-| `ingest.py` | Загрузка документов в индекс |
+| `ingest.py` | Загрузка в индекс; `ingest_manual_text` + `_metadata_from_search_doc` (URL → `source_url` в чанках) |
 | `retrieve.py` | Получение чанков по запросу |
 | `chunking.py` | Разбиение текста на чанки |
 | `parsers.py` | Парсинг PDF/HTML для ingest |

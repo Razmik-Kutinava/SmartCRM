@@ -465,12 +465,26 @@ def ingest_bytes(
     return {"error": f"Неподдерживаемый формат: {mime} ({fn_lower})", "chunks": 0, "steps": [], "chunk_previews": []}
 
 
+def _metadata_from_search_doc(meta: dict[str, Any] | None) -> dict[str, Any]:
+    """URL и прочие поля из поиска → метаданные чанков для агентов."""
+    out: dict[str, Any] = {}
+    for k, v in (meta or {}).items():
+        if k == "title" or v is None or str(v).strip() == "":
+            continue
+        if k == "source" and str(v).startswith("http"):
+            out["source_url"] = str(v)[:2000]
+        else:
+            out[k] = str(v)[:500]
+    return out
+
+
 def ingest_manual_text(
     text: str,
     title: str = "manual",
     tags: str = "",
     for_agent: str = "all",
     dry_run: bool = False,
+    extra_metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     steps_pre = [{"stage": "Ввод", "format": "текст вручную", "chars": len(text)}]
     return _ingest_plain_text(
@@ -480,6 +494,7 @@ def ingest_manual_text(
         mime="text/plain",
         tags=tags,
         for_agent=for_agent,
+        extra_base_meta=extra_metadata,
         steps_pre=steps_pre,
         dry_run=dry_run,
     )
