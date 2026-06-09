@@ -2,7 +2,7 @@
 
 `Спринт:[Фаза 1] | Задача:[Поиск и RAG] | Статус:п.1–5 ЗАКРЫТЫ ✅ — блок «Поиск и RAG (базово)» готов`
 
-**Процесс:** `git commit` + ops — всегда при закрытии шага (`smartcrm-commit-ops.mdc`).
+**Процесс:** `git commit` + ops + **хвост A/B/C** в ответе и `SESSION_STATE` (`smartcrm-commit-ops.mdc`).
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 

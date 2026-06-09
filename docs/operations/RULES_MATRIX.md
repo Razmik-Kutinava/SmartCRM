@@ -24,7 +24,7 @@
 | R3 | Старт сессии: 3 строки | `task-workflow` | дисциплина |
 | R4 | `go` на новую задачу; стоп после шага | `task-workflow` | дисциплина |
 | R5 | Тест + регрессия зоны | `task-workflow`, `dev-gates` | `run_zone_regression.py` |
-| R6 | Honest report | `task-workflow` | дисциплина |
+| R6 | Хвост прогона A+B+C | `commit-ops`, `task-workflow` | `check_agent_step.py` FAIL |
 | R7 | BACKLOG ↔ PRD_MAP | `BACKLOG.md` | таблица |
 | R8 | Сплит >200 строк | `code-split.mdc` | ревью |
 | R9 | Backend README sync | `repo-layout` §5 | финиш-чеклист |
@@ -42,7 +42,7 @@
 1. Тесты зелёные (или docs-only)
 2. **`git commit` + ops** (`commit-ops.mdc`)
 3. `check_agent_step.py` + `check_rules_commit_conflict.py`
-4. Отчёт → **стоп до `go`**
+4. Отчёт с **A / B / C** → **стоп до `go`**
 
 ## Регрессия
 

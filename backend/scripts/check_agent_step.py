@@ -39,6 +39,21 @@ def file_modified_in_worktree(path: Path) -> bool:
     return bool(out.strip())
 
 
+def latest_session_state_entry() -> str | None:
+    if not SESSION_STATE.is_file():
+        return None
+    for line in SESSION_STATE.read_text(encoding="utf-8").splitlines():
+        if re.match(r"^\d{4}-\d{2}-\d{2}\s*\|", line.strip()):
+            return line.strip()
+    return None
+
+
+def session_state_has_run_tail(entry: str) -> bool:
+    """Require Хвост A/B/C on the latest SESSION_STATE entry (smartcrm-commit-ops)."""
+    required = ("Хвост A:", "Хвост B:", "Хвост C:")
+    return all(marker in entry for marker in required)
+
+
 def session_state_has_recent_entry(max_days: int = 2) -> bool:
     if not SESSION_STATE.is_file():
         return False
@@ -85,6 +100,13 @@ def main() -> int:
         errors.append(
             "SESSION_STATE.md: нет свежей записи (≤2 дней) — обнови ops после шага."
         )
+    else:
+        latest = latest_session_state_entry()
+        if latest and not session_state_has_run_tail(latest):
+            errors.append(
+                "FAIL: последняя строка SESSION_STATE без Хвост A/B/C — "
+                "добавь все три блока (нет или список). См. smartcrm-commit-ops.mdc."
+            )
 
     for name, path in [("HANDOFF.md", HANDOFF), ("CHANGELOG.md", CHANGELOG)]:
         if file_modified_in_worktree(path):
