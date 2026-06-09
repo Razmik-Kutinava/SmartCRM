@@ -6,7 +6,7 @@
 
 `[время] | Действие:[что сделал] | Следующий шаг:[что дальше] | Вопросы:[если есть]`
 
-2026-06-08 | Действие: зачистка правил — только безусловный `git commit` при закрытии шага; убраны отложенные формулировки в `.mdc`, `AGENTS.md`, ops; усилен `check_rules_commit_conflict.py`. | Следующий шаг: PRD_MAP. | Статус: in_progress
+2026-06-08 | Действие: зачистка правил — только безусловный `git commit` при закрытии шага; убраны отложенные формулировки в `.mdc`, `AGENTS.md`, ops; усилен `check_rules_commit_conflict.py`. | Коммит: `02ef689` | Следующий шаг: PRD_MAP RAG п.3. | Статус: done
 
 2026-06-08 | Действие: RAG п.2 — 6 режимов перепроход: `test_search_modes_api.py` + `test_search_modes.py`, `smoke_search_modes.py` 19 pytest + live free; DevTools 6 табов + free live 10 результатов; `SEARCH_MODES_ACCEPTANCE.md` (сделано/НЕ сдали); PRD_MAP п.2 ✅; BACKLOG п.3–5. | Следующий шаг: `go` RAG п.3 Chroma. | Статус: done
 
