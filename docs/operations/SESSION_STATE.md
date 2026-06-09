@@ -10,6 +10,10 @@
 
 2026-06-08 | Действие: PRD_NOTES §CHANGELOG → шапка `operations/CHANGELOG.md`; NOTES — ссылка на канон. | Следующий шаг: хвост Ф1 Hermes/voice или `go` Фаза 2. | Статус: done
 
+2026-06-08 | Действие: Hermes п.2 — slot_normalize, rescue, smoke_hermes_leads 40 passed; BACKLOG hermes eval закрыт; `HERMES_LEADS_ACCEPTANCE.md`. | Следующий шаг: voice_action или полные интенты. | Статус: done
+
+2026-06-08 | Действие: BACKLOG — Pydantic `@validator` в `email.py` → `@field_validator` (🟢, шум в pytest). | Следующий шаг: п.2 Hermes / voice_action. | Статус: done
+
 2026-06-08 | Действие: Whisper STT п.1 — `smoke_whisper_stt.py` 14+1 live Groq; фикс 503/WS error; `WHISPER_STT_ACCEPTANCE.md`; DevTools WS OK. | Следующий шаг: п.2 Hermes интенты или п.3 voice_action. | Статус: done
 
 2026-06-08 | Действие: балльная воронка — `lead_priority_tier.py`, `smoke_scoring_funnel.py`, 21 pytest; PRD_MAP смоук ✅; `SCORING_FUNNEL_ACCEPTANCE.md`. | Следующий шаг: `go` голос → лиды или распределение PRD_NOTES. | Статус: done

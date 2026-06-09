@@ -30,13 +30,41 @@ def fastpath_route(text: str) -> dict | None:
     if not config.HERMES_ENABLE_FASTPATH:
         return None
     t = normalize_text_for_cache(text)
-    if ("покажи" in t or "покажи" in t) and ("сделк" in t or "лид" in t) and "задач" not in t:
+    if ("покажи" in t or "список" in t) and ("сделк" in t or "лид" in t) and "задач" not in t:
+        filt = "hot" if "горяч" in t else "new" if "нов" in t else "all"
         return {
             "intent": "list_leads",
             "agents": ["analyst"],
-            "slots": {"filter": "all"},
+            "slots": {"filter": filt},
             "parallel": False,
             "reply": "Показываю лиды.",
+            "_model": "fastpath",
+        }
+    if ("удали" in t or "удалить" in t) and "лид" in t:
+        return {
+            "intent": "delete_lead",
+            "agents": ["analyst"],
+            "slots": {},
+            "parallel": False,
+            "reply": "Удаляю лид.",
+            "_model": "fastpath",
+        }
+    if "напоминал" in t or "создай задач" in t or t.startswith("таск"):
+        return {
+            "intent": "create_task",
+            "agents": ["analyst"],
+            "slots": {},
+            "parallel": False,
+            "reply": "Создаю задачу.",
+            "_model": "fastpath",
+        }
+    if "создай два" in t or "создай 2" in t:
+        return {
+            "intent": "noop",
+            "agents": [],
+            "slots": {},
+            "parallel": False,
+            "reply": "Уточните одну команду за раз.",
             "_model": "fastpath",
         }
     if any(x in t for x in ("привет", "как дела", "анекдот", "что такое блокчейн")):

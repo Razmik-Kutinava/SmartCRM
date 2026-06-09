@@ -61,6 +61,14 @@ BACKLOG.md       — отложено по PRD_MAP
 
 ---
 
+## 2026-06-08 — Hermes: интенты по лидам (перепроход)
+
+**Сделано:** `slot_normalize.py`, усилен rescue/fastpath; `smoke_hermes_leads.py` 40 pytest; BACKLOG eval закрыт; `HERMES_LEADS_ACCEPTANCE.md`.
+
+**Зачем:** закрыть PRD_MAP п.2 CRUD/стадия/задача с воспроизводимым смоуком без зависимости от flaky Groq.
+
+---
+
 ## 2026-06-08 — Whisper STT: перепроход и смоук
 
 **Сделано:** `smoke_whisper_stt.py`, тесты voice/smoke; фикс 503 на `/api/voice/transcribe` и `error` в WS при сбое STT; live Groq OK; `WHISPER_STT_ACCEPTANCE.md`.

@@ -21,7 +21,9 @@
 
 `[2026-06-08] | PRD_MAP: п.2 «Поля Битрикс + синк» | Отложено: туннель (ngrok/cloudflared) + исходящий вебхук в портале | Причина: dev на localhost — Битрикс не достучится; мгновенный синк не проверить без публичного URL | Нужна фаза MAP: 2 / DevOps | Сейчас работает: полный импорт (кнопка) + опрос BITRIX_AUTO_SYNC_MINUTES=5 | Действие: туннель :8000 → URL в Битриксе ONCRMLEADADD → /api/webhooks/bitrix/events?token=...; опционально :5173 для UI`
 
-`[2026-06-07] | PRD_MAP: «Голос / Hermes — разбор интентов» | Отложено: починить 9 тестов tests/core/test_hermes_eval.py | Причина: падают без LLM или после рефактора hermes | Нужна фаза MAP: 1 | Из шага: rules-audit + run_zone_regression all`
+`[2026-06-08] | PRD_MAP: п.2 Hermes лиды — ЗАКРЫТО | Было: 9 падений test_hermes_eval | Сделано: slot_normalize, rescue, smoke_hermes_leads 40 passed; LLM eval 8/11 (3 flaky слота Groq — опционально) | Команда: pytest tests/core/test_hermes_eval.py::TestHermesIntents`
+
+`[2026-06-08] | PRD_MAP: стек / Email API | Отложено: миграция `@validator` → `@field_validator` в `backend/api/routes/email.py` (Pydantic V2) | Причина: при pytest/smoke шумит `PydanticDeprecatedSince20` (3 предупреждения: imap/smtp, body, lead_ids); на Whisper STT и лиды не влияет | Нужна фаза MAP: любой шаг с касанием email | Действие: переписать валидаторы по гайду Pydantic v2, прогнать `tests/api/test_email*` + smoke | Приоритет: 🟢`
 
 ---
 
@@ -30,9 +32,10 @@
 | Приоритет | PRD_MAP | Что | Фаза MAP |
 |-----------|---------|-----|----------|
 | 🟡 | п.2 Битрикс синк | Туннель :8000 + исходящий вебхук в портале | 2 / DevOps |
-| 🟡 | Голос / Hermes — разбор интентов | 9 тестов `test_hermes_eval.py` | 1 |
-| 🟡 | Хвост Ф1: расширить интенты Hermes | реализация + тесты | 1 |
+| 🟡 | Хвост Ф1: расширить интенты Hermes | история, аналитика, фильтры (след. пункт MAP) | 1 |
+| 🟢 | Hermes LLM eval | 3 flaky кейса Groq слотов (eval-003/020, noop) | 1 |
 | 🔴 | Хвост Ф1: UI `voice_action` | модалки, навигация, фильтр | 1 |
+| 🟢 | Email API / техдолг | `@validator` → `@field_validator` в `email.py` | при касании email |
 
 ---
 

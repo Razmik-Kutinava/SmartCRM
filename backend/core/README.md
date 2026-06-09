@@ -22,6 +22,8 @@
 
 Импорт снаружи: `from core.hermes import parse_intent`.
 
+| `hermes/slot_normalize.py` | Нормализация слотов/агентов после LLM и rescue |
+
 ---
 
 ## Пакет `qa/` — QA-агент для тендеров

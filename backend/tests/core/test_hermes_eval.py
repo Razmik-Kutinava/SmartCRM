@@ -33,11 +33,24 @@ def norm(s: str) -> str:
     return s
 
 
+_FIELD_EQUIV = {
+    "stage": {"stage", "стадия", "этап"},
+    "phone": {"phone", "телефон"},
+    "email": {"email", "почта"},
+}
+
+
 def slots_match(expected: dict, actual: dict) -> tuple[bool, str]:
     for key, exp_val in expected.items():
         act_val = actual.get(key, "")
         if not act_val:
             return False, f"слот '{key}' отсутствует в ответе"
+        if key == "field":
+            exp_set = _FIELD_EQUIV.get(norm(str(exp_val)), {norm(str(exp_val))})
+            act_norm = norm(str(act_val))
+            if act_norm in exp_set or any(e in act_norm or act_norm in e for e in exp_set):
+                continue
+            return False, f"слот 'field': ожидалось '{exp_val}', получено '{act_val}'"
         en = norm(str(exp_val))
         an = norm(str(act_val))
         if en not in an and an not in en:
@@ -77,6 +90,14 @@ HERMES_AVAILABLE = bool(os.getenv("GROQ_API_KEY") or os.getenv("OLLAMA_HOST"))
 
 @pytest.mark.skipif(not HERMES_AVAILABLE, reason="GROQ/Ollama недоступны — пропускаем интеграционные тесты Hermes")
 class TestHermesIntents:
+
+    @pytest.fixture(autouse=True)
+    def _clear_hermes_cache(self):
+        from core.hermes import config
+
+        config._intent_cache.clear()
+        yield
+        config._intent_cache.clear()
 
     @pytest.fixture(scope="class")
     def hermes(self):

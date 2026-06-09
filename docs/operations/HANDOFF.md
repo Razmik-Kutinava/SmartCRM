@@ -1,8 +1,10 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Голос → лиды, п.1 Whisper STT] | Статус:DONE — ждём апрув`
+`Спринт:[Фаза 1] | Задача:[Голос → лиды, п.2 Hermes] | Статус:DONE — ждём апрув`
 
-**Whisper STT перепроход ✅** — `smoke_whisper_stt.py` 15 pytest (вкл. live Groq), `WHISPER_STT_ACCEPTANCE.md`.
+**Hermes интенты по лидам ✅** — `smoke_hermes_leads.py` 40 pytest, `HERMES_LEADS_ACCEPTANCE.md`.
+
+**Whisper STT перепроход ✅** — `smoke_whisper_stt.py`, `WHISPER_STT_ACCEPTANCE.md`.
 
 **Блок «Балльная воронка» закрыт.** Смоук формулы + приоритеты 2026-06-08 (`SCORING_FUNNEL_ACCEPTANCE.md`).
 
@@ -28,7 +30,7 @@
 
 ## Следующий шаг (после апрува)
 
-Голос → лиды: **п.2 полные интенты** или **п.3 voice_action UI**.
+Голос → лиды: **п.3 voice_action UI** или **полный набор интентов** (история/аналитика).
 
 **Блокеры:** нет 🔴
 

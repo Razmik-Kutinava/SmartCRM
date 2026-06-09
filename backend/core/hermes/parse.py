@@ -10,6 +10,7 @@ from .json_parse import parse_json
 from .prompts import get_system_prompt
 from .providers import groq_chat, ollama_chat, ollama_preload
 from .rescue import post_verify, rescue_route
+from .slot_normalize import normalize_parsed_intent
 from .text_utils import choose_num_ctx, choose_provider, compress_context, sanitize_user_text, unique_models
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ async def parse_intent(text: str) -> dict:
 
     fastpath = fastpath_route(normalized_text)
     if fastpath:
+        fastpath = normalize_parsed_intent(normalized_text, fastpath)
         cache_set(normalized_text, fastpath)
         if config.HERMES_ENABLE_MEMORY:
             try:
@@ -128,6 +130,7 @@ async def parse_intent(text: str) -> dict:
 
     rescue = rescue_route(normalized_text)
     if rescue:
+        rescue = normalize_parsed_intent(normalized_text, rescue)
         cache_set(normalized_text, rescue)
         if config.HERMES_ENABLE_MEMORY:
             try:
