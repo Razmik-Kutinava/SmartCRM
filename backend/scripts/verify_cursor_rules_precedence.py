@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify SmartCRM project rules override User Rules (AGENTS.md + commit-ops)."""
+"""Verify SmartCRM commit-ops canon is present and consistent."""
 
 from __future__ import annotations
 
@@ -16,8 +16,6 @@ REQUIRED_PHRASES = (
     "git commit",
     "SESSION_STATE",
     "push",
-    "Project Rules",
-    "User Rules",
 )
 
 
@@ -49,15 +47,12 @@ def main() -> int:
         errors.append(proc.stdout.strip() or proc.stderr.strip())
 
     if errors:
-        print("FAIL: project rules override incomplete\n")
+        print("FAIL: commit-ops canon incomplete\n")
         for e in errors:
             print(f"  - {e}")
-        print("\nСм. docs/operations/CURSOR_USER_RULES_STATUS.md")
         return 1
 
-    print("OK: SmartCRM project rules (AGENTS.md + commit-ops) настроены.")
-    print("     Project Rules перебивают User Rules в этом репо.")
-    print("     User Rules в UI: см. CURSOR_USER_RULES_STATUS.md (опционально).")
+    print("OK: commit-ops canon (AGENTS.md + smartcrm-commit-ops.mdc) настроен.")
     return 0
 
 

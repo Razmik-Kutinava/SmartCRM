@@ -19,6 +19,26 @@
 
 **Правило:** изменение кода или архитектуры без записи здесь = не зафиксировано для следующей сессии.
 
+## [2026-06-08] — Правила: только безусловный commit+ops (процесс)
+
+**Сделано:** зачистка всех формулировок отложенного коммита в `.mdc`, `AGENTS.md`, ops-журналах; `check_rules_commit_conflict.py` сканирует `SESSION_STATE`; канон — один: `git commit` при закрытии шага.
+
+**Зачем:** агенты не откладывали коммит и не спрашивали разрешение.
+
+## [2026-06-08] — RAG п.2: 6 режимов поиска перепроход (`go`)
+
+**Сделано:** pytest API 6 эндпоинтов + unit modes; `smoke_search_modes.py`; `data-testid` на 6 табах/submit; DevTools табы + free live; `SEARCH_MODES_ACCEPTANCE.md` с блоком «НЕ СДАЛИ»; PRD_MAP п.2 ✅.
+
+**Не в scope п.2 (явно):** Chroma/p.3, `/rag` upload/p.4, save button/p.5, enrich-lead live smoke, авто-чанки Ф2.
+
+**Зачем:** закрыть п.2 по шаблону п.1 — автотесты + acceptance + честный хвост.
+
+## [2026-06-08] — RAG п.1 хвост: apiFetch + live smoke + UI (`go`)
+
+**Сделано:** `search/+page.svelte` — все `fetch` → `apiFetch`/`apiPost`; `smoke_search_providers.py` — `_load_env()` для live probe; DevTools полный UI-клик; `SEARCH_PROVIDERS_ACCEPTANCE.md` таблица «сделано/проверено»; `BACKLOG.md` — хвост п.2–5 на потом.
+
+**Зачем:** дожать п.1 до acceptance-уровня голосового блока (не только API evaluate_script).
+
 ## [2026-06-08] — RAG п.1 Serper + Brave + Tavily перепроход (`go`)
 
 **Сделано:** фикс кэша `company_search.py`; pytest моки провайдеров + API; `smoke_search_providers.py`; DevTools `/search` live run; `SEARCH_PROVIDERS_ACCEPTANCE.md`; PRD_MAP перепроход.
@@ -139,9 +159,9 @@ BACKLOG.md       — отложено по PRD_MAP
 
 ## 2026-06-08 — Процесс: единое правило commit + ops
 
-**Сделано:** `smartcrm-commit-ops.mdc` — канон (всегда `git commit` + ops; `git push` только по апруву). Остальные `.mdc` ссылаются на него без дублей. `check_rules_commit_conflict.py` — автопроверка конфликтов в rules/ops. Очищены формулировки «коммит по запросу» / «стоп до апрува» в SESSION_STATE.
+**Сделано:** `smartcrm-commit-ops.mdc` — канон (всегда `git commit` + ops; `git push` только по явному go). Остальные `.mdc` ссылаются на него без дублей. `check_rules_commit_conflict.py` — автопроверка формулировок в rules/ops.
 
-**Зачем:** агенты не должны пропускать коммит из-за противоречивых правил.
+**Зачем:** единое правило коммита без дублей в документах.
 
 ---
 
@@ -245,11 +265,11 @@ BACKLOG.md       — отложено по PRD_MAP
 
 ---
 
-## 2026-06-08 — Правила: коммит+ops безусловно (запрет «скажи если нужен»)
+## 2026-06-08 — Правила: коммит+ops безусловно
 
-**Сделано:** `agent-workflow` §0 железное правило; `task-workflow`, `dev-gates`, `.cursorrules`, `RULES_MATRIX`, `CURSOR_USER_RULES_SNIPPET`; `check_agent_step.py` — незакоммиченное = FAIL.
+**Сделано:** `agent-workflow` §0; `task-workflow`, `dev-gates`, `.cursorrules`, `RULES_MATRIX`; `check_agent_step.py` — незакоммиченное = FAIL.
 
-**Причина:** агенты пропускали коммит и спрашивали разрешение.
+**Причина:** агенты пропускали коммит на закрытии шага.
 
 ---
 

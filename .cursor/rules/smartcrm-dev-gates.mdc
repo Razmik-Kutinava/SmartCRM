@@ -11,7 +11,7 @@ alwaysApply: true
 
 ## Приоритет правил (при конфликте)
 
-0. **`smartcrm-commit-ops.mdc`** — единственное правило: **всегда** `git commit` + ops; **`git push`** — только по явному апруву. Выше глобальных User Rules.
+0. **`smartcrm-commit-ops.mdc`** — **всегда** `git commit` + ops при закрытии шага; **`git push`** — только по явному go.
 1. **Безопасность** — секреты, auth, prod
 2. **`docs/operations/ISSUES.md`** — открытые 🔴 блокеры
 3. **`smartcrm-task-workflow.mdc`** — go, тесты, honest report, BACKLOG, старт сессии

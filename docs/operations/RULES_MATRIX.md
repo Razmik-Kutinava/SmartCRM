@@ -13,15 +13,14 @@
 
 Проверки: `verify_cursor_rules_precedence.py`, `check_agent_step.py`, `check_rules_commit_conflict.py`.
 
-`AGENTS.md` в корне — дубль для приоритета над User Rules (см. `CURSOR_USER_RULES_STATUS.md`).
+`AGENTS.md` в корне — краткий дубль канона коммита.
 
 ## Сводка правил
 
 | # | Правило | Где | Enforcement |
 |---|---------|-----|-------------|
-| R0 | `.mdc` выше User Rules | `commit-ops`, `dev-gates` п.0 | User Rules snippet |
 | R1 | Всегда commit + ops | `commit-ops.mdc` | `check_agent_step.py` FAIL |
-| R2 | Push только по апруву | `commit-ops.mdc` | дисциплина |
+| R2 | Push только по явному go | `commit-ops.mdc` | дисциплина |
 | R3 | Старт сессии: 3 строки | `task-workflow` | дисциплина |
 | R4 | `go` на новую задачу; стоп после шага | `task-workflow` | дисциплина |
 | R5 | Тест + регрессия зоны | `task-workflow`, `dev-gates` | `run_zone_regression.py` |

@@ -61,9 +61,9 @@ alwaysApply: true
 
 ---
 
-## Только с явным апрувом (`smartcrm-commit-ops.mdc`)
+## Push и deploy — только с явным go
 
-- **`git push`** (коммит локальный — всегда, push — нет)
+- **`git push`**
 - deploy / prod
 - деструктивный git
 - смена scope / PRD

@@ -10,16 +10,15 @@
 2. `docs/operations/SESSION_STATE.md`
 3. В конце шага: `CHANGELOG.md` + `HANDOFF.md`
 
-**Не спрашивать** «нужен ли коммит». **Не писать** «коммит не делал».
+В отчёте: **`Коммит: <хеш>`**.
 
-## Push — только по явному апруву
+## Push
 
 `git push` — только когда пользователь явно написал push.
 
-## Приоритет правил (Cursor)
+## Проверка
 
-**Project Rules** (этот файл + `.cursor/rules/*.mdc`) **выше** глобальных User Rules.
-
-Глобальное «Only create commits when requested» **не действует** в SmartCRM.
-
-Проверка: `python backend/scripts/verify_cursor_rules_precedence.py`
+```bash
+python backend/scripts/check_agent_step.py
+python backend/scripts/check_rules_commit_conflict.py
+```

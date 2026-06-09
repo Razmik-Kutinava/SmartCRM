@@ -17,7 +17,7 @@
 | [`smartcrm-repo-layout.mdc`](.cursor/rules/smartcrm-repo-layout.mdc) | структура репо, backend README |
 | [`smartcrm-code-split.mdc`](.cursor/rules/smartcrm-code-split.mdc) | лимит файлов, сплит |
 
-**Приоритет:** `.mdc` **выше** глобальных User Rules. Матрица: [`RULES_MATRIX.md`](docs/operations/RULES_MATRIX.md). Cursor User Rules: [`CURSOR_USER_RULES_SNIPPET.md`](docs/operations/CURSOR_USER_RULES_SNIPPET.md).
+Матрица правил: [`RULES_MATRIX.md`](docs/operations/RULES_MATRIX.md).
 
 ## Документация
 

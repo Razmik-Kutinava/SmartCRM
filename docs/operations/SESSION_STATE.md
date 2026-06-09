@@ -1,10 +1,16 @@
 ﻿# SESSION_STATE
 
-Краткий прогресс сессии — **обязательно** после каждого действия (1–2 строки). Канон: `smartcrm-commit-ops.mdc`.
+Краткий прогресс сессии — **обязательно** после каждого действия (1–2 строки). Шаг с изменениями файлов → `git commit` **до** отчёта. Канон: `smartcrm-commit-ops.mdc`.
 
 Шаблон строки:
 
 `[время] | Действие:[что сделал] | Следующий шаг:[что дальше] | Вопросы:[если есть]`
+
+2026-06-08 | Действие: зачистка правил — только безусловный `git commit` при закрытии шага; убраны отложенные формулировки в `.mdc`, `AGENTS.md`, ops; усилен `check_rules_commit_conflict.py`. | Следующий шаг: PRD_MAP. | Статус: in_progress
+
+2026-06-08 | Действие: RAG п.2 — 6 режимов перепроход: `test_search_modes_api.py` + `test_search_modes.py`, `smoke_search_modes.py` 19 pytest + live free; DevTools 6 табов + free live 10 результатов; `SEARCH_MODES_ACCEPTANCE.md` (сделано/НЕ сдали); PRD_MAP п.2 ✅; BACKLOG п.3–5. | Следующий шаг: `go` RAG п.3 Chroma. | Статус: done
+
+2026-06-08 | Действие: RAG п.1 хвост — `/search` все API через `apiFetch`/`apiPost`; `smoke_search_providers.py` грузит `.env` (live serper/brave/tavily OK); DevTools UI «Сбербанк»→«Найти»→7 результатов; `SEARCH_PROVIDERS_ACCEPTANCE.md` таблица; `BACKLOG.md` § «Поиск и RAG» хвост на потом. | Следующий шаг: `go` RAG п.2. | Статус: done
 
 2026-06-08 | Действие: PRD_MAP RAG п.1 — перепроход Serper/Brave/Tavily: фикс cache в `company_search.py`, `test_search_providers.py` + API smoke, `smoke_search_providers.py` 11 pytest; DevTools `/search` — 3 ключа ✓, `/run` Сбербанк → 7 результатов; `SEARCH_PROVIDERS_ACCEPTANCE.md`. | Коммит: `eb138bd` | Следующий шаг: `go` RAG п.2 «6 режимов поиска». | Статус: done
 
@@ -72,13 +78,13 @@
 
 2026-06-08 | Действие: п.2 «Поля Битрикс» — маппинг + `amount_rub`; автосинк: `POST /api/webhooks/bitrix/events` + фон `BITRIX_AUTO_SYNC_MINUTES=5`; `GET /api/leads/bitrix-sync-status`; pytest bitrix 7 passed (3 live). Файлы: `bitrix24_sync.py`, `webhooks_bitrix.py`, `bitrix.md`. | Следующий шаг: перезапуск uvicorn; вебхук ONCRMLEADADD; `go` на п.3 Kanban DnD. | Статус: done (код), ждёт настройку портала
 
-2026-05-04 | Действие: ROOT CAUSE найден и устранён — база `smartcrm` и юзер `smartcrm` отсутствовали в Postgres; созданы через psql; uvicorn перезапущен → `init_db` применил схему; проверено: `/api/leads` → 200 OK, `/api/leads/1791` → 404 (база пустая). Ошибок 500 нет. | Следующий шаг: импорт/сид данных (Bitrix или `seed_eval_benchmark_leads.py`) при необходимости; коммит фиксов. | Вопросы: нет | Статус: done
+2026-05-04 | Действие: ROOT CAUSE найден и устранён — база `smartcrm` и юзер `smartcrm` отсутствовали в Postgres; созданы через psql; uvicorn перезапущен → `init_db` применил схему; проверено: `/api/leads` → 200 OK, `/api/leads/1791` → 404 (база пустая). Ошибок 500 нет. | Следующий шаг: импорт/сид данных (Bitrix или `seed_eval_benchmark_leads.py`) при необходимости. | Вопросы: нет | Статус: done
 
 2026-05-04 | Действие: Доп. фикс RST при connect — в `db/session.py`: нормализация `@localhost`→`127.0.0.1` (env `DATABASE_FORCE_IPV4`), дефолт URL на `127.0.0.1`, `connect_args` timeout + опционально `DATABASE_SSL=disable`; `.env.example` обновлён. | Следующий шаг: перезапуск uvicorn; при своём `.env` с localhost — перезагрузить без смены файла (нормализация сработает). | Вопросы: нет | Статус: done
 
 2026-05-04 | Действие: 500 на `/api/leads` — по логам не ORM, а обрыв TCP к Postgres (`ConnectionResetError` 10054, `ConnectionDoesNotExistError`). В `db/session.py`: `pool_pre_ping=True`, `pool_recycle` (+ опция в `.env.example`). | Следующий шаг: перезапуск uvicorn; проверить что Postgres стабилен (Docker/VPN). | Вопросы: нет | Статус: done
 
-2026-05-04 | Действие: Дожат операционка под hotfix — строка в `CHANGELOG`, уточнён `HANDOFF` (след. шаг + voice WS). | Следующий шаг: коммит / смоук по HANDOFF. | Вопросы: нет | Статус: done
+2026-05-04 | Действие: Дожат операционка под hotfix — строка в `CHANGELOG`, уточнён `HANDOFF` (след. шаг + voice WS). | Следующий шаг: смоук по HANDOFF. | Вопросы: нет | Статус: done
 
 2026-05-04 | Действие: Фикс старта API — в `LeadFieldAudit` не был импортирован `Optional` для `audit_metadata`; добавлены `typing.Any`/`Optional` и аннотация `dict[str, Any]`; у `Lead.approvals` — то же для JSON. Импорт `main:app` проверен. | Следующий шаг: перезагрузить uvicorn; повторить запросы к `/api/leads/...`. | Вопросы: нет | Статус: done
 
@@ -92,11 +98,11 @@
 
 2026-05-04 | Действие: P1 по `go` — суммы `amount_rub`/`paid_amount_rub`, `lead_score_advisory`, флаги CRM, `scoreAdvisory` в GET/PATCH лида, гейт `update_lead_score`, UI карточки, тесты `test_lead_score_advisory.py`; PRD/ARCH синхронизированы с решением «балл = менеджер». | Следующий шаг: смоук UI + при желании P2. | Вопросы: нет | Статус: done
 
-2026-05-04 | Действие: Завершение итерации (`go` «добей») — оптимизация `page.subscribe` на карточке лида (fetch только при смене `id`); обновлён `docs/agents/langgraph.md` (гейт `update_lead_score`, `scoreAdvisory`); pytest `test_lead_score_advisory` + выборочные тесты зелёные; полный `tests/` падает на несвязанном `test_email_sync`. | Следующий шаг: коммит; P2 по отдельному `go`. | Вопросы: нет | Статус: done
+2026-05-04 | Действие: Завершение итерации (`go` «добей») — оптимизация `page.subscribe` на карточке лида (fetch только при смене `id`); обновлён `docs/agents/langgraph.md` (гейт `update_lead_score`, `scoreAdvisory`); pytest `test_lead_score_advisory` + выборочные тесты зелёные; полный `tests/` падает на несвязанном `test_email_sync`. | Следующий шаг: P2 по отдельному `go`. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: Техдельта v3 в доки — `voice_action`, email режимы, Search-to-Q&A, gate тендеров, lookalike, fanout; файлы: PRD, ARCHITECTURE, PRD_MAP, PRD_NOTES (журнал), langgraph, RAG, leadgen, tenders; ops батч. | Следующий шаг: коммит docs; проход Фазы 1 по PRD_MAP (ждать `go`). | Вопросы: нет | Статус: done
+2026-06-07 | Действие: Техдельта v3 в доки — `voice_action`, email режимы, Search-to-Q&A, gate тендеров, lookalike, fanout; файлы: PRD, ARCHITECTURE, PRD_MAP, PRD_NOTES (журнал), langgraph, RAG, leadgen, tenders; ops батч. | Следующий шаг: проход Фазы 1 по PRD_MAP (ждать `go`). | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: Правила структуры репо и сплита кода — `.cursor/rules/smartcrm-repo-layout.mdc`, `smartcrm-code-split.mdc`; канон `docs/dev/REPO_LAYOUT.md`; аудит `LAYOUT_AUDIT.md` (пакеты P1–P6 без переносов); обновлены CONTRIBUTING, docs/README. | Следующий шаг: коммит; пользователь выбирает `go P1`… для переносов. | Вопросы: нет | Статус: done
+2026-06-07 | Действие: Правила структуры репо и сплита кода — `.cursor/rules/smartcrm-repo-layout.mdc`, `smartcrm-code-split.mdc`; канон `docs/dev/REPO_LAYOUT.md`; аудит `LAYOUT_AUDIT.md` (пакеты P1–P6 без переносов); обновлены CONTRIBUTING, docs/README. | Следующий шаг: пользователь выбирает `go P1`… для переносов. | Вопросы: нет | Статус: done
 
 2026-06-07 | Действие: P1 layout — корневой `tests/` → `backend/tests/{api,core,rag}/`; `conftest.py` с auth для pytest; удалён `/tests/`; pytest: 25 passed (api+rag+hermes unit). | Следующий шаг: `go P2` или Фаза 1 PRD_MAP. | QA: api 13, rag 7, hermes parser 5 green | Статус: done
 
@@ -136,35 +142,35 @@
 
 2026-06-07 | Действие: P6 ops — `api/routes/ops.py` → пакет `api/routes/ops/` (10 модулей, 34 роута); тест review_fixes + hermes Parser 6 passed; коммит P6 hermes+ops. | Следующий шаг: P6 pipeline/search/tenders или Фаза 1 PRD_MAP. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: P6 остаток — `qa/`, `tenders/`, `analyst/`, `rag/search/`, `leadgen/pipeline/`, `checko/`; фикс cross-imports + `_resplit_leadgen_pkgs.py`; тесты leadgen+voice+tenders+qa+analyst+rag: **114 passed**. | Следующий шаг: коммит P6 остаток; Фаза 1 PRD_MAP. | Вопросы: нет | Статус: done
+2026-06-07 | Действие: P6 остаток — `qa/`, `tenders/`, `analyst/`, `rag/search/`, `leadgen/pipeline/`, `checko/`; фикс cross-imports + `_resplit_leadgen_pkgs.py`; тесты leadgen+voice+tenders+qa+analyst+rag: **114 passed**. | Следующий шаг: Фаза 1 PRD_MAP. | Вопросы: нет | Статус: done
 
 2026-06-07 | Действие: коммит `725b284` (P6+CRM+tenders+leads UI) + push `main` → origin (25 коммитов). | Следующий шаг: **Фаза 1 PRD_MAP** — баги/чеклист в ISSUES. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: 15× `backend/**/README.md` (карта бэкенда); ссылка в REPO_LAYOUT; черновик правила README-sync — ждёт апрув. | Следующий шаг: апрув правила → commit+push. | Вопросы: нет | Статус: in_progress
+2026-06-07 | Действие: 15× `backend/**/README.md` (карта бэкенда); ссылка в REPO_LAYOUT; черновик правила README-sync — ждёт апрув. | Следующий шаг: апрув правила → push. | Вопросы: нет | Статус: in_progress
 
 2026-06-07 | Действие: push `351fc23` — backend README pack + BACKEND_README_SYNC_DRAFT. | Следующий шаг: апрув правила → влить в smartcrm-repo-layout.mdc. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: правило §5 Backend README Sync в `smartcrm-repo-layout.mdc`; DRAFT → применено; CHANGELOG+HANDOFF. | Следующий шаг: commit+push; ждём задачу пользователя (Фаза 1 PRD_MAP). | Вопросы: нет | Статус: done
+2026-06-07 | Действие: правило §5 Backend README Sync в `smartcrm-repo-layout.mdc`; DRAFT → применено; CHANGELOG+HANDOFF. | Следующий шаг: push; ждём задачу пользователя (Фаза 1 PRD_MAP). | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: `smartcrm-task-workflow.mdc` (go, тесты, авто commit/ops, push/deploy по апруву); ссылка в repo-layout §6. | Следующий шаг: commit; ждём пункт PRD_MAP от пользователя. | Вопросы: нет | Статус: done
+2026-06-07 | Действие: `smartcrm-task-workflow.mdc` (go, тесты, авто commit/ops, push/deploy по апруву); ссылка в repo-layout §6. | Следующий шаг: ждём пункт PRD_MAP от пользователя. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: § anti-hallucination в task-workflow (честный отчёт «Не сделано / не проверено»). | Следующий шаг: commit; ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
+2026-06-07 | Действие: § anti-hallucination в task-workflow (честный отчёт «Не сделано / не проверено»). | Следующий шаг: ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: BACKLOG.md + § бэклог в task-workflow (связь с пунктами PRD_MAP, фаза опционально). | Следующий шаг: commit; ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
+2026-06-07 | Действие: BACKLOG.md + § бэклог в task-workflow (связь с пунктами PRD_MAP, фаза опционально). | Следующий шаг: ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
 
-2026-06-07 | Действие: smartcrm-dev-gates.mdc (DoD, регрессия, миграции, API, hot-path); .cursorrules→индекс; agent-workflow+BACKLOG. | Следующий шаг: commit; ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
+2026-06-07 | Действие: smartcrm-dev-gates.mdc (DoD, регрессия, миграции, API, hot-path); .cursorrules→индекс; agent-workflow+BACKLOG. | Следующий шаг: ждём пункт PRD_MAP. | Вопросы: нет | Статус: done
 
 2026-06-07 | Действие: Аудит правил — канон в `smartcrm-*.mdc`; п.0 коммит+ops; honest report; `run_zone_regression.py`; CURSOR_USER_RULES_SNIPPET. | Следующий шаг: Фаза 1 PRD_MAP + go. | Вопросы: нет | Статус: done
 
 2026-06-07 | Действие: коммит `28ab125`; регрессия p1/p6 PASS, hermes_eval 9 FAIL → ISSUES+BACKLOG. | Следующий шаг: Фаза 1 PRD_MAP + go. | Вопросы: push по апруву | Статус: done
 
-2026-06-08 | Действие: ops sync — RULES_MATRIX, check_agent_step.py, fix agent-workflow.mdc, BACKLOG/PRD_MAP, зачистка журналов, archive rename. | Следующий шаг: commit; Фаза 1 PRD_MAP (интенты Hermes) + go. | Тесты: p6 PASS, check_agent_step | Статус: done
+2026-06-08 | Действие: ops sync — RULES_MATRIX, check_agent_step.py, fix agent-workflow.mdc, BACKLOG/PRD_MAP, зачистка журналов, archive rename. | Следующий шаг: Фаза 1 PRD_MAP (интенты Hermes) + go. | Тесты: p6 PASS, check_agent_step | Статус: done
 
 2026-06-08 | Действие: коммит `bcce33c` (ops sync). Регрессия p6: All zones passed (121 tests). | Следующий шаг: Фаза 1 PRD_MAP + go. | push по апруву | Статус: done
 
 2026-06-08 | Действие: push `main` → origin (6 коммитов: rules + ops sync). | Следующий шаг: Фаза 1 PRD_MAP с начала — пункт + go. | Статус: done
 
-2026-06-08 | Действие: правила — коммит+ops безусловно; запрет «скажи если нужен коммит»; check_agent_step FAIL на незакоммиченное. | Следующий шаг: commit. | Статус: done
+2026-06-08 | Действие: правила — коммит+ops безусловно; check_agent_step FAIL на незакоммиченное. | Коммит: `86a8e7a` | Статус: done
 
 2026-06-08 | Действие: коммит `86a8e7a`. | Следующий шаг: Фаза 1 PRD_MAP + go. | Статус: done
 
