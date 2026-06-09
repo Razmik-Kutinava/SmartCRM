@@ -75,9 +75,11 @@
 |-----------|---------|-----|----------|-----|
 | ✅ | enrich-lead | Смоук `enrich-lead` live E2E | **1** | `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` |
 | 🟢 | prospect/agent | Spot-check live Groq в UI (prospect, enrich, agent) | **1** | 👤 опционально |
-| 🟢 | Ф2 п.4 | Авто-чанки «поиск → RAG» | **2** | агент |
+| 🟡 | Ф2 §4 | Кэш результата enrich (company+ИНН, TTL ~24 ч) | **2** | агент по `go` |
+| 🟡 | Ф2 §9 | Кнопка «Обогатить» на `/leads/{id}` | **2** | агент по `go` |
+| 🟢 | Ф2 §4 | Авто-чанки «поиск → RAG» | **2** | агент |
 
-**п.1–4** — `SEARCH_PROVIDERS/MODES/CHROMA/RAG_UPLOAD_ACCEPTANCE.md`.
+**Ф1 enrich** — `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` ✅. **п.1–5 RAG** — acceptance-доки в `docs/operations/`.
 
 ---
 
@@ -87,7 +89,7 @@
 |-----------|---------|-----|----------|-----|
 | 🔴 | Голос → лиды п.1 | E2E микрофон | **1** | 👤 ты |
 | 🟡 | Голос → лиды п.3, п.5 | Spot-check approve / fanout | **1** | 👤 ты |
-| 🟡 | Поиск и RAG п.5 | «Сохранить в базу» из поиска | **1** | агент по `go` |
+| 🟡 | Ф2 §4 / §9 | Кэш enrich + кнопка на карточке лида | **2** | агент по `go` |
 | 🟡 | Лиды п.2 Битрикс синк | Туннель :8000 + вебхук | **2** / DevOps | 👤 ты |
 | 🟡 | Фаза 2 Voice Layer | Голос вне лидов | **2** | агент по `go` |
 

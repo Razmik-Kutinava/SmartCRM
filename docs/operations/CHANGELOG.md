@@ -31,6 +31,10 @@
 
 **Зачем:** агенты не откладывали коммит и не спрашивали разрешение.
 
+## [2026-06-09] — PRD_MAP Ф2: enrich cache + кнопка на карточке (план)
+
+**Сделано:** `PRD_MAP.md` §4 кэш enrich, §9 кнопка `/leads/{id}`; BACKLOG + acceptance ссылки.
+
 ## [2026-06-09] — enrich-lead усиление: Brave, Checko, CRM apply (`go`)
 
 **Сделано:** `brave_limit.py` кэш+semaphore; `enrich_sources.py` Checko/ИНН, таргет LinkedIn/ЛПР, scrape сайта; UI выбор лида + PATCH; 28 pytest.

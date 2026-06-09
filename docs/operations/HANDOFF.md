@@ -8,7 +8,7 @@
 
 **п.4 ✅** `SEARCH_RAG_UPLOAD_ACCEPTANCE.md`. **п.3 ✅** `SEARCH_CHROMA_ACCEPTANCE.md`. **п.2 ✅** `SEARCH_MODES_ACCEPTANCE.md`. **п.1 ✅** `SEARCH_PROVIDERS_ACCEPTANCE.md`.
 
-**enrich-lead ✅** — `SEARCH_ENRICH_LEAD_ACCEPTANCE.md`. **Хвост:** Ф2 авто-чанки → `BACKLOG.md`.
+**enrich-lead ✅** — `SEARCH_ENRICH_LEAD_ACCEPTANCE.md`. **Ф2 ближайшее (enrich):** кэш enrich §4, кнопка на карточке §9 — `PRD_MAP.md`. **Хвост:** авто-чанки → `BACKLOG.md`.
 
 **Голос → лиды** — микрофон E2E на пользователе (`BACKLOG.md` § ручная работа).
 
