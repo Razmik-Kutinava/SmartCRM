@@ -1,14 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { getApiUrl } from '$lib/websocket.js';
-
-	const API = getApiUrl();
+	import { apiFetch, apiPost } from '$lib/api.js';
 
 	// ── Провайдеры ───────────────────────────────────────────────────────────────
 	let providers = $state({});
 	onMount(async () => {
 		try {
-			const r = await fetch(`${API}/api/search/providers`);
+			const r = await apiFetch('/api/search/providers');
 			if (r.ok) providers = await r.json();
 		} catch {}
 	});
@@ -35,11 +33,7 @@
 
 	// ── Общий хелпер ─────────────────────────────────────────────────────────────
 	async function post(endpoint, body) {
-		const r = await fetch(`${API}${endpoint}`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(body),
-		});
+		const r = await apiPost(endpoint, body);
 		if (!r.ok) throw new Error(await r.text());
 		return r.json();
 	}
@@ -109,15 +103,11 @@
 		const idx = pr_result.companies.indexOf(company);
 		pr_adding = new Set([...pr_adding, idx]);
 		try {
-			const r = await fetch(`${API}/api/leads`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					company: company.name,
-					description: company.snippet || '',
-					website: company.url || '',
-					score: company.fit_score || 50,
-				}),
+			const r = await apiPost('/api/leads', {
+				company: company.name,
+				description: company.snippet || '',
+				website: company.url || '',
+				score: company.fit_score || 50,
 			});
 			if (r.ok) {
 				const updated = [...pr_result.companies];
@@ -208,10 +198,11 @@
 		if (!rg_approved.size || rg_previewing) return;
 		rg_previewing = true; rg_preview = null; rg_err = '';
 		try {
-			const resp = await fetch(`${API}/api/rag/ingest-batch`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ documents: ragDocs(), for_agent: rg_agent, tags: 'search', dry_run: true }),
+			const resp = await apiPost('/api/rag/ingest-batch', {
+				documents: ragDocs(),
+				for_agent: rg_agent,
+				tags: 'search',
+				dry_run: true,
 			});
 			const data = await resp.json();
 			if (resp.ok && data.ok) {
@@ -229,10 +220,11 @@
 		if (rg_ingesting) return;
 		rg_ingesting = true; rg_ingest_msg = ''; rg_ingest_ok = false;
 		try {
-			const resp = await fetch(`${API}/api/rag/ingest-batch`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ documents: ragDocs(), for_agent: rg_agent, tags: 'search', dry_run: false }),
+			const resp = await apiPost('/api/rag/ingest-batch', {
+				documents: ragDocs(),
+				for_agent: rg_agent,
+				tags: 'search',
+				dry_run: false,
 			});
 			const data = await resp.json();
 			if (resp.ok && data.ok) {
@@ -305,6 +297,8 @@
 	<div class="flex border-b border-gray-800 bg-gray-900 shrink-0 px-4 overflow-x-auto">
 		{#each TABS as tab}
 			<button
+				type="button"
+				data-testid="search-tab-{tab.id}"
 				onclick={() => activeTab = tab.id}
 				class="flex items-center gap-1.5 px-4 py-3 text-xs font-medium whitespace-nowrap border-b-2 transition-colors
 					{activeTab === tab.id
@@ -350,8 +344,13 @@
 					Без кэша
 				</label>
 			</div>
-			<button onclick={runCompanySearch} disabled={cs_running || !cs_company.trim()}
-				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm">
+			<button
+				type="button"
+				data-testid="search-company-submit"
+				onclick={runCompanySearch}
+				disabled={cs_running || !cs_company.trim()}
+				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm"
+			>
 				{cs_running ? '⟳ Поиск...' : '🔍 Найти'}
 			</button>
 		</div>
@@ -456,8 +455,13 @@
 				<input type="checkbox" bind:checked={fq_summarize} class="accent-indigo-500" />
 				Сформировать AI-ответ на основе результатов
 			</label>
-			<button onclick={runFreeSearch} disabled={fq_running || !fq_query.trim()}
-				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm">
+			<button
+				type="button"
+				data-testid="search-free-submit"
+				onclick={runFreeSearch}
+				disabled={fq_running || !fq_query.trim()}
+				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm"
+			>
 				{fq_running ? '⟳ Поиск...' : '🔍 Найти и ответить'}
 			</button>
 		</div>
@@ -520,8 +524,13 @@
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white" />
 				</div>
 			</div>
-			<button onclick={runProspect} disabled={pr_running || !pr_icp.trim()}
-				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm">
+			<button
+				type="button"
+				data-testid="search-prospect-submit"
+				onclick={runProspect}
+				disabled={pr_running || !pr_icp.trim()}
+				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm"
+			>
 				{pr_running ? '⟳ Ищу компании...' : '🎯 Найти потенциальных клиентов'}
 			</button>
 		</div>
@@ -590,8 +599,13 @@
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white" />
 				</div>
 			</div>
-			<button onclick={runEnrich} disabled={en_running || !en_company.trim()}
-				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm">
+			<button
+				type="button"
+				data-testid="search-enrich-submit"
+				onclick={runEnrich}
+				disabled={en_running || !en_company.trim()}
+				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm"
+			>
 				{en_running ? '⟳ Ищу данные...' : '✨ Обогатить данные о компании'}
 			</button>
 		</div>
@@ -669,8 +683,13 @@
 					</select>
 				</div>
 			</div>
-			<button onclick={runRagSearch} disabled={rg_running || !rg_query.trim()}
-				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm">
+			<button
+				type="button"
+				data-testid="search-rag-submit"
+				onclick={runRagSearch}
+				disabled={rg_running || !rg_query.trim()}
+				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm"
+			>
 				{rg_running ? '⟳ Поиск...' : '📚 Найти материалы'}
 			</button>
 		</div>
@@ -855,8 +874,13 @@
 						class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white" />
 				</div>
 			</div>
-			<button onclick={runAgentTask} disabled={at_running || !at_task.trim()}
-				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm">
+			<button
+				type="button"
+				data-testid="search-agent-submit"
+				onclick={runAgentTask}
+				disabled={at_running || !at_task.trim()}
+				class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm"
+			>
 				{at_running ? '⟳ Агент работает...' : '🤖 Поставить задачу агенту'}
 			</button>
 		</div>

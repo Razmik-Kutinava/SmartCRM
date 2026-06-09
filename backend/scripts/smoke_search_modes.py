@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Смоук PRD_MAP «Поиск и RAG» п.1 — Serper + Brave + Tavily."""
+"""Смоук PRD_MAP «Поиск и RAG» п.2 — 6 режимов поиска."""
 
 from __future__ import annotations
 
@@ -14,7 +14,13 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 _REPO_ROOT = BACKEND.parent
-OUT = BACKEND / "data" / "artifacts" / "search" / "providers_smoke.json"
+OUT = BACKEND / "data" / "artifacts" / "search" / "modes_smoke.json"
+
+PYTEST = [
+    "tests/api/test_search_modes_api.py",
+    "tests/rag/test_search_modes.py",
+    "tests/api/test_search_providers_api.py",
+]
 
 
 def _load_env() -> None:
@@ -26,12 +32,6 @@ def _load_env() -> None:
     except ImportError:
         pass
 
-PYTEST = [
-    "tests/rag/test_search_providers.py",
-    "tests/rag/test_search_pkg.py",
-    "tests/api/test_search_providers_api.py",
-]
-
 
 def _probe(url: str) -> bool:
     try:
@@ -41,51 +41,49 @@ def _probe(url: str) -> bool:
         return False
 
 
-async def _live_probe() -> dict:
-    from rag.search.providers import _search_brave, _search_serper, _search_tavily
+async def _live_free_ask() -> dict:
+    from rag.search import free_search
 
-    q = "SmartCRM тест поиска"
-    out = {}
-    for name, fn, env in (
-        ("serper", _search_serper, "SERPER_API_KEY"),
-        ("brave", _search_brave, "BRAVE_API_KEY"),
-        ("tavily", _search_tavily, "TAVILY_API_KEY"),
-    ):
-        if not os.getenv(env):
-            out[name] = {"skipped": True, "reason": f"no {env}"}
-            continue
-        try:
-            rows = await asyncio.wait_for(fn(q, 3), timeout=20.0)
-            out[name] = {"ok": len(rows) > 0, "count": len(rows)}
-        except Exception as e:
-            out[name] = {"ok": False, "error": type(e).__name__}
-    return out
+    try:
+        out = await asyncio.wait_for(
+            free_search("SmartCRM тест свободного запроса", summarize=False, max_results=5),
+            timeout=30.0,
+        )
+        return {
+            "ok": len(out.get("raw_results", [])) > 0,
+            "providers": out.get("providers_used", []),
+            "count": len(out.get("raw_results", [])),
+        }
+    except Exception as e:
+        return {"ok": False, "error": type(e).__name__}
 
 
 def main() -> int:
     _load_env()
-    print("SmartCRM smoke — поисковики Serper/Brave/Tavily\n")
+    print("SmartCRM smoke — 6 режимов поиска\n")
+
     proc = subprocess.run(
         [sys.executable, "-m", "pytest", *PYTEST, "-q", "--tb=short"],
         cwd=BACKEND,
     )
     if proc.returncode != 0:
-        print("\nsmoke_search_providers: FAIL (pytest)")
+        print("\nsmoke_search_modes: FAIL (pytest)")
         return 1
 
-    payload = {
+    payload: dict = {
         "pytest": True,
+        "modes": ["company", "free", "prospect", "enrich", "rag", "agent"],
         "backend": _probe("http://127.0.0.1:8000/docs"),
         "frontend": None,
-        "live": None,
+        "live_free_ask": None,
     }
 
     keys = [os.getenv(k) for k in ("SERPER_API_KEY", "BRAVE_API_KEY", "TAVILY_API_KEY")]
     if any(keys):
         sys.path.insert(0, str(BACKEND))
-        payload["live"] = asyncio.run(_live_probe())
+        payload["live_free_ask"] = asyncio.run(_live_free_ask())
     else:
-        payload["live"] = {"skipped": True, "reason": "no API keys"}
+        payload["live_free_ask"] = {"skipped": True, "reason": "no API keys"}
 
     for host in ("localhost", "127.0.0.1"):
         for port in (5174, 5173, 4173):
@@ -98,9 +96,9 @@ def main() -> int:
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\nsmoke_search_providers: OK → {OUT}")
+    print(f"\nsmoke_search_modes: OK → {OUT}")
     if payload["frontend"]:
-        print(f"  frontend: {payload['frontend']} — DevTools UI")
+        print(f"  frontend: {payload['frontend']} — DevTools 6 табов")
     return 0
 
 
