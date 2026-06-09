@@ -10,6 +10,8 @@
 
 2026-06-08 | Действие: PRD_NOTES §CHANGELOG → шапка `operations/CHANGELOG.md`; NOTES — ссылка на канон. | Следующий шаг: хвост Ф1 Hermes/voice или `go` Фаза 2. | Статус: done
 
+2026-06-08 | Действие: Whisper STT п.1 — `smoke_whisper_stt.py` 14+1 live Groq; фикс 503/WS error; `WHISPER_STT_ACCEPTANCE.md`; DevTools WS OK. | Следующий шаг: п.2 Hermes интенты или п.3 voice_action. | Статус: done
+
 2026-06-08 | Действие: балльная воронка — `lead_priority_tier.py`, `smoke_scoring_funnel.py`, 21 pytest; PRD_MAP смоук ✅; `SCORING_FUNNEL_ACCEPTANCE.md`. | Следующий шаг: `go` голос → лиды или распределение PRD_NOTES. | Статус: done
 
 2026-06-08 | Действие: PRD_NOTES → канон: стек в ARCHITECTURE, карта docs в README, gaps в BACKLOG, RAG коллекции; NOTES обрезан (~500 строк дублей). | Следующий шаг: ждём апрув блока Лиды / `go` п.3. | Статус: done

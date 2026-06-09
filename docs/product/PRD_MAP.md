@@ -81,7 +81,13 @@
 
 ### Голос → лиды (базово)
 
-- [x] Whisper (Groq STT) → текст
+> **Перепроход п.1 (2026-06-08):** Whisper STT — `smoke_whisper_stt.py` 14 pytest + live Groq.
+
+| # | Пункт | Перепроход | Итог |
+|---|--------|------------|------|
+| 1 | Whisper (Groq STT) → текст | 2026-06-08 | ✅ transcribe API, WS audio/text, live Groq; `WHISPER_STT_ACCEPTANCE.md` |
+
+- [x] Whisper (Groq STT) → текст — перепроход **2026-06-08 ✅**
 - [x] Hermes → интенты по лидам (CRUD, стадия, задача)
 - [ ] Полный набор интентов по лидам (история, аналитика лида, фильтры)
 - [ ] UI-реакции: модалка / навигация / фильтр / апрув (`voice_action`) → [`ARCHITECTURE.md`](ARCHITECTURE.md#контракт-voice_action)

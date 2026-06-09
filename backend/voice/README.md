@@ -9,3 +9,5 @@
 | `audio_preprocess.py` | Нормализация аудио перед Whisper |
 
 Настройки: `core/voice_settings.py`, `data/whisper_settings.json`.
+
+Смоук: `python scripts/smoke_whisper_stt.py` (см. `docs/operations/WHISPER_STT_ACCEPTANCE.md`).

@@ -61,6 +61,14 @@ BACKLOG.md       — отложено по PRD_MAP
 
 ---
 
+## 2026-06-08 — Whisper STT: перепроход и смоук
+
+**Сделано:** `smoke_whisper_stt.py`, тесты voice/smoke; фикс 503 на `/api/voice/transcribe` и `error` в WS при сбое STT; live Groq OK; `WHISPER_STT_ACCEPTANCE.md`.
+
+**Зачем:** закрыть PRD_MAP п.1 «Whisper → текст» с воспроизводимой проверкой.
+
+---
+
 ## 2026-06-08 — Балльная воронка: смоук формулы и приоритетов
 
 **Сделано:** `lead_priority_tier.py`, `smoke_scoring_funnel.py`, 21 pytest (формула scoreAdvisory, API, фильтр critical в списке); `SCORING_FUNNEL_ACCEPTANCE.md`; PRD_MAP пункт закрыт.

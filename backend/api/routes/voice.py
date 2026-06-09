@@ -40,7 +40,10 @@ async def transcribe_audio(file: UploadFile = File(...)):
     audio_bytes = await file.read(MAX_AUDIO_BYTES + 1)
     if len(audio_bytes) > MAX_AUDIO_BYTES:
         raise HTTPException(413, detail="Файл слишком большой (максимум 10 МБ)")
-    transcript = await transcribe(audio_bytes, file.filename or "audio.webm")
+    try:
+        transcript = await transcribe(audio_bytes, file.filename or "audio.webm")
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
     return {"transcript": transcript}
 
 
@@ -101,7 +104,11 @@ async def voice_websocket(ws: WebSocket):
 
                 await ws.send_json({"type": "processing", "message": "Распознаю речь..."})
 
-                result = await process_audio(audio_bytes)
+                try:
+                    result = await process_audio(audio_bytes)
+                except RuntimeError as e:
+                    await ws.send_json({"type": "error", "message": str(e)})
+                    continue
 
                 await ws.send_json({"type": "transcript", "text": result["transcript"]})
                 await ws.send_json({

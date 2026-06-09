@@ -52,6 +52,8 @@ pytest tests/api/ -q
 | `test_lead_score_advisory.py` | Скор-советы |
 | `core/test_lead_priority_tier.py` | Приоритет лида (зеркало crmStages.js) |
 | `smoke/test_scoring_funnel_smoke.py` | Смоук балльной воронки (API + формула) |
+| `voice/test_whisper_stt.py` | Groq Whisper STT, preprocess, pipeline audio |
+| `smoke/test_whisper_stt_smoke.py` | HTTP transcribe + ops whisper settings + WS |
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |
 | `test_search.py` | Поиск |
