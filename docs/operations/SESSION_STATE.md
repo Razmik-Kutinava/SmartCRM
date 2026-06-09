@@ -6,7 +6,7 @@
 
 `[время] | Действие:[что сделал] | Следующий шаг:[что дальше] | Вопросы:[если есть]`
 
-2026-06-08 | Действие: PRD_MAP RAG п.1 — перепроход Serper/Brave/Tavily: фикс cache в `company_search.py`, `test_search_providers.py` + API smoke, `smoke_search_providers.py` 11 pytest; DevTools `/search` — 3 ключа ✓, `/run` Сбербанк → 7 результатов; `SEARCH_PROVIDERS_ACCEPTANCE.md`. | Следующий шаг: `go` RAG п.2 «6 режимов поиска». | Статус: done
+2026-06-08 | Действие: PRD_MAP RAG п.1 — перепроход Serper/Brave/Tavily: фикс cache в `company_search.py`, `test_search_providers.py` + API smoke, `smoke_search_providers.py` 11 pytest; DevTools `/search` — 3 ключа ✓, `/run` Сбербанк → 7 результатов; `SEARCH_PROVIDERS_ACCEPTANCE.md`. | Коммит: `eb138bd` | Следующий шаг: `go` RAG п.2 «6 режимов поиска». | Статус: done
 
 2026-06-08 | Действие: BACKLOG § «Ручная работа (только ты)» — таблица Фаза/блок/пункт: 🔴 микрофон E2E (Ф1 п.1), 🟡 approve+fanout spot-check, 🟢 live Groq опционально, Ф2 Битрикс туннель; синхрон «Активный хвост». | Следующий шаг: пользователь — строка 🔴 в BACKLOG; после OK — строка в SESSION_STATE. | Коммит: `b4ca224` | Статус: done
 
