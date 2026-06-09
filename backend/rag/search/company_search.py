@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 _cache: dict[str, dict[str, Any]] = {}  # key → {ts, results}
 
 
-from .cache import cache_clear, cache_list
+from .cache import _cache_get, _cache_key, _cache_set, cache_clear, cache_list
 from .config import load_config, save_config
 from .merge import _deduplicate, _filter_by_date, _format_results, _rerank_with_llm
 from .providers import (

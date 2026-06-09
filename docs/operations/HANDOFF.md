@@ -1,6 +1,10 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Голос → лиды — ждём ручной E2E] | Статус:BLOCKED на пользователя`
+`Спринт:[Фаза 1] | Задача:[Поиск и RAG — перепроход] | Статус:п.1 DONE → ждём go п.2`
+
+**RAG п.1 Serper/Brave/Tavily ✅** — `smoke_search_providers.py`, `SEARCH_PROVIDERS_ACCEPTANCE.md`, DevTools OK.
+
+**Голос → лиды** — микрофон E2E на пользователе (`BACKLOG.md` § ручная работа).
 
 **Чеклист ручной работы → `BACKLOG.md` § «👤 Ручная работа (только ты)».**
 

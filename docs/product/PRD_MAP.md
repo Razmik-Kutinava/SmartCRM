@@ -99,7 +99,9 @@
 
 ### Поиск и RAG (базово)
 
-- [x] Serper + Brave + Tavily
+> **Перепроход п.1 (2026-06-08):** Serper + Brave + Tavily — `smoke_search_providers.py`, 11 pytest, DevTools `/search`.
+
+- [x] Serper + Brave + Tavily — перепроход **2026-06-08 ✅** (`SEARCH_PROVIDERS_ACCEPTANCE.md`)
 - [x] 6 режимов поиска
 - [x] Chroma RAG (~1592 чанка), разделение по агентам
 - [x] Загрузка PDF/текста в `/rag`
