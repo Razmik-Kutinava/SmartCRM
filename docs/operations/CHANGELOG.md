@@ -19,6 +19,12 @@
 
 **Правило:** изменение кода или архитектуры без записи здесь = не зафиксировано для следующей сессии.
 
+## [2026-06-08] — BACKLOG: ручная работа по фазам (`go`)
+
+**Сделано:** секция «👤 Ручная работа (только ты)» в `BACKLOG.md` — таблица Фаза MAP / блок PRD / пункт / чеклист; критерий 100% закрытия Ф1 голоса; обновлены «Активный хвост» и «Сводный хвост».
+
+**Зачем:** не потерять единственный открытый шаг (микрофон E2E) и spot-check перед Фазой 2.
+
 ## [2026-06-08] — хвост BACKLOG «Голос → лиды» #2–#11 (`go`)
 
 **Сделано:** `add_communication` (Hermes + список лидов); `stage_fuzzy` + crm_settings; чипы industry/city; индикатор fanout в layout; `/health/whisper?ping=1`; Pydantic `@field_validator` в `email.py`; eval-034–036; фикс eval-003/020 rescue; `test_voice_approve_ui.py`; `smoke_hermes_leads_live.py`; `VOICE_LEADS_TAIL_ACCEPTANCE.md`.

@@ -6,7 +6,9 @@
 
 `[время] | Действие:[что сделал] | Следующий шаг:[что дальше] | Вопросы:[если есть]`
 
-2026-06-08 | Действие: хвост BACKLOG «Голос → лиды» #2–#11 (кроме #1 микрофон) — add_communication, fuzzy stage, чипы, fanout UI, health/whisper, email field_validator, eval-034–036, approve testids, smoke_hermes_leads_live; `VOICE_LEADS_TAIL_ACCEPTANCE.md`; pytest smoke зелёный. | Следующий шаг: пользователь — E2E микрофон вручную; затем Фаза 2 / Битрикс. | Статус: done
+2026-06-08 | Действие: BACKLOG § «Ручная работа (только ты)» — таблица Фаза/блок/пункт: 🔴 микрофон E2E (Ф1 п.1), 🟡 approve+fanout spot-check, 🟢 live Groq опционально, Ф2 Битрикс туннель; синхрон «Активный хвост». | Следующий шаг: пользователь — строка 🔴 в BACKLOG; после OK — строка в SESSION_STATE. | Коммит: см. ниже | Статус: done
+
+2026-06-08 | Действие: хвост BACKLOG «Голос → лиды» #2–#11 (кроме #1 микрофон) — add_communication, fuzzy stage, чипы, fanout UI, health/whisper, email field_validator, eval-034–036, approve testids, smoke_hermes_leads_live; `VOICE_LEADS_TAIL_ACCEPTANCE.md`; pytest smoke зелёный. | Коммит: `352eed2` | Статус: done
 
 2026-06-08 | Действие: п.5 смоук голоса — S01–S09 pytest 23 + chain 47; DevTools localhost:5174 API+WS OK; `VOICE_LEAD_SCENARIOS_ACCEPTANCE.md`; BACKLOG сводный хвост блока. | Следующий шаг: блок «Голос → лиды» закрыт → Фаза 2 или Битрикс. | Статус: done
 
