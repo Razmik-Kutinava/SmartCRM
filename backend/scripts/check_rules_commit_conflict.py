@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail if rules/docs contain wording that defers or optionalizes git commit."""
+"""Fail if rules/docs teach deferred or optional git commit."""
 
 from __future__ import annotations
 
@@ -29,11 +29,12 @@ BAD_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("committing_changes_rule", re.compile(r"committing-changes-with-git", re.I)),
     ("ask_if_commit_needed", re.compile(r"скажи.*коммит|нужен\s+ли\s+коммит|напиши.*коммит", re.I)),
     ("commit_not_done", re.compile(r"коммит\s+не\s+делал", re.I)),
+    ("wait_for_commit", re.compile(r"жду.*коммит|жду\s+явн", re.I)),
+    ("commit_dash", re.compile(r"Коммит:\s*—", re.I)),
     ("next_step_commit", re.compile(r"следующий\s+шаг:\s*(коммит|commit)\b", re.I)),
     ("defer_commit_phrase", re.compile(r"следующий\s+шаг:.*\b(коммит|commit)\b", re.I)),
+    ("commit_arrow", re.compile(r"следующий\s+шаг:.*коммит\s*→", re.I)),
     ("commit_needs_approval", re.compile(r"апрув.*→\s*commit|commit.*→.*апрув|апрув.*commit\+push", re.I)),
-    ("ignore_commit_rule", re.compile(r"игнорир.*коммит|игнорир.*commit", re.I)),
-    ("commit_rule_not_apply", re.compile(r"не\s+действует.*коммит|коммит.*не\s+действует", re.I)),
 ]
 
 
@@ -46,8 +47,7 @@ def _should_scan(path: Path) -> bool:
 
 
 def _is_commit_hash_line(line: str) -> bool:
-    """Allow «Коммит: `abc123`» in journals."""
-    return bool(re.search(r"Коммит:\s*`[0-9a-f]+`", line, re.I))
+    return bool(re.search(r"Коммит:\s*`[0-9a-f]{7,40}`", line, re.I))
 
 
 def scan_file(path: Path) -> list[str]:

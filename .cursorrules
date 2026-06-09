@@ -2,7 +2,7 @@
 
 **Канон процесса — `.cursor/rules/smartcrm-*.mdc` (alwaysApply).**
 
-**Единственное правило коммита:** [`smartcrm-commit-ops.mdc`](.cursor/rules/smartcrm-commit-ops.mdc) — **всегда** `git commit` + ops; **`git push`** — только по явному апруву.
+**Жёстко:** [`smartcrm-commit-ops.mdc`](.cursor/rules/smartcrm-commit-ops.mdc) — `git commit` **до** ответа пользователю; **`git push`** — только по явному go.
 
 Этот файл — стек, стиль кода, вход в проект.
 

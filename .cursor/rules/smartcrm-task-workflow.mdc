@@ -44,11 +44,14 @@ alwaysApply: true
 
 ## Финиш шага
 
-См. **`smartcrm-commit-ops.mdc`** — коммит и ops всегда.
+См. **`smartcrm-commit-ops.mdc`** — коммит **до** ответа пользователю.
+
+**Запрещено** писать пользователю «готово» / «следующий шаг» / «дай go» **до** `git commit` и ops.
 
 Чеклист — **все пункты**, иначе шаг **заблокирован**:
 
-- [ ] **`git commit`** + ops (`smartcrm-commit-ops.mdc`)
+- [ ] **`git commit`** — **первым**, до текста ответа (`smartcrm-commit-ops.mdc`)
+- [ ] ops после коммита
 - [ ] **`SESSION_STATE.md`** — запись по шагу
 - [ ] **`CHANGELOG.md` + `HANDOFF.md`** — батч в конце шага
 - [ ] **`ISSUES.md`** — если был баг

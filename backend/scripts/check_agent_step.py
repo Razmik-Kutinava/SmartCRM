@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify agent step closure: ops files touched, optional commit ahead of origin."""
+"""Verify agent step closure: commit, ops, SESSION_STATE tail."""
 
 from __future__ import annotations
 
@@ -14,6 +14,18 @@ OPS = REPO_ROOT / "docs" / "operations"
 SESSION_STATE = OPS / "SESSION_STATE.md"
 HANDOFF = OPS / "HANDOFF.md"
 CHANGELOG = OPS / "CHANGELOG.md"
+
+DEFER_COMMIT_MARKERS = (
+    "коммит по запросу",
+    "коммит не делал",
+    "жду коммит",
+    "жду явного",
+    "напиши коммит",
+    "нужен ли коммит",
+    "коммить",
+)
+
+COMMIT_HASH_RE = re.compile(r"Коммит:\s*`([0-9a-f]{7,40})`", re.I)
 
 
 def run_git(*args: str) -> str:
@@ -49,9 +61,18 @@ def latest_session_state_entry() -> str | None:
 
 
 def session_state_has_run_tail(entry: str) -> bool:
-    """Require Хвост A/B/C on the latest SESSION_STATE entry (smartcrm-commit-ops)."""
     required = ("Хвост A:", "Хвост B:", "Хвост C:")
     return all(marker in entry for marker in required)
+
+
+def session_state_commit_hash(entry: str) -> str | None:
+    m = COMMIT_HASH_RE.search(entry)
+    return m.group(1) if m else None
+
+
+def session_state_has_defer_commit_wording(entry: str) -> list[str]:
+    lower = entry.lower()
+    return [m for m in DEFER_COMMIT_MARKERS if m in lower]
 
 
 def session_state_has_recent_entry(max_days: int = 2) -> bool:
@@ -88,34 +109,41 @@ def main() -> int:
 
     if has_uncommitted_changes():
         errors.append(
-            "FAIL: есть незакоммиченные изменения — git commit обязателен "
-            "(smartcrm-agent-workflow §0). Запрещено отчитываться «done» без коммита."
+            "FAIL: незакоммиченные изменения — сначала git commit, потом ответ пользователю "
+            "(smartcrm-commit-ops.mdc)."
         )
 
     if file_modified_in_worktree(SESSION_STATE):
-        errors.append(
-            "FAIL: SESSION_STATE.md изменён, но не закоммичен — включи в коммит шага."
-        )
+        errors.append("FAIL: SESSION_STATE.md изменён, но не закоммичен.")
     elif not session_state_has_recent_entry():
-        errors.append(
-            "SESSION_STATE.md: нет свежей записи (≤2 дней) — обнови ops после шага."
-        )
+        errors.append("SESSION_STATE.md: нет свежей записи (≤2 дней).")
     else:
         latest = latest_session_state_entry()
-        if latest and not session_state_has_run_tail(latest):
-            errors.append(
-                "FAIL: последняя строка SESSION_STATE без Хвост A/B/C — "
-                "добавь все три блока (нет или список). См. smartcrm-commit-ops.mdc."
-            )
+        if latest:
+            if not session_state_has_run_tail(latest):
+                errors.append(
+                    "FAIL: последняя SESSION_STATE без Хвост A/B/C — smartcrm-commit-ops.mdc."
+                )
+            defer_hits = session_state_has_defer_commit_wording(latest)
+            if defer_hits:
+                errors.append(
+                    "FAIL: SESSION_STATE содержит отложенный коммит: "
+                    + ", ".join(defer_hits)
+                )
+            if "Коммит: —" in latest or "Коммит: pending" in latest.lower():
+                errors.append("FAIL: SESSION_STATE «Коммит: —» — нужен реальный хеш.")
+            if re.search(r"статус:\s*done", latest, re.I):
+                if not session_state_commit_hash(latest):
+                    errors.append(
+                        "FAIL: SESSION_STATE done без «Коммит: `hash`» — сначала commit."
+                    )
 
     for name, path in [("HANDOFF.md", HANDOFF), ("CHANGELOG.md", CHANGELOG)]:
         if file_modified_in_worktree(path):
             errors.append(f"FAIL: {name} изменён, но не закоммичен.")
 
     if not handoff_lists_recent_commit():
-        warnings.append(
-            "HANDOFF.md не содержит хеш текущего HEAD — обнови «Последние коммиты»."
-        )
+        warnings.append("HANDOFF.md не содержит хеш текущего HEAD.")
 
     print("SmartCRM agent step check\n")
     if errors:
@@ -125,12 +153,12 @@ def main() -> int:
         for w in warnings:
             print(f"WARN:  {w}")
     if not errors and not warnings:
-        print("OK: ops и рабочее дерево выглядят согласованно для закрытия шага.")
+        print("OK: ops и рабочее дерево согласованы для закрытия шага.")
         return 0
     if errors:
-        print("\nFAIL: исправь ERROR перед отчётом «done».")
+        print("\nFAIL: исправь ERROR перед отчётом пользователю.")
         return 1
-    print("\nWARN only: обнови HANDOFF (хеш HEAD) и закрой шаг.")
+    print("\nWARN only: обнови HANDOFF (хеш HEAD).")
     return 0
 
 

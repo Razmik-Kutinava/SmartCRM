@@ -17,9 +17,9 @@ alwaysApply: true
 |---|----------|
 | 1 | Один логический шаг |
 | 2 | Тесты (`smartcrm-dev-gates.mdc`) |
-| 3 | **`git commit`** + **ops** (`smartcrm-commit-ops.mdc`) |
-| 4 | `check_agent_step.py` + `check_rules_commit_conflict.py` |
-| 5 | Отчёт: хвост **A / B / C** (`smartcrm-task-workflow.mdc`) |
+| 3 | **`git commit`** + **ops** — **до любого ответа** (`smartcrm-commit-ops.mdc`) |
+| 4 | `check_agent_step.py` + `check_rules_commit_conflict.py` — оба OK |
+| 5 | Отчёт с **`Коммит: <хеш>`** + хвост **A / B / C** |
 | 6 | **Стоп** — ждать **`go`** на следующий шаг |
 
 Срочность не отменяет коммит и ops.

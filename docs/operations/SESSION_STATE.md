@@ -8,7 +8,9 @@
 
 **Хвост A/B/C обязателен** в каждой новой записи (`check_agent_step.py`).
 
-2026-06-08 | Действие: PRD_MAP leadgen «Анализ по ИНН/названию» — перепроход: fix website `https://` double, checko `fetch_full_profile` import `_available`, +5 pytest, `smoke_leadgen_inn_analysis.py` 81 green + live score 79, testid, DevTools ИНН Сбербанк + название Яндекс; `LEADGEN_INN_ANALYSIS_ACCEPTANCE.md`. | Коммит: — | Хвост A: портрет/кластер MAP | Хвост B: нет | Хвост C: website + checko financials | Следующий шаг: коммит по запросу / `go` портрет. | Статус: done
+**Правило:** в строке только реальный `Коммит: \`hash\`` — иначе `check_agent_step.py` FAIL.
+
+2026-06-09 | Действие: iron commit — усилены `commit-ops`, `check_agent_step`, `check_rules_commit_conflict`; зачистка SESSION_STATE; коммит leadgen ИНН/название (должен был быть ранее). | Коммит: pending | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: `go` портрет. | Статус: in_progress
 
 2026-06-08 | Действие: правило хвоста прогона A/B/C — `commit-ops`, `task-workflow`, `AGENTS.md`, `RULES_MATRIX`, `check_agent_step.py`; три сценария: план не сделано / BACKLOG в прогоне / доп. починки. | Коммит: `5c0b636` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: PRD_MAP. | Статус: done
 
@@ -22,7 +24,7 @@
 
 2026-06-08 | Действие: RAG п.4 upload PDF/txt — `test_rag_upload.py`, `test_rag_upload_api.py`, `smoke_rag_upload.py` 8 pytest; DevTools `/rag` текст «В базу» 1 чанк + PDF в источниках; `SEARCH_RAG_UPLOAD_ACCEPTANCE.md`; PRD_MAP п.4 ✅. | Следующий шаг: `go` п.5 save из поиска. | Статус: done
 
-2026-06-08 | Действие: RAG п.3 Chroma — `test_rag_api.py`, `smoke_rag_chroma.py` 11 pytest, live 1592 чанка (economist 960 / all 624 / marketer 8); `/rag` apiFetch; `SEARCH_CHROMA_ACCEPTANCE.md`; PRD_MAP п.3 ✅. DevTools: серверы не запущены — pytest + прямой count Chroma OK. | Следующий шаг: коммит → `go` п.4. | Статус: done
+2026-06-08 | Действие: RAG п.3 Chroma — `test_rag_api.py`, `smoke_rag_chroma.py` 11 pytest, live 1592 чанка (economist 960 / all 624 / marketer 8); `/rag` apiFetch; `SEARCH_CHROMA_ACCEPTANCE.md`; PRD_MAP п.3 ✅. DevTools: серверы не запущены — pytest + прямой count Chroma OK. | Коммит: `97778b2` | Следующий шаг: `go` п.4. | Статус: done
 
 2026-06-08 | Действие: зачистка правил — только безусловный `git commit` при закрытии шага; убраны отложенные формулировки в `.mdc`, `AGENTS.md`, ops; усилен `check_rules_commit_conflict.py`. | Коммит: `02ef689` | Следующий шаг: PRD_MAP RAG п.3. | Статус: done
 
