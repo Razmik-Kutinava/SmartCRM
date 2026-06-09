@@ -1,8 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
+	import { apiFetch, apiPost, apiDelete } from '$lib/api.js';
 	import { getApiUrl } from '$lib/websocket.js';
 
-	const API = getApiUrl();
+	const API_KEY = import.meta.env.PUBLIC_SMARTCRM_API_KEY || '';
 
 	/** Извлечь читаемое сообщение об ошибке из ответа сервера */
 	async function extractError(r) {
@@ -53,7 +54,7 @@
 		err = '';
 		loading = true;
 		try {
-			const r = await fetch(`${API}/api/rag/sources`);
+			const r = await apiFetch('/api/rag/sources');
 			if (!r.ok) throw new Error(await r.text());
 			const d = await r.json();
 			sources = d.sources || [];
@@ -81,7 +82,7 @@
 			fd.append('file', pendingFile);
 			fd.append('tags', tags);
 			fd.append('for_agent', forAgent);
-			const r = await fetch(`${API}/api/rag/preview`, { method: 'POST', body: fd });
+			const r = await apiFetch('/api/rag/preview', { method: 'POST', body: fd });
 			if (!r.ok) throw new Error(await extractError(r));
 			const d = await r.json();
 			lastPipeline = d;
@@ -133,7 +134,8 @@
 			uploadProgress = 0;
 		};
 
-		xhr.open('POST', `${API}/api/rag/upload`);
+		xhr.open('POST', `${getApiUrl()}/api/rag/upload`);
+		if (API_KEY) xhr.setRequestHeader('X-API-Key', API_KEY);
 		xhr.send(fd);
 	}
 
@@ -143,7 +145,7 @@
 		try {
 			const q = encodeURIComponent(queryText.trim());
 			const fa = encodeURIComponent(queryAgent);
-			const r = await fetch(`${API}/api/rag/query?q=${q}&top_k=5&for_agent=${fa}`);
+			const r = await apiFetch(`/api/rag/query?q=${q}&top_k=5&for_agent=${fa}`);
 			if (!r.ok) throw new Error(await extractError(r));
 			const d = await r.json();
 			queryContext = d.context || '';
@@ -158,10 +160,12 @@
 		if (!ingestText.trim()) return;
 		uploadBusy = true; err = ''; msg = ''; lastPipeline = null;
 		try {
-			const r = await fetch(`${API}/api/rag/ingest`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ title: ingestTitle, text: ingestText, tags, for_agent: forAgent, dry_run: false }),
+			const r = await apiPost('/api/rag/ingest', {
+				title: ingestTitle,
+				text: ingestText,
+				tags,
+				for_agent: forAgent,
+				dry_run: false,
 			});
 			if (!r.ok) throw new Error(await extractError(r));
 			const d = await r.json();
@@ -183,10 +187,11 @@
 		msg = '';
 		lastPipeline = null;
 		try {
-			const r = await fetch(`${API}/api/rag/ingest-json`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ title: jsonTitle, json: obj, tags, for_agent: forAgent }),
+			const r = await apiPost('/api/rag/ingest-json', {
+				title: jsonTitle,
+				json: obj,
+				tags,
+				for_agent: forAgent,
 			});
 			if (!r.ok) throw new Error(await extractError(r));
 			const d = await r.json();
@@ -201,7 +206,7 @@
 	async function removeSource(sourceId) {
 		if (!confirm('Удалить все чанки этого источника?')) return;
 		try {
-			const r = await fetch(`${API}/api/rag/sources/${encodeURIComponent(sourceId)}`, { method: 'DELETE' });
+			const r = await apiDelete(`/api/rag/sources/${encodeURIComponent(sourceId)}`);
 			if (!r.ok) throw new Error(await extractError(r));
 			await loadSources();
 		} catch (e) {
@@ -216,7 +221,7 @@
 	<div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900 shrink-0">
 		<div>
 			<h1 class="text-lg font-semibold text-white">База знаний</h1>
-			<p class="text-xs text-gray-500">
+			<p class="text-xs text-gray-500" data-testid="rag-chunk-count">
 				RAG · Chroma · {totalChunks} чанков · отдельные документы на агента
 			</p>
 		</div>
@@ -368,6 +373,7 @@
 			<div class="text-xs text-gray-500 uppercase tracking-wide">Поиск</div>
 			<div class="flex flex-col sm:flex-row gap-2">
 				<input
+					data-testid="rag-query-input"
 					bind:value={queryText}
 					placeholder="Запрос к базе…"
 					class="flex-1 bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-4 py-2.5 placeholder-gray-500 focus:outline-none focus:border-indigo-500"
@@ -383,6 +389,7 @@
 				</select>
 				<button
 					type="button"
+					data-testid="rag-query-submit"
 					onclick={runQuery}
 					disabled={queryLoading}
 					class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm text-white disabled:opacity-50"

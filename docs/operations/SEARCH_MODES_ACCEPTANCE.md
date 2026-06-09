@@ -46,7 +46,7 @@ cd backend && python scripts/smoke_search_modes.py
 
 | Что | Почему не в п.2 | Куда |
 |-----|-----------------|------|
-| **Chroma RAG ~1592 чанка**, разделение по агентам | п.3 MAP | `go` п.3 |
+| **Chroma RAG ~1592 чанка**, разделение по агентам | п.3 MAP | `SEARCH_CHROMA_ACCEPTANCE.md` ✅ |
 | **Загрузка PDF/текста** на `/rag` | п.4 MAP | `go` п.4 |
 | **Кнопка «сохранить в базу»** (базово) | п.5 MAP; в табе rag есть ingest-batch, но acceptance Chroma — п.3–5 | `go` п.5 |
 | **Смоук enrich-lead end-to-end** (live LLM + веб) | отдельная строка MAP п.110 | `BACKLOG.md` |

@@ -1,14 +1,14 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Поиск и RAG] | Статус:п.1–2 ЗАКРЫТЫ ✅ → ждём go п.3 Chroma RAG`
+`Спринт:[Фаза 1] | Задача:[Поиск и RAG] | Статус:п.1–3 ЗАКРЫТЫ ✅ → ждём go п.4 upload PDF`
 
 **Процесс:** `git commit` + ops — всегда при закрытии шага (`smartcrm-commit-ops.mdc`).
 
-**RAG п.2 — 6 режимов ✅** — `smoke_search_modes.py` 19 pytest, DevTools 6 табов, `SEARCH_MODES_ACCEPTANCE.md` (см. § «НЕ СДАЛИ»).
+**RAG п.3 Chroma ✅** — `smoke_rag_chroma.py`, 1592 чанка, `SEARCH_CHROMA_ACCEPTANCE.md` (было/стало).
 
-**RAG п.1 Serper/Brave/Tavily ✅** — `SEARCH_PROVIDERS_ACCEPTANCE.md`.
+**RAG п.2 ✅** — `SEARCH_MODES_ACCEPTANCE.md`. **п.1 ✅** — `SEARCH_PROVIDERS_ACCEPTANCE.md`.
 
-**Хвост п.3–5 + enrich smoke** → `BACKLOG.md` § «Поиск и RAG».
+**Хвост п.4–5 + enrich smoke** → `BACKLOG.md` § «Поиск и RAG».
 
 **Голос → лиды** — микрофон E2E на пользователе (`BACKLOG.md` § ручная работа).
 

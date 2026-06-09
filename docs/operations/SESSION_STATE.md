@@ -6,6 +6,8 @@
 
 `[время] | Действие:[что сделал] | Следующий шаг:[что дальше] | Вопросы:[если есть]`
 
+2026-06-08 | Действие: RAG п.3 Chroma — `test_rag_api.py`, `smoke_rag_chroma.py` 11 pytest, live 1592 чанка (economist 960 / all 624 / marketer 8); `/rag` apiFetch; `SEARCH_CHROMA_ACCEPTANCE.md`; PRD_MAP п.3 ✅. DevTools: серверы не запущены — pytest + прямой count Chroma OK. | Следующий шаг: коммит → `go` п.4. | Статус: done
+
 2026-06-08 | Действие: зачистка правил — только безусловный `git commit` при закрытии шага; убраны отложенные формулировки в `.mdc`, `AGENTS.md`, ops; усилен `check_rules_commit_conflict.py`. | Коммит: `02ef689` | Следующий шаг: PRD_MAP RAG п.3. | Статус: done
 
 2026-06-08 | Действие: коммит+push RAG п.1 хвост + п.2 — `97778b2` (код/тесты/acceptance; ops CHANGELOG/HANDOFF уже были в HEAD). | Следующий шаг: `go` RAG п.3 Chroma. | Статус: done

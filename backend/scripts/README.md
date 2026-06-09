@@ -45,6 +45,7 @@
 | `smoke_voice_lead_scenarios.py` | Полный смоук блока «Голос → лиды» (п.1–5 chain) |
 | `smoke_search_providers.py` | Смоук Serper/Brave/Tavily (PRD_MAP RAG п.1) |
 | `smoke_search_modes.py` | Смоук 6 режимов поиска (PRD_MAP RAG п.2) |
+| `smoke_rag_chroma.py` | Смоук Chroma RAG + агенты (PRD_MAP RAG п.3) |
 | `run_zone_regression.py` | Регрессия по зонам (crm_leads, leadgen, …) |
 | `_resplit_leadgen_pkgs.py` | One-off: пересборка pipeline/checko пакетов |
 

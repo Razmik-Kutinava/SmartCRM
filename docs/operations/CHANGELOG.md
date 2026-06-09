@@ -25,6 +25,14 @@
 
 **Зачем:** агенты не откладывали коммит и не спрашивали разрешение.
 
+## [2026-06-08] — RAG п.3: Chroma RAG + агенты перепроход (`go`)
+
+**Сделано:** `test_rag_api.py`, `smoke_rag_chroma.py` (1592 чанка, by_agent); `/rag` → apiFetch; `SEARCH_CHROMA_ACCEPTANCE.md` «было/стало»; PRD_MAP п.3 ✅.
+
+**Не в scope п.3:** полный E2E upload PDF (п.4), save из поиска (п.5), enrich smoke, pgvector.
+
+**Зачем:** подтвердить живую базу и фильтр `for_agent`, не только галочку в MAP.
+
 ## [2026-06-08] — RAG п.2: 6 режимов поиска перепроход (`go`)
 
 **Сделано:** pytest API 6 эндпоинтов + unit modes; `smoke_search_modes.py`; `data-testid` на 6 табах/submit; DevTools табы + free live; `SEARCH_MODES_ACCEPTANCE.md` с блоком «НЕ СДАЛИ»; PRD_MAP п.2 ✅.
