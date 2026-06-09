@@ -61,31 +61,9 @@ async def _search_serper(query: str, max_results: int) -> list[dict]:
 
 
 async def _search_brave(query: str, max_results: int) -> list[dict]:
-    key = os.getenv("BRAVE_API_KEY", "")
-    if not key:
-        return []
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as c:
-            r = await c.get(
-                "https://api.search.brave.com/res/v1/web/search",
-                headers={"Accept": "application/json", "X-Subscription-Token": key},
-                params={"q": query, "count": max_results, "search_lang": "ru", "country": "ru"},
-            )
-            r.raise_for_status()
-            data = r.json()
-        results = []
-        for item in (data.get("web", {}).get("results") or [])[:max_results]:
-            results.append({
-                "title":   item.get("title", ""),
-                "snippet": item.get("description", ""),
-                "url":     item.get("url", ""),
-                "date":    item.get("page_age", ""),
-                "source":  "brave",
-            })
-        return results
-    except Exception as e:
-        logger.warning("Brave ошибка: %s", e)
-        return []
+    from .brave_limit import search_brave_limited
+
+    return await search_brave_limited(query, max_results)
 
 
 async def _search_tavily(query: str, max_results: int) -> list[dict]:

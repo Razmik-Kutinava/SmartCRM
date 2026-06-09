@@ -8,7 +8,7 @@ PRD_MAP: **«Поиск и RAG (базово)» — enrich-lead**
 cd backend && python scripts/smoke_search_enrich_lead.py
 ```
 
-20 pytest + live `enrich_lead("Сбербанк")` + probe `/search`.
+28+ pytest + live `enrich_lead("Сбербанк")` + probe `/search`.
 
 ---
 
@@ -26,6 +26,19 @@ cd backend && python scripts/smoke_search_enrich_lead.py
 
 ---
 
+## §2 Усиление enrich (2026-06-09)
+
+| Было | Стало |
+|------|--------|
+| Brave 429 при fanout | `brave_limit.py`: **кэш 1ч** + **semaphore 2** + backoff 45с |
+| revenue/ЛПР без ИНН | **Checko** по `lead.inn`; таргет-запросы LinkedIn/CEO/выручка |
+| Только сниппеты | **Парсинг сайта** (главная + /contacts) |
+| Ручной ввод | **Выбор лида из CRM** + **«Сохранить в карточку»** PATCH |
+
+**testid:** `search-enrich-lead-select`, `search-enrich-apply`
+
+---
+
 ## ✅ СДЕЛАНО и ПРОВЕРЕНО
 
 | # | Шаг | API | UI | Тест |
@@ -34,6 +47,8 @@ cd backend && python scripts/smoke_search_enrich_lead.py
 | 2 | Поиск в вебе | fanout serper/brave/tavily | — | live 43 источника |
 | 3 | LLM extract полей | Groq `core.llm.chat` | блок «Найденные данные» | live phone/email/website |
 | 4 | Валидация | 400 без company | кнопка disabled без имени | API test |
+| 5 | Checko по ИНН | `lead.inn` в body | select лида | `test_enrich_sources` |
+| 6 | Сохранить в CRM | `PATCH /api/leads/{id}` | `search-enrich-apply` | `enrichLeadApply.js` |
 
 **Live smoke (Сбербанк):** `phone`, `website`, `email`, `address` — OK.
 
@@ -52,10 +67,9 @@ cd backend && python scripts/smoke_search_enrich_lead.py
 
 | Проблема | Влияние | Как чинить дальше |
 |----------|---------|-------------------|
-| **Brave 429** при пачке запросов | часть полей только из Serper/Tavily | dedup запросов ✅; опц. semaphore/кэш enrich |
-| **revenue / linkedin / ЛПР** часто пустые | слабые сниппеты в выдаче | отдельные запросы + Checko/ИНН если есть в лиде |
-| UI **не тянет лид из CRM** | ручной ввод company | кнопка «обогатить» на карточке лида (Ф2) |
-| **Нет «применить к лиду»** | только просмотр | PATCH lead из UI после апрува |
+| **Brave 429** при пиковой нагрузке | редко, backoff 45с | кэш+semaphore ✅; при необходимости кэш всего enrich |
+| **revenue / linkedin** без ИНН | всё ещё слабо | Checko только с ИНН; мелкие компании — ручной дозапрос |
+| Обогащение **с карточки лида** one-click | только `/search` | Ф2: кнопка на `/leads/[id]` |
 | Зависимость **GROQ_API_KEY** | без LLM — только raw_results | fallback regex extract или CPU rescue |
 | ~**60–90 с** на запрос | UX | кэш enrich по company+industry |
 
@@ -75,8 +89,8 @@ cd backend && python scripts/smoke_search_enrich_lead.py
 
 | Зона | Путь |
 |------|------|
-| Логика | `backend/rag/search/prospect.py` (`enrich_lead`) |
-| API | `backend/api/routes/search.py` |
-| UI | `frontend/src/routes/search/+page.svelte` |
-| Тесты | `tests/rag/test_search_modes.py`, `tests/api/test_search_enrich_lead_api.py` |
+| Логика | `prospect.py`, `enrich_sources.py`, `brave_limit.py` |
+| API | `backend/api/routes/search.py`, `PATCH /api/leads/{id}` |
+| UI | `search/+page.svelte`, `lib/search/enrichLeadApply.js` |
+| Тесты | `test_brave_limit`, `test_enrich_sources`, `test_search_enrich_lead_api` |
 | Смоук | `backend/scripts/smoke_search_enrich_lead.py` |

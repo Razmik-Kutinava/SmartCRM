@@ -31,6 +31,10 @@
 
 **Зачем:** агенты не откладывали коммит и не спрашивали разрешение.
 
+## [2026-06-09] — enrich-lead усиление: Brave, Checko, CRM apply (`go`)
+
+**Сделано:** `brave_limit.py` кэш+semaphore; `enrich_sources.py` Checko/ИНН, таргет LinkedIn/ЛПР, scrape сайта; UI выбор лида + PATCH; 28 pytest.
+
 ## [2026-06-09] — enrich-lead smoke из поиска (`go`)
 
 **Сделано:** фикс Brave в `enrich_lead`, валидация `lead.company`, фильтр null из LLM, только веб-провайдеры; 8 pytest + `smoke_search_enrich_lead.py`; DevTools enrich Сбербанк; `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` с тонкими местами.

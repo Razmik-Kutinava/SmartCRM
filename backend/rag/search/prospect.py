@@ -176,6 +176,19 @@ async def enrich_lead(lead: dict) -> dict[str, Any]:
 
     industry = lead.get("industry", "")
 
+    from .enrich_sources import (
+        checko_enrich_by_inn,
+        merge_enriched,
+        scrape_website_contacts,
+        targeted_enrich_queries,
+    )
+
+    pre_enriched: dict[str, str] = {}
+    checko_raw: list[dict] = []
+    inn = lead.get("inn") or lead.get("INN")
+    if inn:
+        pre_enriched, checko_raw = await checko_enrich_by_inn(str(inn))
+
     # Определяем какие поля нужно обогатить
     missing: list[str] = []
     for field, desc in _ENRICHABLE_FIELDS.items():
@@ -197,6 +210,7 @@ async def enrich_lead(lead: dict) -> dict[str, Any]:
 
     # Общий поиск по компании
     queries.append((f"{company} официальный сайт контакты реквизиты", "general"))
+    queries.extend(targeted_enrich_queries(company, industry, missing))
 
     cfg = load_config()
     providers_cfg = cfg.get("providers", {})
@@ -237,11 +251,23 @@ async def enrich_lead(lead: dict) -> dict[str, Any]:
                 if prov not in providers_used:
                     providers_used.append(prov)
 
-    deduped = _deduplicate(all_raw)
-    formatted = _format_results(deduped[:20])
+    deduped = _deduplicate(checko_raw + all_raw)
+
+    site_url = (
+        lead.get("website")
+        or pre_enriched.get("website")
+        or ""
+    )
+    site_text, site_raw = await scrape_website_contacts(str(site_url))
+    if site_raw:
+        deduped = _deduplicate(deduped + site_raw)
+
+    formatted = _format_results(deduped[:24])
+    if site_text:
+        formatted += f"\n\n--- Текст с сайта ---\n{site_text[:3000]}"
 
     # LLM извлекает значения для пустых полей
-    enriched: dict[str, str] = {}
+    enriched: dict[str, str] = dict(pre_enriched)
     try:
         from core.llm import chat
         missing_desc = ", ".join(f"{f} ({_ENRICHABLE_FIELDS[f]})" for f in missing[:5])
@@ -265,19 +291,26 @@ async def enrich_lead(lead: dict) -> dict[str, Any]:
         match = re.search(r"\{[\s\S]*\}", raw_enriched)
         if match:
             parsed = json.loads(match.group(0))
-            enriched = {
+            llm_part = {
                 k: str(v).strip()
                 for k, v in parsed.items()
                 if v is not None and str(v).strip() not in ("", "null", "None")
             }
+            enriched = merge_enriched(enriched, llm_part)
     except Exception as e:
         logger.warning("enrich_lead parse ошибка: %s", e)
+
+    sources = list(providers_used)
+    if checko_raw:
+        sources.append("checko")
+    if site_raw:
+        sources.append("website_scrape")
 
     return {
         "enriched":       enriched,
         "missing_fields": missing,
         "raw_results":    deduped,
-        "providers_used": providers_used,
+        "providers_used": sources,
     }
 
 

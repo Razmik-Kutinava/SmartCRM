@@ -112,6 +112,7 @@
 - [x] Кнопка «сохранить в базу» (базово) — перепроход **2026-06-08 ✅** (`SEARCH_RAG_SAVE_ACCEPTANCE.md`)
 - [ ] Авто-чанки из поиска / диалога → **Фаза 2** ([`RAG.md`](../stack/RAG.md#search-to-qa-фаза-2))
 - [x] Смоук обогащения лида из поиска — перепроход **2026-06-09 ✅** (`SEARCH_ENRICH_LEAD_ACCEPTANCE.md`)
+- [x] Обогащение: Brave cache, Checko/ИНН, LinkedIn/ЛПР, парсинг сайта, CRM → карточка — **2026-06-09 ✅** (`SEARCH_ENRICH_LEAD_ACCEPTANCE.md` §2)
 
 ### Лидогенерация `/leadgen`
 

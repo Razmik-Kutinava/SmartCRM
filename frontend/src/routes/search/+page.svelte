@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
-	import { apiFetch, apiPost } from '$lib/api.js';
+	import { apiFetch, apiPatch, apiPost } from '$lib/api.js';
+	import { enrichedToLeadPatch, leadToEnrichPayload } from '$lib/search/enrichLeadApply.js';
 
 	// ── Провайдеры ───────────────────────────────────────────────────────────────
 	let providers = $state({});
@@ -121,20 +122,68 @@
 	// ── Обогащение лида ───────────────────────────────────────────────────────────
 	let en_company    = $state('');
 	let en_industry   = $state('');
+	let en_lead_id    = $state(null);
+	let en_leads      = $state([]);
 	let en_running    = $state(false);
+	let en_saving     = $state(false);
 	let en_result     = $state(null);
 	let en_err        = $state('');
+	let en_save_msg   = $state('');
+
+	async function loadEnrichLeads() {
+		try {
+			const r = await apiFetch('/api/leads');
+			if (r.ok) en_leads = await r.json();
+		} catch {}
+	}
+
+	function onEnrichLeadPick(e) {
+		const id = Number(e.target.value) || null;
+		en_lead_id = id;
+		en_save_msg = '';
+		const lead = en_leads.find(l => l.id === id);
+		if (!lead) return;
+		en_company = lead.company || '';
+		en_industry = lead.industry && lead.industry !== '—' ? lead.industry : '';
+	}
 
 	async function runEnrich() {
 		if (!en_company.trim() || en_running) return;
-		en_running = true; en_result = null; en_err = '';
+		en_running = true; en_result = null; en_err = ''; en_save_msg = '';
 		try {
-			en_result = await post('/api/search/enrich-lead', {
-				lead: { company: en_company.trim(), industry: en_industry.trim() },
-			});
+			const lead = en_lead_id ? en_leads.find(l => l.id === en_lead_id) : null;
+			const payload = lead
+				? leadToEnrichPayload(lead)
+				: { company: en_company.trim(), industry: en_industry.trim() };
+			if (payload) payload.company = en_company.trim();
+			if (en_industry.trim()) payload.industry = en_industry.trim();
+			en_result = await post('/api/search/enrich-lead', { lead: payload });
 		} catch (e) { en_err = e.message; }
 		finally { en_running = false; }
 	}
+
+	async function applyEnrichToLead() {
+		if (!en_lead_id || !en_result?.enriched || en_saving) return;
+		const patch = enrichedToLeadPatch(en_result.enriched);
+		if (!Object.keys(patch).length) {
+			en_save_msg = 'Нет полей для сохранения';
+			return;
+		}
+		en_saving = true; en_save_msg = '';
+		try {
+			const r = await apiPatch(`/api/leads/${en_lead_id}`, patch);
+			if (!r.ok) {
+				const d = await r.json().catch(() => ({}));
+				throw new Error(d.detail || `HTTP ${r.status}`);
+			}
+			en_save_msg = `✓ Сохранено в лид #${en_lead_id}: ${Object.keys(patch).join(', ')}`;
+		} catch (e) { en_save_msg = e.message; }
+		finally { en_saving = false; }
+	}
+
+	$effect(() => {
+		if (activeTab === 'enrich' && !en_leads.length) loadEnrichLeads();
+	});
 
 	// ── Поиск для RAG ─────────────────────────────────────────────────────────────
 	let rg_query       = $state('');
@@ -586,7 +635,21 @@
 	<!-- ═══ Обогащение лида ═══ -->
 	{:else if activeTab === 'enrich'}
 		<div class="bg-gray-900 border border-gray-800 rounded-xl p-5 space-y-4">
-			<p class="text-xs text-gray-500">Введи компанию — AI найдёт телефоны, email, сайт, выручку, ЛПР и другие данные</p>
+			<p class="text-xs text-gray-500">Выбери лид из CRM или введи компанию — AI найдёт телефоны, email, сайт, выручку, ЛПР</p>
+			<div>
+				<div class="block text-xs text-gray-500 mb-1">Лид из CRM (опционально)</div>
+				<select
+					data-testid="search-enrich-lead-select"
+					class="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white"
+					onchange={onEnrichLeadPick}
+					value={en_lead_id ?? ''}
+				>
+					<option value="">— вручную —</option>
+					{#each en_leads as l}
+						<option value={l.id}>{l.company}{l.inn ? ` (ИНН ${l.inn})` : ''}</option>
+					{/each}
+				</select>
+			</div>
 			<div class="grid sm:grid-cols-2 gap-4">
 				<div>
 					<div class="block text-xs text-gray-500 mb-1">Название компании *</div>
@@ -631,6 +694,20 @@
 							</div>
 						{/each}
 					</div>
+					{#if en_lead_id}
+						<button
+							type="button"
+							data-testid="search-enrich-apply"
+							onclick={applyEnrichToLead}
+							disabled={en_saving}
+							class="mt-4 w-full py-2 text-xs bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-white rounded-lg font-medium"
+						>
+							{en_saving ? '⟳ Сохраняю...' : '✓ Сохранить в карточку лида'}
+						</button>
+					{/if}
+					{#if en_save_msg}
+						<div class="mt-2 text-xs text-emerald-400/90">{en_save_msg}</div>
+					{/if}
 				</div>
 			{:else}
 				<div class="text-sm text-gray-500 text-center py-4">Данных не найдено. Попробуй уточнить название.</div>
