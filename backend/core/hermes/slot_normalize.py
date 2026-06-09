@@ -6,9 +6,10 @@ from typing import Any
 
 from .text_utils import normalize_text_for_cache
 
-_LEAD_INTENTS = frozenset(
-    {"create_lead", "update_lead", "delete_lead", "list_leads", "create_task", "list_tasks"}
-)
+_LEAD_INTENTS = frozenset({
+    "create_lead", "update_lead", "delete_lead", "list_leads", "create_task", "list_tasks",
+    "analyze_lead", "lead_history", "add_communication",
+})
 
 _INTENT_AGENTS: dict[str, list[str]] = {
     "create_lead": ["analyst"],
@@ -17,7 +18,9 @@ _INTENT_AGENTS: dict[str, list[str]] = {
     "list_leads": ["analyst"],
     "create_task": ["analyst"],
     "list_tasks": ["analyst"],
-    "analyze_lead": ["analyst"],
+    "analyze_lead": ["analyst", "economist", "marketer", "tech_specialist"],
+    "lead_history": ["analyst"],
+    "add_communication": ["analyst"],
 }
 
 _SLOT_ALIASES = {
@@ -63,20 +66,22 @@ def _clean_company_name(name: str) -> str:
 
 def _extract_company(text: str) -> str:
     t = normalize_text_for_cache(text)
-    m = re.search(r"[«\"']([^»\"']{2,80})[»\"']", text, re.I)
-    if m:
-        return _clean_company_name(m.group(1))
     for pat in (
         r"в базу\s+([a-zа-яё][a-zа-яё0-9\-\s]{1,40})",
         r"(?:ооо|ип|зао|пао)\s+([a-zа-яё0-9][a-zа-яё0-9\-\s]{1,60})",
-        r"у лида\s+([a-zа-яё][a-zа-яё0-9\-\s]{1,40})",
+        r"у лида\s+([a-zа-яё0-9][a-zа-яё0-9\-\s]*?)(?:\s+(?:стади|этап|телефон|phone|почт|email)|\s+на\s+|$)",
         r"(?:лид(?:е|а)?|компан(?:ию|ии|ия))\s+([a-zа-яё][a-zа-яё0-9\-\s]{1,50})",
         r"(?:клиент[а]?)\s+([a-zа-яё][a-zа-яё0-9\-\s]{1,50})",
         r"про компанию\s+([a-zа-яё][a-zа-яё0-9\-\s]{1,50})",
+        r"по лиду\s+([a-zа-яё0-9][a-zа-яё0-9\-\s]*?)(?:\s+[«\"']|\s+на\s+|$)",
+        r"у клиента\s+([a-zа-яё][a-zа-яё0-9\-\s]{1,50})",
     ):
         m2 = re.search(pat, t, re.I)
         if m2:
             return _clean_company_name(m2.group(1))
+    m = re.search(r"[«\"']([^»\"']{2,80})[»\"']", text, re.I)
+    if m and ("лид" in t or "компан" in t or "клиент" in t):
+        return _clean_company_name(m.group(1))
     return ""
 
 
@@ -89,6 +94,13 @@ def _extract_update_field_value(text: str) -> tuple[str, str]:
     )
     if m:
         return "stage", m.group(1).strip()
+    m = re.search(
+        r"(?:телефон|phone)(?:\s+у\s+лида\s+[^«\"']+?)?\s+на\s+([+\d][\d\s\-()]{8,20})",
+        text,
+        re.I,
+    )
+    if m:
+        return "phone", m.group(1).strip()
     m = re.search(r"(?:телефон|phone)\s+(?:на\s+)?([+\d\s\-()]{6,20})", text, re.I)
     if m:
         return "phone", m.group(1).strip()
@@ -144,7 +156,9 @@ def normalize_parsed_intent(text: str, parsed: dict[str, Any]) -> dict[str, Any]
                     slots["field"] = f
                     slots.setdefault("value", val)
 
-    if intent in ("create_lead", "update_lead", "delete_lead") and not slots.get("company"):
+    if intent in (
+        "create_lead", "update_lead", "delete_lead", "analyze_lead", "lead_history", "add_communication",
+    ) and not slots.get("company"):
         comp = _extract_company(text)
         if comp:
             slots["company"] = comp
@@ -168,9 +182,63 @@ def normalize_parsed_intent(text: str, parsed: dict[str, Any]) -> dict[str, Any]
 
     if intent == "list_leads":
         slots.setdefault("filter", _extract_filter(text))
-        m = re.search(r"(?:где|содержит|названи[ея])\s+([a-zа-яё0-9\-]{2,40})", normalize_text_for_cache(text))
+        t_norm = normalize_text_for_cache(text)
+        m = re.search(r"(?:где|содержит|названи[ея])\s+([a-zа-яё0-9\-]{2,40})", t_norm)
         if m and not slots.get("query"):
             slots["query"] = m.group(1).strip()
+        if not slots.get("stage"):
+            m_st = re.search(
+                r"(?:стади[июя]|этап[еа]?)\s+([a-zа-яё][a-zа-яё\s\-]{2,30})",
+                t_norm,
+                re.I,
+            )
+            if m_st:
+                slots["stage"] = m_st.group(1).strip()
+        if not slots.get("city"):
+            m_city = re.search(r"(?:из|город)\s+([a-zа-яё][a-zа-яё\s\-]{2,30})", t_norm, re.I)
+            if m_city:
+                slots["city"] = m_city.group(1).strip().title()
+        if not slots.get("industry"):
+            m_ind = re.search(
+                r"(?:отрасл[ьи]|сфер[ае]|сегмент)\s+([a-zа-яё0-9][a-zа-яё0-9\s\-]{1,40})",
+                t_norm,
+                re.I,
+            )
+            if m_ind:
+                slots["industry"] = m_ind.group(1).strip()
+
+    if intent == "add_communication":
+        if not slots.get("content"):
+            m = re.search(r"[«\"']([^»\"']{2,200})[»\"']", text)
+            if m:
+                slots["content"] = m.group(1).strip()
+            else:
+                m2 = re.search(
+                    r"(?:что|текст|содержан(?:ие|ием)|комментар(?:ий|ием))\s+(.{3,200})$",
+                    normalize_text_for_cache(text),
+                    re.I,
+                )
+                if m2:
+                    slots["content"] = m2.group(1).strip()
+        t_norm = normalize_text_for_cache(text)
+        if "коммент" in t_norm or "заметк" in t_norm:
+            slots.setdefault("kind", "comment")
+        else:
+            slots.setdefault("kind", "communication")
+        if not slots.get("communication_type"):
+            if "звон" in t_norm or "call" in t_norm:
+                slots["communication_type"] = "call"
+            elif "встреч" in t_norm or "meeting" in t_norm:
+                slots["communication_type"] = "meeting"
+            elif "письм" in t_norm or "email" in t_norm:
+                slots["communication_type"] = "email"
+            else:
+                slots["communication_type"] = "call"
+
+    if intent == "update_lead" and slots.get("field") == "stage" and slots.get("value"):
+        from core.hermes.stage_fuzzy import resolve_stage_fuzzy
+
+        slots["value"] = resolve_stage_fuzzy(str(slots["value"]))
 
     if intent in _INTENT_AGENTS:
         out["agents"] = list(_INTENT_AGENTS[intent])

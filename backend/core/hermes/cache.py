@@ -30,6 +30,8 @@ def fastpath_route(text: str) -> dict | None:
     if not config.HERMES_ENABLE_FASTPATH:
         return None
     t = normalize_text_for_cache(text)
+    if ("истори" in t or "менял" in t) and ("лид" in t or "компан" in t or "клиент" in t):
+        return None
     if ("покажи" in t or "список" in t) and ("сделк" in t or "лид" in t) and "задач" not in t:
         filt = "hot" if "горяч" in t else "new" if "нов" in t else "all"
         return {

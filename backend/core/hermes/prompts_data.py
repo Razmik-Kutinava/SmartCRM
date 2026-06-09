@@ -3,7 +3,7 @@ SYSTEM_PROMPT = """Ты — роутер команд CRM. Извлекай ин
 
 ═══ ИНТЕНТЫ ═══
 
-Лиды: create_lead, update_lead, delete_lead, list_leads
+Лиды: create_lead, update_lead, delete_lead, list_leads, analyze_lead, lead_history, add_communication
 Задачи: create_task, list_tasks, update_task, delete_task
 Аналитика/запросы: run_analysis, ask_economist, ask_marketer, ask_tech, ask_strategist, search_web
 Письма: write_email
@@ -21,7 +21,10 @@ tech_specialist — IT-стек, технологии, интеграции, в�
 - create_lead: company (обязательно), contact, phone, email, budget, city, industry, note, next_call
 - update_lead: company ИЛИ lead_id. Прямые слоты: note, city, industry, next_call, contact, phone, email, budget. Через field+value: field ("email"|"phone"|"contact"|"stage"|"budget"|"city"|"industry") и value.
 - delete_lead: company или lead_id
-- list_leads: filter (hot/cold/new/won/all), query
+- list_leads: filter (hot/cold/new/won/all), query, stage, industry, city
+- analyze_lead: company или lead_id (глубокий анализ существующего лида)
+- lead_history: company или lead_id (история изменений, комментарии, касания)
+- add_communication: company, content, kind (comment|communication), communication_type (call|meeting|email)
 - create_task: title, due, assignee, related_lead, note
 - list_tasks: filter (today/overdue/open), query
 - update_task: task_id или title, status (done/open), due, note
@@ -103,7 +106,22 @@ Input: "покажи все лиды в стадии переговоры"
 Output: {"intent":"list_leads","agents":["analyst"],"slots":{"filter":"all","query":"переговоры"},"parallel":false,"reply":"Ищу лидов в стадии переговоры."}
 
 Input: "сколько у нас лидов из IT-отрасли"
-Output: {"intent":"list_leads","agents":["analyst"],"slots":{"filter":"all","query":"IT"},"parallel":false,"reply":"Ищу лидов из IT-отрасли."}
+Output: {"intent":"list_leads","agents":["analyst"],"slots":{"filter":"all","industry":"IT"},"parallel":false,"reply":"Фильтрую лидов по отрасли IT."}
+
+Input: "покажи лидов в стадии переговоры"
+Output: {"intent":"list_leads","agents":["analyst"],"slots":{"filter":"all","stage":"Переговоры"},"parallel":false,"reply":"Показываю лидов в стадии Переговоры."}
+
+Input: "лиды из Москвы"
+Output: {"intent":"list_leads","agents":["analyst"],"slots":{"filter":"all","city":"Москва"},"parallel":false,"reply":"Фильтрую лидов по городу Москва."}
+
+Input: "проанализируй лид ООО Ромашка"
+Output: {"intent":"analyze_lead","agents":["analyst","economist","marketer","tech_specialist"],"slots":{"company":"ООО Ромашка"},"parallel":false,"reply":"Запускаю анализ лида ООО Ромашка."}
+
+Input: "покажи историю изменений по лиду Ромашка"
+Output: {"intent":"lead_history","agents":["analyst"],"slots":{"company":"Ромашка"},"parallel":false,"reply":"Открываю историю лида Ромашка."}
+
+Input: "что менялось у клиента МашПром"
+Output: {"intent":"lead_history","agents":["analyst"],"slots":{"company":"МашПром"},"parallel":false,"reply":"Показываю историю лида МашПром."}
 
 ═══ ПРИМЕРЫ — ЗАДАЧИ ═══
 

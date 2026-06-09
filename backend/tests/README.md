@@ -29,6 +29,12 @@ pytest tests/api/ -q
 |------|--------|
 | `test_leadgen.py` | Пайплайн, Checko, портрет, интеграция |
 | `test_voice_pipeline.py` | Hermes интенты, orchestrator, голос |
+| `voice/test_voice_action.py` | Сборка пакета voice_action |
+| `api/test_voice_action_ws.py` | WS события intent + voice_action |
+| `core/test_hermes_lead_extended.py` | analyze_lead, lead_history, stage-фильтры |
+| `core/test_lead_list_view.py` | Маппинг list_leads → UI |
+| `voice/test_lead_context.py` | Загрузка истории лида |
+| `smoke/test_voice_lead_scenarios.py` | Матрица S01–S09 голосовых сценариев лидов |
 | `test_tender_sources.py` | Источники тендеров |
 | `test_stage_transition.py` | Переходы стадий CRM |
 | `lib/test_funnel_dnd.py` | Воронка Kanban DnD (зеркало funnelDnD.js) |

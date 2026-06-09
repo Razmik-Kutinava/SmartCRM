@@ -8,6 +8,60 @@ export const SORT_OPTIONS = [
 	{ id: 'company_asc', label: 'Компания А–Я' },
 ];
 
+const STAGE_ALIASES = {
+	переговоры: 'Переговоры',
+	новый: 'Новый',
+	квалифицирован: 'Квалифицирован',
+	выигран: 'Выигран',
+	проигран: 'Проигран',
+};
+
+function normalizeStage(raw) {
+	const low = String(raw || '').trim().toLowerCase();
+	return STAGE_ALIASES[low] || String(raw || '').trim();
+}
+
+/** Маппинг слотов Hermes list_leads → состояние UI списка. */
+export function leadListViewFromVoiceSlots(slots = {}) {
+	const f = String(slots.filter || 'all').toLowerCase();
+	const q = String(slots.query || '').trim();
+	const out = {
+		filterStage: 'all',
+		filterPriority: 'all',
+		sortBy: 'score_desc',
+		search: q,
+		filterIndustry: '',
+		filterCity: '',
+	};
+	if (f === 'hot' || f === 'горячих') {
+		out.filterPriority = 'high';
+		out.sortBy = 'priority_desc';
+	} else if (f === 'cold' || f === 'холодных') {
+		out.filterPriority = 'low';
+		out.sortBy = 'score_asc';
+	} else if (f === 'new' || f === 'новых') {
+		out.filterStage = 'Новый';
+	} else if (f === 'won' || f === 'выигранных') {
+		out.filterStage = 'Выигран';
+	}
+	if (slots.stage) out.filterStage = normalizeStage(slots.stage);
+	if (slots.industry) out.filterIndustry = String(slots.industry).trim();
+	if (slots.city) out.filterCity = String(slots.city).trim();
+	return out;
+}
+
+/** Применить view из voice_action.payload.filter */
+export function applyVoiceListFilter(view = {}) {
+	return {
+		filterStage: view.filterStage ?? 'all',
+		filterPriority: view.filterPriority ?? 'all',
+		sortBy: view.sortBy ?? 'score_desc',
+		search: view.search ?? '',
+		filterIndustry: view.industry ?? view.filterIndustry ?? '',
+		filterCity: view.city ?? view.filterCity ?? '',
+	};
+}
+
 export const PRIORITY_FILTERS = [
 	{ id: 'all', label: 'Все приоритеты' },
 	{ id: 'critical', label: 'Критический' },
@@ -40,13 +94,25 @@ export function leadMatchesSearch(lead, query) {
 }
 
 /** @param {Array<Record<string, unknown>>} leads */
-export function filterLeads(leads, { search = '', filterStage = 'all', filterPriority = 'all' }, config = null) {
+function fieldContains(leadVal, filterVal) {
+	const f = String(filterVal || '').trim().toLowerCase();
+	if (!f) return true;
+	return String(leadVal || '').toLowerCase().includes(f);
+}
+
+export function filterLeads(
+	leads,
+	{ search = '', filterStage = 'all', filterPriority = 'all', filterIndustry = '', filterCity = '' },
+	config = null,
+) {
 	return leads.filter((l) => {
 		if (filterStage !== 'all' && l.stage !== filterStage) return false;
 		if (filterPriority !== 'all') {
 			const tier = leadPriorityTier(l.score, config);
 			if (tier.key !== filterPriority) return false;
 		}
+		if (!fieldContains(l.industry, filterIndustry)) return false;
+		if (!fieldContains(l.city, filterCity)) return false;
 		return leadMatchesSearch(l, search);
 	});
 }

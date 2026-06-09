@@ -177,6 +177,12 @@ async def health_llm():
     return await health_check()
 
 
+@app.get("/health/whisper")
+async def health_whisper(ping: bool = False):
+    from voice.whisper import health_check as whisper_health
+    return await whisper_health(ping=ping)
+
+
 
 @app.get("/health/ollama")
 async def health_ollama():

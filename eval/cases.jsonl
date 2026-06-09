@@ -31,3 +31,6 @@
 {"id": "eval-031", "text": "в лиде ромашка исправь почту на ivan@mail.ru", "expected_intent": "update_lead", "expected_slots": {"company": "ромашка", "field": "email", "value": "ivan@mail.ru"}, "tags": ["lead"]}
 {"id": "eval-032", "text": "у ООО Ромашка поменяй телефон на +7 916 1112233", "expected_intent": "update_lead", "expected_slots": {"company": "ромашка", "field": "phone", "value": "+79161112233"}, "tags": ["lead"]}
 {"id": "eval-033", "text": "создай два лида", "expected_intent": "noop", "expected_slots": {}, "tags": ["noop"]}
+{"id": "eval-034", "text": "проанализируй лид ООО Ромашка", "expected_intent": "analyze_lead", "expected_slots": {"company": "ромашка"}, "tags": ["lead", "voice"]}
+{"id": "eval-035", "text": "покажи историю изменений по лиду МашПром", "expected_intent": "lead_history", "expected_slots": {"company": "машпром"}, "tags": ["lead", "voice"]}
+{"id": "eval-036", "text": "запиши касание звонок по лиду АКМЕ «обсудили бюджет»", "expected_intent": "add_communication", "expected_slots": {"company": "акме", "content": "обсудили бюджет"}, "tags": ["lead", "voice"]}

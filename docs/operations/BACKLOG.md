@@ -21,9 +21,31 @@
 
 `[2026-06-08] | PRD_MAP: п.2 «Поля Битрикс + синк» | Отложено: туннель (ngrok/cloudflared) + исходящий вебхук в портале | Причина: dev на localhost — Битрикс не достучится; мгновенный синк не проверить без публичного URL | Нужна фаза MAP: 2 / DevOps | Сейчас работает: полный импорт (кнопка) + опрос BITRIX_AUTO_SYNC_MINUTES=5 | Действие: туннель :8000 → URL в Битриксе ONCRMLEADADD → /api/webhooks/bitrix/events?token=...; опционально :5173 для UI`
 
-`[2026-06-08] | PRD_MAP: п.2 Hermes лиды — ЗАКРЫТО | Было: 9 падений test_hermes_eval | Сделано: slot_normalize, rescue, smoke_hermes_leads 40 passed; LLM eval 8/11 (3 flaky слота Groq — опционально) | Команда: pytest tests/core/test_hermes_eval.py::TestHermesIntents`
+`[2026-06-08] | PRD_MAP: «Голос → лиды» п.2 Hermes — ЗАКРЫТО ✅ | Scope: CRUD, стадия, задача (`create_lead`, `update_lead`, `delete_lead`, `list_leads`, `create_task`) | Сделано: `slot_normalize`, rescue/fastpath, `smoke_hermes_leads.py` 40 passed, `HERMES_LEADS_ACCEPTANCE.md` | Коммит: `be70615` | Хвост п.2 (не блокер): 3 LLM eval Groq — см. таблицу ниже 🟢`
 
-`[2026-06-08] | PRD_MAP: стек / Email API | Отложено: миграция `@validator` → `@field_validator` в `backend/api/routes/email.py` (Pydantic V2) | Причина: при pytest/smoke шумит `PydanticDeprecatedSince20` (3 предупреждения: imap/smtp, body, lead_ids); на Whisper STT и лиды не влияет | Нужна фаза MAP: любой шаг с касанием email | Действие: переписать валидаторы по гайду Pydantic v2, прогнать `tests/api/test_email*` + smoke | Приоритет: 🟢`
+`[2026-06-08] | PRD_MAP: стек / Email API | ЗАКРЫТО ✅ | `@field_validator` в `email.py` | Коммит: см. CHANGELOG 2026-06-08 хвост голос`
+
+---
+
+## Блок «Голос → лиды» — статус PRD_MAP п.1–5 (2026-06-08)
+
+| # | Пункт | Статус | Acceptance |
+|---|--------|--------|------------|
+| 1 | Whisper STT | ✅ | `WHISPER_STT_ACCEPTANCE.md` |
+| 2 | Hermes CRUD/стадия/задача | ✅ | `HERMES_LEADS_ACCEPTANCE.md` |
+| 3 | voice_action UI | ✅ | `VOICE_ACTION_ACCEPTANCE.md` |
+| 4 | Полные интенты | ✅ | `HERMES_LEADS_FULL_ACCEPTANCE.md` |
+| 5 | Смоук сценариев | ✅ автомат | `VOICE_LEAD_SCENARIOS_ACCEPTANCE.md` |
+
+**Команда полного прогона:** `cd backend && python scripts/smoke_voice_lead_scenarios.py`
+
+### Сводный хвост блока «Голос → лиды»
+
+| Приоритет | Источник | Что | Статус |
+|-----------|----------|-----|--------|
+| 🟡 | п.5 смоук | E2E микрофон → Whisper → UI | 👤 **пользователь вручную** (`WHISPER_STT_ACCEPTANCE.md`) |
+| ✅ | п.2–11 | остальной хвост | `VOICE_LEADS_TAIL_ACCEPTANCE.md` |
+| 🟢 | Ф2 | LiveKit вместо WS | см. инфра ниже |
 
 ---
 
@@ -31,11 +53,9 @@
 
 | Приоритет | PRD_MAP | Что | Фаза MAP |
 |-----------|---------|-----|----------|
-| 🟡 | п.2 Битрикс синк | Туннель :8000 + исходящий вебхук в портале | 2 / DevOps |
-| 🟡 | Хвост Ф1: расширить интенты Hermes | история, аналитика, фильтры (след. пункт MAP) | 1 |
-| 🟢 | Hermes LLM eval | 3 flaky кейса Groq слотов (eval-003/020, noop) | 1 |
-| 🔴 | Хвост Ф1: UI `voice_action` | модалки, навигация, фильтр | 1 |
-| 🟢 | Email API / техдолг | `@validator` → `@field_validator` в `email.py` | при касании email |
+| 🟡 | Лиды п.2 Битрикс синк | Туннель :8000 + исходящий вебхук в портале | 2 / DevOps |
+| 🟡 | Фаза 2 Voice Layer | Голос вне лидов (email, search, analytics) | 2 |
+| 🟡 | Голос → лиды | E2E микрофон (единственный открытый хвост) | 1 |
 
 ---
 

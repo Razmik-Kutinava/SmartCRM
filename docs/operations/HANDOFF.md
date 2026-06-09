@@ -1,6 +1,16 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Голос → лиды, п.2 Hermes] | Статус:DONE — ждём апрув`
+`Спринт:[Фаза 1] | Задача:[Голос → лиды — хвост закрыт агентом] | Статус:DONE`
+
+**Открыто только #1 E2E микрофон** — пользователь вручную (`WHISPER_STT_ACCEPTANCE.md`).
+
+**Хвост #2–#11 ✅** — `VOICE_LEADS_TAIL_ACCEPTANCE.md` (add_communication, fuzzy stage, чипы, fanout UI, eval, whisper health, email validators).
+
+**Блок «Голос → лиды» п.1–5 ✅** — `smoke_voice_lead_scenarios.py`, матрица `VOICE_LEAD_SCENARIOS_ACCEPTANCE.md`, DevTools partial.
+
+**Полные интенты лидов ✅** — `smoke_hermes_leads_full.py`, `HERMES_LEADS_FULL_ACCEPTANCE.md`.
+
+**voice_action UI ✅** — modal/navigate/filter/approve, `smoke_voice_action.py`, `VOICE_ACTION_ACCEPTANCE.md`.
 
 **Hermes интенты по лидам ✅** — `smoke_hermes_leads.py` 40 pytest, `HERMES_LEADS_ACCEPTANCE.md`.
 
@@ -30,7 +40,7 @@
 
 ## Следующий шаг (после апрува)
 
-Голос → лиды: **п.3 voice_action UI** или **полный набор интентов** (история/аналитика).
+Следующий фокус: **Фаза 2** (голос вне лидов) или **Битрикс синк** (BACKLOG 🟡).
 
 **Блокеры:** нет 🔴
 

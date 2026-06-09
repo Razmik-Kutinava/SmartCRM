@@ -30,8 +30,9 @@ LLM-интеграция `TestHermesIntents` — отдельно: `pytest tests
 - `rescue.py` — порядок update/task перед create; слоты delete/list/update
 - `fastpath` — list hot/new, delete, create_task, noop «создай два»
 
-## Хвост (не этот пункт)
+## Хвост (не этот пункт) → см. `BACKLOG.md` § «Осталось — Голос → лиды»
 
-- **Полный набор интентов** (история, аналитика, фильтры) → PRD_MAP следующий пункт
-- **voice_action UI** → отдельный пункт
-- **3 LLM eval-кейса** — flaky Groq слоты; опциональный прогон, не блокер смоука
+1. **voice_action** (PRD_MAP п.3) — ✅ см. `VOICE_ACTION_ACCEPTANCE.md`  
+2. **Полный набор интентов** (п.4) — ✅ `HERMES_LEADS_FULL_ACCEPTANCE.md`  
+3. **Смоук голосовых** (п.5)  
+4. **3 LLM eval-кейса** — 🟢, не блокер п.2

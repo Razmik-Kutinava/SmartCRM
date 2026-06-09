@@ -117,6 +117,32 @@ async def transcribe(audio_bytes: bytes, filename: str = "audio.webm") -> str:
         _os.unlink(tmp_path)
 
 
-async def health_check() -> bool:
-    """Проверяет доступность Groq Whisper."""
-    return bool(_client and GROQ_API_KEY)
+async def health_check(*, ping: bool = False) -> dict:
+    """Проверяет конфигурацию Groq Whisper и опционально ping API."""
+    out = {
+        "status": "ok" if (_client and GROQ_API_KEY) else "unconfigured",
+        "configured": bool(_client and GROQ_API_KEY),
+        "reachable": None,
+        "model": WHISPER_MODEL,
+    }
+    if not out["configured"]:
+        return out
+    if not ping:
+        out["reachable"] = True
+        return out
+    try:
+        import httpx
+
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            r = await client.get(
+                "https://api.groq.com/openai/v1/models",
+                headers={"Authorization": f"Bearer {GROQ_API_KEY}"},
+            )
+            out["reachable"] = r.status_code == 200
+            if not out["reachable"]:
+                out["status"] = "error"
+    except Exception as e:
+        out["reachable"] = False
+        out["status"] = "error"
+        out["detail"] = type(e).__name__
+    return out

@@ -46,7 +46,14 @@ def slots_match(expected: dict, actual: dict) -> tuple[bool, str]:
         if not act_val:
             return False, f"слот '{key}' отсутствует в ответе"
         if key == "field":
-            exp_set = _FIELD_EQUIV.get(norm(str(exp_val)), {norm(str(exp_val))})
+            exp_norm = norm(str(exp_val))
+            exp_set = None
+            for equiv in _FIELD_EQUIV.values():
+                if exp_norm in equiv:
+                    exp_set = equiv
+                    break
+            if not exp_set:
+                exp_set = {exp_norm}
             act_norm = norm(str(act_val))
             if act_norm in exp_set or any(e in act_norm or act_norm in e for e in exp_set):
                 continue
@@ -131,3 +138,16 @@ class TestHermesIntents:
         assert result["intent"] == "noop", (
             f"[{case['id']}] '{case['text']}' → intent='{result['intent']}', ожидалось 'noop'"
         )
+
+    @pytest.mark.parametrize(
+        "case",
+        [c for c in load_cases() if c.get("expected_intent") in ("analyze_lead", "lead_history", "add_communication")],
+    )
+    @pytest.mark.asyncio
+    async def test_voice_lead_extended_intents(self, hermes, case):
+        result = await hermes(case["text"])
+        assert result["intent"] == case["expected_intent"], (
+            f"[{case['id']}] '{case['text']}' → intent='{result['intent']}'"
+        )
+        ok, msg = slots_match(case["expected_slots"], result.get("slots", {}))
+        assert ok, f"[{case['id']}] {msg}"

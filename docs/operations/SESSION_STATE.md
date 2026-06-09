@@ -6,9 +6,19 @@
 
 `[время] | Действие:[что сделал] | Следующий шаг:[что дальше] | Вопросы:[если есть]`
 
+2026-06-08 | Действие: хвост BACKLOG «Голос → лиды» #2–#11 (кроме #1 микрофон) — add_communication, fuzzy stage, чипы, fanout UI, health/whisper, email field_validator, eval-034–036, approve testids, smoke_hermes_leads_live; `VOICE_LEADS_TAIL_ACCEPTANCE.md`; pytest smoke зелёный. | Следующий шаг: пользователь — E2E микрофон вручную; затем Фаза 2 / Битрикс. | Статус: done
+
+2026-06-08 | Действие: п.5 смоук голоса — S01–S09 pytest 23 + chain 47; DevTools localhost:5174 API+WS OK; `VOICE_LEAD_SCENARIOS_ACCEPTANCE.md`; BACKLOG сводный хвост блока. | Следующий шаг: блок «Голос → лиды» закрыт → Фаза 2 или Битрикс. | Статус: done
+
+2026-06-08 | Действие: п.4 полные интенты — analyze_lead, lead_history, фильтры stage/industry/city; smoke_hermes_leads_full 34 passed; BACKLOG хвост п.4. | Следующий шаг: `go` п.5 смоук голосовых. | Статус: done
+
+2026-06-08 | Действие: voice_action п.3 — `voice_action.py`, WS событие, фронт VoiceActionHost + stores; 8 pytest + smoke; `VOICE_ACTION_ACCEPTANCE.md`, PRD_MAP [x]. | Следующий шаг: `go` п.4 полные интенты или п.5 смоук. | Статус: done
+
 2026-06-08 | Действие: BACKLOG — отложены pgvector, LiveKit, Litestar (триггеры + фазы MAP). | Следующий шаг: `go` хвост Ф1 голос/Hermes. | Статус: done
 
 2026-06-08 | Действие: PRD_NOTES §CHANGELOG → шапка `operations/CHANGELOG.md`; NOTES — ссылка на канон. | Следующий шаг: хвост Ф1 Hermes/voice или `go` Фаза 2. | Статус: done
+
+2026-06-08 | Действие: BACKLOG — таблица «Осталось Голос→лиды» (п.3 voice_action, п.4 интенты, п.5 смоук); PRD_MAP порядок voice_action выше полных интентов. | Следующий шаг: `go` п.3 voice_action. | Статус: done
 
 2026-06-08 | Действие: Hermes п.2 — slot_normalize, rescue, smoke_hermes_leads 40 passed; BACKLOG hermes eval закрыт; `HERMES_LEADS_ACCEPTANCE.md`. | Следующий шаг: voice_action или полные интенты. | Статус: done
 

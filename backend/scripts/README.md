@@ -40,6 +40,9 @@
 | `smoke_scoring_funnel.py` | Смоук балльной воронки: формула scoreAdvisory + приоритеты |
 | `smoke_whisper_stt.py` | Смоук Groq Whisper STT + опц. live Groq |
 | `smoke_hermes_leads.py` | Смоук Hermes интентов по лидам (CRUD, стадия, задача) |
+| `smoke_voice_action.py` | Смоук сборки voice_action (approve/filter/navigate) |
+| `smoke_hermes_leads_full.py` | Смоук полных интентов лидов (analyze, history, фильтры) |
+| `smoke_voice_lead_scenarios.py` | Полный смоук блока «Голос → лиды» (п.1–5 chain) |
 | `run_zone_regression.py` | Регрессия по зонам (crm_leads, leadgen, …) |
 | `_resplit_leadgen_pkgs.py` | One-off: пересборка pipeline/checko пакетов |
 

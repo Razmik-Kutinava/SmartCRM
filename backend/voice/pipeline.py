@@ -5,6 +5,7 @@ Voice Pipeline: аудио → Whisper → Hermes → агенты (LangGraph) �
 import time
 import logging
 from voice.whisper import transcribe
+from voice.voice_action import build_voice_action
 from core.hermes import parse_intent
 from core import traces
 
@@ -75,26 +76,49 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
     final_reply = base_reply
 
     try:
-        from agents.orchestrator import run_agents
-        agent_result = await run_agents(
-            intent=intent,
-            slots={**slots, "reply": base_reply},
-            transcript=text,
-            trace_id=trace["id"],
-        )
-        if agent_result.get("agents_ran") and agent_result.get("final_reply"):
-            final_reply = agent_result["final_reply"]
+        if intent == "lead_history":
+            from voice.lead_context import fetch_lead_history
+
+            agent_result = await fetch_lead_history(slots)
+            if agent_result.get("final_reply"):
+                final_reply = agent_result["final_reply"]
+            lid = agent_result.get("lead_id")
+            if lid is not None:
+                slots = {**slots, "lead_id": lid}
+        else:
+            from agents.orchestrator import run_agents
+
+            agent_result = await run_agents(
+                intent=intent,
+                slots={**slots, "reply": base_reply},
+                transcript=text,
+                trace_id=trace["id"],
+            )
+            if agent_result.get("agents_ran") and agent_result.get("final_reply"):
+                final_reply = agent_result["final_reply"]
     except Exception as e:
         logger.warning("Оркестратор ошибка (пайплайн продолжается): %s", e)
         agent_result = {"agents_ran": False, "error": str(e)}
+
+    agents = intent_data.get("agents", [])
+    voice_action = build_voice_action(
+        intent=intent,
+        slots=slots,
+        reply=final_reply,
+        agents=agents,
+        agent_result=agent_result,
+        ui_action=intent_data.get("ui_action"),
+        trace_id=trace["id"],
+    )
 
     return {
         "transcript": text,
         "trace_id": trace["id"],
         "intent": intent,
-        "agents": intent_data.get("agents", []),
+        "agents": agents,
         "slots": slots,
         "parallel": intent_data.get("parallel", False),
         "reply": final_reply,
         "agent_result": agent_result,
+        "voice_action": voice_action,
     }

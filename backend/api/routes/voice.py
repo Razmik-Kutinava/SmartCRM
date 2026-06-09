@@ -17,6 +17,25 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+def _voice_events(result: dict) -> list[dict]:
+    """События WS: intent + опционально voice_action."""
+    intent_evt = {
+        "type": "intent",
+        "intent": result["intent"],
+        "reply": result["reply"],
+        "agents": result.get("agents", []),
+        "slots": result.get("slots", {}),
+        "transcript": result.get("transcript", ""),
+        "trace_id": result.get("trace_id"),
+        "agent_result": result.get("agent_result", {}),
+    }
+    events = [intent_evt]
+    va = result.get("voice_action")
+    if va:
+        events.append(va)
+    return events
+
+
 class TextCommand(BaseModel):
     text: str
 
@@ -59,6 +78,7 @@ async def voice_websocket(ws: WebSocket):
     Сервер отвечает JSON событиями:
       {"type": "transcript", "text": "..."}
       {"type": "intent", "intent": "...", "reply": "...", "agents": [...]}
+      {"type": "voice_action", "ui": "modal|navigate|filter|approve", ...}
       {"type": "error", "message": "..."}
     """
     await ws.accept()
@@ -85,16 +105,8 @@ async def voice_websocket(ws: WebSocket):
                     page_ctx = data.get("page_context", "")
                     await ws.send_json({"type": "transcript", "text": text})
                     result = await process_text(text, page_context=page_ctx)
-                    await ws.send_json({
-                        "type": "intent",
-                        "intent": result["intent"],
-                        "reply": result["reply"],
-                        "agents": result.get("agents", []),
-                        "slots": result.get("slots", {}),
-                        "transcript": result["transcript"],
-                        "trace_id": result.get("trace_id"),
-                        "agent_result": result.get("agent_result", {}),
-                    })
+                    for evt in _voice_events(result):
+                        await ws.send_json(evt)
 
             # Аудио байты
             elif "bytes" in message:
@@ -111,16 +123,8 @@ async def voice_websocket(ws: WebSocket):
                     continue
 
                 await ws.send_json({"type": "transcript", "text": result["transcript"]})
-                await ws.send_json({
-                    "type": "intent",
-                    "intent": result["intent"],
-                    "reply": result["reply"],
-                    "agents": result.get("agents", []),
-                    "slots": result.get("slots", {}),
-                    "transcript": result["transcript"],
-                    "trace_id": result.get("trace_id"),
-                    "agent_result": result.get("agent_result", {}),
-                })
+                for evt in _voice_events(result):
+                    await ws.send_json(evt)
 
     except WebSocketDisconnect:
         logger.info("WebSocket голос: отключение")

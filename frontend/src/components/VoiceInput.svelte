@@ -1,6 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { connect, sendText, sendAudio, onMessage, postCommand, getApiUrl } from '$lib/websocket.js';
+	import { handleVoiceAction } from '$lib/voice/voiceAction.js';
+	import { goto } from '$app/navigation';
 
 	let { onResult } = $props();
 
@@ -46,13 +48,18 @@
 			transcript = data.text;
 			status = 'processing';
 		}
+		if (data.type === 'voice_action') {
+			handleVoiceAction(data, { goto });
+		}
 		if (data.type === 'intent') {
 			processing = false;
 			status = 'done';
 			reply = data.reply;
 			lastTraceId = data.trace_id || null;
 			feedbackSent = null;
-			onResult?.(data);
+			if (data.intent !== 'delete_lead') {
+				onResult?.(data);
+			}
 			setTimeout(() => { status = 'idle'; reply = ''; transcript = ''; lastTraceId = null; feedbackSent = null; }, 8000);
 		}
 		if (data.type === 'error') {

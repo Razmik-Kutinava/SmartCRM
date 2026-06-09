@@ -3,6 +3,8 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { getApiUrl, connect, sendText, sendAudio, onMessage } from '$lib/websocket.js';
+	import { handleVoiceAction } from '$lib/voice/voiceAction.js';
+	import VoiceActionHost from '../components/VoiceActionHost.svelte';
 	import { goto } from '$app/navigation';
 
 	let { children } = $props();
@@ -49,8 +51,17 @@
 	let voice_ws         = $state(false);
 	let voice_traceId    = $state(null);
 	let voice_feedback   = $state(null);
+	let voice_fanout     = $state(false);
 	let mediaRecorder    = null;
 	let audioChunks      = [];
+
+	function voiceLooksFanout(text) {
+		const t = String(text || '').toLowerCase();
+		return (
+			(/\b(анализ|проанализ|оцени)\b/.test(t) && /\b(лид|компан|клиент)\b/.test(t))
+			|| (/\bсоздай\b/.test(t) && /\bлид\b/.test(t))
+		);
+	}
 
 	// Контекст текущей страницы для Hermes
 	function pageContext() {
@@ -89,18 +100,27 @@
 			if (data.type === 'connected')    { voice_ws = true; return; }
 			if (data.type === 'disconnected') { voice_ws = false; return; }
 			if (data.type === 'processing')   { voice_status = 'processing'; voice_processing = true; }
-			if (data.type === 'transcript')   { voice_transcript = data.text; voice_status = 'processing'; }
+			if (data.type === 'transcript')   {
+				voice_transcript = data.text;
+				voice_status = 'processing';
+				voice_fanout = voiceLooksFanout(data.text);
+			}
+			if (data.type === 'voice_action') {
+				handleVoiceAction(data, { goto });
+			}
 			if (data.type === 'intent') {
 				voice_processing = false;
 				voice_status = 'done';
 				voice_reply = data.reply || '';
 				voice_traceId = data.trace_id || null;
 				voice_feedback = null;
-				// Навигация по интенту
-				_handleIntentNav(data);
+				// Фолбек-навигация, если voice_action не пришёл
+				if (data.intent !== 'delete_lead') {
+					_handleIntentNav(data);
+				}
 				setTimeout(() => {
 					voice_status = 'idle'; voice_reply = ''; voice_transcript = '';
-					voice_traceId = null; voice_feedback = null;
+					voice_traceId = null; voice_feedback = null; voice_fanout = false;
 				}, 7000);
 			}
 			if (data.type === 'error') {
@@ -145,6 +165,7 @@
 					const blob = new Blob(audioChunks, { type: 'audio/webm' });
 					stream.getTracks().forEach(t => t.stop());
 					voice_status = 'processing'; voice_processing = true;
+					voice_fanout = false;
 					voice_transcript = 'Распознаю...';
 					sendAudio(blob);
 				};
@@ -165,6 +186,7 @@
 		voice_text = '';
 		voice_transcript = t;
 		voice_status = 'processing'; voice_processing = true;
+		voice_fanout = voiceLooksFanout(t);
 		// Добавляем контекст страницы к тексту команды
 		const ctx = pageContext();
 		const full = ctx ? `[${ctx}] ${t}` : t;
@@ -285,7 +307,11 @@
 
 					{:else if voice_status === 'processing'}
 						<div class="text-xs text-indigo-300">
-							⟳ Обрабатываю...
+							{#if voice_fanout}
+								⟳ Агенты анализируют… (может занять 15–30 с)
+							{:else}
+								⟳ Обрабатываю...
+							{/if}
 							{#if voice_transcript && voice_transcript !== 'Распознаю...'}
 								<span class="text-indigo-500 italic ml-1">"{voice_transcript}"</span>
 							{/if}
@@ -336,4 +362,5 @@
 		{@render children()}
 	</div>
 
+	<VoiceActionHost />
 </div>

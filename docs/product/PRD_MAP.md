@@ -87,12 +87,15 @@
 |---|--------|------------|------|
 | 1 | Whisper (Groq STT) → текст | 2026-06-08 | ✅ transcribe API, WS audio/text, live Groq; `WHISPER_STT_ACCEPTANCE.md` |
 | 2 | Hermes → интенты по лидам | 2026-06-08 | ✅ `smoke_hermes_leads.py` 40 pytest; `HERMES_LEADS_ACCEPTANCE.md` |
+| 3 | UI `voice_action` | 2026-06-08 | ✅ modal/navigate/filter/approve; `VOICE_ACTION_ACCEPTANCE.md` |
+| 4 | Полные интенты лидов | 2026-06-08 | ✅ analyze_lead, lead_history, stage/industry/city; `HERMES_LEADS_FULL_ACCEPTANCE.md` |
+| 5 | Смоук голосовых сценариев | 2026-06-08 | ✅ S01–S09 + chain; DevTools partial; `VOICE_LEAD_SCENARIOS_ACCEPTANCE.md` |
 
 - [x] Whisper (Groq STT) → текст — перепроход **2026-06-08 ✅**
 - [x] Hermes → интенты по лидам (CRUD, стадия, задача) — перепроход **2026-06-08 ✅**
-- [ ] Полный набор интентов по лидам (история, аналитика лида, фильтры)
-- [ ] UI-реакции: модалка / навигация / фильтр / апрув (`voice_action`) → [`ARCHITECTURE.md`](ARCHITECTURE.md#контракт-voice_action)
-- [ ] Смоук голосовых сценариев (`docs/agents/langgraph.md`)
+- [x] UI-реакции: модалка / навигация / фильтр / апрув (`voice_action`) — перепроход **2026-06-08 ✅**
+- [x] Полный набор интентов по лидам (история, аналитика лида, фильтры) — перепроход **2026-06-08 ✅**
+- [x] Смоук голосовых сценариев (`docs/agents/langgraph.md`) — перепроход **2026-06-08 ✅** (хвост: микрофон E2E, UI approve — BACKLOG)
 
 ### Поиск и RAG (базово)
 

@@ -112,6 +112,30 @@ async def update_lead_fields(lead_id: int, patch: dict) -> dict:
         return {"ok": False, "error": str(e)}
 
 
+async def read_lead_audit(lead_id: int, limit: int = 60) -> list[dict]:
+    try:
+        return await _api_get(f"/api/leads/{lead_id}/audit?limit={limit}")
+    except Exception as e:
+        logger.warning("tools.read_lead_audit(%s) ошибка: %s", lead_id, e)
+        return []
+
+
+async def read_lead_comments(lead_id: int, limit: int = 40) -> list[dict]:
+    try:
+        return await _api_get(f"/api/leads/{lead_id}/comments?limit={limit}")
+    except Exception as e:
+        logger.warning("tools.read_lead_comments(%s) ошибка: %s", lead_id, e)
+        return []
+
+
+async def read_lead_communications(lead_id: int, limit: int = 40) -> list[dict]:
+    try:
+        return await _api_get(f"/api/leads/{lead_id}/communications?limit={limit}")
+    except Exception as e:
+        logger.warning("tools.read_lead_communications(%s) ошибка: %s", lead_id, e)
+        return []
+
+
 async def read_tasks(filter_status: str = "open") -> list[dict]:
     """Получить задачи по фильтру: open / done / all."""
     try:

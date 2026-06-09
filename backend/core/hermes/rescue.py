@@ -28,6 +28,57 @@ def rescue_route(text: str) -> dict | None:
     if ("анализ" in t or "за прошлый год" in t) and "найди компанию" in t:
         return out("noop", [], "Нужна более точная CRM-команда.")
 
+    if ("запиши" in t or "добавь" in t or "зафиксируй" in t) and (
+        "лид" in t or "компан" in t or "клиент" in t
+    ) and ("касан" in t or "звонок" in t or "встреч" in t or "письм" in t or "коммент" in t or "заметк" in t):
+        from .slot_normalize import _extract_company
+
+        comp = _extract_company(text)
+        slots_ac: dict = {"company": comp} if comp else {}
+        if "коммент" in t or "заметк" in t:
+            slots_ac["kind"] = "comment"
+        else:
+            slots_ac["kind"] = "communication"
+            slots_ac["communication_type"] = (
+                "call" if "звон" in t else "meeting" if "встреч" in t else "email" if "письм" in t else "call"
+            )
+        m_q = re.search(r"[«\"']([^»\"']{2,200})[»\"']", text)
+        if m_q:
+            slots_ac["content"] = m_q.group(1).strip()
+        return out("add_communication", ["analyst"], "Записываю касание.", slots_ac)
+
+    if ("анализ" in t or "проанализ" in t or "оцени" in t) and (
+        "лид" in t or "компан" in t or "клиент" in t
+    ):
+        from .slot_normalize import _extract_company
+
+        comp = _extract_company(text)
+        slots_an: dict = {"company": comp} if comp else {}
+        return out(
+            "analyze_lead",
+            ["analyst", "economist", "marketer", "tech_specialist"],
+            "Анализирую лид.",
+            slots_an,
+        )
+
+    if ("покажи" in t or "pokazi" in t or "список" in t or "дай список" in t) and (
+        "лид" in t or "сделк" in t or "lidy" in t or "lid" in t
+    ) and ("истори" in t or "менял" in t or "изменен" in t or "касан" in t):
+        from .slot_normalize import _extract_company
+
+        comp = _extract_company(text)
+        slots_h: dict = {"company": comp} if comp else {}
+        return out("lead_history", ["analyst"], "Показываю историю лида.", slots_h)
+
+    if ("истори" in t or "менял" in t or "изменен" in t or "лог" in t or "касан" in t) and (
+        "лид" in t or "компан" in t or "клиент" in t or "сделк" in t
+    ):
+        from .slot_normalize import _extract_company
+
+        comp = _extract_company(text)
+        slots_h: dict = {"company": comp} if comp else {}
+        return out("lead_history", ["analyst"], "Показываю историю лида.", slots_h)
+
     if ("покажи" in t or "pokazi" in t or "список" in t or "дай список" in t) and (
         "лид" in t or "сделк" in t or "lidy" in t or "lid" in t
     ):
@@ -37,7 +88,20 @@ def rescue_route(text: str) -> dict | None:
             m = re.search(r"(?:где|названи[ея])\s+([a-zа-яё0-9\-]{2,40})", t)
             if m:
                 slots["query"] = m.group(1)
+        m_st = re.search(r"(?:стади[июя]|этап[еа]?)\s+([a-zа-яё][a-zа-яё\s\-]{2,30})", t, re.I)
+        if m_st:
+            slots["stage"] = m_st.group(1).strip()
+        m_city = re.search(r"(?:из|город)\s+([a-zа-яё][a-zа-яё\s\-]{2,30})", t, re.I)
+        if m_city:
+            slots["city"] = m_city.group(1).strip()
         return out("list_leads", ["analyst"], "Показываю лиды.", slots)
+
+    if ("лид" in t or "сделк" in t) and ("из " in t or "город" in t):
+        slots_lc: dict = {"filter": "all"}
+        m_city2 = re.search(r"(?:из|город)\s+([a-zа-яё][a-zа-яё\s\-]{2,30})", t, re.I)
+        if m_city2:
+            slots_lc["city"] = m_city2.group(1).strip()
+        return out("list_leads", ["analyst"], "Фильтрую лидов.", slots_lc)
 
     if ("удали" in t or "удалить" in t or "delete" in t or "выпили" in t) and (
         "лид" in t or "компан" in t

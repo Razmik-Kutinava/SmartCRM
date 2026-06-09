@@ -8,7 +8,7 @@ from typing import List, Optional
 
 import aiosmtplib
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -32,7 +32,8 @@ class EmailAccountCreate(BaseModel):
     smtp_port: int = 465
     use_ssl: bool = True
 
-    @validator("imap_server", "smtp_server", pre=True)
+    @field_validator("imap_server", "smtp_server", mode="before")
+    @classmethod
     def trim_host(cls, value: str) -> str:
         return value.strip()
 
@@ -58,7 +59,8 @@ class EmailReplyBody(BaseModel):
     thread_id: Optional[int] = None
     body: str
 
-    @validator("body")
+    @field_validator("body")
+    @classmethod
     def body_not_empty(cls, value: str) -> str:
         if not value.strip():
             raise ValueError("Тело письма не может быть пустым")
@@ -73,7 +75,8 @@ class EmailCampaignCreate(BaseModel):
     lead_ids: List[int]
     send_now: bool = False
 
-    @validator("lead_ids")
+    @field_validator("lead_ids")
+    @classmethod
     def lead_ids_not_empty(cls, value: List[int]) -> List[int]:
         if not value:
             raise ValueError("Список лидов не может быть пустым")

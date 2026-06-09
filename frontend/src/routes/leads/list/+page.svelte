@@ -22,15 +22,25 @@
 	} from '$lib/crmStages.js';
 	import {
 		applyLeadListView,
+		applyVoiceListFilter,
 		PRIORITY_FILTERS,
 		SORT_OPTIONS,
+		leadListViewFromVoiceSlots,
 	} from '$lib/leads/leadListFilter.js';
+	import {
+		voiceLeadFilter,
+		registerLeadIntentHandler,
+	} from '$lib/voice/voiceAction.js';
+	import { createLeadComment } from '$lib/leads/leadComments.js';
+	import { createLeadCommunication } from '$lib/leads/leadCommunications.js';
 
 	const API = getApiUrl();
 
 	let search = $state('');
 	let filterStage = $state('all');
 	let filterPriority = $state('all');
+	let filterIndustry = $state('');
+	let filterCity = $state('');
 	let sortBy = $state('score_desc');
 	let showVoice = $state(false); // голос теперь глобальный — в layout
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
@@ -63,19 +73,41 @@
 			bitrixStats = null;
 		}
 
-		// Подписываемся на глобальный голосовой ввод — обрабатываем intent-события
-		const unsub = onMessage((data) => {
+		registerLeadIntentHandler(handleVoiceResult);
+
+		const unsubWs = onMessage((data) => {
 			if (data.type === 'intent' && data.intent) {
-				handleVoiceResult(data);
+				// delete_lead — только через voice_action approve
+				if (data.intent !== 'delete_lead') {
+					handleVoiceResult(data);
+				}
 			}
 		});
-		return unsub;
+
+		const unsubFilter = voiceLeadFilter.subscribe((filt) => {
+			if (!filt) return;
+			const v = applyVoiceListFilter(filt);
+			filterStage = v.filterStage;
+			filterPriority = v.filterPriority;
+			sortBy = v.sortBy;
+			search = v.search;
+			filterIndustry = v.filterIndustry;
+			filterCity = v.filterCity;
+			notify('Фильтр применён голосом', 'info');
+			voiceLeadFilter.set(null);
+		});
+
+		return () => {
+			unsubWs();
+			unsubFilter();
+			registerLeadIntentHandler(null);
+		};
 	});
 
 	let filtered = $derived(
 		applyLeadListView(
 			leads,
-			{ search, filterStage, filterPriority, sortBy },
+			{ search, filterStage, filterPriority, filterIndustry, filterCity, sortBy },
 			getCachedCrmConfig(),
 		),
 	);
@@ -343,34 +375,52 @@
 			}
 
 		case 'list_leads': {
-			const f = slots?.filter;
-			const q = slots?.query ? String(slots.query).trim() : '';
-			if (f === 'hot' || f === 'горячих') {
-				filterPriority = 'high';
-				sortBy = 'priority_desc';
-				notify('Показываю горячих лидов (высокий приоритет)');
-			} else if (f === 'cold' || f === 'холодных') {
-				filterPriority = 'low';
-				sortBy = 'score_asc';
-				notify('Показываю холодных лидов (низкий приоритет)');
-			} else if (f === 'new' || f === 'новых') {
-				filterStage = 'Новый';
-				notify('Показываю новых лидов');
-			} else if (f === 'won' || f === 'выигранных') {
-				filterStage = 'Выигран';
-				notify('Показываю выигранные сделки');
-			} else {
-				filterStage = 'all';
-				filterPriority = 'all';
-				sortBy = 'score_desc';
-				notify('Показываю всех лидов');
-			}
-			if (q) {
-				search = q;
-				notify(`Фильтр по запросу: ${q}`);
-			}
+			const view = leadListViewFromVoiceSlots(slots);
+			filterStage = view.filterStage;
+			filterPriority = view.filterPriority;
+			sortBy = view.sortBy;
+			search = view.search || search;
+			filterIndustry = view.filterIndustry;
+			filterCity = view.filterCity;
+			notify('Фильтр списка обновлён', 'info');
 			break;
 		}
+
+			case 'analyze_lead':
+			case 'lead_history': {
+				notify(reply || 'Смотри модалку / карточку лида', 'info');
+				break;
+			}
+
+			case 'add_communication': {
+				const lead = findLead(slots);
+				if (!lead) {
+					notify('Лид не найден — уточни компанию', 'error');
+					return;
+				}
+				const content = String(slots?.content || slots?.comment || '').trim();
+				if (!content) {
+					notify('Не указан текст касания или комментария', 'error');
+					return;
+				}
+				try {
+					if (slots?.kind === 'comment') {
+						await createLeadComment(lead.id, content, 'Голос');
+						notify(`✓ Комментарий к ${lead.company} сохранён`);
+					} else {
+						const ctype = slots?.communication_type || slots?.communicationType || 'call';
+						await createLeadCommunication(lead.id, {
+							communicationType: ctype,
+							content,
+							actor: 'Голос',
+						});
+						notify(`✓ Касание (${ctype}) к ${lead.company} записано`);
+					}
+				} catch (e) {
+					notify(`Ошибка записи: ${e.message}`, 'error');
+				}
+				break;
+			}
 
 			case 'create_task': {
 				const title = slots?.title || '';
@@ -544,6 +594,27 @@
 			>{stage === 'all' ? 'Все этапы' : stage}</button>
 		{/each}
 	</div>
+	{#if filterIndustry || filterCity}
+		<div class="flex gap-2 flex-wrap items-center">
+			<span class="text-[11px] text-gray-500 uppercase tracking-wide">Голосовые фильтры</span>
+			{#if filterIndustry}
+				<button
+					type="button"
+					class="px-2 py-0.5 text-xs rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 hover:bg-cyan-900"
+					onclick={() => filterIndustry = ''}
+					title="Сбросить отрасль"
+				>Отрасль: {filterIndustry} ✕</button>
+			{/if}
+			{#if filterCity}
+				<button
+					type="button"
+					class="px-2 py-0.5 text-xs rounded-full bg-violet-950 text-violet-300 border border-violet-800 hover:bg-violet-900"
+					onclick={() => filterCity = ''}
+					title="Сбросить город"
+				>Город: {filterCity} ✕</button>
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <!-- Table -->

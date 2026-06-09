@@ -5,6 +5,8 @@
 | Файл | За что |
 |------|--------|
 | `pipeline.py` | `process_text` / `process_audio`: связка Whisper + Hermes + orchestrator |
+| `voice_action.py` | Сборка пакета `voice_action` (modal / navigate / filter / approve) для WS |
+| `lead_context.py` | История лида (audit/comments/comms) для `lead_history` |
 | `whisper.py` | Распознавание речи (Groq Whisper / локально) |
 | `audio_preprocess.py` | Нормализация аудио перед Whisper |
 
