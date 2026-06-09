@@ -8,9 +8,11 @@
 
 2026-06-08 | Действие: зачистка правил — только безусловный `git commit` при закрытии шага; убраны отложенные формулировки в `.mdc`, `AGENTS.md`, ops; усилен `check_rules_commit_conflict.py`. | Коммит: `02ef689` | Следующий шаг: PRD_MAP RAG п.3. | Статус: done
 
-2026-06-08 | Действие: RAG п.2 — 6 режимов перепроход: `test_search_modes_api.py` + `test_search_modes.py`, `smoke_search_modes.py` 19 pytest + live free; DevTools 6 табов + free live 10 результатов; `SEARCH_MODES_ACCEPTANCE.md` (сделано/НЕ сдали); PRD_MAP п.2 ✅; BACKLOG п.3–5. | Следующий шаг: `go` RAG п.3 Chroma. | Статус: done
+2026-06-08 | Действие: коммит+push RAG п.1 хвост + п.2 — `97778b2` (код/тесты/acceptance; ops CHANGELOG/HANDOFF уже были в HEAD). | Следующий шаг: `go` RAG п.3 Chroma. | Статус: done
 
-2026-06-08 | Действие: RAG п.1 хвост — `/search` все API через `apiFetch`/`apiPost`; `smoke_search_providers.py` грузит `.env` (live serper/brave/tavily OK); DevTools UI «Сбербанк»→«Найти»→7 результатов; `SEARCH_PROVIDERS_ACCEPTANCE.md` таблица; `BACKLOG.md` § «Поиск и RAG» хвост на потом. | Следующий шаг: `go` RAG п.2. | Статус: done
+2026-06-08 | Действие: RAG п.2 — 6 режимов перепроход: `test_search_modes_api.py` + `test_search_modes.py`, `smoke_search_modes.py` 19 pytest + live free; DevTools 6 табов + free live 10 результатов; `SEARCH_MODES_ACCEPTANCE.md` (сделано/НЕ сдали); PRD_MAP п.2 ✅; BACKLOG п.3–5. | Коммит: `97778b2` | Статус: done
+
+2026-06-08 | Действие: RAG п.1 хвост — `/search` все API через `apiFetch`/`apiPost`; `smoke_search_providers.py` грузит `.env`; DevTools UI «Сбербанк»→«Найти»→7 результатов; `SEARCH_PROVIDERS_ACCEPTANCE.md` таблица; `BACKLOG.md`. | Коммит: `97778b2` | Статус: done
 
 2026-06-08 | Действие: PRD_MAP RAG п.1 — перепроход Serper/Brave/Tavily: фикс cache в `company_search.py`, `test_search_providers.py` + API smoke, `smoke_search_providers.py` 11 pytest; DevTools `/search` — 3 ключа ✓, `/run` Сбербанк → 7 результатов; `SEARCH_PROVIDERS_ACCEPTANCE.md`. | Коммит: `eb138bd` | Следующий шаг: `go` RAG п.2 «6 режимов поиска». | Статус: done
 
