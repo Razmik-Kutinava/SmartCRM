@@ -2,7 +2,9 @@
 
 `Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:«Анализ по ИНН/названию» перепроход ✅ — `LEADGEN_INN_ANALYSIS_ACCEPTANCE.md``
 
-**Процесс:** `git commit` + ops + **хвост A/B/C** в ответе и `SESSION_STATE` (`smartcrm-commit-ops.mdc`).
+**Процесс:** `git commit` **до** ответа + ops + хвост A/B/C (`smartcrm-commit-ops.mdc`). Последний коммит: `7eba527` (iron commit).
+
+**Следующий MAP:** лидоген «Поиск по портрету» — ждём `go`.
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 

@@ -10,7 +10,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе `check_agent_step.py` FAIL.
 
-2026-06-09 | Действие: iron commit — усилены `commit-ops`, `check_agent_step`, `check_rules_commit_conflict`; зачистка SESSION_STATE; коммит leadgen ИНН/название (должен был быть ранее). | Коммит: pending | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: `go` портрет. | Статус: in_progress
+2026-06-09 | Действие: iron commit — усилены `commit-ops`, `check_agent_step`, `check_rules_commit_conflict`; зачистка SESSION_STATE; ответ только после commit. | Коммит: `7eba527` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: `go` портрет. | Статус: done
 
 2026-06-08 | Действие: правило хвоста прогона A/B/C — `commit-ops`, `task-workflow`, `AGENTS.md`, `RULES_MATRIX`, `check_agent_step.py`; три сценария: план не сделано / BACKLOG в прогоне / доп. починки. | Коммит: `5c0b636` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: PRD_MAP. | Статус: done
 
