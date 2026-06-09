@@ -8,6 +8,8 @@
 
 **Хвост A/B/C обязателен** в каждой новой записи (`check_agent_step.py`).
 
+2026-06-08 | Действие: PRD_MAP leadgen «Анализ по ИНН/названию» — перепроход: fix website `https://` double, checko `fetch_full_profile` import `_available`, +5 pytest, `smoke_leadgen_inn_analysis.py` 81 green + live score 79, testid, DevTools ИНН Сбербанк + название Яндекс; `LEADGEN_INN_ANALYSIS_ACCEPTANCE.md`. | Коммит: — | Хвост A: портрет/кластер MAP | Хвост B: нет | Хвост C: website + checko financials | Следующий шаг: коммит по запросу / `go` портрет. | Статус: done
+
 2026-06-08 | Действие: правило хвоста прогона A/B/C — `commit-ops`, `task-workflow`, `AGENTS.md`, `RULES_MATRIX`, `check_agent_step.py`; три сценария: план не сделано / BACKLOG в прогоне / доп. починки. | Коммит: `5c0b636` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: PRD_MAP. | Статус: done
 
 2026-06-09 | Действие: PRD_MAP Ф2 — §4 кэш enrich, §9 кнопка на карточке лида; BACKLOG + SEARCH_ENRICH_LEAD_ACCEPTANCE синхрон. | Следующий шаг: по `go` следующий пункт. | Статус: done

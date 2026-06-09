@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from .helpers import _num, _sum_num
-from .http_client import _get
+from .http_client import _available, _get
 
 logger = logging.getLogger(__name__)
 

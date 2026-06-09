@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from .utils import _fmt_money, _render_script
+from .utils import _extract_domain, _fmt_money, _render_script
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ def _build_lead_card(
         "city": company.get("city", ""),
         "address": company.get("address", ""),
         "region": company.get("region", ""),
-        "website": company.get("website", ""),
+        "website": _extract_domain(company.get("website", "")),
         "company_status": company.get("status", ""),
         "registration_date": company.get("registration_date", ""),
         "smb_category": company.get("smb_category", ""),

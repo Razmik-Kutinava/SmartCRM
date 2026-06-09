@@ -178,6 +178,8 @@ async def run_pipeline(
         company_data["website"] = apollo_company_data["domain"]
     if not company_data.get("website") and web_contacts.get("website"):
         company_data["website"] = web_contacts["website"]
+    if company_data.get("website"):
+        company_data["website"] = _extract_domain(company_data["website"])
 
     # Обогащение из Hunter Company
     if hunter_company_data:

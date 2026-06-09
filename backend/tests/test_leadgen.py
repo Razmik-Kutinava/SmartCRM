@@ -91,6 +91,15 @@ class TestCheckoIdentification:
         assert res[0]["inn"] == "7700000000"
         assert "Тест" in res[0]["name"]
 
+    def test_fetch_full_profile_without_api_key_returns_empty(self, monkeypatch):
+        """fetch_full_profile не падает NameError при отсутствии CHECKO_API_KEY."""
+        import asyncio
+        from leadgen.modules.checko import endpoints
+
+        monkeypatch.setattr("leadgen.modules.checko.endpoints._available", lambda: False)
+        res = asyncio.get_event_loop().run_until_complete(endpoints.fetch_full_profile("7707083893"))
+        assert res == {}
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 2. FNS
@@ -404,6 +413,7 @@ class TestPipelineHelpers:
         from leadgen.pipeline import _extract_domain
         assert _extract_domain("https://www.example.com/path") == "example.com"
         assert _extract_domain("http://test.ru") == "test.ru"
+        assert _extract_domain("https://sberbank.ru") == "sberbank.ru"
         assert _extract_domain("") == ""
 
     def test_fmt_money(self):
@@ -472,6 +482,17 @@ class TestPipelineHelpers:
         assert 5 <= card["final_score"] <= 99
         assert card["priority"] in ("critical", "high", "medium", "low")
         assert card["action"] in ("call_now", "schedule_call", "research_more", "monitor")
+
+    def test_build_lead_card_strips_website_protocol(self):
+        from leadgen.pipeline import _build_lead_card, _compute_final_score
+        from leadgen.analyzers import compute_profile_analyses
+
+        company = {**SAMPLE_PROFILE["company"], "website": "https://technosoft.ru/path"}
+        analyses = compute_profile_analyses(SAMPLE_PROFILE)
+        agents = {k: {"score": 70} for k in ("analyst", "tech_specialist", "marketer", "strategist")}
+        score = _compute_final_score(analyses, agents)
+        card = _build_lead_card(company, SAMPLE_PROFILE, analyses, agents, score)
+        assert card["website"] == "technosoft.ru"
 
     def test_lead_card_lpr_email(self):
         from leadgen.pipeline import _build_lead_card, _compute_final_score

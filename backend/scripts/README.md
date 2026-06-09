@@ -49,6 +49,7 @@
 | `smoke_rag_upload.py` | Смоук upload PDF/txt в /rag (PRD_MAP RAG п.4) |
 | `smoke_rag_save_from_search.py` | Смоук «сохранить в базу» из /search ingest-batch (PRD_MAP RAG п.5) |
 | `smoke_search_enrich_lead.py` | Смоук enrich-lead из /search (PRD_MAP RAG enrich) |
+| `smoke_leadgen_inn_analysis.py` | Смоук анализа по ИНН/названию (PRD_MAP leadgen direct) |
 | `run_zone_regression.py` | Регрессия по зонам (crm_leads, leadgen, …) |
 | `_resplit_leadgen_pkgs.py` | One-off: пересборка pipeline/checko пакетов |
 

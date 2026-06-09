@@ -132,6 +132,14 @@ let portrait_deep      = $state(false);
 		if (s === 'dummy') return '⚠ не задан';
 		return '✕ отсутствует';
 	}
+	function websiteHost(url) {
+		if (!url) return '';
+		return String(url).replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0];
+	}
+	function websiteHref(url) {
+		const h = websiteHost(url);
+		return h ? `https://${h}` : '';
+	}
 	function lSeverity(svc) {
 		const pct = svc.pct_day ?? svc.pct_month ?? null;
 		if (pct !== null && pct >= 90) return 'critical';
@@ -608,12 +616,12 @@ let portrait_deep      = $state(false);
 			<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
 				<div>
 					<div class="text-xs text-gray-500 mb-1 block">ИНН</div>
-					<input bind:value={direct_inn} placeholder="7736207543"
+					<input bind:value={direct_inn} placeholder="7736207543" data-testid="leadgen-direct-inn"
 						class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500" />
 				</div>
 				<div>
 					<div class="text-xs text-gray-500 mb-1 block">Название компании</div>
-					<input bind:value={direct_name} placeholder="ООО Ромашка"
+					<input bind:value={direct_name} placeholder="ООО Ромашка" data-testid="leadgen-direct-name"
 						class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500" />
 				</div>
 				<div>
@@ -750,6 +758,7 @@ let portrait_deep      = $state(false);
 		<button
 			onclick={run}
 			disabled={loading}
+			data-testid="leadgen-analyze-btn"
 			class="mt-4 px-6 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
 		>
 			{#if loading}
@@ -775,7 +784,7 @@ let portrait_deep      = $state(false);
 		{@const agout = result.agent_outputs || {}}
 		{@const risks = result.risk_flags || {}}
 
-		<div class="space-y-4">
+		<div class="space-y-4" data-testid="leadgen-result-card">
 
 			<!-- ══ ШАПКА КОМПАНИИ ══ -->
 			<div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
@@ -788,7 +797,7 @@ let portrait_deep      = $state(false);
 
 						<!-- ЕГРЮЛ строка -->
 						<div class="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-gray-500 mt-1">
-							<span>ИНН: <span class="text-gray-300">{result.inn || '—'}</span></span>
+							<span>ИНН: <span class="text-gray-300" data-testid="leadgen-result-inn">{result.inn || '—'}</span></span>
 							{#if result.kpp}<span>КПП: <span class="text-gray-400">{result.kpp}</span></span>{/if}
 							<span>ОГРН: <span class="text-gray-300">{result.ogrn || '—'}</span></span>
 							{#if result.registration_date}<span>Рег: <span class="text-gray-400">{result.registration_date}</span></span>{/if}
@@ -808,7 +817,7 @@ let portrait_deep      = $state(false);
 						<div class="mt-1 text-xs text-gray-600">
 							{#if result.address}<div>{result.address}</div>{:else if result.city}<div>{result.city}</div>{/if}
 							{#if result.website}
-								<a href="https://{result.website}" target="_blank" class="text-indigo-400 hover:underline">{result.website}</a>
+								<a href={websiteHref(result.website)} target="_blank" class="text-indigo-400 hover:underline">{websiteHost(result.website)}</a>
 							{/if}
 						</div>
 
@@ -830,7 +839,7 @@ let portrait_deep      = $state(false);
 
 					<div class="flex flex-col items-end gap-2 shrink-0">
 						<div class="flex items-center gap-3">
-							<span class="text-4xl font-bold {scoreColor(result.final_score)}">{result.final_score ?? '—'}</span>
+							<span class="text-4xl font-bold {scoreColor(result.final_score)}" data-testid="leadgen-result-score">{result.final_score ?? '—'}</span>
 							<div class="text-right">
 								<div class="text-xs text-gray-500">Итоговый скор</div>
 								<span class="text-xs px-2 py-0.5 rounded-full {priorityBadge(result.priority)}">{result.priority || '—'}</span>
@@ -889,8 +898,8 @@ let portrait_deep      = $state(false);
 						{#if result.website}
 							<div class="flex justify-between items-center">
 								<span class="text-gray-500">🌐 Сайт</span>
-								<a href="https://{result.website}" target="_blank" rel="noopener"
-									class="text-indigo-400 hover:underline text-xs font-mono">{result.website}</a>
+								<a href={websiteHref(result.website)} target="_blank" rel="noopener"
+									class="text-indigo-400 hover:underline text-xs font-mono">{websiteHost(result.website)}</a>
 							</div>
 						{/if}
 
@@ -963,7 +972,7 @@ let portrait_deep      = $state(false);
 						{#if lpr.hunter_pattern || lpr.hunter_total_emails > 0}
 							<div class="pt-1 border-t border-gray-800/60 text-xs text-gray-600">
 								{#if lpr.hunter_pattern}
-									<span>Формат email: <span class="text-gray-400 font-mono">{lpr.hunter_pattern}@{result.website || '...'}</span></span>
+									<span>Формат email: <span class="text-gray-400 font-mono">{lpr.hunter_pattern}@{websiteHost(result.website) || '...'}</span></span>
 								{/if}
 								{#if lpr.hunter_total_emails > 0}
 									<span class="ml-2">Hunter нашёл: <span class="text-indigo-400">{lpr.hunter_total_emails}</span> адресов</span>
@@ -976,7 +985,7 @@ let portrait_deep      = $state(false);
 							<div class="text-xs text-yellow-800 bg-yellow-950/20 rounded px-2 py-1.5 mt-1">
 								⚠ Контакты в открытых реестрах не найдены.
 								{#if result.website}
-									Попробуй на сайте <a href="https://{result.website}" target="_blank" class="text-indigo-400 hover:underline">{result.website}</a>
+									Попробуй на сайте <a href={websiteHref(result.website)} target="_blank" class="text-indigo-400 hover:underline">{websiteHost(result.website)}</a>
 								{:else}
 									Введи сайт компании для поиска контактов.
 								{/if}

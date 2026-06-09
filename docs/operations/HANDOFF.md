@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Поиск и RAG] | Статус:блок «Поиск и RAG (базово)» ЗАКРЫТ ✅ (п.1–5 + enrich-lead)`
+`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:«Анализ по ИНН/названию» перепроход ✅ — `LEADGEN_INN_ANALYSIS_ACCEPTANCE.md``
 
 **Процесс:** `git commit` + ops + **хвост A/B/C** в ответе и `SESSION_STATE` (`smartcrm-commit-ops.mdc`).
 
