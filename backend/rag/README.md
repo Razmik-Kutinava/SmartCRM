@@ -11,7 +11,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `providers.py` | Tavily, Brave, Exa и др. |
 | `merge.py` | Слияние результатов источников |
 | `company_search.py` | Поиск компании по запросу |
-| `prospect.py` | Поиск prospect-лидов |
+| `prospect.py` | prospect + `enrich_lead` (serper/brave/tavily → LLM extract) |
 | `rag_queries.py` | Запросы к Chroma |
 | `cache.py` | Кэш поиска |
 | `config.py` | Ключи и лимиты |

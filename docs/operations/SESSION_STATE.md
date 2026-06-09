@@ -10,6 +10,8 @@
 
 2026-06-08 | Действие: правило хвоста прогона A/B/C — `commit-ops`, `task-workflow`, `AGENTS.md`, `RULES_MATRIX`, `check_agent_step.py`; три сценария: план не сделано / BACKLOG в прогоне / доп. починки. | Коммит: `5c0b636` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: PRD_MAP. | Статус: done
 
+2026-06-09 | Действие: enrich-lead smoke — Brave fix, API validation, 20 pytest, live Сбербанк phone/email/website; DevTools таб enrich OK; `SEARCH_ENRICH_LEAD_ACCEPTANCE.md`; PRD_MAP enrich ✅; блок RAG закрыт. | Следующий шаг: Ф2 авто-чанки или другой блок MAP. | Статус: done
+
 2026-06-08 | Действие: RAG п.5 save из поиска — `source_url` в metadata, `test_rag_ingest_batch*.py` 6 pytest, `smoke_rag_save_from_search.py`; DevTools `/search` таб RAG → 1 чанк cbr.ru; `SEARCH_RAG_SAVE_ACCEPTANCE.md`; блок п.1–5 ✅. | Следующий шаг: enrich-lead smoke или Ф2. | Статус: done
 
 2026-06-08 | Действие: RAG п.4 upload PDF/txt — `test_rag_upload.py`, `test_rag_upload_api.py`, `smoke_rag_upload.py` 8 pytest; DevTools `/rag` текст «В базу» 1 чанк + PDF в источниках; `SEARCH_RAG_UPLOAD_ACCEPTANCE.md`; PRD_MAP п.4 ✅. | Следующий шаг: `go` п.5 save из поиска. | Статус: done

@@ -61,3 +61,48 @@ async def test_enrich_lead_empty_company():
     out = await enrich_lead({})
     assert out["enriched"] == {}
     assert out["missing_fields"] == []
+
+
+@pytest.mark.asyncio
+async def test_enrich_lead_mocked_search_and_llm(monkeypatch):
+    monkeypatch.setenv("SERPER_API_KEY", "k")
+    monkeypatch.setenv("BRAVE_API_KEY", "k")
+
+    brave_called = {"n": 0}
+
+    async def fake_serper(q, n):
+        return [{"title": "Сайт", "snippet": f"https://example.ru {q}", "url": "https://example.ru", "date": "", "source": "serper"}]
+
+    async def fake_brave(q, n):
+        brave_called["n"] += 1
+        return [{"title": "Контакты", "snippet": "+7 495 123-45-67", "url": "https://b.ru", "date": "", "source": "brave"}]
+
+    async def fake_chat(*a, **kw):
+        return '{"website":"https://example.ru","phone":"+7 495 123-45-67"}'
+
+    monkeypatch.setattr("rag.search.prospect._search_serper", fake_serper)
+    monkeypatch.setattr("rag.search.prospect._search_brave", fake_brave)
+    monkeypatch.setattr("rag.search.prospect._search_tavily", AsyncMock(return_value=[]))
+    monkeypatch.setattr("core.llm.chat", fake_chat)
+
+    from rag.search import enrich_lead
+
+    out = await enrich_lead({"company": "ООО ТестРитейл", "industry": "ритейл"})
+    assert brave_called["n"] >= 1
+    assert "website" in out["enriched"]
+    assert out["enriched"]["website"] == "https://example.ru"
+    assert "phone" in out["missing_fields"] or "website" in out["missing_fields"]
+    assert out["providers_used"]
+
+
+@pytest.mark.asyncio
+async def test_enrich_lead_all_fields_filled_skips_search():
+    from rag.search import enrich_lead
+
+    lead = {k: "заполнено" for k in (
+        "company", "phone", "email", "website", "address", "industry", "employees",
+        "revenue", "description", "linkedin", "decision_maker",
+    )}
+    out = await enrich_lead(lead)
+    assert out["enriched"] == {}
+    assert out["missing_fields"] == []

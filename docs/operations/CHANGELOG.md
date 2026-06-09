@@ -31,6 +31,12 @@
 
 **Зачем:** агенты не откладывали коммит и не спрашивали разрешение.
 
+## [2026-06-09] — enrich-lead smoke из поиска (`go`)
+
+**Сделано:** фикс Brave в `enrich_lead`, валидация `lead.company`, фильтр null из LLM, только веб-провайдеры; 8 pytest + `smoke_search_enrich_lead.py`; DevTools enrich Сбербанк; `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` с тонкими местами.
+
+**Зачем:** закрыть последний пункт блока «Поиск и RAG» — live E2E обогащения лида.
+
 ## [2026-06-08] — RAG п.5: «сохранить в базу» из /search (`go`)
 
 **Сделано:** проброс `source_url` в метаданные чанков при `ingest-batch`; `total_chunks` в ответе save; UI «✓ Сохранить в базу» + testid; 6 pytest; `smoke_rag_save_from_search.py`; DevTools E2E (поиск → превью → save); `SEARCH_RAG_SAVE_ACCEPTANCE.md`.

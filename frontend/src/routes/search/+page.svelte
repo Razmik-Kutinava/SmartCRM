@@ -615,8 +615,13 @@
 		{#if en_result}
 			{@const enriched = en_result.enriched || {}}
 			{@const keys = Object.keys(enriched)}
+			{#if en_result.providers_used?.length}
+				<div class="text-xs text-gray-600" data-testid="search-enrich-providers">
+					Провайдеры: {en_result.providers_used.join(', ')}
+				</div>
+			{/if}
 			{#if keys.length}
-				<div class="bg-gray-900 border border-indigo-800/50 rounded-xl p-5">
+				<div class="bg-gray-900 border border-indigo-800/50 rounded-xl p-5" data-testid="search-enrich-results">
 					<div class="text-xs text-indigo-400 font-medium mb-3">Найденные данные</div>
 					<div class="space-y-2">
 						{#each keys as k}

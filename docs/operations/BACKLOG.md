@@ -73,7 +73,7 @@
 
 | Приоритет | PRD_MAP | Что | Фаза MAP | Кто |
 |-----------|---------|-----|----------|-----|
-| 🟢 | enrich-lead | Смоук `enrich-lead` live E2E (MAP п.110) | **1** | агент |
+| ✅ | enrich-lead | Смоук `enrich-lead` live E2E | **1** | `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` |
 | 🟢 | prospect/agent | Spot-check live Groq в UI (prospect, enrich, agent) | **1** | 👤 опционально |
 | 🟢 | Ф2 п.4 | Авто-чанки «поиск → RAG» | **2** | агент |
 

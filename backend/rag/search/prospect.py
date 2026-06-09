@@ -203,21 +203,26 @@ async def enrich_lead(lead: dict) -> dict[str, Any]:
     all_raw: list[dict] = []
     providers_used: list[str] = []
 
+    # Только веб-поиск: DataNewton/Мои-Закупки не дают контакты по названию компании.
+    _ENRICH_PROVIDERS = frozenset({"serper", "brave", "tavily"})
+    seen_q: set[str] = set()
     tasks: list[asyncio.Task] = []
     task_meta: list[tuple[str, str]] = []
     for q, field in queries:
+        q_norm = q.strip().lower()
+        if q_norm in seen_q:
+            continue
+        seen_q.add(q_norm)
         for provider, pcfg in providers_cfg.items():
-            if not pcfg.get("enabled", True):
+            if provider not in _ENRICH_PROVIDERS or not pcfg.get("enabled", True):
                 continue
-            mr = 5
+            mr = min(int(pcfg.get("max_results", 5) or 5), 5)
             if provider == "serper":
                 tasks.append(asyncio.create_task(_search_serper(q, mr)))
+            elif provider == "brave":
+                tasks.append(asyncio.create_task(_search_brave(q, mr)))
             elif provider == "tavily":
                 tasks.append(asyncio.create_task(_search_tavily(q, mr)))
-            elif provider == "datanewton":
-                tasks.append(asyncio.create_task(_search_datanewton(q, mr)))
-            elif provider == "moy_zakupki":
-                tasks.append(asyncio.create_task(_search_moy_zakupki(q, mr)))
             else:
                 continue
             task_meta.append((provider, field))
@@ -259,7 +264,12 @@ async def enrich_lead(lead: dict) -> dict[str, Any]:
         )
         match = re.search(r"\{[\s\S]*\}", raw_enriched)
         if match:
-            enriched = json.loads(match.group(0))
+            parsed = json.loads(match.group(0))
+            enriched = {
+                k: str(v).strip()
+                for k, v in parsed.items()
+                if v is not None and str(v).strip() not in ("", "null", "None")
+            }
     except Exception as e:
         logger.warning("enrich_lead parse ошибка: %s", e)
 

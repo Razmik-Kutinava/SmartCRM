@@ -171,6 +171,9 @@ async def enrich_lead_search(body: EnrichLeadBody):
     """Обогащение лида: заполнить пустые поля из веба."""
     if not body.lead:
         raise HTTPException(400, detail="lead обязателен")
+    company = (body.lead.get("company") or body.lead.get("name") or "").strip()
+    if not company:
+        raise HTTPException(400, detail="lead.company обязателен")
     try:
         from rag.search import enrich_lead
         result = await enrich_lead(lead=body.lead)

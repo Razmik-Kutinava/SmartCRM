@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Поиск и RAG] | Статус:п.1–5 ЗАКРЫТЫ ✅ — блок «Поиск и RAG (базово)» готов`
+`Спринт:[Фаза 1] | Задача:[Поиск и RAG] | Статус:блок «Поиск и RAG (базово)» ЗАКРЫТ ✅ (п.1–5 + enrich-lead)`
 
 **Процесс:** `git commit` + ops + **хвост A/B/C** в ответе и `SESSION_STATE` (`smartcrm-commit-ops.mdc`).
 
@@ -8,7 +8,7 @@
 
 **п.4 ✅** `SEARCH_RAG_UPLOAD_ACCEPTANCE.md`. **п.3 ✅** `SEARCH_CHROMA_ACCEPTANCE.md`. **п.2 ✅** `SEARCH_MODES_ACCEPTANCE.md`. **п.1 ✅** `SEARCH_PROVIDERS_ACCEPTANCE.md`.
 
-**Хвост:** enrich-lead smoke, Ф2 авто-чанки → `BACKLOG.md`.
+**enrich-lead ✅** — `SEARCH_ENRICH_LEAD_ACCEPTANCE.md`. **Хвост:** Ф2 авто-чанки → `BACKLOG.md`.
 
 **Голос → лиды** — микрофон E2E на пользователе (`BACKLOG.md` § ручная работа).
 
