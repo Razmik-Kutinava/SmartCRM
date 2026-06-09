@@ -81,10 +81,11 @@
 
 Обновляется агентами в процессе работы:
 
+- [CHANGELOG.md](operations/CHANGELOG.md) — **история** (формат записи, хронология, статус продукта)
 - [HANDOFF.md](operations/HANDOFF.md) — статус задачи, следующий шаг
 - [SESSION_STATE.md](operations/SESSION_STATE.md) — краткий прогресс сессии
-- [CHANGELOG.md](operations/CHANGELOG.md) — что сделано по шагам
 - [ISSUES.md](operations/ISSUES.md) — баги и инциденты
+- [BACKLOG.md](operations/BACKLOG.md) — отложено по PRD_MAP
 
 ---
 
