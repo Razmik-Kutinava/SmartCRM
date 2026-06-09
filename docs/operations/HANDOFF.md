@@ -1,14 +1,14 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Поиск и RAG] | Статус:п.1–3 ЗАКРЫТЫ ✅ → ждём go п.4 upload PDF`
+`Спринт:[Фаза 1] | Задача:[Поиск и RAG] | Статус:п.1–4 ЗАКРЫТЫ ✅ → ждём go п.5 «сохранить в базу»`
 
 **Процесс:** `git commit` + ops — всегда при закрытии шага (`smartcrm-commit-ops.mdc`).
 
-**RAG п.3 Chroma ✅** — `smoke_rag_chroma.py`, 1592 чанка, `SEARCH_CHROMA_ACCEPTANCE.md` (было/стало).
+**RAG п.4 upload ✅** — `smoke_rag_upload.py`, DevTools текст+PDF, `SEARCH_RAG_UPLOAD_ACCEPTANCE.md`.
 
-**RAG п.2 ✅** — `SEARCH_MODES_ACCEPTANCE.md`. **п.1 ✅** — `SEARCH_PROVIDERS_ACCEPTANCE.md`.
+**п.3 ✅** `SEARCH_CHROMA_ACCEPTANCE.md`. **п.2 ✅** `SEARCH_MODES_ACCEPTANCE.md`. **п.1 ✅** `SEARCH_PROVIDERS_ACCEPTANCE.md`.
 
-**Хвост п.4–5 + enrich smoke** → `BACKLOG.md` § «Поиск и RAG».
+**Хвост п.5 + enrich smoke** → `BACKLOG.md`.
 
 **Голос → лиды** — микрофон E2E на пользователе (`BACKLOG.md` § ручная работа).
 

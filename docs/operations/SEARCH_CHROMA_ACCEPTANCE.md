@@ -55,7 +55,7 @@ cd backend && python scripts/smoke_rag_chroma.py
 
 | Что | Пункт |
 |-----|--------|
-| Загрузка PDF/текста — **полный** перепроход UI (preview/upload E2E) | **п.4** |
+| Загрузка PDF/текста | **п.4** | `SEARCH_RAG_UPLOAD_ACCEPTANCE.md` ✅ |
 | Кнопка «сохранить в базу» из поиска — acceptance | **п.5** |
 | Смоук enrich-lead | MAP п.110 |
 | Авто-чанки | **Фаза 2** |
@@ -65,4 +65,4 @@ cd backend && python scripts/smoke_rag_chroma.py
 
 ## Следующий пункт MAP
 
-**п.4 — загрузка PDF/текста в `/rag`** (отдельный перепроход).
+**п.4 upload** — `SEARCH_RAG_UPLOAD_ACCEPTANCE.md` ✅. Дальше **п.5 save из поиска**.

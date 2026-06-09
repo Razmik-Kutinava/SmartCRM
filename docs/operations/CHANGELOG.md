@@ -25,6 +25,12 @@
 
 **Зачем:** агенты не откладывали коммит и не спрашивали разрешение.
 
+## [2026-06-08] — RAG п.4: upload PDF/текста в /rag (`go`)
+
+**Сделано:** pytest ingest/upload/preview; `smoke_rag_upload.py`; testid на UI; DevTools ручной текст + живые PDF в списке; `SEARCH_RAG_UPLOAD_ACCEPTANCE.md`.
+
+**Не в scope:** save из `/search` (п.5), enrich smoke, авто-чанки.
+
 ## [2026-06-08] — RAG п.3: Chroma RAG + агенты перепроход (`go`)
 
 **Сделано:** `test_rag_api.py`, `smoke_rag_chroma.py` (1592 чанка, by_agent); `/rag` → apiFetch; `SEARCH_CHROMA_ACCEPTANCE.md` «было/стало»; PRD_MAP п.3 ✅.

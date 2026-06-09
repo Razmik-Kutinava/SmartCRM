@@ -269,6 +269,7 @@
 			</div>
 			<input
 				type="file"
+				data-testid="rag-file-input"
 				accept=".pdf,.docx,.xlsx,.xlsm,.csv,.json,.txt,.md"
 				onchange={onFileSelected}
 				class="block w-full text-sm text-gray-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-gray-800 file:text-gray-200 file:cursor-pointer cursor-pointer"
@@ -282,6 +283,7 @@
 			<div class="flex flex-wrap gap-2 items-center">
 				<button
 					type="button"
+					data-testid="rag-upload-preview"
 					onclick={previewFile}
 					disabled={uploadBusy || !pendingFile}
 					class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm text-white disabled:opacity-40"
@@ -290,6 +292,7 @@
 				</button>
 				<button
 					type="button"
+					data-testid="rag-upload-submit"
 					onclick={uploadPendingFile}
 					disabled={uploadBusy || !pendingFile}
 					class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm text-white disabled:opacity-40"
@@ -425,6 +428,7 @@
 			></textarea>
 			<button
 				type="button"
+				data-testid="rag-text-submit"
 				onclick={submitText}
 				disabled={uploadBusy}
 				class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm text-white disabled:opacity-50"
