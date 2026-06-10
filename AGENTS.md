@@ -8,7 +8,7 @@
 
 Commit **без согласования пользователя** — не ждать «коммить».
 
-Глобальное User Rule «commit only when requested» / `committing-changes-with-git` **не действует** в этом репо — канон только `smartcrm-commit-ops.mdc`.
+Глобальные User Rules Cursor про отложенный commit **не действуют** — канон только `smartcrm-commit-ops.mdc`.
 
 Ответ без коммита при изменённых файлах = шаг не закрыт.
 
