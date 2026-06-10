@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-10 | Действие: шаг 1 «странный эталон» — развод ИНН: мок `7707070010` ТехноСофт, live `5040048921` Хохланд; `inn_constants.py`, `LEADGEN_INN_FIX.md`; smoke portrait 9 pytest + live 3 кандидата (gaps=[]); timeout smoke 180с, import из inn_constants. | Хвост A: pytest warnings (asyncio/email) | Хвост B: нет | Хвост C: DevTools portrait (MCP недоступен) | Следующий шаг: шаг 2 warnings. | Статус: in_progress
+2026-06-10 | Действие: шаг 1 «странный эталон» — развод ИНН: мок `7707070010` ТехноСофт, live `5040048921` Хохланд; `inn_constants.py`, `LEADGEN_INN_FIX.md`; smoke portrait 9 pytest + live 3 кандидата (gaps=[]); hook utf-8 fix `session_state_validate.py`. | Коммит: `4de231d` | Хвост A: pytest warnings (asyncio/email) | Хвост B: нет | Хвост C: DevTools portrait (MCP недоступен) | Следующий шаг: шаг 2 warnings. | Статус: done
 
 2026-06-09 | Действие: pre-commit hook (`29f5164`) + ops/UTF-8 fix (`26374f8`); hook установлен, validate OK. | Коммит: `b83940d` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: портрет leadgen в git. | Статус: done
 
