@@ -1,10 +1,14 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:автосейв (direct+portrait+cluster) + dedup ✅ — `LEADGEN_AUTOSAVE_ACCEPTANCE.md``
+`Спринт:[Фаза 1→2] | Задача:[MAP выровнен] | Статус:PRD_MAP — легенда, DoD Ф1, хвосты→BACKLOG, порядок Ф2 ✅`
 
-**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go. Последний коммит: `5ef5b3f`.
+**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
-**Следующий MAP:** голосовые команды лидогена → Фаза 2 (`PRD_MAP.md`).
+**Фаза 1:** сдана по коду; **⚠️ вернуться:** микрофон E2E → `BACKLOG.md` § ручная работа 🔴.
+
+**Следующий продуктовый MAP (после `go`):** Ф2 §8 голос `/leadgen` **или** Ф2 §1 Voice Layer **или** ручной микрофон E2E.
+
+**Навигация:** `PRD_MAP.md` — таблицы = истина; хвосты не дублировать, только `BACKLOG.md`.
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 
