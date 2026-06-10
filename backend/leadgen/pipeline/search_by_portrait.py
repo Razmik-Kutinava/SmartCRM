@@ -20,7 +20,7 @@ from .portrait_helpers import (
     _parse_portrait_criteria,
     _score_reference_similarity,
 )
-from .utils import _safe
+from .utils import _parse_json_safe, _safe
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
+	import { apiFetch } from '$lib/api.js';
+	import { portraitFieldsFromLead } from '$lib/leadgen/portraitFromLead.js';
 	import { getApiUrl } from '$lib/websocket.js';
 	const API = getApiUrl();
 
@@ -32,6 +34,32 @@ let portrait_inn       = $state('');   // ИНН эталонной компан
 	let portrait_notes     = $state('');   // доп. текст
 	let portrait_limit     = $state(3);
 let portrait_deep      = $state(false);
+	let portrait_leads     = $state([]);
+	let portrait_lead_id   = $state(null);
+
+	async function loadPortraitLeads() {
+		try {
+			const r = await apiFetch('/api/leads');
+			if (r.ok) portrait_leads = await r.json();
+		} catch {}
+	}
+
+	function onPortraitLeadPick(e) {
+		const id = Number(e.target.value) || null;
+		portrait_lead_id = id;
+		const lead = portrait_leads.find((l) => l.id === id);
+		if (!lead) return;
+		const f = portraitFieldsFromLead(lead);
+		if (f.inn) portrait_inn = f.inn;
+		if (f.industry) portrait_industry = f.industry;
+		if (f.city) portrait_city = f.city;
+		if (f.empMin) portrait_emp_min = f.empMin;
+		if (f.revenueMln) portrait_revenue = f.revenueMln;
+	}
+
+	$effect(() => {
+		if (mode === 'portrait' && !portrait_leads.length) loadPortraitLeads();
+	});
 
 	function buildPortraitText() {
 		const parts = [];
@@ -180,7 +208,16 @@ let portrait_deep      = $state(false);
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(body),
 		});
-		if (!r.ok) throw new Error(await r.text());
+		if (!r.ok) {
+			const t = await r.text();
+			try {
+				const j = JSON.parse(t);
+				throw new Error(j.detail || t);
+			} catch (e) {
+				if (e instanceof Error && e.message !== t) throw e;
+				throw new Error(t || `HTTP ${r.status}`);
+			}
+		}
 		return r.json();
 	}
 
@@ -343,6 +380,7 @@ let portrait_deep      = $state(false);
 		{#each MODES as m}
 			<button
 				onclick={() => { mode = m.id; clearAll(); if (m.id === 'limits') loadLimits(); }}
+				data-testid="leadgen-mode-{m.id}"
 				class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all
 					{mode === m.id
 						? 'bg-indigo-600 text-white font-medium'
@@ -636,11 +674,27 @@ let portrait_deep      = $state(false);
 			</label>
 
 		{:else if mode === 'portrait'}
+			<div class="mb-3">
+				<div class="text-xs text-gray-500 mb-1 block">Лид из CRM (критерии из карточки)</div>
+				<select
+					data-testid="leadgen-portrait-lead-select"
+					class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+					onchange={onPortraitLeadPick}
+				>
+					<option value="">— выбери лид —</option>
+					{#each portrait_leads as lead}
+						<option value={lead.id} selected={portrait_lead_id === lead.id}>
+							{lead.company}{lead.inn ? ` · ИНН ${lead.inn}` : ''}
+						</option>
+					{/each}
+				</select>
+			</div>
 			<!-- Главный режим: эталонная компания -->
 			<div class="mb-4 p-3 rounded-xl bg-indigo-950/40 border border-indigo-800/40">
 				<div class="text-xs text-indigo-400 mb-1 block font-semibold">⭐ ИНН эталонной компании — найдём похожих</div>
 				<div class="flex gap-2">
 					<input bind:value={portrait_inn} placeholder="7707083893 — введи ИНН клиента, похожих на которого хочешь найти"
+						data-testid="leadgen-portrait-inn"
 						class="flex-1 bg-gray-800 border border-indigo-700/50 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500" />
 				</div>
 				<div class="text-xs text-gray-500 mt-1">Система проанализирует компанию по ИНН и найдёт максимально похожих по отрасли, размеру и городу</div>
@@ -1567,11 +1621,11 @@ let portrait_deep      = $state(false);
 		{@const ar = portrait_results.agent_review || {}}
 		{@const arCompanies = ar.companies || []}
 		{@const ref = portrait_results.reference_profile}
-		<div class="space-y-3">
+		<div class="space-y-3" data-testid="leadgen-portrait-results">
 
 			<!-- Эталонная компания (если была задана) -->
 			{#if ref}
-				<div class="bg-indigo-950/50 border border-indigo-700/50 rounded-xl p-4">
+				<div class="bg-indigo-950/50 border border-indigo-700/50 rounded-xl p-4" data-testid="leadgen-portrait-reference">
 					<div class="text-xs text-indigo-400 mb-1.5 font-semibold">⭐ Эталон для поиска</div>
 					<div class="flex items-start justify-between gap-3">
 						<div>
@@ -1595,7 +1649,7 @@ let portrait_deep      = $state(false);
 
 			<!-- Шапка: сколько найдено + критерии -->
 			<div class="flex items-center justify-between flex-wrap gap-2">
-				<div class="text-sm text-gray-400">
+				<div class="text-sm text-gray-400" data-testid="leadgen-portrait-total">
 					Найдено: <span class="text-white font-medium">{portrait_results.total ?? 0}</span> компаний
 					{#if portrait_results.criteria?.city}
 						· <span class="text-indigo-300">{portrait_results.criteria.city}</span>
@@ -1622,7 +1676,7 @@ let portrait_deep      = $state(false);
 				{@const ai = arCompanies.find(x => x.inn === company.inn || x.name === (company.name || company.name_short))}
 				{@const fitScore = ai?.fit_score ?? Math.round((company._portrait_match || 0) * 100)}
 				{@const verdict = ai?.verdict || (fitScore >= 70 ? 'high' : fitScore >= 45 ? 'medium' : 'low')}
-				<div class="bg-gray-900 rounded-xl border {verdict === 'high' ? 'border-green-800/50' : verdict === 'medium' ? 'border-yellow-800/40' : 'border-gray-800'} p-4 hover:border-indigo-700/60 transition-colors">
+				<div class="bg-gray-900 rounded-xl border {verdict === 'high' ? 'border-green-800/50' : verdict === 'medium' ? 'border-yellow-800/40' : 'border-gray-800'} p-4 hover:border-indigo-700/60 transition-colors" data-testid="leadgen-portrait-company-card">
 
 					<!-- Шапка компании -->
 					<div class="flex items-start justify-between gap-3 mb-3">

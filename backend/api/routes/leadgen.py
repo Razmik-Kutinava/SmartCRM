@@ -38,7 +38,7 @@ class ClusterRequest(BaseModel):
 
 
 class PortraitRequest(BaseModel):
-    portrait: str
+    portrait: str = ""
     limit: int = 10
     deep_analysis: bool = False
     reference_inn: str = ""
@@ -102,15 +102,19 @@ async def cluster(body: ClusterRequest):
 @router.post("/portrait")
 async def portrait_search(body: PortraitRequest):
     """Поиск компаний по описанию портрета идеального клиента."""
-    if not body.portrait:
-        raise HTTPException(400, "Опиши портрет клиента")
+    ref = body.reference_inn.strip()
+    portrait = body.portrait.strip()
+    if not portrait and not ref:
+        raise HTTPException(400, "Укажи ИНН эталона или опиши портрет клиента")
+    if not portrait and ref:
+        portrait = f"похожие на компанию с ИНН {ref}"
     try:
         from leadgen.pipeline import search_by_portrait
         result = await search_by_portrait(
-            body.portrait,
+            portrait,
             limit=min(body.limit, 20),
             deep_analysis=body.deep_analysis,
-            reference_inn=body.reference_inn.strip(),
+            reference_inn=ref,
         )
         return result
     except Exception as e:

@@ -1,0 +1,59 @@
+# Смоук лидогена — поиск по портрету (2026-06-09)
+
+PRD_MAP: **«Лидогенерация `/leadgen`» — Поиск по портрету** (перепроход)
+
+## Команда
+
+```bash
+cd backend && python scripts/smoke_leadgen_portrait.py
+```
+
+9 pytest + live `search_by_portrait(reference_inn=7736207543)` + probe `/leadgen`.
+
+---
+
+## Пайплайн
+
+1. **Эталон** — `reference_inn` → Checko `fetch_company` + `fetch_full_profile` → критерии (ОКВЭД, город, выручка ±)
+2. **Текст портрета** — LLM `_parse_portrait_criteria` + эвристики (город, сотрудники, госконтракты)
+3. **Поиск** — параллельно: Checko EGRUL, **Tavily**, **Brave** (ИНН из сниппетов → Checko)
+4. **Скоринг** — `_match_portrait` + бонус `_score_reference_similarity`
+5. **LLM review** — один вызов `_portrait_fit_analysis` (fit_score, verdict, продукт)
+
+---
+
+## Было → стало
+
+| Было | Стало |
+|------|--------|
+| Нет API-тестов `/portrait` | **+5** `test_leadgen_portrait_api.py` |
+| `reference_inn` без `portrait` → 422 | API принимает только ИНН эталона |
+| `NameError: re` в seed queries | `import re` в `portrait_helpers.py` |
+| `NameError: _parse_json_safe` в fit analysis | import в `search_by_portrait.py` |
+| Критерии только руками | **Select лида из CRM** → `portraitFromLead.js` |
+| Нет smoke / testid | `smoke_leadgen_portrait.py`, testid portrait |
+
+**testid:** `leadgen-mode-portrait`, `leadgen-portrait-lead-select`, `leadgen-portrait-inn`, `leadgen-portrait-results`, `leadgen-portrait-reference`, `leadgen-portrait-total`, `leadgen-portrait-company-card`
+
+---
+
+## ✅ СДЕЛАНО и ПРОВЕРЕНО
+
+| # | Шаг | Результат |
+|---|-----|-----------|
+| 1 | Live smoke эталон `7736207543` | **3 кандидата**, criteria okved=62, city=Москва |
+| 2 | API only `reference_inn` | 200, автотекст портрета |
+| 3 | Integration mock | эталон исключён из выдачи, match score |
+| 4 | UI режим «По портрету» | форма + select лидов (CRM загружается) |
+| 5 | DevTools | UI `/api/leadgen/portrait` из страницы: **200**, total=3, inns `7702510904`… |
+
+---
+
+## ⚠️ НЕ СДАНО / хвосты
+
+| Пробел | Примечание |
+|--------|------------|
+| Долгий запрос ~30–90 с | UX; нет отдельного progress в UI |
+| ИНН `7736207543` в live → «ООО Яндекс» | кэш/маппинг Checko — сверять эталон в UI |
+| LLM review при недоступном Groq | ошибка в `errors[]`, кандидаты всё равно есть |
+| Кластер / холдинг | отдельный пункт MAP |

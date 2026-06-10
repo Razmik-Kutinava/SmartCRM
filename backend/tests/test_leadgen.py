@@ -564,6 +564,46 @@ class TestPortraitWebFill:
         assert val >= 1_500_000_000
 
 
+class TestPortraitSearchIntegration:
+    def test_search_by_portrait_with_reference_mock(self):
+        import asyncio
+        from unittest.mock import AsyncMock, patch
+
+        ref = {
+            "inn": "7736207543",
+            "name_short": "ТехноСофт",
+            "okved": "62.01",
+            "city": "Москва",
+            "revenue": 120_000_000,
+            "_contracts_count": 2,
+        }
+        candidates = [
+            {"inn": "7701000001", "name": "ООО Похожая IT", "city": "Москва", "okved": "62.02", "status": "ACTIVE"},
+            {"inn": "7736207543", "name": "Эталон", "city": "Москва", "okved": "62.01"},
+        ]
+
+        async def run():
+            with patch("leadgen.pipeline.search_by_portrait._build_reference_profile", new=AsyncMock(return_value=ref)), \
+                 patch("leadgen.modules.checko.search_companies", new=AsyncMock(return_value=candidates)), \
+                 patch("leadgen.pipeline.search_by_portrait._tavily_portrait_search", new=AsyncMock(return_value=[])), \
+                 patch("leadgen.pipeline.search_by_portrait._brave_portrait_search", new=AsyncMock(return_value=[])), \
+                 patch("leadgen.modules.checko.fetch_full_profile", new=AsyncMock(return_value={})), \
+                 patch("leadgen.pipeline.search_by_portrait._portrait_fit_analysis", new=AsyncMock(return_value={"summary": "ok", "companies": []})):
+                from leadgen.pipeline import search_by_portrait
+                return await search_by_portrait(
+                    portrait="похожие на компанию с ИНН 7736207543",
+                    limit=3,
+                    reference_inn="7736207543",
+                )
+
+        result = asyncio.get_event_loop().run_until_complete(run())
+        assert result["status"] == "ok"
+        assert result["reference_profile"]["inn"] == "7736207543"
+        inns = [c.get("inn") for c in result["results"]]
+        assert "7736207543" not in inns
+        assert len(result["results"]) >= 1
+
+
 class TestPortraitReference:
     def test_merge_criteria_with_reference(self):
         from leadgen.pipeline import _merge_criteria_with_reference
