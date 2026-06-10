@@ -25,7 +25,10 @@ SKIP_NAMES = {
 BAD_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("commit_only_on_request", re.compile(r"коммит\s+по\s+запросу", re.I)),
     ("commit_only_when_requested", re.compile(r"only\s+create\s+commits\s+when\s+requested", re.I)),
+    ("commit_en_only_on_request", re.compile(r"commit\s+только\s+по\s+явному\s+запросу", re.I)),
+    ("commit_en_explicit_request", re.compile(r"commit\s+only\s+(when\s+requested|by\s+explicit|on\s+request)", re.I)),
     ("commit_if_user_asks", re.compile(r"коммит\s+только\s+по\s+запросу", re.I)),
+    ("go_then_commit", re.compile(r"`go`\s+commit|go\s+commit\s*→", re.I)),
     ("committing_changes_rule", re.compile(r"committing-changes-with-git", re.I)),
     ("ask_if_commit_needed", re.compile(r"скажи.*коммит|нужен\s+ли\s+коммит|напиши.*коммит", re.I)),
     ("commit_not_done", re.compile(r"коммит\s+не\s+делал", re.I)),

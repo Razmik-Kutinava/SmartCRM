@@ -2,9 +2,9 @@
 
 `Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:шаг 1 ИНН мок/live ✅ — `LEADGEN_INN_FIX.md`; portrait smoke gaps=[]`
 
-**Процесс:** commit только по явному запросу пользователя. Незакоммичено: portrait + INN split + ops.
+**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go. Последний коммит: `12726e2`.
 
-**Следующий MAP:** `go` commit → warnings (шаг 2) или кластер/холдинг (уже [x] в MAP — проверить acceptance).
+**Следующий MAP:** `go` шаг 2 warnings (asyncio/email) или кластер/холдинг — см. `PRD_MAP.md`.
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 

@@ -8,6 +8,12 @@
 
 **Зачем:** «странный эталон» — не баг Checko, а конфликт тестовых данных с ЕГРЮЛ.
 
+## 2026-06-10 — Убран конфликт «commit по запросу» в HANDOFF
+
+**Сделано:** HANDOFF — канон `commit-ops`; `check_rules_commit_conflict.py` — EN-паттерны (`commit только по явному`, `go commit`); `CURSOR_USER_RULES_SNIPPET.md` — override для Settings.
+
+**Зачем:** агенты читали HANDOFF и ждали явного запроса на commit вопреки `smartcrm-commit-ops.mdc`.
+
 ## 2026-06-09 — Pre-commit: SESSION_STATE без отложенного коммита
 
 **Сделано:** `session_state_validate.py`, git pre-commit hook, `install_git_hooks.ps1/.sh`, интеграция в `check_agent_step.py` и `smartcrm-commit-ops.mdc`.
