@@ -12,6 +12,10 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе `check_agent_step.py` FAIL.
 
+2026-06-09 | Действие: commit-ops — явно: commit без согласования пользователя; зачистка SESSION_STATE портрет. | Коммит: pending | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: — | Статус: in_progress
+
+2026-06-09 | Действие: PRD_MAP leadgen «Поиск по портрету» — API only reference_inn, fix re/_parse_json_safe, select лида CRM, smoke 9 pytest + live 3 кандидата, DevTools fetch 200; `LEADGEN_PORTRAIT_ACCEPTANCE.md`. | Хвост A: кластер MAP | Хвост B: нет | Хвост C: 3 бага portrait pipeline | Следующий шаг: commit portrait WIP + `go` кластер. | Статус: in_progress
+
 2026-06-09 | Действие: iron commit — усилены `commit-ops`, `check_agent_step`, `check_rules_commit_conflict`; зачистка SESSION_STATE; ответ только после commit. | Коммит: `7eba527` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: `go` портрет. | Статус: done
 
 2026-06-08 | Действие: правило хвоста прогона A/B/C — `commit-ops`, `task-workflow`, `AGENTS.md`, `RULES_MATRIX`, `check_agent_step.py`; три сценария: план не сделано / BACKLOG в прогоне / доп. починки. | Коммит: `5c0b636` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: PRD_MAP. | Статус: done
