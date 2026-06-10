@@ -130,15 +130,16 @@ BUSTER_API_KEY=your_buster_api_key
 {
   "status": "ok",
   "inn": "5040048921",
-  "company_name": "ООО ТехноСофт",
+  "company_name": "ООО \"ХОХЛАНД РУССЛАНД\"",
+  "website": "hochland.ru",
   "lpr": {
-    "name": "Иванов Иван Иванович",
-    "role": "Собственник / Генеральный директор",
-    "email": "ivan.ivanov@technosoft.ru",
+    "name": "Генеральный директор",
+    "role": "Генеральный директор",
+    "email": "info@hochland.ru",
     "email_valid": true
   },
   "founders": [...],
-  "financials": { "revenue": 500000000, "trend": "growing" },
+  "financials": { "revenue": 1200000000, "trend": "stable" },
   "tech_stack": { "count": 15, "crm": ["amoCRM"], "maturity": "medium" },
   "analyses": {
     "it_maturity": { "level": "optimization", ... },

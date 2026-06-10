@@ -1,7 +1,5 @@
-"""ИНН для leadgen: моки vs live (не путать с ЕГРЮЛ)."""
+"""Re-export канона из leadgen.inn_constants (тесты и smoke)."""
 
-# Только unit/integration с замоканным Checko — не существует в боевом smoke
-MOCK_INN_TECHNOSOFT = "7707070010"
+from leadgen.inn_constants import LIVE_INN_HOCHLAND, MOCK_INN_TECHNOSOFT
 
-# ООО «Хохланд Руссланд» — боевой партнёр, live smoke / DevTools
-LIVE_INN_HOCHLAND = "5040048921"
+__all__ = ["LIVE_INN_HOCHLAND", "MOCK_INN_TECHNOSOFT"]

@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-_LIVE_INN = "5040048921"  # ООО «Хохланд Руссланд»
+from leadgen.inn_constants import LIVE_INN_HOCHLAND as _LIVE_INN
 
 _MOCK_CARD = {
     "status": "ok",

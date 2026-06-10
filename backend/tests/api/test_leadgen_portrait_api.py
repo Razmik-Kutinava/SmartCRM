@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-_LIVE_INN = "5040048921"  # ООО «Хохланд Руссланд»
+from leadgen.inn_constants import LIVE_INN_HOCHLAND as _LIVE_INN
 
 _MOCK_PORTRAIT = {
     "status": "ok",
@@ -25,14 +25,14 @@ async def test_leadgen_portrait_by_reference_inn(client):
     with patch("leadgen.pipeline.search_by_portrait", new_callable=AsyncMock, return_value=_MOCK_PORTRAIT) as run:
         r = await client.post(
             "/api/leadgen/portrait",
-            json={"portrait": "похожие на компанию с ИНН 5040048921", "reference_inn": "5040048921", "limit": 3},
+            json={"portrait": f"похожие на компанию с ИНН {_LIVE_INN}", "reference_inn": _LIVE_INN, "limit": 3},
         )
     assert r.status_code == 200
     data = r.json()
     assert data["total"] == 1
-    assert data["reference_profile"]["inn"] == "5040048921"
+    assert data["reference_profile"]["inn"] == _LIVE_INN
     run.assert_awaited_once()
-    assert run.call_args.kwargs["reference_inn"] == "5040048921"
+    assert run.call_args.kwargs["reference_inn"] == _LIVE_INN
 
 
 @pytest.mark.asyncio
@@ -52,7 +52,7 @@ async def test_leadgen_portrait_requires_input(client):
     assert r.status_code == 400
 
     with patch("leadgen.pipeline.search_by_portrait", new_callable=AsyncMock, return_value=_MOCK_PORTRAIT):
-        r2 = await client.post("/api/leadgen/portrait", json={"reference_inn": "5040048921"})
+        r2 = await client.post("/api/leadgen/portrait", json={"reference_inn": _LIVE_INN})
     assert r2.status_code == 200
 
 
@@ -61,7 +61,7 @@ async def test_leadgen_portrait_passes_deep_analysis(client):
     with patch("leadgen.pipeline.search_by_portrait", new_callable=AsyncMock, return_value=_MOCK_PORTRAIT) as run:
         r = await client.post(
             "/api/leadgen/portrait",
-            json={"portrait": "IT Москва", "reference_inn": "5040048921", "deep_analysis": True, "limit": 2},
+            json={"portrait": "IT Москва", "reference_inn": _LIVE_INN, "deep_analysis": True, "limit": 2},
         )
     assert r.status_code == 200
     assert run.call_args.kwargs["deep_analysis"] is True

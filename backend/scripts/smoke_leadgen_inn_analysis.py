@@ -14,7 +14,10 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 _REPO_ROOT = BACKEND.parent
+sys.path.insert(0, str(BACKEND))
 OUT = BACKEND / "data" / "artifacts" / "leadgen" / "inn_analysis_smoke.json"
+
+from leadgen.inn_constants import LIVE_INN_HOCHLAND
 
 PYTEST = [
     "tests/test_leadgen.py",
@@ -44,7 +47,7 @@ async def _live_analyze_inn() -> dict:
     from leadgen.pipeline import run_pipeline
 
     try:
-        out = await asyncio.wait_for(run_pipeline(inn="5040048921", deep_analysis=False), timeout=120.0)
+        out = await asyncio.wait_for(run_pipeline(inn=LIVE_INN_HOCHLAND, deep_analysis=False), timeout=120.0)
         return {
             "ok": out.get("status") == "ok" and bool(out.get("inn")),
             "inn": out.get("inn"),

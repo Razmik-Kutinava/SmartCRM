@@ -24,7 +24,7 @@ PYTEST = [
     "tests/api/test_leadgen_portrait_api.py",
 ]
 
-from tests.fixtures.leadgen.inn_constants import LIVE_INN_HOCHLAND as REFERENCE_INN
+from leadgen.inn_constants import LIVE_INN_HOCHLAND as REFERENCE_INN
 
 
 def _load_env() -> None:

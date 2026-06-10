@@ -16,6 +16,8 @@ import time
 import httpx
 from fastapi import APIRouter
 
+from leadgen.inn_constants import LIVE_INN_HOCHLAND
+
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/usage", tags=["usage"])
 
@@ -108,7 +110,7 @@ async def _checko_status() -> dict:
         async with httpx.AsyncClient(timeout=8.0) as c:
             r = await c.get(
                 "https://api.checko.ru/v2/company",
-                params={"key": key, "inn": "5040048921"},  # Хохланд Руссланд — тест Checko
+                params={"key": key, "inn": LIVE_INN_HOCHLAND},
             )
             if r.status_code == 200:
                 return {"available": True, "status": "ok"}

@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-10 — Leadgen: хвост ИНН + DevTools portrait E2E
+
+**Сделано:** канон `leadgen/inn_constants.py`, импорты в smoke/API-тестах, docs на Хохланд (без Сбера в leadgen), `asyncio.run` в test_leadgen, DevTools E2E portrait (cursor-ide-browser), `test_inn_constants.py`.
+
+**Зачем:** один источник live-ИНН, acceptance без drift, warnings pytest убраны.
+
 ## 2026-06-10 — Leadgen: развод ИНН мок vs live (эталон портрета)
 
 **Сделано:** `inn_constants.py` — мок `7707070010` (ТехноСофт), live `5040048921` (Хохланд); убран `7736207543` (реальный Яндекс в ЕГРЮЛ); обновлены фикстуры, smoke, UI placeholders; `LEADGEN_INN_FIX.md`; smoke portrait live OK (3 кандидата).

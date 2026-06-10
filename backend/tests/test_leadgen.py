@@ -86,7 +86,7 @@ class TestCheckoIdentification:
 
         monkeypatch.setattr("leadgen.modules.checko.http_client._available", lambda: False)
         monkeypatch.setattr("leadgen.modules.checko.search._search_egrul_rows", fake_rows)
-        res = asyncio.get_event_loop().run_until_complete(checko_mod.search_companies("тест", count=3))
+        res = asyncio.run(checko_mod.search_companies("тест", count=3))
         assert len(res) == 1
         assert res[0]["inn"] == "7700000000"
         assert "Тест" in res[0]["name"]
@@ -97,7 +97,7 @@ class TestCheckoIdentification:
         from leadgen.modules.checko import endpoints
 
         monkeypatch.setattr("leadgen.modules.checko.endpoints._available", lambda: False)
-        res = asyncio.get_event_loop().run_until_complete(endpoints.fetch_full_profile("7707070010"))
+        res = asyncio.run(endpoints.fetch_full_profile("7707070010"))
         assert res == {}
 
 
@@ -181,7 +181,7 @@ class TestBuiltWith:
         from leadgen.modules.builtwith import fetch_tech_stack
         with patch.dict(os.environ, {}, clear=True):
             os.environ.pop("BUILTWITH_API_KEY", None)
-            result = asyncio.get_event_loop().run_until_complete(
+            result = asyncio.run(
                 fetch_tech_stack("example.com")
             )
         assert result.get("_skipped") or result == {}
@@ -232,7 +232,7 @@ class TestNewsAPI:
         import asyncio
         from leadgen.modules.newsapi import fetch_news
         os.environ.pop("NEWS_API_KEY", None)
-        result = asyncio.get_event_loop().run_until_complete(fetch_news("Ромашка"))
+        result = asyncio.run(fetch_news("Ромашка"))
         assert result == []
 
 
@@ -262,7 +262,7 @@ class TestBuster:
         import asyncio
         from leadgen.modules.buster import find_email
         os.environ.pop("BUSTER_API_KEY", None)
-        result = asyncio.get_event_loop().run_until_complete(
+        result = asyncio.run(
             find_email("Иван", "Петров", "example.com")
         )
         assert result.get("source") == "pattern"
@@ -597,7 +597,7 @@ class TestPortraitSearchIntegration:
                     reference_inn="7707070010",
                 )
 
-        result = asyncio.get_event_loop().run_until_complete(run())
+        result = asyncio.run(run())
         assert result["status"] == "ok"
         assert result["reference_profile"]["inn"] == "7707070010"
         inns = [c.get("inn") for c in result["results"]]
@@ -677,7 +677,7 @@ class TestPipelineIntegration:
                 from leadgen.pipeline import run_pipeline
                 return await run_pipeline(inn="7707070010")
 
-        result = asyncio.get_event_loop().run_until_complete(run())
+        result = asyncio.run(run())
         assert result["status"] == "ok"
         assert result["inn"] == "7707070010"
         assert "final_score" in result
@@ -696,7 +696,7 @@ class TestPipelineIntegration:
                 from leadgen.pipeline import run_pipeline
                 return await run_pipeline()
 
-        result = asyncio.get_event_loop().run_until_complete(run())
+        result = asyncio.run(run())
         assert result["status"] == "ok"
 
 
@@ -747,7 +747,7 @@ class TestOrchestratorLeadgen:
     def test_run_agents_noop_for_unknown(self):
         import asyncio
         from agents.orchestrator import run_agents
-        result = asyncio.get_event_loop().run_until_complete(
+        result = asyncio.run(
             run_agents("unknown_intent", {}, "test")
         )
         assert result["agents_ran"] is False

@@ -47,7 +47,7 @@ cd backend && python scripts/smoke_leadgen_portrait.py
 | 2 | API only `reference_inn` | 200, автотекст портрета |
 | 3 | Integration mock | эталон исключён из выдачи, match score |
 | 4 | UI режим «По портрету» | форма + select лидов (CRM загружается) |
-| 5 | DevTools | UI `/api/leadgen/portrait` из страницы: **200**, total=3, inns `7702510904`… |
+| 5 | DevTools E2E 2026-06-10 (cursor-ide-browser) | `/leadgen` → «По портрету» → ИНН `5040048921` → «Найти компании» → POST `/api/leadgen/portrait` **200**, эталон **ХОХЛАНД**, **3** карточки кандидатов |
 
 ---
 

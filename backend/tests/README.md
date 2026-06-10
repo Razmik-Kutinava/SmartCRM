@@ -29,6 +29,7 @@ pytest tests/api/ -q
 
 | Файл | За что |
 |------|--------|
+| `leadgen/test_inn_constants.py` | Канон ИНН мок vs live (Хохланд) |
 | `test_leadgen.py` | Пайплайн, Checko, портрет, интеграция |
 | `api/test_leadgen_analyze_api.py` | POST `/api/leadgen/analyze` (ИНН, название, 400) |
 | `api/test_leadgen_portrait_api.py` | POST `/api/leadgen/portrait` (эталон ИНН, текст, deep) |
