@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-10 — Leadgen: автосейв в портрете и кластере
+
+**Сделано:** `persist_autosave.py`; `save_to_crm` в `/portrait` и `/cluster`; UI чекбокс для всех режимов; `crm_saved[]`; 6 pytest.
+
 ## 2026-06-10 — Leadgen: dedup по ИНН при сохранении в CRM
 
 **Сделано:** `persist_card.py` + update по ИНН в `_save_to_crm`; `crm_lead_created` в ответе; UI «Обновлён»; 4 pytest dedup.

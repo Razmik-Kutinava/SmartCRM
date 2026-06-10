@@ -23,7 +23,7 @@
 	let direct_inn     = $state('');
 	let direct_name    = $state('');
 	let direct_website = $state('');
-	let direct_save    = $state(false);
+	let autosave_crm   = $state(false);
 
 	// ── Портрет (структурированные поля) ─────────────────────────────────────
 	let portrait_industry  = $state('');   // IT, строительство, финансы...
@@ -190,10 +190,12 @@ let portrait_deep      = $state(false);
 	let cluster_result   = $state(null);   // дерево /cluster
 	let saved_crm_id     = $state(null);
 	let saved_crm_created = $state(true);
+	let crm_saved_batch  = $state([]);
 
 	function clearAll() {
 		result = null; portrait_results = null; cluster_result = null;
-		news_result = null; saved_crm_id = null; saved_crm_created = true; error = '';
+		news_result = null; saved_crm_id = null; saved_crm_created = true;
+		crm_saved_batch = []; error = '';
 	}
 
 	// ── Config (для Ops) ──────────────────────────────────────────────────────
@@ -247,13 +249,13 @@ let portrait_deep      = $state(false);
 					inn: direct_inn.trim(),
 					company_name: direct_name.trim(),
 					website: direct_website.trim(),
-					save_to_crm: direct_save,
+					save_to_crm: autosave_crm,
 				});
 				// Автозаполняем сайт из результата если не был задан
 				if (result?.website && !direct_website.trim()) {
 					direct_website = result.website;
 				}
-				if (direct_save && result?.crm_lead_id) {
+				if (autosave_crm && result?.crm_lead_id) {
 					saved_crm_id = result.crm_lead_id;
 					saved_crm_created = result.crm_lead_created !== false;
 				}
@@ -266,10 +268,16 @@ let portrait_deep      = $state(false);
 					limit: portrait_limit,
 					deep_analysis: portrait_deep,
 					reference_inn: refInn,
+					save_to_crm: autosave_crm,
 				});
+				crm_saved_batch = portrait_results?.crm_saved || [];
 			} else if (mode === 'cluster') {
 				if (!cluster_inn.trim()) throw new Error('Введи ИНН якорной компании');
-				cluster_result = await post('/api/leadgen/cluster', { inn: cluster_inn.trim() });
+				cluster_result = await post('/api/leadgen/cluster', {
+					inn: cluster_inn.trim(),
+					save_to_crm: autosave_crm,
+				});
+				crm_saved_batch = cluster_result?.crm_saved || [];
 			} else if (mode === 'news') {
 				if (!news_query.trim()) throw new Error('Введи поисковый запрос (например: ITOM или ManageEngine)');
 				news_result = await post('/api/news/search', {
@@ -312,7 +320,12 @@ let portrait_deep      = $state(false);
 			result = await post('/api/leadgen/analyze', {
 				inn: company.inn || '',
 				company_name: company.name || '',
+				save_to_crm: autosave_crm,
 			});
+			if (autosave_crm && result?.crm_lead_id) {
+				saved_crm_id = result.crm_lead_id;
+				saved_crm_created = result.crm_lead_created !== false;
+			}
 		} catch (e) {
 			error = e.message;
 		} finally {
@@ -687,14 +700,6 @@ let portrait_deep      = $state(false);
 						class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500" />
 				</div>
 			</div>
-			<label
-				data-testid="leadgen-direct-autosave"
-				class="flex items-center gap-2 text-sm text-gray-400 mb-4 cursor-pointer"
-			>
-				<input type="checkbox" bind:checked={direct_save} class="accent-indigo-500" />
-				Сохранить в CRM автоматически (если скор ≥ {config?.score_threshold_crm ?? 30})
-			</label>
-
 		{:else if mode === 'portrait'}
 			<div class="mb-3">
 				<div class="text-xs text-gray-500 mb-1 block">Лид из CRM (критерии из карточки)</div>
@@ -832,6 +837,21 @@ let portrait_deep      = $state(false);
 			</div>
 		{/if}
 
+		{#if mode === 'direct' || mode === 'portrait' || mode === 'cluster'}
+			<label
+				data-testid="leadgen-autosave-crm"
+				class="flex items-center gap-2 text-sm text-gray-400 mt-4 mb-1 cursor-pointer"
+			>
+				<input type="checkbox" bind:checked={autosave_crm} class="accent-indigo-500" />
+				Сохранить в CRM автоматически (если скор ≥ {config?.score_threshold_crm ?? 30})
+				{#if mode === 'portrait'}
+					<span class="text-gray-600">· по fit-score кандидатов</span>
+				{:else if mode === 'cluster'}
+					<span class="text-gray-600">· якорь и связанные юрлица</span>
+				{/if}
+			</label>
+		{/if}
+
 		<button
 			onclick={run}
 			disabled={loading}
@@ -958,7 +978,7 @@ let portrait_deep      = $state(false);
 				{/if}
 
 				<!-- Сохранить в CRM -->
-				{#if !direct_save}
+				{#if !autosave_crm}
 					<div class="mt-4 flex items-center gap-3">
 						{#if saved_crm_id}
 							<span class="text-sm text-green-400" data-testid="leadgen-crm-save-status">
@@ -1699,6 +1719,18 @@ let portrait_deep      = $state(false);
 			{/if}
 
 			<!-- Шапка: сколько найдено + критерии -->
+			{#if crm_saved_batch?.length}
+				<div
+					data-testid="leadgen-portrait-crm-saved"
+					class="text-sm text-green-400 bg-green-950/30 border border-green-800/40 rounded-lg px-3 py-2"
+				>
+					✓ В CRM: {crm_saved_batch.length}
+					{#each crm_saved_batch.slice(0, 5) as row}
+						· <a href="/leads/{row.lead_id}" class="text-indigo-400 hover:underline">{row.company_name || row.inn}</a>
+					{/each}
+				</div>
+			{/if}
+
 			<div class="flex items-center justify-between flex-wrap gap-2">
 				<div class="text-sm text-gray-400" data-testid="leadgen-portrait-total">
 					Найдено: <span class="text-white font-medium">{portrait_results.total ?? 0}</span> компаний
@@ -1822,6 +1854,17 @@ let portrait_deep      = $state(false);
 		{@const hasAnyRelated = parents.length || subsidiaries.length || siblings.length || person_companies.length || ips.length}
 
 		<div class="space-y-4" data-testid="leadgen-cluster-results">
+			{#if crm_saved_batch?.length}
+				<div
+					data-testid="leadgen-cluster-crm-saved"
+					class="text-sm text-green-400 bg-green-950/30 border border-green-800/40 rounded-lg px-3 py-2"
+				>
+					✓ В CRM: {crm_saved_batch.length}
+					{#each crm_saved_batch.slice(0, 5) as row}
+						· <a href="/leads/{row.lead_id}" class="text-indigo-400 hover:underline">{row.company_name || row.inn}</a>
+					{/each}
+				</div>
+			{/if}
 			<!-- Шапка -->
 			<div class="text-sm text-gray-400" data-testid="leadgen-cluster-total">
 				Найдено связей: <span class="text-white font-bold text-base">{cluster_result.total_companies ?? 1}</span> субъектов

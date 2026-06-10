@@ -18,6 +18,7 @@
 | `score_card.py` | Финальный скор и сборка карточки |
 | `persist.py` | Сохранение лида в CRM (БД), dedup по ИНН |
 | `persist_card.py` | Сборка полей Lead из карточки analyze |
+| `persist_autosave.py` | Автосейв списка компаний (портрет / кластер) |
 | `portrait_helpers.py` | Критерии портрета, match, эталон |
 | `portrait_cache.py` | Кэш portrait-review |
 | `utils.py` | Утилиты: домен, деньги, JSON, контакты |

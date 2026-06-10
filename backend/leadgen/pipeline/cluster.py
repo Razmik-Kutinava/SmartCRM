@@ -9,7 +9,7 @@ from .utils import _safe
 
 logger = logging.getLogger(__name__)
 
-async def run_cluster(inn: str) -> dict[str, Any]:
+async def run_cluster(inn: str, save_to_crm: bool = False) -> dict[str, Any]:
     """
     Кластер-поиск: по ИНН якоря находит связанные компании (2 уровня).
     Источники связей:
@@ -26,7 +26,12 @@ async def run_cluster(inn: str) -> dict[str, Any]:
 
     anchor = await _safe(checko_company(inn), errors, "cluster_anchor")
     if not anchor:
-        return {"status": "error", "message": f"Компания с ИНН {inn} не найдена", "errors": errors}
+        return {
+            "status": "error",
+            "message": f"Компания с ИНН {inn} не найдена",
+            "crm_saved": [],
+            "errors": errors,
+        }
 
     related: list[dict] = []
     seen_inns: set[str] = {inn}       # ИНН юрлиц (уже обработаны)
@@ -149,6 +154,15 @@ async def run_cluster(inn: str) -> dict[str, Any]:
     ips          = [r for r in related if r.get("_type") == "IP"]
     other        = [r for r in related if r not in subsidiaries + parents + siblings + person_cos + ips]
 
+    from .persist_autosave import autosave_companies
+
+    cluster_pool = [{**anchor, "finances": anchor_finances}] + list(related)
+    crm_saved = await autosave_companies(
+        cluster_pool,
+        save_to_crm=save_to_crm,
+        score_for=lambda _c: 50,
+    )
+
     return {
         "status": "ok",
         "anchor": {**anchor, "finances": anchor_finances},
@@ -164,6 +178,7 @@ async def run_cluster(inn: str) -> dict[str, Any]:
         },
         "total_companies": 1 + len(related),
         "total_revenue_estimate": total_revenue,
+        "crm_saved": crm_saved,
         "errors": errors,
     }
 

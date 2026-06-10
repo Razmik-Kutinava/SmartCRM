@@ -35,6 +35,7 @@ class AnalyzeRequest(BaseModel):
 
 class ClusterRequest(BaseModel):
     inn: str
+    save_to_crm: bool = False
 
 
 class PortraitRequest(BaseModel):
@@ -42,6 +43,7 @@ class PortraitRequest(BaseModel):
     limit: int = 10
     deep_analysis: bool = False
     reference_inn: str = ""
+    save_to_crm: bool = False
 
 
 class SaveRequest(BaseModel):
@@ -92,7 +94,7 @@ async def cluster(body: ClusterRequest):
         raise HTTPException(400, "ИНН обязателен")
     try:
         from leadgen.pipeline import run_cluster
-        result = await run_cluster(body.inn.strip())
+        result = await run_cluster(body.inn.strip(), save_to_crm=body.save_to_crm)
         return result
     except Exception as e:
         logger.exception("Leadgen cluster error: %s", e)
@@ -115,6 +117,7 @@ async def portrait_search(body: PortraitRequest):
             limit=min(body.limit, 20),
             deep_analysis=body.deep_analysis,
             reference_inn=ref,
+            save_to_crm=body.save_to_crm,
         )
         return result
     except Exception as e:

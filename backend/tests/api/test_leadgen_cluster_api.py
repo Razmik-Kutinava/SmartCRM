@@ -40,4 +40,4 @@ async def test_leadgen_cluster_requires_inn(client):
 async def test_leadgen_cluster_strips_inn(client):
     with patch("leadgen.pipeline.run_cluster", new_callable=AsyncMock, return_value=_MOCK_CLUSTER) as run:
         await client.post("/api/leadgen/cluster", json={"inn": f" {_LIVE_INN} "})
-    run.assert_awaited_once_with(_LIVE_INN)
+    run.assert_awaited_once_with(_LIVE_INN, save_to_crm=False)

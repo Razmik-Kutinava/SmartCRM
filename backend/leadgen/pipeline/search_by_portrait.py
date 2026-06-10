@@ -29,6 +29,7 @@ async def search_by_portrait(
     limit: int = 3,
     deep_analysis: bool = False,
     reference_inn: str = "",
+    save_to_crm: bool = False,
 ) -> dict[str, Any]:
     """
     Поиск компаний похожих на эталон (reference_inn) или по текстовому портрету.
@@ -123,7 +124,7 @@ async def search_by_portrait(
         return {
             "status": "ok", "criteria": criteria,
             "reference_profile": reference_profile,
-            "results": [], "total": 0, "agent_review": {}, "errors": errors,
+            "results": [], "total": 0, "agent_review": {}, "crm_saved": [], "errors": errors,
         }
 
     # ── Шаг 3: обогащение Checko + двойной скоринг ──────────────────────────
@@ -162,6 +163,14 @@ async def search_by_portrait(
         selected, portrait, criteria, errors, reference_profile=reference_profile
     )
 
+    from .persist_autosave import autosave_companies, portrait_fit_score
+
+    crm_saved = await autosave_companies(
+        selected,
+        save_to_crm=save_to_crm,
+        score_for=lambda c: portrait_fit_score(c, agent_review),
+    )
+
     return {
         "status":           "ok",
         "criteria":         criteria,
@@ -169,6 +178,7 @@ async def search_by_portrait(
         "results":          selected,
         "total":            len(selected),
         "agent_review":     agent_review,
+        "crm_saved":        crm_saved,
         "errors":           errors,
     }
 

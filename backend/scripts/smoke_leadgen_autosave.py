@@ -18,8 +18,10 @@ OUT = BACKEND / "data" / "artifacts" / "leadgen" / "autosave_smoke.json"
 PYTEST = [
     "tests/leadgen/test_autosave.py",
     "tests/leadgen/test_persist_dedup.py",
+    "tests/leadgen/test_persist_autosave.py",
     "tests/api/test_leadgen_autosave_api.py",
     "tests/api/test_leadgen_save_dedup_api.py",
+    "tests/api/test_leadgen_autosave_modes_api.py",
 ]
 
 

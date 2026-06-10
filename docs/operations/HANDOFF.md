@@ -1,8 +1,8 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:автосейв + dedup ИНН ✅ — `LEADGEN_AUTOSAVE_ACCEPTANCE.md``
+`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:автосейв (direct+portrait+cluster) + dedup ✅ — `LEADGEN_AUTOSAVE_ACCEPTANCE.md``
 
-**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go. Последний коммит: `3dfa15d`.
+**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
 **Следующий MAP:** голосовые команды лидогена → Фаза 2 (`PRD_MAP.md`).
 

@@ -18,6 +18,8 @@ cd backend && python scripts/smoke_leadgen_autosave.py
 2. Pipeline: `should_autosave_to_crm(save_to_crm, final_score)` — порог из конфига
 3. При проходе порога: `_save_to_crm(card)` → `crm_lead_id` в ответе и баннер «Автосохранён в CRM»
 4. Скор ниже порога или чекбокс выкл. — ручная кнопка «+ Добавить в CRM» (`POST /api/leadgen/save`)
+5. **Портрет:** `save_to_crm` → кандидаты с `fit_score` ≥ порога → `crm_saved[]`
+6. **Кластер:** `save_to_crm` → якорь + связанные юрлица (скор 50, dedup по ИНН)
 
 **Live-ИНН для E2E:** `5040048921` (Хохланд, `leadgen/inn_constants.py`).
 
@@ -30,7 +32,7 @@ cd backend && python scripts/smoke_leadgen_autosave.py
 | 1 | Порог из конфига | `leadgen/crm_threshold.py`, не хардкод в pipeline |
 | 2 | Unit + persist | `test_autosave.py` — порог 29/30, запись в Lead |
 | 3 | API | `test_leadgen_autosave_api.py` — analyze + `/save` |
-| 4 | UI testid | `leadgen-direct-autosave`, `leadgen-autosave-done` |
+| 4 | UI testid | `leadgen-autosave-crm`, `leadgen-autosave-done`, `leadgen-portrait-crm-saved`, `leadgen-cluster-crm-saved` |
 | 5 | DevTools E2E 2026-06-10 (**user-chrome-devtools**) | ИНН `5040048921`, чекбокс вкл. → скор **84** → «Автосохранён в CRM», лид **#3187** |
 
 ---
@@ -40,4 +42,4 @@ cd backend && python scripts/smoke_leadgen_autosave.py
 | Пробел | Примечание |
 |--------|------------|
 | ~~Дубликаты при повторном анализе~~ | **исправлено:** dedup по ИНН — update существующего (`persist_card.py`) |
-| Портрет / кластер | автосейв только режим «По ИНН / названию» |
+| ~~Портрет / кластер~~ | **исправлено:** чекбокс + `save_to_crm` в `/portrait` и `/cluster`; `crm_saved[]` в ответе |
