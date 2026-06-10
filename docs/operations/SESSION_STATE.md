@@ -14,7 +14,7 @@
 
 2026-06-10 | Действие: убран конфликт commit в HANDOFF; EN-паттерны в `check_rules_commit_conflict.py`; `CURSOR_USER_RULES_SNIPPET.md`. | Коммит: `8bc2554` | Хвост A: snippet в Cursor Settings — вручную у пользователя | Хвост B: нет | Хвост C: нет | Следующий шаг: `go` шаг 2 warnings. | Статус: done
 
-2026-06-10 | Действие: portrait progress UI (`portraitProgress.js`, testids) + DevTools E2E **user-chrome-devtools** MCP (progress «Загружаем эталон…», POST portrait 200, 3 кандидата). | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: следующий MAP. | Статус: in_progress
+2026-06-10 | Действие: portrait progress UI (`portraitProgress.js`, testids) + DevTools E2E **user-chrome-devtools** MCP (progress «Загружаем эталон…», POST portrait 200, 3 кандидата). | Коммит: `3ebb811` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: следующий MAP. | Статус: done
 
 2026-06-10 | Действие: хвост ИНН 1–6 — `leadgen/inn_constants.py`, импорты smoke/API, docs Хохланд, asyncio.run, DevTools portrait E2E (cursor-ide-browser POST 200, 3 кандидата), `test_inn_constants.py` 10 pytest. | Коммит: `1bb0645` | Хвост A: нет | Хвост B: нет | Хвост C: user-chrome-devtools MCP errored — cursor-ide-browser | Следующий шаг: следующий пункт MAP. | Статус: done
 
