@@ -5,6 +5,8 @@ import logging
 import time
 from typing import Any
 
+from leadgen.crm_threshold import should_autosave_to_crm
+
 from .gather import _gather_all_data, _run_leadgen_agents
 from .persist import _save_to_crm
 from .portrait_helpers import _extract_company_from_portrait
@@ -227,7 +229,7 @@ async def run_pipeline(
     card["connections"] = connections
 
     # ── Шаг 8: Сохранение в CRM (если запрошено) ────────────────────
-    if save_to_crm and final_score >= 30:
+    if should_autosave_to_crm(save_to_crm, final_score):
         crm_id = await _save_to_crm(card)
         card["crm_lead_id"] = crm_id
 

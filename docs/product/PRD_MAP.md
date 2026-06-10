@@ -119,7 +119,7 @@
 - [x] Анализ по ИНН / названию — **2026-06-08 ✅** (`LEADGEN_INN_ANALYSIS_ACCEPTANCE.md`, smoke + DevTools)
 - [x] Поиск по портрету — **2026-06-09 ✅** (`LEADGEN_PORTRAIT_ACCEPTANCE.md`, smoke + DevTools)
 - [x] Кластер / холдинг — **2026-06-10 ✅** (`LEADGEN_CLUSTER_ACCEPTANCE.md`, smoke + DevTools)
-- [x] Автосохранение в CRM при скор ≥ 30
+- [x] Автосохранение в CRM при скор ≥ 30 — **2026-06-10 ✅** (`LEADGEN_AUTOSAVE_ACCEPTANCE.md`, smoke + DevTools)
 - [ ] Голосовые команды лидогена → **Фаза 2**
 - [ ] Портрет из выигранных сделок → **Фаза 2** ([`leadgen.md`](../modules/leadgen.md#lookalike-из-won-сделок-фаза-2))
 - [ ] Авто-мониторинг новых лидов → **Фаза 3**

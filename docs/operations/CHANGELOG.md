@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-10 — Leadgen: автосейв в CRM + commit-ops override
+
+**Сделано:** `crm_threshold.py`, порог из конфига; 10 pytest; `smoke_leadgen_autosave.py`; UI testid; DevTools E2E скор 84 → лид #3187; `LEADGEN_AUTOSAVE_ACCEPTANCE.md`; усилен `commit-ops`/`AGENTS.md` (override глобального User Rule); удалены `CURSOR_USER_RULES_*.md`.
+
 ## 2026-06-10 — Leadgen: кластер / холдинг (перепроход)
 
 **Сделано:** API-тесты, integration mock, `smoke_leadgen_cluster.py`, testid UI, DevTools E2E Хохланд 4 субъекта, `LEADGEN_CLUSTER_ACCEPTANCE.md`; portrait Groq review → BACKLOG Ф2.

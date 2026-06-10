@@ -684,9 +684,12 @@ let portrait_deep      = $state(false);
 						class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500" />
 				</div>
 			</div>
-			<label class="flex items-center gap-2 text-sm text-gray-400 mb-4 cursor-pointer">
+			<label
+				data-testid="leadgen-direct-autosave"
+				class="flex items-center gap-2 text-sm text-gray-400 mb-4 cursor-pointer"
+			>
 				<input type="checkbox" bind:checked={direct_save} class="accent-indigo-500" />
-				Сохранить в CRM автоматически (если скор ≥ 30)
+				Сохранить в CRM автоматически (если скор ≥ {config?.score_threshold_crm ?? 30})
 			</label>
 
 		{:else if mode === 'portrait'}
@@ -965,7 +968,10 @@ let portrait_deep      = $state(false);
 						{/if}
 					</div>
 				{:else if saved_crm_id}
-					<div class="mt-3 flex items-center gap-2 text-sm text-green-400">
+					<div
+						data-testid="leadgen-autosave-done"
+						class="mt-3 flex items-center gap-2 text-sm text-green-400"
+					>
 						✓ Автосохранён в CRM <a href="/leads/{saved_crm_id}" class="text-indigo-400 hover:underline ml-1">Открыть лид →</a>
 					</div>
 				{/if}

@@ -4,6 +4,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from .utils import _fmt_money
+
 logger = logging.getLogger(__name__)
 
 async def _save_to_crm(card: dict) -> int | None:

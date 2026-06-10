@@ -1,10 +1,10 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:кластер/холдинг ✅ — `LEADGEN_CLUSTER_ACCEPTANCE.md`; portrait Groq → BACKLOG Ф2`
+`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:автосейв CRM ✅ — `LEADGEN_AUTOSAVE_ACCEPTANCE.md``
 
-**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go. Последний коммит: `8bc2554`.
+**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
-**Следующий MAP:** `go` шаг 2 warnings (asyncio/email) или кластер/холдинг — см. `PRD_MAP.md`.
+**Следующий MAP:** голосовые команды лидогена → Фаза 2 (`PRD_MAP.md`).
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 
