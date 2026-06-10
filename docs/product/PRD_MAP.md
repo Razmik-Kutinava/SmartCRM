@@ -200,16 +200,18 @@
 
 ### Открытые хвосты Фазы 1 → вернуться
 
-> **Канон хвостов:** [`BACKLOG.md`](../operations/BACKLOG.md) — не дублировать здесь.
+> **Канон:** детали и чеклисты — только [`BACKLOG.md`](../operations/BACKLOG.md). Здесь **указатель** (3–5 строк), таблицы BACKLOG **не копировать**.
+>
+> **Снято с хвоста (закрыто ✅):** «Расширить интенты Hermes», «UI voice_action», «Смоук голос + UI» — см. таблицу **«Голос → лиды»** выше; старый блок «Хвост Фазы 1» удалён.
 
-| Приоритет | Что | Где |
-|-----------|-----|-----|
-| 🔴 | E2E микрофон → Whisper → Hermes → UI | `BACKLOG` § ручная работа |
-| 🟡 | Spot-check approve delete (S04) + fanout (S02/S06) | `BACKLOG` § ручная работа |
-| 🟡 | Битрикс: туннель + исходящий вебхук | `BACKLOG` § записи |
-| 🟢 | Live Hermes / whisper health (опц.) | `BACKLOG` |
+| Приоритет | Что | Где в BACKLOG |
+|-----------|-----|----------------|
+| 🔴 | E2E микрофон → Whisper → Hermes → UI | § [👤 Ручная работа](../operations/BACKLOG.md) |
+| 🟡 | Spot-check approve delete (S04) + fanout (S02/S06) | § [👤 Ручная работа](../operations/BACKLOG.md) · сводка § [Голос → лиды](../operations/BACKLOG.md) |
+| 🟡 | Битрикс: туннель :8000 + исходящий вебхук | § [Записи](../operations/BACKLOG.md) · § [Активный хвост](../operations/BACKLOG.md) |
+| 🟢 | Live Hermes / whisper health (опц.) | § [👤 Ручная работа](../operations/BACKLOG.md) |
 
-**Качество кода:** регрессия по зонам обязательна; **coverage %** — опционально (цель TBD), не замена acceptance.
+**Новый хвост:** запись в `BACKLOG.md` + одна строка в таблице выше — **не** отдельная таблица в MAP.
 
 ---
 
