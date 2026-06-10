@@ -2,6 +2,18 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-09 — Pre-commit: SESSION_STATE без отложенного коммита
+
+**Сделано:** `session_state_validate.py`, git pre-commit hook, `install_git_hooks.ps1/.sh`, интеграция в `check_agent_step.py` и `smartcrm-commit-ops.mdc`.
+
+**Зачем:** git pre-commit блокирует журнал SESSION_STATE с отложенным коммитом или `done` без хеша.
+
+## 2026-06-09 — Leadgen: поиск по портрету (перепроход)
+
+**Сделано:** API `/portrait` только с `reference_inn`, фиксы `re`/`_parse_json_safe`, select лида → критерии, smoke + DevTools, `LEADGEN_PORTRAIT_ACCEPTANCE.md`.
+
+**Зачем:** PRD_MAP перепроход portrait: эталон → Checko/Tavily/Brave → match + LLM review.
+
 ## 2026-06-08 — Leadgen: анализ по ИНН/названию (перепроход)
 
 **Сделано:** API-тесты `/api/leadgen/analyze`, smoke `smoke_leadgen_inn_analysis.py`, fix нормализации `website` (без двойного https), testid на `/leadgen` direct, DevTools E2E Сбербанк ИНН, `LEADGEN_INN_ANALYSIS_ACCEPTANCE.md`.

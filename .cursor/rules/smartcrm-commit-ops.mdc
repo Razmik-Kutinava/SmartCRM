@@ -62,4 +62,4 @@ python backend/scripts/session_state_validate.py
 powershell -File scripts/install_git_hooks.ps1
 ```
 
-Hook **не даст закоммитить** `SESSION_STATE` с `Коммит: —`, «коммит по запросу», `done` без хеша.
+Hook **не даст закоммитить** `SESSION_STATE` с отложенным коммитом (`session_state_validate.py --pre-commit`).

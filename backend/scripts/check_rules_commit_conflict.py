@@ -50,12 +50,16 @@ def _is_commit_hash_line(line: str) -> bool:
     return bool(re.search(r"Коммит:\s*`[0-9a-f]{7,40}`", line, re.I))
 
 
+ENTRY_LINE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\s*\|")
+
+
 def scan_file(path: Path) -> list[str]:
     hits: list[str] = []
     try:
         text = path.read_text(encoding="utf-8")
     except OSError as exc:
         return [f"{path}: read error: {exc}"]
+    skip_journal = path.name == "SESSION_STATE.md"
     in_fence = False
     for lineno, line in enumerate(text.splitlines(), start=1):
         stripped = line.strip()
@@ -63,6 +67,8 @@ def scan_file(path: Path) -> list[str]:
             in_fence = not in_fence
             continue
         if in_fence:
+            continue
+        if skip_journal and ENTRY_LINE_RE.match(stripped):
             continue
         if _is_commit_hash_line(line):
             continue

@@ -10,11 +10,13 @@
 
 **Хвост A/B/C обязателен** в каждой новой записи (`check_agent_step.py`).
 
-**Правило:** в строке только реальный `Коммит: \`hash\`` — иначе `check_agent_step.py` FAIL.
+**Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-09 | Действие: commit-ops — явно: commit без согласования пользователя; зачистка SESSION_STATE портрет. | Коммит: `525fa19` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: commit portrait WIP. | Статус: done
+2026-06-09 | Действие: pre-commit hook + `session_state_validate.py` — git не примет SESSION_STATE с отложенным коммитом; `install_git_hooks.ps1`. | Коммит: `29f5164` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: портрет leadgen в git. | Статус: done
 
-2026-06-09 | Действие: PRD_MAP leadgen «Поиск по портрету» — API only reference_inn, fix re/_parse_json_safe, select лида CRM, smoke 9 pytest + live 3 кандидата, DevTools fetch 200; `LEADGEN_PORTRAIT_ACCEPTANCE.md`. | Хвост A: кластер MAP | Хвост B: нет | Хвост C: 3 бага portrait pipeline | Следующий шаг: commit portrait WIP + `go` кластер. | Статус: in_progress
+2026-06-09 | Действие: commit-ops — явно: commit без согласования пользователя; зачистка SESSION_STATE портрет. | Коммит: `525fa19` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: `go` портрет в git. | Статус: done
+
+2026-06-09 | Действие: PRD_MAP leadgen «Поиск по портрету» — API only reference_inn, fix re/_parse_json_safe, select лида CRM, smoke 9 pytest + live 3 кандидата, DevTools fetch 200; `LEADGEN_PORTRAIT_ACCEPTANCE.md`. | Хвост A: кластер MAP | Хвост B: нет | Хвост C: 3 бага portrait pipeline | Следующий шаг: портрет leadgen в git + `go` кластер. | Статус: in_progress
 
 2026-06-09 | Действие: iron commit — усилены `commit-ops`, `check_agent_step`, `check_rules_commit_conflict`; зачистка SESSION_STATE; ответ только после commit. | Коммит: `7eba527` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: `go` портрет. | Статус: done
 

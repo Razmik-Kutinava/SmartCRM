@@ -1,8 +1,8 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:«Анализ по ИНН/названию» перепроход ✅ — `LEADGEN_INN_ANALYSIS_ACCEPTANCE.md``
+`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:«Поиск по портрету» перепроход ✅ — `LEADGEN_PORTRAIT_ACCEPTANCE.md``
 
-**Процесс:** `git commit` **до** ответа + ops + хвост A/B/C (`smartcrm-commit-ops.mdc`). Последний коммит: `7eba527` (iron commit).
+**Процесс:** `git commit` **до** ответа + ops + хвост A/B/C (`smartcrm-commit-ops.mdc`). Pre-commit hook: `powershell -File scripts/install_git_hooks.ps1`. Последний коммит: `29f5164` (SESSION_STATE validate).
 
 **Следующий MAP:** лидоген «Поиск по портрету» — ждём `go`.
 
