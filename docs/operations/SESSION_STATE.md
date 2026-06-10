@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе `check_agent_step.py` FAIL.
 
-2026-06-09 | Действие: commit-ops — явно: commit без согласования пользователя; зачистка SESSION_STATE портрет. | Коммит: pending | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: — | Статус: in_progress
+2026-06-09 | Действие: commit-ops — явно: commit без согласования пользователя; зачистка SESSION_STATE портрет. | Коммит: `525fa19` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: commit portrait WIP. | Статус: done
 
 2026-06-09 | Действие: PRD_MAP leadgen «Поиск по портрету» — API only reference_inn, fix re/_parse_json_safe, select лида CRM, smoke 9 pytest + live 3 кандидата, DevTools fetch 200; `LEADGEN_PORTRAIT_ACCEPTANCE.md`. | Хвост A: кластер MAP | Хвост B: нет | Хвост C: 3 бага portrait pipeline | Следующий шаг: commit portrait WIP + `go` кластер. | Статус: in_progress
 
