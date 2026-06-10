@@ -2,7 +2,7 @@
 
 `Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:автосейв (direct+portrait+cluster) + dedup ✅ — `LEADGEN_AUTOSAVE_ACCEPTANCE.md``
 
-**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
+**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go. Последний коммит: `5ef5b3f`.
 
 **Следующий MAP:** голосовые команды лидогена → Фаза 2 (`PRD_MAP.md`).
 

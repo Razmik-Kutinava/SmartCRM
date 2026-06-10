@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-10 | Действие: leadgen автосейв портрет+кластер — `persist_autosave.py`, `save_to_crm` в API, UI `leadgen-autosave-crm`, `crm_saved[]`, 24 pytest autosave block. | Коммит: `5ef5b3f` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: голосовые Ф2. | Статус: done
+
 2026-06-10 | Действие: leadgen dedup ИНН (вариант A) — `persist_card.py`, update по ИНН, `crm_lead_created`, UI «Обновлён», 14 pytest. | Коммит: `3dfa15d` | Хвост A: нет | Хвост B: autosave портрет/кластер — Ф2 | Хвост C: нет | Следующий шаг: голосовые Ф2. | Статус: done
 
 2026-06-10 | Действие: leadgen автосейв CRM — `crm_threshold.py`, 10 pytest, smoke, DevTools E2E скор 84 → лид #3187; усилен commit-ops (override User Rules); удалены `CURSOR_USER_RULES_*.md`. | Коммит: `a8f4c6a` | Хвост A: нет | Хвост B: dedup по ИНН в CRM — BACKLOG | Хвост C: persist `_fmt_money` import | Следующий шаг: голосовые Ф2. | Статус: done
