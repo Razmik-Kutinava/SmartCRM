@@ -6,11 +6,13 @@
 >
 > | Метка | Смысл |
 > |-------|--------|
-> | ✅ | Готово: код + автомат-смоук + acceptance |
-> | ⚠️ | Код/автомат ✅; **хвост** — см. `operations/BACKLOG.md` или acceptance § хвост |
+> | ✅ | Готово полностью: код + автомат-смоук + acceptance (+ E2E, если нужен) |
+> | ⚠️ | **Код/автомат ✅**; хвост — `BACKLOG.md` или acceptance § хвост |
 > | 🔲 | Не начато / перенесено в Ф2–3 |
-> | `[x]` | То же что ✅ в чеклистах (перепроходим на баги) |
-> | `[ ]` | 🔲 или явный хвост фазы |
+> | `[x]` | = ✅ по коду и автомату (перепроходим на баги); **не** скрывает ⚠️ в колонке «Итог» |
+> | `[ ]` | = 🔲 или явный хвост |
+>
+> **Закрытие пункта MAP:** pytest + acceptance → `[x]` / ✅ в «Итог». **Снять ⚠️:** ручной E2E OK → `SESSION_STATE` → убрать ⚠️ в MAP + строку в `BACKLOG`.
 >
 > **DoD пункта** (pytest, smoke, миграции) → `.cursor/rules/smartcrm-dev-gates.mdc`.
 
@@ -29,6 +31,7 @@
 3. После прохода пункта: баг → фикс; ок → оставляем `[x]`.
 4. Источник деталей: `PRD_NOTES.md` (разделы по модулям).
 5. Хвосты и ручная работа → [`BACKLOG.md`](../operations/BACKLOG.md) (не дублировать здесь таблицами).
+6. Колонка **«Итог»** с ⚠️ важнее слепого `[x]` в старых списках — сводка смотрит на ⚠️.
 
 ### Definition of Done — Фаза 1
 
@@ -66,7 +69,7 @@
 | # | Пункт | Перепроход | Итог |
 |---|--------|------------|------|
 | 1 | CRUD лидов (API + UI) | 2026-06-08 | ✅ **OK** — API `crm_leads` 22 passed; live Postgres CRUD; UI create/list/delete + форма edit на `/leads/{id}`; DevTools CRUD+PATCH карточки; `4ec4b6a` |
-| 2 | Поля уровня Битрикс + синк | 2026-06-08 | ✅ **OK** — маппинг + опрос 5 мин + код вебхука; **хвост → BACKLOG:** туннель + настройка исходящего вебхука в портале |
+| 2 | Поля уровня Битрикс + синк | 2026-06-08 | ✅ код · **⚠️** туннель + исходящий вебхук в портале → `BACKLOG` 🟡 |
 | 3 | Воронка Kanban DnD | 2026-06-08 | ✅ **OK** — DnD на `/leads/funnel`, PATCH stage, rollback при `stage_transition_blocked`; pytest funnel + API |
 | 4 | Список фильтры + сортировка | 2026-06-08 | ✅ **OK** — поиск, этап, приоритет; сортировка балл/приоритет/компания; `leadListFilter.js` |
 | 5 | Карточка лида | 2026-06-08 | ✅ **OK** — поля+должность, суммы ₽, апрувы, касания; apiFetch для activity; pytest engagement 10 |
@@ -93,15 +96,17 @@
 
 ### Голос → лиды (базово)
 
-> **Перепроход п.1 (2026-06-08):** Whisper STT — `smoke_whisper_stt.py` 14 pytest + live Groq.
+> **Перепроход (2026-06-08):** чеклист = таблица ниже. **Статус блока:** ⚠️ **частично** — код ✅; E2E микрофон 🔴 (`BACKLOG`).
 
-| # | Пункт | Перепроход | Итог |
-|---|--------|------------|------|
-| 1 | Whisper (Groq STT) → текст | 2026-06-08 | ✅ код + API/WS; **⚠️** E2E микрофон → `BACKLOG.md` 🔴 |
-| 2 | Hermes → интенты по лидам | 2026-06-08 | ✅ `smoke_hermes_leads.py` 40 pytest; `HERMES_LEADS_ACCEPTANCE.md` |
-| 3 | UI `voice_action` | 2026-06-08 | ✅ modal/navigate/filter/approve; **⚠️** spot-check delete approve → `BACKLOG` 🟡 |
-| 4 | Полные интенты лидов | 2026-06-08 | ✅ analyze_lead, lead_history, stage/industry/city; `HERMES_LEADS_FULL_ACCEPTANCE.md` |
-| 5 | Смоук голосовых сценариев | 2026-06-08 | ✅ S01–S09 автомат; **⚠️** fanout UI 15–30 с → `BACKLOG` 🟡; `VOICE_LEAD_SCENARIOS_ACCEPTANCE.md` |
+| # | Пункт | Перепроход | Статус | Итог |
+|---|--------|------------|--------|------|
+| 1 | Whisper (Groq STT) → текст | 2026-06-08 | ⚠️ | ✅ код + API/WS + `smoke_whisper_stt.py` · **⚠️ E2E микрофон** → [`BACKLOG`](../operations/BACKLOG.md) 🔴 · `WHISPER_STT_ACCEPTANCE.md` |
+| 2 | Hermes → интенты по лидам | 2026-06-08 | ✅ | `smoke_hermes_leads.py` 40 pytest; `HERMES_LEADS_ACCEPTANCE.md` |
+| 3 | UI `voice_action` | 2026-06-08 | ⚠️ | ✅ modal/navigate/filter/approve · **⚠️** spot-check delete approve → `BACKLOG` 🟡 · `VOICE_ACTION_ACCEPTANCE.md` |
+| 4 | Полные интенты лидов | 2026-06-08 | ✅ | analyze_lead, lead_history, stage/industry/city; `HERMES_LEADS_FULL_ACCEPTANCE.md` |
+| 5 | Смоук голосовых сценариев | 2026-06-08 | ⚠️ | ✅ код + автомат S01–S09 · **⚠️** fanout UI 15–30 с, approve UI → `BACKLOG` 🟡 · `VOICE_LEAD_SCENARIOS_ACCEPTANCE.md` |
+
+**Закрыть блок на ✅:** снять ⚠️ п.1 (микрофон E2E); п.3/5 🟡 — желательно до Ф2, не блокер.
 
 ### Поиск и RAG (базово)
 
@@ -370,7 +375,7 @@
 |--------|------|-------|---------------------------|
 | Лиды | 1 | ✅ 2026-06-08 | — |
 | Баллы | 1 (+P3) | ✅ | P3: SLA-протоколы |
-| Голос лиды | 1 | ⚠️ код ✅ | **🔴** микрофон E2E → `BACKLOG` |
+| Голос лиды | 1 | ⚠️ **частично** | **🔴** E2E микрофон → `BACKLOG`; п.3/5 🟡 spot-check |
 | Поиск/RAG | 1→2 | ✅ база | Ф2 §4: кэш enrich, авто-чанки |
 | Лиды enrich | 2 | 🔲 | Ф2 §9: кнопка на карточке |
 | Лидоген | 1→2 | ✅ Ф1 | **Ф2 §8:** голос `/leadgen` |
