@@ -64,4 +64,4 @@ async def test_save_endpoint_persists_card(client):
     with patch("leadgen.pipeline._save_to_crm", new_callable=AsyncMock, return_value=777):
         r = await client.post("/api/leadgen/save", json={"card": card})
     assert r.status_code == 200
-    assert r.json() == {"status": "ok", "lead_id": 777}
+    assert r.json() == {"status": "ok", "lead_id": 777, "created": True}

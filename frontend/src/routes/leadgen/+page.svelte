@@ -189,10 +189,11 @@ let portrait_deep      = $state(false);
 	let portrait_results = $state(null);   // список /portrait
 	let cluster_result   = $state(null);   // дерево /cluster
 	let saved_crm_id     = $state(null);
+	let saved_crm_created = $state(true);
 
 	function clearAll() {
 		result = null; portrait_results = null; cluster_result = null;
-		news_result = null; saved_crm_id = null; error = '';
+		news_result = null; saved_crm_id = null; saved_crm_created = true; error = '';
 	}
 
 	// ── Config (для Ops) ──────────────────────────────────────────────────────
@@ -254,6 +255,7 @@ let portrait_deep      = $state(false);
 				}
 				if (direct_save && result?.crm_lead_id) {
 					saved_crm_id = result.crm_lead_id;
+					saved_crm_created = result.crm_lead_created !== false;
 				}
 			} else if (mode === 'portrait') {
 				const pt = buildPortraitText();
@@ -294,6 +296,7 @@ let portrait_deep      = $state(false);
 		try {
 			const r = await post('/api/leadgen/save', { card: result });
 			saved_crm_id = r.lead_id;
+			saved_crm_created = r.created !== false;
 		} catch (e) {
 			error = e.message;
 		} finally {
@@ -958,7 +961,9 @@ let portrait_deep      = $state(false);
 				{#if !direct_save}
 					<div class="mt-4 flex items-center gap-3">
 						{#if saved_crm_id}
-							<span class="text-sm text-green-400">✓ Сохранён в CRM (ID: {saved_crm_id})</span>
+							<span class="text-sm text-green-400" data-testid="leadgen-crm-save-status">
+								✓ {saved_crm_created ? 'Сохранён' : 'Обновлён'} в CRM (ID: {saved_crm_id})
+							</span>
 							<a href="/leads/{saved_crm_id}" class="text-xs text-indigo-400 hover:underline">Открыть лид →</a>
 						{:else}
 							<button onclick={saveToCRM} disabled={loading}
@@ -972,7 +977,8 @@ let portrait_deep      = $state(false);
 						data-testid="leadgen-autosave-done"
 						class="mt-3 flex items-center gap-2 text-sm text-green-400"
 					>
-						✓ Автосохранён в CRM <a href="/leads/{saved_crm_id}" class="text-indigo-400 hover:underline ml-1">Открыть лид →</a>
+						✓ {saved_crm_created ? 'Автосохранён' : 'Обновлён'} в CRM
+						<a href="/leads/{saved_crm_id}" class="text-indigo-400 hover:underline ml-1">Открыть лид →</a>
 					</div>
 				{/if}
 			</div>

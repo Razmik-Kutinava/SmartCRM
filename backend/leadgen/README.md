@@ -16,7 +16,8 @@
 | `search_by_portrait.py` | Поиск компаний по текстовому портрету |
 | `cluster.py` | Связанные компании по ИНН (2 уровня) |
 | `score_card.py` | Финальный скор и сборка карточки |
-| `persist.py` | Сохранение лида в CRM (БД) |
+| `persist.py` | Сохранение лида в CRM (БД), dedup по ИНН |
+| `persist_card.py` | Сборка полей Lead из карточки analyze |
 | `portrait_helpers.py` | Критерии портрета, match, эталон |
 | `portrait_cache.py` | Кэш portrait-review |
 | `utils.py` | Утилиты: домен, деньги, JSON, контакты |

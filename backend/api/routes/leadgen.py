@@ -130,7 +130,11 @@ async def save_to_crm(body: SaveRequest):
         lead_id = await _save_to_crm(body.card)
         if not lead_id:
             raise HTTPException(500, "Не удалось сохранить лид")
-        return {"status": "ok", "lead_id": lead_id}
+        return {
+            "status": "ok",
+            "lead_id": lead_id,
+            "created": bool(body.card.get("crm_lead_created", True)),
+        }
     except HTTPException:
         raise
     except Exception as e:

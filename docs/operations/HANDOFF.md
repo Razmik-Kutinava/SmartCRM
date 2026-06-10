@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:автосейв CRM ✅ — `LEADGEN_AUTOSAVE_ACCEPTANCE.md``
+`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:автосейв + dedup ИНН ✅ — `LEADGEN_AUTOSAVE_ACCEPTANCE.md``
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go. Последний коммит: `a8f4c6a`.
 

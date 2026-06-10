@@ -58,7 +58,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | Файл | URL-префикс | За что |
 |------|-------------|--------|
 | `voice.py` | `/api/voice` | Голос: текст/аудио → Hermes → агенты |
-| `leadgen.py` | `/api/leadgen` | Запуск пайплайна, кластер, портрет |
+| `leadgen.py` | `/api/leadgen` | Пайплайн, кластер, портрет; `/save` с dedup по ИНН |
 | `crm.py` | `/api/crm` | Публичные CRM: стадии, настройки |
 | `webhooks_bitrix.py` | `/api/webhooks/bitrix` | Исходящие события Битрикс24 (ONCRMLEADADD) |
 | `leads/` | `/api/leads` | См. пакет выше |

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-10 — Leadgen: dedup по ИНН при сохранении в CRM
+
+**Сделано:** `persist_card.py` + update по ИНН в `_save_to_crm`; `crm_lead_created` в ответе; UI «Обновлён»; 4 pytest dedup.
+
 ## 2026-06-10 — Leadgen: автосейв в CRM + commit-ops override
 
 **Сделано:** `crm_threshold.py`, порог из конфига; 10 pytest; `smoke_leadgen_autosave.py`; UI testid; DevTools E2E скор 84 → лид #3187; `LEADGEN_AUTOSAVE_ACCEPTANCE.md`; усилен `commit-ops`/`AGENTS.md` (override глобального User Rule); удалены `CURSOR_USER_RULES_*.md`.
