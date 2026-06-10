@@ -14,7 +14,7 @@
 
 2026-06-10 | Действие: убран конфликт commit в HANDOFF; EN-паттерны в `check_rules_commit_conflict.py`; `CURSOR_USER_RULES_SNIPPET.md`. | Коммит: `8bc2554` | Хвост A: snippet в Cursor Settings — вручную у пользователя | Хвост B: нет | Хвост C: нет | Следующий шаг: `go` шаг 2 warnings. | Статус: done
 
-2026-06-10 | Действие: хвост ИНН 1–6 — `leadgen/inn_constants.py`, импорты smoke/API, docs Хохланд, asyncio.run, DevTools portrait E2E (cursor-ide-browser POST 200, 3 кандидата), `test_inn_constants.py` 10 pytest. | Хвост A: нет | Хвост B: нет | Хвост C: user-chrome-devtools MCP errored — использован cursor-ide-browser | Следующий шаг: следующий пункт MAP. | Статус: in_progress
+2026-06-10 | Действие: хвост ИНН 1–6 — `leadgen/inn_constants.py`, импорты smoke/API, docs Хохланд, asyncio.run, DevTools portrait E2E (cursor-ide-browser POST 200, 3 кандидата), `test_inn_constants.py` 10 pytest. | Коммит: `1bb0645` | Хвост A: нет | Хвост B: нет | Хвост C: user-chrome-devtools MCP errored — cursor-ide-browser | Следующий шаг: следующий пункт MAP. | Статус: done
 
 2026-06-10 | Действие: шаг 1 «странный эталон» — развод ИНН: мок `7707070010` ТехноСофт, live `5040048921` Хохланд; `inn_constants.py`, `LEADGEN_INN_FIX.md`; smoke portrait 9 pytest + live 3 кандидата (gaps=[]); hook utf-8 fix `session_state_validate.py`. | Коммит: `4de231d` | Хвост A: pytest warnings (asyncio/email) | Хвост B: нет | Хвост C: DevTools portrait (MCP недоступен) | Следующий шаг: шаг 2 warnings. | Статус: done
 
