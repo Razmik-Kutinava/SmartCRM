@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-10 — Leadgen: кластер / холдинг (перепроход)
+
+**Сделано:** API-тесты, integration mock, `smoke_leadgen_cluster.py`, testid UI, DevTools E2E Хохланд 4 субъекта, `LEADGEN_CLUSTER_ACCEPTANCE.md`; portrait Groq review → BACKLOG Ф2.
+
 ## 2026-06-10 — Leadgen portrait: progress UI + Chrome DevTools MCP E2E
 
 **Сделано:** `portraitProgress.js` — стадии/таймер/полоса при поиске по портрету; pytest smoke; DevTools E2E через **user-chrome-devtools** (POST 200, progress виден).

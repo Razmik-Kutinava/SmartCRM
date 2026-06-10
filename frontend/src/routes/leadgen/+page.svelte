@@ -782,6 +782,7 @@ let portrait_deep      = $state(false);
 		{:else if mode === 'cluster'}
 			<div class="text-xs text-gray-500 mb-1 block">ИНН якорной компании</div>
 			<input bind:value={cluster_inn} placeholder="5040048921 — найдём весь холдинг и учредителей"
+				data-testid="leadgen-cluster-inn"
 				class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500" />
 
 		{:else if mode === 'news'}
@@ -1808,9 +1809,9 @@ let portrait_deep      = $state(false);
 		{@const persons = cluster_result.persons || []}
 		{@const hasAnyRelated = parents.length || subsidiaries.length || siblings.length || person_companies.length || ips.length}
 
-		<div class="space-y-4">
+		<div class="space-y-4" data-testid="leadgen-cluster-results">
 			<!-- Шапка -->
-			<div class="text-sm text-gray-400">
+			<div class="text-sm text-gray-400" data-testid="leadgen-cluster-total">
 				Найдено связей: <span class="text-white font-bold text-base">{cluster_result.total_companies ?? 1}</span> субъектов
 				{#if cluster_result.total_revenue_estimate > 0}
 					· Оборот группы: <span class="text-green-400">{fmtMoney(cluster_result.total_revenue_estimate)}</span>
@@ -1820,7 +1821,7 @@ let portrait_deep      = $state(false);
 			<!-- Якорная компания -->
 			{#if cluster_result.anchor}
 				{@const a = cluster_result.anchor}
-				<div class="bg-gray-900 rounded-xl border border-indigo-700/60 p-4">
+				<div class="bg-gray-900 rounded-xl border border-indigo-700/60 p-4" data-testid="leadgen-cluster-anchor">
 					<div class="flex items-start justify-between gap-3">
 						<div class="flex-1 min-w-0">
 							<div class="text-xs text-indigo-400 mb-1 font-medium tracking-wide">⚓ ЯКОРНАЯ КОМПАНИЯ</div>

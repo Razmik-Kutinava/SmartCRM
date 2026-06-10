@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:ИНН хвост 1–6 ✅ — канон Хохланд, DevTools portrait E2E, warnings pytest`
+`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:кластер/холдинг ✅ — `LEADGEN_CLUSTER_ACCEPTANCE.md`; portrait Groq → BACKLOG Ф2`
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go. Последний коммит: `8bc2554`.
 

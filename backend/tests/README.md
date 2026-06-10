@@ -33,6 +33,8 @@ pytest tests/api/ -q
 | `test_leadgen.py` | Пайплайн, Checko, портрет, интеграция |
 | `api/test_leadgen_analyze_api.py` | POST `/api/leadgen/analyze` (ИНН, название, 400) |
 | `api/test_leadgen_portrait_api.py` | POST `/api/leadgen/portrait` (эталон ИНН, текст, deep) |
+| `api/test_leadgen_cluster_api.py` | POST `/api/leadgen/cluster` (ИНН якоря, 400) |
+| `leadgen/test_cluster.py` | `run_cluster` mock: дочка + материнская |
 | `test_voice_pipeline.py` | Hermes интенты, orchestrator, голос |
 | `voice/test_voice_action.py` | Сборка пакета voice_action |
 | `api/test_voice_action_ws.py` | WS события intent + voice_action |

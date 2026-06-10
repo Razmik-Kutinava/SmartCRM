@@ -51,6 +51,7 @@
 | `smoke_search_enrich_lead.py` | Смоук enrich-lead из /search (PRD_MAP RAG enrich) |
 | `smoke_leadgen_inn_analysis.py` | Смоук анализа по ИНН/названию (PRD_MAP leadgen direct) |
 | `smoke_leadgen_portrait.py` | Смоук поиска по портрету (PRD_MAP leadgen portrait) |
+| `smoke_leadgen_cluster.py` | Смоук кластер / холдинг (PRD_MAP leadgen cluster) |
 | `run_zone_regression.py` | Регрессия по зонам (crm_leads, leadgen, …) |
 | `_resplit_leadgen_pkgs.py` | One-off: пересборка pipeline/checko пакетов |
 
