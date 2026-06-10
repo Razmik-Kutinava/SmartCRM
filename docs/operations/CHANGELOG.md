@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-10 — Leadgen portrait: progress UI + Chrome DevTools MCP E2E
+
+**Сделано:** `portraitProgress.js` — стадии/таймер/полоса при поиске по портрету; pytest smoke; DevTools E2E через **user-chrome-devtools** (POST 200, progress виден).
+
+**Зачем:** UX при долгом POST; канонический MCP-прогон вместо cursor-ide-browser.
+
 ## 2026-06-10 — Leadgen: хвост ИНН + DevTools portrait E2E
 
 **Сделано:** канон `leadgen/inn_constants.py`, импорты в smoke/API-тестах, docs на Хохланд (без Сбера в leadgen), `asyncio.run` в test_leadgen, DevTools E2E portrait (cursor-ide-browser), `test_inn_constants.py`.

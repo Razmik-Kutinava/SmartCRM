@@ -2,6 +2,10 @@
 	import { onMount } from 'svelte';
 	import { apiFetch } from '$lib/api.js';
 	import { portraitFieldsFromLead } from '$lib/leadgen/portraitFromLead.js';
+	import {
+		portraitProgressPercent,
+		startPortraitProgress,
+	} from '$lib/leadgen/portraitProgress.js';
 	import { getApiUrl } from '$lib/websocket.js';
 	const API = getApiUrl();
 
@@ -178,6 +182,8 @@ let portrait_deep      = $state(false);
 
 	// ── Состояние ─────────────────────────────────────────────────────────────
 	let loading   = $state(false);
+	let portrait_progress_step = $state('');
+	let portrait_progress_sec = $state(0);
 	let error     = $state('');
 	let result    = $state(null);          // карточка /analyze
 	let portrait_results = $state(null);   // список /portrait
@@ -224,6 +230,13 @@ let portrait_deep      = $state(false);
 	// ── Запуск ────────────────────────────────────────────────────────────────
 	async function run() {
 		loading = true; clearAll();
+		let stopPortraitProgress = null;
+		if (mode === 'portrait') {
+			stopPortraitProgress = startPortraitProgress(
+				(s) => { portrait_progress_step = s; },
+				(n) => { portrait_progress_sec = n; },
+			);
+		}
 		try {
 			if (mode === 'direct') {
 				if (!direct_inn.trim() && !direct_name.trim()) {
@@ -268,6 +281,9 @@ let portrait_deep      = $state(false);
 		} catch (e) {
 			error = e.message || String(e);
 		} finally {
+			stopPortraitProgress?.();
+			portrait_progress_step = '';
+			portrait_progress_sec = 0;
 			loading = false;
 		}
 	}
@@ -816,11 +832,33 @@ let portrait_deep      = $state(false);
 			class="mt-4 px-6 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
 		>
 			{#if loading}
-				<span class="animate-spin inline-block">⟳</span> {mode === 'news' ? 'Ищу новости...' : 'Анализирую...'}
+				<span class="animate-spin inline-block">⟳</span>
+				{#if mode === 'portrait' && portrait_progress_step}
+					{portrait_progress_step}
+				{:else if mode === 'news'}
+					Ищу новости...
+				{:else}
+					Анализирую...
+				{/if}
 			{:else}
 				{mode === 'direct' ? '🔍 Анализировать' : mode === 'portrait' ? '🎯 Найти компании' : mode === 'cluster' ? '🕸 Найти связанные' : '📰 Найти новости'}
 			{/if}
 		</button>
+
+		{#if loading && mode === 'portrait' && portrait_progress_step}
+			<div class="mt-3 rounded-lg border border-indigo-800/50 bg-indigo-950/30 p-3" data-testid="leadgen-portrait-progress">
+				<div class="flex justify-between text-xs text-gray-400 mb-2">
+					<span data-testid="leadgen-portrait-progress-step">{portrait_progress_step}</span>
+					<span data-testid="leadgen-portrait-progress-elapsed">{portrait_progress_sec} с</span>
+				</div>
+				<div class="h-1.5 bg-gray-800 rounded-full overflow-hidden" data-testid="leadgen-portrait-progress-bar">
+					<div
+						class="h-full bg-indigo-500 transition-all duration-500"
+						style="width: {portraitProgressPercent(portrait_progress_sec)}%"
+					></div>
+				</div>
+			</div>
+		{/if}
 	</div>
 
 	<!-- Ошибка -->

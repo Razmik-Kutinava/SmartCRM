@@ -35,7 +35,7 @@ cd backend && python scripts/smoke_leadgen_portrait.py
 | Критерии только руками | **Select лида из CRM** → `portraitFromLead.js` |
 | Нет smoke / testid | `smoke_leadgen_portrait.py`, testid portrait |
 
-**testid:** `leadgen-mode-portrait`, `leadgen-portrait-lead-select`, `leadgen-portrait-inn`, `leadgen-portrait-results`, `leadgen-portrait-reference`, `leadgen-portrait-total`, `leadgen-portrait-company-card`
+**testid:** `leadgen-mode-portrait`, `leadgen-portrait-lead-select`, `leadgen-portrait-inn`, `leadgen-portrait-progress`, `leadgen-portrait-progress-step`, `leadgen-portrait-results`, `leadgen-portrait-reference`, `leadgen-portrait-total`, `leadgen-portrait-company-card`
 
 ---
 
@@ -47,7 +47,8 @@ cd backend && python scripts/smoke_leadgen_portrait.py
 | 2 | API only `reference_inn` | 200, автотекст портрета |
 | 3 | Integration mock | эталон исключён из выдачи, match score |
 | 4 | UI режим «По портрету» | форма + select лидов (CRM загружается) |
-| 5 | DevTools E2E 2026-06-10 (cursor-ide-browser) | `/leadgen` → «По портрету» → ИНН `5040048921` → «Найти компании» → POST `/api/leadgen/portrait` **200**, эталон **ХОХЛАНД**, **3** карточки кандидатов |
+| 5 | DevTools E2E 2026-06-10 (**user-chrome-devtools** MCP) | `/leadgen` → «По портрету» → ИНН `5040048921` → «Найти компании» → progress «Загружаем эталон…» + таймер → POST `/api/leadgen/portrait` **200**, эталон **ХОХЛАНД**, **3** кандидата |
+| 6 | Progress UI | `leadgen-portrait-progress`, step + elapsed + bar (`portraitProgress.js`) |
 
 ---
 
@@ -55,7 +56,7 @@ cd backend && python scripts/smoke_leadgen_portrait.py
 
 | Пробел | Примечание |
 |--------|------------|
-| Долгий запрос ~30–90 с | UX; нет отдельного progress в UI |
+| ~~Долгий запрос ~30–90 с без progress~~ | **исправлено:** стадии + таймер + полоса |
 | ~~ИНН 7736207543 = Яндекс в ЕГРУЛ, в тестах был ТехноСофт~~ | **исправлено:** `LEADGEN_INN_FIX.md` |
 | LLM review при недоступном Groq | ошибка в `errors[]`, кандидаты всё равно есть |
 | Кластер / холдинг | отдельный пункт MAP |
