@@ -14,7 +14,7 @@
 
 2026-06-10 | Действие: убран конфликт commit в HANDOFF; EN-паттерны в `check_rules_commit_conflict.py`; `CURSOR_USER_RULES_SNIPPET.md`. | Коммит: `8bc2554` | Хвост A: snippet в Cursor Settings — вручную у пользователя | Хвост B: нет | Хвост C: нет | Следующий шаг: `go` шаг 2 warnings. | Статус: done
 
-2026-06-10 | Действие: leadgen кластер/холдинг — API+integration tests, smoke live 4 субъекта Хохланд, testid UI, DevTools MCP POST cluster 200; portrait Groq review → BACKLOG Ф2; `LEADGEN_CLUSTER_ACCEPTANCE.md`. | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: автосохранение CRM или Ф2. | Статус: in_progress
+2026-06-10 | Действие: leadgen кластер/холдинг — API+integration tests, smoke live 4 субъекта Хохланд, testid UI, DevTools MCP POST cluster 200; portrait Groq review → BACKLOG Ф2; `LEADGEN_CLUSTER_ACCEPTANCE.md`. | Коммит: `c291a32` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: автосохранение CRM или Ф2. | Статус: done
 
 2026-06-10 | Действие: portrait progress UI (`portraitProgress.js`, testids) + DevTools E2E **user-chrome-devtools** MCP (progress «Загружаем эталон…», POST portrait 200, 3 кандидата). | Коммит: `3ebb811` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: следующий MAP. | Статус: done
 
