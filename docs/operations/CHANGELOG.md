@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-10 — Leadgen: развод ИНН мок vs live (эталон портрета)
+
+**Сделано:** `inn_constants.py` — мок `7707070010` (ТехноСофт), live `5040048921` (Хохланд); убран `7736207543` (реальный Яндекс в ЕГРЮЛ); обновлены фикстуры, smoke, UI placeholders; `LEADGEN_INN_FIX.md`; smoke portrait live OK (3 кандидата).
+
+**Зачем:** «странный эталон» — не баг Checko, а конфликт тестовых данных с ЕГРЮЛ.
+
 ## 2026-06-09 — Pre-commit: SESSION_STATE без отложенного коммита
 
 **Сделано:** `session_state_validate.py`, git pre-commit hook, `install_git_hooks.ps1/.sh`, интеграция в `check_agent_step.py` и `smartcrm-commit-ops.mdc`.

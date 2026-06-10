@@ -1,10 +1,10 @@
 # HANDOFF
 
-`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:«Поиск по портрету» перепроход ✅ — `LEADGEN_PORTRAIT_ACCEPTANCE.md``
+`Спринт:[Фаза 1] | Задача:[Лидогенерация] | Статус:шаг 1 ИНН мок/live ✅ — `LEADGEN_INN_FIX.md`; portrait smoke gaps=[]`
 
-**Процесс:** `git commit` **до** ответа + ops + хвост A/B/C (`smartcrm-commit-ops.mdc`). Pre-commit hook: `powershell -File scripts/install_git_hooks.ps1`. Последний коммит: `29f5164` (SESSION_STATE validate).
+**Процесс:** commit только по явному запросу пользователя. Незакоммичено: portrait + INN split + ops.
 
-**Следующий MAP:** лидоген «Поиск по портрету» — ждём `go`.
+**Следующий MAP:** `go` commit → warnings (шаг 2) или кластер/холдинг (уже [x] в MAP — проверить acceptance).
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 

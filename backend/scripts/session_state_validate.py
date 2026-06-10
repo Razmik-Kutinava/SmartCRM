@@ -114,9 +114,11 @@ def staged_added_journal_line_numbers() -> set[int] | None:
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         check=False,
     )
-    if proc.returncode != 0 or not proc.stdout.strip():
+    if proc.returncode != 0 or proc.stdout is None or not proc.stdout.strip():
         return None
 
     new_line_nums: set[int] = set()
@@ -141,9 +143,11 @@ def is_session_state_staged() -> bool:
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         check=False,
     )
-    return bool(proc.stdout.strip())
+    return bool(proc.stdout and proc.stdout.strip())
 
 
 def validate_latest_entry(text: str) -> list[str]:

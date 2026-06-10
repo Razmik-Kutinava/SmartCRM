@@ -5,10 +5,12 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
+_LIVE_INN = "5040048921"  # ООО «Хохланд Руссланд»
+
 _MOCK_PORTRAIT = {
     "status": "ok",
-    "criteria": {"okved": "62", "city": "Москва"},
-    "reference_profile": {"inn": "7736207543", "name_short": "ТехноСофт", "okved": "62.01", "city": "Москва"},
+    "criteria": {"okved": "10", "city": "Пенза"},
+    "reference_profile": {"inn": _LIVE_INN, "name_short": "Хохланд Руссланд", "okved": "10.51", "city": "Пенза"},
     "results": [
         {"inn": "7701000001", "name": "ООО Похожая", "city": "Москва", "okved": "62.02", "_portrait_match": 0.82}
     ],
@@ -23,14 +25,14 @@ async def test_leadgen_portrait_by_reference_inn(client):
     with patch("leadgen.pipeline.search_by_portrait", new_callable=AsyncMock, return_value=_MOCK_PORTRAIT) as run:
         r = await client.post(
             "/api/leadgen/portrait",
-            json={"portrait": "похожие на компанию с ИНН 7736207543", "reference_inn": "7736207543", "limit": 3},
+            json={"portrait": "похожие на компанию с ИНН 5040048921", "reference_inn": "5040048921", "limit": 3},
         )
     assert r.status_code == 200
     data = r.json()
     assert data["total"] == 1
-    assert data["reference_profile"]["inn"] == "7736207543"
+    assert data["reference_profile"]["inn"] == "5040048921"
     run.assert_awaited_once()
-    assert run.call_args.kwargs["reference_inn"] == "7736207543"
+    assert run.call_args.kwargs["reference_inn"] == "5040048921"
 
 
 @pytest.mark.asyncio
@@ -50,7 +52,7 @@ async def test_leadgen_portrait_requires_input(client):
     assert r.status_code == 400
 
     with patch("leadgen.pipeline.search_by_portrait", new_callable=AsyncMock, return_value=_MOCK_PORTRAIT):
-        r2 = await client.post("/api/leadgen/portrait", json={"reference_inn": "7736207543"})
+        r2 = await client.post("/api/leadgen/portrait", json={"reference_inn": "5040048921"})
     assert r2.status_code == 200
 
 
@@ -59,7 +61,7 @@ async def test_leadgen_portrait_passes_deep_analysis(client):
     with patch("leadgen.pipeline.search_by_portrait", new_callable=AsyncMock, return_value=_MOCK_PORTRAIT) as run:
         r = await client.post(
             "/api/leadgen/portrait",
-            json={"portrait": "IT Москва", "reference_inn": "7736207543", "deep_analysis": True, "limit": 2},
+            json={"portrait": "IT Москва", "reference_inn": "5040048921", "deep_analysis": True, "limit": 2},
         )
     assert r.status_code == 200
     assert run.call_args.kwargs["deep_analysis"] is True

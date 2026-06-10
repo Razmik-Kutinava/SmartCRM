@@ -33,7 +33,7 @@ class TestCheckoIdentification:
         """Checko возвращает телефоны, email и сайт из поля Контакты."""
         from leadgen.modules.checko import _parse_company
         raw = {
-            "ИНН": "7736207543",
+            "ИНН": "7707070010",
             "КПП": "773601001",
             "ОГРН": "1234567890123",
             "НаимПолн": "ООО ТехноСофт",
@@ -47,7 +47,7 @@ class TestCheckoIdentification:
         }
         result = _parse_company(raw)
         assert result is not None
-        assert result["inn"] == "7736207543"
+        assert result["inn"] == "7707070010"
         assert result["name"] == "ООО ТехноСофт"
         assert result["status"] == "ACTIVE"
         assert result["director"] == "Иванов Иван Иванович"
@@ -97,7 +97,7 @@ class TestCheckoIdentification:
         from leadgen.modules.checko import endpoints
 
         monkeypatch.setattr("leadgen.modules.checko.endpoints._available", lambda: False)
-        res = asyncio.get_event_loop().run_until_complete(endpoints.fetch_full_profile("7707083893"))
+        res = asyncio.get_event_loop().run_until_complete(endpoints.fetch_full_profile("7707070010"))
         assert res == {}
 
 
@@ -273,9 +273,10 @@ class TestBuster:
 # 6. Анализаторы (все 5)
 # ══════════════════════════════════════════════════════════════════════════════
 
+# 7707070010 — фейковый ИНН только для моков (не ЕГРЮЛ). Live: 5040048921 Хохланд — inn_constants.py
 SAMPLE_PROFILE = {
     "company": {
-        "inn": "7736207543",
+        "inn": "7707070010",
         "name": "ООО ТехноСофт",
         "okved": "62.01",
         "okved_name": "Разработка ПО",
@@ -471,7 +472,7 @@ class TestPipelineHelpers:
         score = _compute_final_score(analyses, agents)
         card = _build_lead_card(SAMPLE_PROFILE["company"], SAMPLE_PROFILE, analyses, agents, score)
         # Обязательные поля
-        assert card["inn"] == "7736207543"
+        assert card["inn"] == "7707070010"
         assert card["company_name"] == "ООО ТехноСофт"
         assert "lpr" in card
         assert card["lpr"]["name"] == "Иванов Иван Иванович"
@@ -570,7 +571,7 @@ class TestPortraitSearchIntegration:
         from unittest.mock import AsyncMock, patch
 
         ref = {
-            "inn": "7736207543",
+            "inn": "7707070010",
             "name_short": "ТехноСофт",
             "okved": "62.01",
             "city": "Москва",
@@ -579,7 +580,7 @@ class TestPortraitSearchIntegration:
         }
         candidates = [
             {"inn": "7701000001", "name": "ООО Похожая IT", "city": "Москва", "okved": "62.02", "status": "ACTIVE"},
-            {"inn": "7736207543", "name": "Эталон", "city": "Москва", "okved": "62.01"},
+            {"inn": "7707070010", "name": "Эталон", "city": "Москва", "okved": "62.01"},
         ]
 
         async def run():
@@ -591,16 +592,16 @@ class TestPortraitSearchIntegration:
                  patch("leadgen.pipeline.search_by_portrait._portrait_fit_analysis", new=AsyncMock(return_value={"summary": "ok", "companies": []})):
                 from leadgen.pipeline import search_by_portrait
                 return await search_by_portrait(
-                    portrait="похожие на компанию с ИНН 7736207543",
+                    portrait="похожие на компанию с ИНН 7707070010",
                     limit=3,
-                    reference_inn="7736207543",
+                    reference_inn="7707070010",
                 )
 
         result = asyncio.get_event_loop().run_until_complete(run())
         assert result["status"] == "ok"
-        assert result["reference_profile"]["inn"] == "7736207543"
+        assert result["reference_profile"]["inn"] == "7707070010"
         inns = [c.get("inn") for c in result["results"]]
-        assert "7736207543" not in inns
+        assert "7707070010" not in inns
         assert len(result["results"]) >= 1
 
 
@@ -674,11 +675,11 @@ class TestPipelineIntegration:
                  patch("rag.search.free_search", new=AsyncMock(return_value={"formatted_block": ""})), \
                  patch("core.llm.chat", new=AsyncMock(return_value='{"score":75,"summary":"ok","hook":"test","script_outline":["Hello"],"triggers":[]}')):
                 from leadgen.pipeline import run_pipeline
-                return await run_pipeline(inn="7736207543")
+                return await run_pipeline(inn="7707070010")
 
         result = asyncio.get_event_loop().run_until_complete(run())
         assert result["status"] == "ok"
-        assert result["inn"] == "7736207543"
+        assert result["inn"] == "7707070010"
         assert "final_score" in result
         assert 5 <= result["final_score"] <= 99
         assert "lpr" in result
@@ -812,7 +813,7 @@ class TestChecko:
         from leadgen.modules.checko import _parse_company
         # Реальная структура Checko API
         d = {
-            "ИНН": "7736207543",
+            "ИНН": "7707070010",
             "ОГРН": "1027700132380",
             "НаимПолн": "ООО МангоТелеком",
             "Статус": {"Наим": "Действует"},
@@ -822,7 +823,7 @@ class TestChecko:
         }
         result = _parse_company(d)
         assert result is not None
-        assert result["inn"] == "7736207543"
+        assert result["inn"] == "7707070010"
         assert result["status"] == "ACTIVE"
         assert result["director"] == "Иванов Иван Иванович"
         assert result["city"] == "Москва"

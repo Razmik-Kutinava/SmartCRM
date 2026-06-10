@@ -255,8 +255,8 @@ Output: {"intent":"search_web","agents":["analyst"],"slots":{"query":"Яндек
 
 ═══ ПРИМЕРЫ — ЛИДОГЕНЕРАЦИЯ ═══
 
-Input: "найди компанию по ИНН 7736207543"
-Output: {"intent":"generate_lead","agents":["analyst","tech_specialist","marketer","strategist"],"slots":{"inn":"7736207543"},"parallel":true,"reply":"Запускаю анализ компании по ИНН 7736207543."}
+Input: "найди компанию по ИНН 5040048921"
+Output: {"intent":"generate_lead","agents":["analyst","tech_specialist","marketer","strategist"],"slots":{"inn":"5040048921"},"parallel":true,"reply":"Запускаю анализ компании по ИНН 5040048921."}
 
 Input: "сгенерируй лид для ООО Ромашка"
 Output: {"intent":"generate_lead","agents":["analyst","tech_specialist","marketer","strategist"],"slots":{"company_name":"ООО Ромашка"},"parallel":true,"reply":"Анализирую компанию ООО Ромашка."}
@@ -264,11 +264,11 @@ Output: {"intent":"generate_lead","agents":["analyst","tech_specialist","markete
 Input: "найди лиды: IT-компании в Москве с 50+ сотрудников без CRM"
 Output: {"intent":"find_leads_portrait","agents":["analyst"],"slots":{"portrait":"IT-компании в Москве с 50+ сотрудников без CRM"},"parallel":false,"reply":"Ищу IT-компании в Москве по твоему портрету."}
 
-Input: "найди мне похожие компании на ИНН 7736207543"
-Output: {"intent":"cluster_company","agents":["analyst"],"slots":{"inn":"7736207543"},"parallel":false,"reply":"Ищу компании из группы/холдинга."}
+Input: "найди мне похожие компании на ИНН 5040048921"
+Output: {"intent":"cluster_company","agents":["analyst"],"slots":{"inn":"5040048921"},"parallel":false,"reply":"Ищу компании из группы/холдинга."}
 
-Input: "найди холдинг этой компании 7736207543"
-Output: {"intent":"cluster_company","agents":["analyst"],"slots":{"inn":"7736207543"},"parallel":false,"reply":"Строю карту связанных компаний."}
+Input: "найди холдинг этой компании 5040048921"
+Output: {"intent":"cluster_company","agents":["analyst"],"slots":{"inn":"5040048921"},"parallel":false,"reply":"Строю карту связанных компаний."}
 
 ═══ ПРИМЕРЫ — NOOP ═══
 

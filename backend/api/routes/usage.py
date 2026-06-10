@@ -108,7 +108,7 @@ async def _checko_status() -> dict:
         async with httpx.AsyncClient(timeout=8.0) as c:
             r = await c.get(
                 "https://api.checko.ru/v2/company",
-                params={"key": key, "inn": "7736207543"},  # Сбербанк — тест
+                params={"key": key, "inn": "5040048921"},  # Хохланд Руссланд — тест Checko
             )
             if r.status_code == 200:
                 return {"available": True, "status": "ok"}

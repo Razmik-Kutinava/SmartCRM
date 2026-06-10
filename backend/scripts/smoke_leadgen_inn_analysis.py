@@ -44,7 +44,7 @@ async def _live_analyze_inn() -> dict:
     from leadgen.pipeline import run_pipeline
 
     try:
-        out = await asyncio.wait_for(run_pipeline(inn="7707083893", deep_analysis=False), timeout=120.0)
+        out = await asyncio.wait_for(run_pipeline(inn="5040048921", deep_analysis=False), timeout=120.0)
         return {
             "ok": out.get("status") == "ok" and bool(out.get("inn")),
             "inn": out.get("inn"),

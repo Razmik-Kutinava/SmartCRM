@@ -8,7 +8,9 @@ PRD_MAP: **«Лидогенерация `/leadgen`» — Поиск по пор�
 cd backend && python scripts/smoke_leadgen_portrait.py
 ```
 
-9 pytest + live `search_by_portrait(reference_inn=7736207543)` + probe `/leadgen`.
+9 pytest + live `search_by_portrait(reference_inn=5040048921)` (Хохланд Руссланд) + probe `/leadgen`.
+
+**ИНН:** моки `7707070010` (ТехноСофт) — только pytest с Checko mock; live — `5040048921` (`inn_constants.py`).
 
 ---
 
@@ -41,7 +43,7 @@ cd backend && python scripts/smoke_leadgen_portrait.py
 
 | # | Шаг | Результат |
 |---|-----|-----------|
-| 1 | Live smoke эталон `7736207543` | **3 кандидата**, criteria okved=62, city=Москва |
+| 1 | Live smoke эталон `5040048921` (Хохланд) | **3 кандидата**, ОКВЭД пищевка, регион Пенза |
 | 2 | API only `reference_inn` | 200, автотекст портрета |
 | 3 | Integration mock | эталон исключён из выдачи, match score |
 | 4 | UI режим «По портрету» | форма + select лидов (CRM загружается) |
@@ -54,6 +56,6 @@ cd backend && python scripts/smoke_leadgen_portrait.py
 | Пробел | Примечание |
 |--------|------------|
 | Долгий запрос ~30–90 с | UX; нет отдельного progress в UI |
-| ИНН `7736207543` в live → «ООО Яндекс» | кэш/маппинг Checko — сверять эталон в UI |
+| ~~ИНН 7736207543 = Яндекс в ЕГРУЛ, в тестах был ТехноСофт~~ | **исправлено:** `LEADGEN_INN_FIX.md` |
 | LLM review при недоступном Groq | ошибка в `errors[]`, кандидаты всё равно есть |
 | Кластер / холдинг | отдельный пункт MAP |

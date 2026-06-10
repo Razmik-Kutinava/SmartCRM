@@ -8,7 +8,9 @@ PRD_MAP: **«Лидогенерация `/leadgen`» — Анализ по ИН�
 cd backend && python scripts/smoke_leadgen_inn_analysis.py
 ```
 
-79+ pytest + live Checko по названию + live `run_pipeline(inn=7707083893)` + probe `/leadgen`.
+79+ pytest + live Checko по названию + live `run_pipeline(inn=5040048921)` (Хохланд) + probe `/leadgen`.
+
+Моки: `7707070010` ТехноСофт — только замоканный Checko (`inn_constants.py`).
 
 ---
 

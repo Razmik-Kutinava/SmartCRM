@@ -14,6 +14,7 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 _REPO_ROOT = BACKEND.parent
+sys.path.insert(0, str(BACKEND))
 OUT = BACKEND / "data" / "artifacts" / "leadgen" / "portrait_smoke.json"
 
 PYTEST = [
@@ -23,7 +24,7 @@ PYTEST = [
     "tests/api/test_leadgen_portrait_api.py",
 ]
 
-REFERENCE_INN = "7736207543"
+from tests.fixtures.leadgen.inn_constants import LIVE_INN_HOCHLAND as REFERENCE_INN
 
 
 def _load_env() -> None:
@@ -54,7 +55,7 @@ async def _live_portrait() -> dict:
                 limit=3,
                 reference_inn=REFERENCE_INN,
             ),
-            timeout=120.0,
+            timeout=180.0,
         )
         ref = out.get("reference_profile") or {}
         results = out.get("results") or []

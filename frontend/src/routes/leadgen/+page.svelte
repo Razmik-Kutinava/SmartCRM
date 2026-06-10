@@ -654,7 +654,7 @@ let portrait_deep      = $state(false);
 			<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
 				<div>
 					<div class="text-xs text-gray-500 mb-1 block">ИНН</div>
-					<input bind:value={direct_inn} placeholder="7736207543" data-testid="leadgen-direct-inn"
+					<input bind:value={direct_inn} placeholder="5040048921" data-testid="leadgen-direct-inn"
 						class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500" />
 				</div>
 				<div>
@@ -693,7 +693,7 @@ let portrait_deep      = $state(false);
 			<div class="mb-4 p-3 rounded-xl bg-indigo-950/40 border border-indigo-800/40">
 				<div class="text-xs text-indigo-400 mb-1 block font-semibold">⭐ ИНН эталонной компании — найдём похожих</div>
 				<div class="flex gap-2">
-					<input bind:value={portrait_inn} placeholder="7707083893 — введи ИНН клиента, похожих на которого хочешь найти"
+					<input bind:value={portrait_inn} placeholder="5040048921 — Хохланд Руссланд, похожих по отрасли"
 						data-testid="leadgen-portrait-inn"
 						class="flex-1 bg-gray-800 border border-indigo-700/50 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500" />
 				</div>
@@ -765,7 +765,7 @@ let portrait_deep      = $state(false);
 
 		{:else if mode === 'cluster'}
 			<div class="text-xs text-gray-500 mb-1 block">ИНН якорной компании</div>
-			<input bind:value={cluster_inn} placeholder="7736207543 — найдём весь холдинг и учредителей"
+			<input bind:value={cluster_inn} placeholder="5040048921 — найдём весь холдинг и учредителей"
 				class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500" />
 
 		{:else if mode === 'news'}
