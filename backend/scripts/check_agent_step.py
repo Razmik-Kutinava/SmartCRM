@@ -15,17 +15,9 @@ SESSION_STATE = OPS / "SESSION_STATE.md"
 HANDOFF = OPS / "HANDOFF.md"
 CHANGELOG = OPS / "CHANGELOG.md"
 
-DEFER_COMMIT_MARKERS = (
-    "коммит по запросу",
-    "коммит не делал",
-    "жду коммит",
-    "жду явного",
-    "напиши коммит",
-    "нужен ли коммит",
-    "коммить",
-)
-
-COMMIT_HASH_RE = re.compile(r"Коммит:\s*`([0-9a-f]{7,40})`", re.I)
+# Reuse SESSION_STATE validators (pre-commit + agent step)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from session_state_validate import validate_latest_entry  # noqa: E402
 
 
 def run_git(*args: str) -> str:
@@ -58,21 +50,6 @@ def latest_session_state_entry() -> str | None:
         if re.match(r"^\d{4}-\d{2}-\d{2}\s*\|", line.strip()):
             return line.strip()
     return None
-
-
-def session_state_has_run_tail(entry: str) -> bool:
-    required = ("Хвост A:", "Хвост B:", "Хвост C:")
-    return all(marker in entry for marker in required)
-
-
-def session_state_commit_hash(entry: str) -> str | None:
-    m = COMMIT_HASH_RE.search(entry)
-    return m.group(1) if m else None
-
-
-def session_state_has_defer_commit_wording(entry: str) -> list[str]:
-    lower = entry.lower()
-    return [m for m in DEFER_COMMIT_MARKERS if m in lower]
 
 
 def session_state_has_recent_entry(max_days: int = 2) -> bool:
@@ -118,25 +95,9 @@ def main() -> int:
     elif not session_state_has_recent_entry():
         errors.append("SESSION_STATE.md: нет свежей записи (≤2 дней).")
     else:
-        latest = latest_session_state_entry()
-        if latest:
-            if not session_state_has_run_tail(latest):
-                errors.append(
-                    "FAIL: последняя SESSION_STATE без Хвост A/B/C — smartcrm-commit-ops.mdc."
-                )
-            defer_hits = session_state_has_defer_commit_wording(latest)
-            if defer_hits:
-                errors.append(
-                    "FAIL: SESSION_STATE содержит отложенный коммит: "
-                    + ", ".join(defer_hits)
-                )
-            if "Коммит: —" in latest or "Коммит: pending" in latest.lower():
-                errors.append("FAIL: SESSION_STATE «Коммит: —» — нужен реальный хеш.")
-            if re.search(r"статус:\s*done", latest, re.I):
-                if not session_state_commit_hash(latest):
-                    errors.append(
-                        "FAIL: SESSION_STATE done без «Коммит: `hash`» — сначала commit."
-                    )
+        text = SESSION_STATE.read_text(encoding="utf-8")
+        for msg in validate_latest_entry(text):
+            errors.append(f"FAIL: SESSION_STATE — {msg}")
 
     for name, path in [("HANDOFF.md", HANDOFF), ("CHANGELOG.md", CHANGELOG)]:
         if file_modified_in_worktree(path):

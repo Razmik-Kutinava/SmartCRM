@@ -49,6 +49,17 @@ alwaysApply: true
 ```bash
 python backend/scripts/check_agent_step.py
 python backend/scripts/check_rules_commit_conflict.py
+python backend/scripts/session_state_validate.py
 ```
 
-Оба **OK**. Иначе — не отправлять финальный отчёт.
+Все **OK**. Иначе — не отправлять финальный отчёт.
+
+## Git pre-commit hook (блокирует мусор в SESSION_STATE)
+
+Один раз после clone:
+
+```powershell
+powershell -File scripts/install_git_hooks.ps1
+```
+
+Hook **не даст закоммитить** `SESSION_STATE` с `Коммит: —`, «коммит по запросу», `done` без хеша.

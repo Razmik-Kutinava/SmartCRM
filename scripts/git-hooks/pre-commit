@@ -1,0 +1,11 @@
+#!/bin/sh
+# SmartCRM — block SESSION_STATE with deferred-commit wording
+set -e
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+STAGED=$(git diff --cached --name-only -- docs/operations/SESSION_STATE.md)
+if [ -n "$STAGED" ]; then
+  python backend/scripts/session_state_validate.py --pre-commit || exit 1
+  python backend/scripts/check_rules_commit_conflict.py || exit 1
+fi
+exit 0
