@@ -1,6 +1,7 @@
 # CI baseline (GitHub Actions)
 
 **Workflow:** `.github/workflows/ci.yml`  
+**Коммит:** `0477431`  
 **Триггер:** `push` и `pull_request` на `main`.
 
 ## Jobs
