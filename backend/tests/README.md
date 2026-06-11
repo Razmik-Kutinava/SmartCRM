@@ -73,6 +73,9 @@ pytest tests/api/ -q
 | `smoke/test_whisper_stt_smoke.py` | HTTP transcribe + ops whisper settings + WS |
 | `smoke/test_voice_mic_ws_e2e.py` | WS audio bytes → STT → Hermes (mic E2E) |
 | `smoke/test_leadgen_voice_ws.py` | WS → generate_lead → /leadgen (Ф2 §8 slice) |
+| `lib/test_ops_route_manifest.py` | Зеркало навигации Ops + список API smoke |
+| `api/test_ops_baseline_api.py` | Ops Ф1: read API + prompt/CRM roundtrip |
+| `smoke/test_ops_baseline_smoke.py` | Смоук Ops manifest + sample API |
 | `smoke/test_tenders_baseline_smoke.py` | Тендеры Ф1: search/plans/usage mocked |
 | `test_tender_sources.py` | Юниты провайдеров и хелперов tenders |
 | `test_review_fixes.py` | Регрессии по code review |

@@ -43,6 +43,8 @@
 
 ## Записи
 
+`[2026-06-11] | PRD_MAP: «Ops /ops» п.10 версионирование промптов | Отложено: git-like версии override промптов | Причина: scope Ф2 | Сейчас: PUT/DELETE override в `backend/data/agent_prompt_*.txt` | Действие: Ф2 ops versioning`
+
 `[2026-06-11] | PRD_MAP: «Аналитика (базовая)» п.7 голос | Отложено: голосовые запросы к воронке/KPI | Причина: scope Ф2 (`PRD_MAP` п.188) | Сейчас: UI+API baseline на `/leads/analytics` | Действие: Voice Layer + intent «покажи воронку»`
 
 `[2026-06-08] | PRD_MAP: п.2 «Поля Битрикс + синк» | Отложено: туннель (ngrok/cloudflared) + исходящий вебхук в портале | Причина: dev на localhost — Битрикс не достучится; мгновенный синк не проверить без публичного URL | Нужна фаза MAP: 2 / DevOps | Сейчас работает: полный импорт (кнопка) + опрос BITRIX_AUTO_SYNC_MINUTES=5 | Действие: туннель :8000 → URL в Битриксе ONCRMLEADADD → /api/webhooks/bitrix/events?token=...; опционально :5173 для UI`

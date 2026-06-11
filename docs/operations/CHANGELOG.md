@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Ops: baseline Ф1 formalized
+
+**Сделано:** аудит `/ops` (реальные API, без UI-моков); `smoke_ops_baseline.py` 33 pytest; DevTools `/ops`, `/ops/agents`; `OPS_BASELINE_ACCEPTANCE.md`.
+
 ## 2026-06-11 — Тендеры: PDF extract live smoke + curl в acceptance
 
 **Сделано:** `smoke_tender_pdf_extract.py` (ключ из корневого `.env`); в `smoke_tenders_baseline`; PowerShell/curl гайд в `TENDERS_BASELINE_ACCEPTANCE.md`.

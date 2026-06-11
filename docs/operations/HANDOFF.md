@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Ф1/Ф2] | Задача:[аналитика baseline] | Статус:Аналитика Ф1 ✅ · голос по метрикам → Ф2`
+`Спринт:[Ф1/Ф2] | Задача:[Ops baseline] | Статус:Ops Ф1 ✅ · версионирование промптов → Ф2`
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
@@ -16,9 +16,11 @@
 
 **Тендеры Ф1:** Serper/Tavily, Мои/Архив БД, LLM analyze, Gosplan UI — `2acf0da`+.
 
-**Аналитика Ф1 ✅** — `ANALYTICS_BASELINE_ACCEPTANCE.md`, `/leads/analytics`, API export.
+**Аналитика Ф1 ✅** — `ANALYTICS_BASELINE_ACCEPTANCE.md`.
 
-**Следующий `go`:** Ops `/ops` перепроход **или** Ф2 §8 live leadgen **или** §1 Voice Layer.
+**Ops Ф1 ✅** — `OPS_BASELINE_ACCEPTANCE.md`, `smoke_ops_baseline.py` (33 pytest).
+
+**Следующий `go`:** Агенты (MAP) перепроход **или** Ф2 §8 live leadgen **или** §1 Voice Layer.
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 

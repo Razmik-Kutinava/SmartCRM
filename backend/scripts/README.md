@@ -39,6 +39,7 @@
 |--------|--------|
 | `smoke_leads_block.py` | Смоук блока «Лиды»: pytest-регрессия + опц. GET фронта |
 | `smoke_analytics_baseline.py` | Смоук Ф1 «Аналитика»: pytest метрик/API + опц. GET `/leads/analytics` |
+| `smoke_ops_baseline.py` | Смоук Ф1 «Ops»: pytest API ops + whisper + scenarios + опц. GET `/ops` |
 | `smoke_scoring_funnel.py` | Смоук балльной воронки: формула scoreAdvisory + приоритеты |
 | `smoke_whisper_stt.py` | Смоук Groq Whisper STT + опц. live Groq |
 | `smoke_hermes_leads.py` | Смоук Hermes интентов по лидам (CRUD, стадия, задача) |

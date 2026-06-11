@@ -206,6 +206,21 @@
 - [x] Редактирование промптов агентов
 - [ ] Версионирование промптов → **Фаза 2**
 
+| # | Пункт | Дата | Статус |
+|---|--------|------|--------|
+| 1 | Обзор + очередь | 2026-06-11 | ✅ **OK** — `/api/ops/overview`, `queue` |
+| 2 | Интенты (Hermes) | 2026-06-11 | ✅ **OK** — traces, improve, scenarios, eval |
+| 3 | Голос (Whisper) | 2026-06-11 | ✅ **OK** — `/api/ops/voice/whisper` |
+| 4 | Агенты + промпты | 2026-06-11 | ✅ **OK** — 5 агентов, PUT prompt |
+| 5 | Поиск (Ops) | 2026-06-11 | ✅ **OK** — `/api/search/config` |
+| 6 | Статистика + инсайты | 2026-06-11 | ✅ **OK** — `stats`, `insights` |
+| 7 | API лимиты | 2026-06-11 | ✅ **OK** — `/api/usage/stats` |
+| 8 | Логи | 2026-06-11 | ✅ **OK** — `/api/ops/logs` |
+| 9 | CRM-конфиг | 2026-06-11 | ✅ **OK** — `crm-settings` GET/PUT |
+| 10 | Версионирование промптов | — | 🔲 → **Фаза 2** |
+
+**Acceptance:** [`OPS_BASELINE_ACCEPTANCE.md`](../operations/OPS_BASELINE_ACCEPTANCE.md)
+
 ### Агенты (по отдельности)
 
 > **Ф1:** чат + RAG по PDF ✅. **Ф2:** quality gates ниже — закрытие через [`/ops/eval`](../operations/) и цифры, **не** галочка MAP без измерения.
