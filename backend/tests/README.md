@@ -10,7 +10,7 @@ pytest tests/test_leadgen.py -q
 pytest tests/api/ -q
 ```
 
-Конфиг: `pytest.ini`, `.coveragerc`, фикстуры: `conftest.py`. Baseline %: `docs/operations/COVERAGE_BASELINE.md`.
+Конфиг: `pytest.ini`, `.coveragerc`, фикстуры: `conftest.py`. Baseline %: `docs/operations/COVERAGE_BASELINE.md`. CI: `.github/workflows/ci.yml`, `docs/operations/CI_BASELINE.md`.
 
 ---
 

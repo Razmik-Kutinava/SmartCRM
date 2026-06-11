@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — CI: pytest + smoke на push/PR
+
+**Сделано:** `.github/workflows/ci.yml` — jobs `pytest (sqlite)` и `smoke (ops·leads·voice)`; `scripts/ci_smoke.py`; `CI_BASELINE.md`; branch protection — вручную в GitHub.
+
 ## 2026-06-11 — Coverage: pytest-cov baseline 51.4%
 
 **Сделано:** `requirements-dev.txt` (pytest-cov); `backend/.coveragerc`; команда `pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing`; baseline **51.4%** в `COVERAGE_BASELINE.md`; MAP ориентиры Ф2/Ф3; маркер `live_eval` (исключён из регрессии); фиксы: voice WS без `str(e)`, RAG stubs не ломают suite, brave backoff reset.

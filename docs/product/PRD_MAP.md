@@ -293,7 +293,7 @@
 > **Обязательно:** регрессия по зонам + smoke + acceptance ([`smartcrm-dev-gates.mdc`](../../.cursor/rules/smartcrm-dev-gates.mdc)).  
 > **Coverage %:** **не gate** закрытия фазы; ориентир **soft ~40% Ф2**, **~60% к концу Ф2**, **~75% к концу Ф3**.  
 > **Baseline:** **51.4%** (2026-06-11) — [`COVERAGE_BASELINE.md`](../operations/COVERAGE_BASELINE.md); команда `cd backend && pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing`.  
-> pytest-cov в CI — отдельный шаг.  
+> **CI:** [`CI_BASELINE.md`](../operations/CI_BASELINE.md) — pytest + smoke на каждый push/PR (`main`). pytest-cov fail-under в CI — отдельный шаг.  
 > **Агенты:** quality gates закрываются через `/ops/eval` с цифрами, не `[x]` в MAP без метрик.
 
 ### Открытые хвосты Фазы 1 → вернуться

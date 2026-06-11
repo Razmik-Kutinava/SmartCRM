@@ -37,6 +37,7 @@
 
 | Скрипт | За что |
 |--------|--------|
+| `ci_smoke.py` | CI smoke: ops + leads + voice (pytest, без live Groq) |
 | `smoke_leads_block.py` | Смоук блока «Лиды»: pytest-регрессия + опц. GET фронта |
 | `smoke_analytics_baseline.py` | Смоук Ф1 «Аналитика»: pytest метрик/API + опц. GET `/leads/analytics` |
 | `smoke_ops_baseline.py` | Смоук Ф1 «Ops»: pytest API ops + whisper + scenarios + опц. GET `/ops` |

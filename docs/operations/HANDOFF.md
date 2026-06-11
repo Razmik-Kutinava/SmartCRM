@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[Coverage baseline] | Статус:51.4% pytest-cov ✅ · CI gate — отдельно`
+`Спринт:[Ф1→Ф2] | Задача:[CI pytest+smoke] | Статус:ci.yml ✅ · branch protection — вручную в GitHub`
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
