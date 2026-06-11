@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Аналитика: baseline Ф1 formalized
+
+**Сделано:** KPI на `/leads/analytics` (воронка, конверсия, чек, цикл); API summary/export; убран mock `/analytics`; 10 pytest; DevTools + Puppeteer; `ANALYTICS_BASELINE_ACCEPTANCE.md`.
+
 ## 2026-06-11 — Тендеры: apiFetch + DevTools PDF UI OK
 
 **Сделано:** tenderApi на apiFetch (X-API-Key); DevTools: upload PDF → «✓ текст готов · 23 симв.»; .env.example SMARTCRM_API_KEY.

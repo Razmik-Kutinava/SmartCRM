@@ -43,6 +43,8 @@
 
 ## Записи
 
+`[2026-06-11] | PRD_MAP: «Аналитика (базовая)» п.7 голос | Отложено: голосовые запросы к воронке/KPI | Причина: scope Ф2 (`PRD_MAP` п.188) | Сейчас: UI+API baseline на `/leads/analytics` | Действие: Voice Layer + intent «покажи воронку»`
+
 `[2026-06-08] | PRD_MAP: п.2 «Поля Битрикс + синк» | Отложено: туннель (ngrok/cloudflared) + исходящий вебхук в портале | Причина: dev на localhost — Битрикс не достучится; мгновенный синк не проверить без публичного URL | Нужна фаза MAP: 2 / DevOps | Сейчас работает: полный импорт (кнопка) + опрос BITRIX_AUTO_SYNC_MINUTES=5 | Действие: туннель :8000 → URL в Битриксе ONCRMLEADADD → /api/webhooks/bitrix/events?token=...; опционально :5173 для UI`
 
 `[2026-06-08] | PRD_MAP: «Голос → лиды» п.2 Hermes — ЗАКРЫТО ✅ | Scope: CRUD, стадия, задача (`create_lead`, `update_lead`, `delete_lead`, `list_leads`, `create_task`) | Сделано: `slot_normalize`, rescue/fastpath, `smoke_hermes_leads.py` 40 passed, `HERMES_LEADS_ACCEPTANCE.md` | Коммит: `be70615` | Хвост п.2 (не блокер): 3 LLM eval Groq — см. таблицу ниже 🟢`

@@ -48,6 +48,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 
 | Файл | За что |
 |------|--------|
+| `analytics_metrics.py` | KPI воронки: конверсия, средний чек, цикл, CSV-экспорт |
 | `llm.py` | Общий чат с LLM (Groq/Ollama), json_mode |
 | `auth.py` | API-ключ, `require_api_key` |
 | `crypto.py` | Шифрование секретов (почта и т.п.) |

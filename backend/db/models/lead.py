@@ -113,6 +113,8 @@ class Lead(Base):
             "nextCall": self.next_call,
             "description": self.description,
             "created": self.created_at.strftime("%d.%m.%Y") if self.created_at else "—",
+            "createdAt": self.created_at.isoformat() if self.created_at else None,
+            "updatedAt": self.updated_at.isoformat() if self.updated_at else None,
             # Новые поля
             "bitrixLeadId": self.bitrix_lead_id,
             "inn": self.inn or "",
