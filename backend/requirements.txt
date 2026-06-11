@@ -13,6 +13,7 @@ ollama
 chromadb
 playwright
 python-dotenv
+cryptography
 httpx
 pydantic
 email-validator

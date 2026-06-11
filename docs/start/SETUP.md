@@ -48,8 +48,16 @@ docker-compose up -d postgres redis nginx
 
 # Запустить бэкенд
 cd backend
-pip install -r requirements.txt
+python -m venv .venv
+# Windows: .\.venv\Scripts\Activate.ps1  |  Linux: source .venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
 uvicorn main:app --reload --port 8000
+```
+
+Тесты (из `backend/`, venv активен): `python -m pytest -q` · smoke: `python scripts/ci_smoke.py`
+
+```bash
+# продолжение — фронт
 
 # Запустить фронтенд
 cd frontend

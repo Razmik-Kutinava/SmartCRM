@@ -7,8 +7,9 @@
 
 ```bash
 cd backend
-pip install -r requirements-dev.txt
-pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing
+python -m venv .venv && .\.venv\Scripts\Activate.ps1   # Linux: source .venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
+python -m pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing
 ```
 
 Источники: `api`, `core`, `agents`, `db`, `services`, `email_sync`, `leadgen`, `rag`, `integrations`, `voice`.  
@@ -26,8 +27,9 @@ pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing
 
 ## Примечания
 
-- Регрессия по умолчанию: `pytest` (без `live_eval`; см. `pytest.ini`).
-- Live LLM eval: `pytest -m live_eval tests/core/test_hermes_eval.py`.
+- Регрессия по умолчанию: `python -m pytest` (без `live_eval`; см. `pytest.ini`).
+- Live LLM eval: `python -m pytest -m live_eval tests/core/test_hermes_eval.py`.
+- `cryptography` обязателен (`core/crypto.py`) — в `requirements.txt`.
 - CI с `--cov` и fail-under — отдельный шаг (PRD_MAP).
 
 ## История

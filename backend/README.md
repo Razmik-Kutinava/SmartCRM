@@ -6,9 +6,14 @@ Python-сервер на FastAPI. Всё, что делает API, AI, лиды,
 
 ```bash
 cd backend
-pip install -r requirements.txt
+python -m venv .venv
+# Windows: .\.venv\Scripts\Activate.ps1
+# Linux/macOS: source .venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
 uvicorn main:app --reload --port 8000
 ```
+
+Тесты: `python -m pytest -q` (не голый `pytest` — на Windows может не быть в PATH).
 
 Переменные окружения — в корне репо: `.env.example` → `.env`.
 

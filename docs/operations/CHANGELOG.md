@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — fix: cryptography в requirements + venv/docs
+
+**Сделано:** `cryptography` в `requirements.txt` (venv падал на `core/crypto`); доки/CI — `python -m pytest`, venv в SETUP/README/COVERAGE/CI_BASELINE.
+
 ## 2026-06-11 — CI: pytest + smoke на push/PR
 
 **Сделано:** `.github/workflows/ci.yml` — jobs `pytest (sqlite)` и `smoke (ops·leads·voice)`; `scripts/ci_smoke.py`; `CI_BASELINE.md`; branch protection — вручную в GitHub.

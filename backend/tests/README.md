@@ -2,12 +2,12 @@
 
 ```bash
 cd backend
-pip install -r requirements-dev.txt
-pytest                    # регрессия (без live_eval)
-pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing   # coverage baseline
-pytest -m live_eval tests/core/test_hermes_eval.py   # live LLM eval
-pytest tests/test_leadgen.py -q
-pytest tests/api/ -q
+python -m venv .venv && .\.venv\Scripts\Activate.ps1   # или source .venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
+python -m pytest -q                    # регрессия (без live_eval)
+python -m pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing   # coverage
+python -m pytest -m live_eval tests/core/test_hermes_eval.py   # live LLM eval
+python scripts/ci_smoke.py             # smoke ops/leads/voice
 ```
 
 Конфиг: `pytest.ini`, `.coveragerc`, фикстуры: `conftest.py`. Baseline %: `docs/operations/COVERAGE_BASELINE.md`. CI: `.github/workflows/ci.yml`, `docs/operations/CI_BASELINE.md`.

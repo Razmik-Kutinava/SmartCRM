@@ -17,8 +17,9 @@ Live Groq, IMAP (`EMAIL_SYNC_LIVE`), Bitrix webhook, frontend DevTools — **н�
 
 ```bash
 cd backend
+python -m venv .venv && .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt -r requirements-dev.txt
-pytest -q --tb=short
+python -m pytest -q --tb=short
 python scripts/ci_smoke.py
 ```
 
