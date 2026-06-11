@@ -1,6 +1,7 @@
 # SmartCRM — карта PRD
 
-> Навигатор и **рабочие чеклисты по фазам**. Детали — [`PRD.md`](PRD.md), черновики — [`PRD_NOTES.md`](PRD_NOTES.md).
+> Навигатор и **рабочие чеклисты по фазам**. Детали — [`PRD.md`](PRD.md), черновики — [`PRD_NOTES.md`](PRD_NOTES.md).  
+> **MAP-doc:** выровнен 2026-06-10 — таблицы = истина; хвосты → [`BACKLOG.md`](../operations/BACKLOG.md).
 >
 > **Легенда статусов**
 >
@@ -73,7 +74,7 @@
 
 ### Лиды `/leads`
 
-> **Перепроход Фазы 1 (2026-06-08):** идём сверху вниз; после пункта — смоук, pytest, DevTools, запись здесь → следующий пункт.
+> **Перепроход Фазы 1 (2026-06-08):** чеклист = таблица ниже. После пункта — смоук, pytest, DevTools → следующий пункт.
 
 | # | Пункт | Перепроход | Итог |
 |---|--------|------------|------|
@@ -92,7 +93,7 @@
 
 ### Балльная воронка (P1+P2+P3 код)
 
-> **Перепроход (2026-06-08):** смоук формулы + приоритеты; `smoke_scoring_funnel.py` 21 pytest.
+> **Перепроход (2026-06-08):** чеклист = таблица ниже. **Статус блока:** ✅ (п.6 → Ф3).
 
 | # | Пункт | Перепроход | Итог |
 |---|--------|------------|------|
@@ -119,20 +120,18 @@
 
 ### Поиск и RAG (базово)
 
-> **Перепроход п.1 (2026-06-08):** Serper + Brave + Tavily — `smoke_search_providers.py`, 11 pytest, DevTools `/search`.  
-> **Перепроход п.2 (2026-06-08):** 6 режимов — `smoke_search_modes.py`, 19 pytest, DevTools 6 табов.  
-> **Перепроход п.3 (2026-06-08):** Chroma RAG — `smoke_rag_chroma.py`, 11 pytest, 1592 чанка по агентам.  
-> **Перепроход п.4 (2026-06-08):** upload PDF/txt — `smoke_rag_upload.py`, 8 pytest, DevTools `/rag`.  
-> **Перепроход п.5 (2026-06-08):** save из поиска — `smoke_rag_save_from_search.py`, 6 pytest, DevTools `/search` таб RAG.
+> **Перепроход (2026-06-08–09):** чеклист = таблица ниже. **Статус блока:** ✅ база Ф1 закрыта (авто-чанки → Ф2).
 
-- [x] Serper + Brave + Tavily — перепроход **2026-06-08 ✅** (`SEARCH_PROVIDERS_ACCEPTANCE.md`)
-- [x] 6 режимов поиска — перепроход **2026-06-08 ✅** (`SEARCH_MODES_ACCEPTANCE.md`)
-- [x] Chroma RAG (~1592 чанка), разделение по агентам — перепроход **2026-06-08 ✅** (`SEARCH_CHROMA_ACCEPTANCE.md`)
-- [x] Загрузка PDF/текста в `/rag` — перепроход **2026-06-08 ✅** (`SEARCH_RAG_UPLOAD_ACCEPTANCE.md`)
-- [x] Кнопка «сохранить в базу» (базово) — перепроход **2026-06-08 ✅** (`SEARCH_RAG_SAVE_ACCEPTANCE.md`)
-- [ ] Авто-чанки из поиска / диалога → **Фаза 2** ([`RAG.md`](../stack/RAG.md#search-to-qa-фаза-2))
-- [x] Смоук обогащения лида из поиска — перепроход **2026-06-09 ✅** (`SEARCH_ENRICH_LEAD_ACCEPTANCE.md`)
-- [x] Обогащение: Brave cache, Checko/ИНН, LinkedIn/ЛПР, парсинг сайта, CRM → карточка — **2026-06-09 ✅** (`SEARCH_ENRICH_LEAD_ACCEPTANCE.md` §2)
+| # | Пункт | Перепроход | Статус | Итог |
+|---|--------|------------|--------|------|
+| 1 | Serper + Brave + Tavily | 2026-06-08 | ✅ | `smoke_search_providers.py` 11 pytest; DevTools `/search`; `SEARCH_PROVIDERS_ACCEPTANCE.md` |
+| 2 | 6 режимов поиска | 2026-06-08 | ✅ | `smoke_search_modes.py` 19 pytest; DevTools 6 табов; `SEARCH_MODES_ACCEPTANCE.md` |
+| 3 | Chroma RAG (~1592 чанка), по агентам | 2026-06-08 | ✅ | `smoke_rag_chroma.py` 11 pytest; `SEARCH_CHROMA_ACCEPTANCE.md` |
+| 4 | Загрузка PDF/текста в `/rag` | 2026-06-08 | ✅ | `smoke_rag_upload.py` 8 pytest; DevTools `/rag`; `SEARCH_RAG_UPLOAD_ACCEPTANCE.md` |
+| 5 | «Сохранить в базу» из поиска | 2026-06-08 | ✅ | `smoke_rag_save_from_search.py` 6 pytest; `SEARCH_RAG_SAVE_ACCEPTANCE.md` |
+| 6 | Авто-чанки из поиска / диалога | — | 🔲 | → **Фаза 2** [`RAG.md`](../stack/RAG.md#search-to-qa-фаза-2) |
+| 7 | Смоук enrich-lead | 2026-06-09 | ✅ | `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` |
+| 8 | Обогащение → карточка лида (Checko, Brave, CRM) | 2026-06-09 | ✅ | `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` §2 |
 
 ### Лидогенерация `/leadgen`
 
