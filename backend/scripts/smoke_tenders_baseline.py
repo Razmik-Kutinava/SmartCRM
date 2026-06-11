@@ -54,6 +54,11 @@ def main() -> int:
     except OSError as e:
         print(f"usage stats skip: {e} (live API не блокер pytest)")
 
+    pdf_script = BACKEND / "scripts" / "smoke_tender_pdf_extract.py"
+    pdf_env = {**os.environ, "TENDERS_SMOKE_API_URL": api}
+    if subprocess.run([sys.executable, str(pdf_script)], cwd=BACKEND, env=pdf_env).returncode != 0:
+        return 1
+
     print("smoke_tenders_baseline: passed")
     return 0
 

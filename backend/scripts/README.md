@@ -25,6 +25,7 @@
 | `tender_sources_benchmark.py` | Бенчмарк источников |
 | `tender_sources_tests.py` | Тесты источников (CLI) |
 | `moy_zakupki_smoke.py` | Смоук «Мои закупки» |
+| `smoke_tender_pdf_extract.py` | Live POST `/api/tenders/documents/extract` (ключ из корневого `.env`) |
 
 ## Данные
 

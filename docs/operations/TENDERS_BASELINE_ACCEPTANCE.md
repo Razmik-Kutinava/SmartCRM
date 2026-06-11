@@ -21,6 +21,33 @@ cd backend && python scripts/smoke_tenders_baseline.py
 | 7 | Агенты | `POST /api/tenders/analyze` (LLM), сохранение анализа в БД |
 | 8 | PDF/DOCX → текст | `POST /api/tenders/documents/extract` · UI → `document_text` в analyze |
 
+## PDF extract — ручная проверка (live API)
+
+**Ключ:** `SMARTCRM_API_KEY` в **корневом** `SmartCRM/.env` (не `backend/.env`).  
+**Фикстура:** `backend/tests/fixtures/tenders/sample_tz.pdf` — путь относительно **корня репо**.
+
+### Автомат (рекомендуется)
+
+```bash
+cd backend && python scripts/smoke_tender_pdf_extract.py
+```
+
+Входит в `smoke_tenders_baseline.py` после pytest, если API на `:8000` и ключ задан.
+
+### PowerShell (из корня репо)
+
+```powershell
+cd C:\Tools\workarea\SmartCRM
+$key = ((Get-Content .env | Select-String '^SMARTCRM_API_KEY=').Line -split '=',2)[1].Trim()
+curl.exe -X POST "http://127.0.0.1:8000/api/tenders/documents/extract" `
+  -H "X-API-Key: $key" `
+  -F "file=@backend/tests/fixtures/tenders/sample_tz.pdf"
+```
+
+Ожидание: `{"ok":true,"text":"SMARTCRM_TZ_MARKER_44FZ","chars":23,...}`
+
+**Частые ошибки:** `Unauthorized` — пустой `$key` (читали `.env` из `backend\`); `curl: (26)` — неверный путь к PDF (из `backend\` нужно `@tests/fixtures/...`, не `@backend/tests/...`). В PowerShell **не** использовать `^` для переноса (это cmd) — обратная кавычка `` ` `` или одна строка.
+
 ## Live (нужны ключи)
 
 - `TENDERGURU_API_KEY`, `GROQ_API_KEY` — поиск и анализ
