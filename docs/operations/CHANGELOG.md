@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Email: кнопка Sync + POST /api/email/sync
+
+**Сделано:** отдельная синхронизация без пароля; IMAP SINCE `last_synced_at−1д`; UI «🔄 Синхронизировать»; `smoke_email_sync.py`; 7 pytest; DevTools OK.
+
 ## 2026-06-11 — Email: live connect ib@agneko.com (Яндекс IMAP)
 
 **Сделано:** `emailStorage.js` → `apiFetch`; лимит `EMAIL_IMAP_FETCH_LIMIT`; `smoke_email_connect.py`; mock pytest; DevTools `/email` 504 треда; `EMAIL_CONNECT_ACCEPTANCE.md`. **Хвост:** `me@agneko.am` на `mail.agneko.am` — отдельный пароль.

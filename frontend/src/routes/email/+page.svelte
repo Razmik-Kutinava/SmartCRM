@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import {
-        fetchEmailAccounts, connectEmailAccount, fetchEmailThreads,
+        fetchEmailAccounts, connectEmailAccount, syncAllEmailAccounts, fetchEmailThreads,
         fetchEmailCampaigns, createCampaign, bindEmailToLead
     } from '$lib/emailStorage.js';
     import { fetchLeads } from '$lib/leadsStorage.js';
@@ -43,6 +43,7 @@
     let smtp_port   = $state(465);
     let use_ssl     = $state(true);
     let connectLoading = $state(false);
+    let syncLoading    = $state(false);
 
     // ─── кампании ────────────────────────────────────────────────
     let selectedAccountId = $state(null);
@@ -195,6 +196,23 @@
         finally { replyLoading = false; }
     }
 
+    // ─── синхронизация ───────────────────────────────────────────
+    async function syncMail() {
+        if (!accounts.length) { error = '❌ Сначала подключите почту'; return; }
+        error = ''; success = '';
+        syncLoading = true;
+        try {
+            const result = await syncAllEmailAccounts();
+            accounts = await fetchEmailAccounts();
+            threads  = await fetchEmailThreads();
+            const n = result.imported ?? 0;
+            success = n > 0
+                ? `✅ Синхронизировано: +${n} новых писем`
+                : '✅ Актуально — новых писем нет';
+        } catch (e) { error = `❌ ${e.message}`; }
+        finally { syncLoading = false; }
+    }
+
     // ─── подключение ─────────────────────────────────────────────
     async function connect() {
         error = ''; success = '';
@@ -259,6 +277,11 @@
                 onclick={() => openCompose()}
             >✏ Написать письмо</button>
             <button
+                class="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-800 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors disabled:opacity-50"
+                onclick={syncMail}
+                disabled={syncLoading || !accounts.length}
+            >{syncLoading ? '⏳ Синхронизация...' : '🔄 Синхронизировать'}</button>
+            <button
                 class="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-800 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
                 onclick={() => showSettings = !showSettings}
             >⚙ Подключить почту</button>
@@ -304,7 +327,7 @@
                 <div class="text-xs text-gray-400 font-medium truncate">{accounts[0].username}</div>
                 <div class="text-xs text-gray-600 mt-0.5">
                     {accounts[0].lastSyncedAt
-                        ? new Date(accounts[0].lastSyncedAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+                        ? `обновлено ${new Date(accounts[0].lastSyncedAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}`
                         : 'Не синхронизировано'}
                 </div>
             </div>

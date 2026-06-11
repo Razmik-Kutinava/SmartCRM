@@ -156,6 +156,43 @@ async def connect_email_account(body: EmailAccountCreate, db: AsyncSession = Dep
     return {"account": account.to_dict(), "sync": sync_result}
 
 
+@router.post("/accounts/{account_id}/sync")
+async def sync_email_account(account_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(EmailAccount).where(EmailAccount.id == account_id))
+    account = result.scalars().first()
+    if not account:
+        raise HTTPException(status_code=404, detail="Аккаунт не найден")
+    try:
+        sync_result = await sync_account_messages(account, db)
+    except Exception as e:
+        await db.rollback()
+        logger.warning("Email sync failed for account %s: %s", account_id, e)
+        raise HTTPException(status_code=400, detail="Ошибка синхронизации почты.")
+    return {"account": account.to_dict(), "sync": sync_result}
+
+
+@router.post("/sync")
+async def sync_all_email_accounts(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(EmailAccount).order_by(EmailAccount.id))
+    accounts = result.scalars().all()
+    if not accounts:
+        raise HTTPException(status_code=404, detail="Нет подключённых аккаунтов")
+    imported = 0
+    total = 0
+    rows: list[dict] = []
+    for account in accounts:
+        try:
+            sync_result = await sync_account_messages(account, db)
+            imported += sync_result.get("imported", 0)
+            total += sync_result.get("total", 0)
+            rows.append({"id": account.id, "username": account.username, **sync_result})
+        except Exception as e:
+            await db.rollback()
+            logger.warning("Email sync failed for %s: %s", account.username, e)
+            rows.append({"id": account.id, "username": account.username, "error": "sync_failed"})
+    return {"imported": imported, "total": total, "accounts": rows}
+
+
 @router.get("/threads")
 async def list_email_threads(account_id: Optional[int] = None, lead_id: Optional[int] = None, db: AsyncSession = Depends(get_db)):
     q = select(EmailThread).order_by(EmailThread.last_message_at.desc().nulls_last())

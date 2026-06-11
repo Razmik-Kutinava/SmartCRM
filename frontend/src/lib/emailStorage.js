@@ -23,6 +23,14 @@ export async function connectEmailAccount(body) {
 	});
 }
 
+export async function syncEmailAccount(accountId) {
+	return emailJson(`/accounts/${accountId}/sync`, { method: 'POST' });
+}
+
+export async function syncAllEmailAccounts() {
+	return emailJson('/sync', { method: 'POST' });
+}
+
 export async function fetchLeadEmails(leadId) {
 	const r = await apiFetch(`/api/leads/${leadId}/email`);
 	if (!r.ok) throw new Error('Ошибка загрузки писем лида');

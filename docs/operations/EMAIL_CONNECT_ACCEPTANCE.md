@@ -20,10 +20,21 @@ EMAIL_ACCOUNT_1_IMAP_HOST=mail.agneko.am
 
 ```bash
 cd backend
-python scripts/smoke_email_connect.py              # оба аккаунта из .env
+python scripts/smoke_email_connect.py              # connect из .env
 EMAIL_CONNECT_ONLY=2 python scripts/smoke_email_connect.py   # только ib
-pytest tests/email_sync/test_fetch_imap_mock.py -q
+python scripts/smoke_email_sync.py                 # POST /api/email/sync (без пароля)
+pytest tests/api/test_email_sync_api.py tests/email_sync/test_fetch_imap_mock.py -q
 ```
+
+## Синхронизация (UI + API)
+
+| Способ | Когда |
+|--------|--------|
+| **🔄 Синхронизировать** на `/email` | Обновить письма без повторного пароля |
+| `POST /api/email/sync` | Все аккаунты |
+| `POST /api/email/accounts/{id}/sync` | Один аккаунт |
+
+IMAP: письма **с `last_synced_at − 1 день`** (SINCE), лимит `EMAIL_IMAP_FETCH_LIMIT` (default 200). Автофона нет.
 
 ## Закрыто
 
@@ -33,6 +44,8 @@ pytest tests/email_sync/test_fetch_imap_mock.py -q
 | 2 | `ib@agneko.com` + `imap.yandex.com` | ✅ API + UI 504 тредов |
 | 3 | DevTools `/email` — входящие, письма | ✅ |
 | 4 | Unit IMAP mock | ✅ `test_fetch_imap_mock.py` |
+| 5 | Кнопка Sync + `POST /sync` | ✅ DevTools «Актуально» |
+| 6 | Live `smoke_email_sync.py` | ✅ ib@, SINCE 2026-06-10 |
 
 ## Хвост
 

@@ -81,7 +81,8 @@ pytest tests/api/ -q
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |
 | `test_search.py` | Поиск |
-| `email_sync/test_fetch_imap_mock.py` | IMAP fetch с моком (CI) |
+| `api/test_email_sync_api.py` | POST `/api/email/sync`, `/accounts/{id}/sync` |
+| `email_sync/test_fetch_imap_mock.py` | IMAP fetch + SINCE с моком (CI) |
 | `test_email_sync.py` | Live IMAP только при `EMAIL_SYNC_LIVE=1` |
 | `test_bitrix_integration.py` | Битрикс live (REST вебхук) |
 | `integrations/test_bitrix_row_map.py` | Маппинг полей Битрикс → Lead |

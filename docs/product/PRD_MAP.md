@@ -251,7 +251,7 @@
 | 2 | Docker локально, `.env` | ✅ |
 | 3 | `pool_pre_ping`, `pool_recycle`, `init_db` | ✅ |
 | 4 | P6/CRM/лиды в git | ✅ |
-| 5 | `test_email_sync` / connect | 🟡 mock ✅ · live `ib@agneko.com` ✅ · `me@agneko.am` — свой пароль |
+| 5 | `test_email_sync` / connect | 🟡 ib ✅ + кнопка Sync · `me@agneko.am` — свой пароль |
 
 **Acceptance:** [`EMAIL_CONNECT_ACCEPTANCE.md`](../operations/EMAIL_CONNECT_ACCEPTANCE.md)
 

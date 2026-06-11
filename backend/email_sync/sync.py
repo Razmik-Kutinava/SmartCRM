@@ -1,12 +1,12 @@
 import os
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from email.utils import getaddresses, parsedate_to_datetime
 from typing import Any
 from core.crypto import decrypt
 
 from bs4 import BeautifulSoup
-from imap_tools import MailBox
+from imap_tools import AND, MailBox
 from starlette.concurrency import run_in_threadpool
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -57,14 +57,28 @@ def classify_email(text: str) -> str:
     return 'general'
 
 
+def _imap_since_date(account: EmailAccount) -> date | None:
+    """Письма с этой даты (IMAP SINCE). None — первая полная выборка по лимиту."""
+    last = getattr(account, "last_synced_at", None)
+    if not last:
+        return None
+    if last.tzinfo is None:
+        last = last.replace(tzinfo=timezone.utc)
+    return (last - timedelta(days=1)).date()
+
+
 def _fetch_imap_messages(account: EmailAccount) -> list[dict[str, Any]]:
     messages = []
     from imap_tools import MailBox, MailBoxUnencrypted
     mailbox_cls = MailBox if account.use_ssl else MailBoxUnencrypted
     with mailbox_cls(host=account.imap_server, port=account.imap_port) as mailbox:
         mailbox.login(account.username, decrypt(account.password))
-        fetch_limit = int(os.getenv("EMAIL_IMAP_FETCH_LIMIT", "100"))
-        for msg in mailbox.fetch(limit=max(1, fetch_limit), reverse=True):
+        fetch_limit = int(os.getenv("EMAIL_IMAP_FETCH_LIMIT", "200"))
+        since = _imap_since_date(account)
+        fetch_kw: dict[str, Any] = {"limit": max(1, fetch_limit), "reverse": True}
+        if since:
+            fetch_kw["criteria"] = AND(date_gte=since)
+        for msg in mailbox.fetch(**fetch_kw):
             subject = msg.subject or ''
             body = to_text(msg.text or '', msg.html or '')
             sent_at = None
@@ -137,9 +151,14 @@ async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict
         thread.last_message_at = email.sent_at or datetime.now(timezone.utc)
         thread.category = email.category
 
+    since = _imap_since_date(account)
     account.last_synced_at = datetime.now(timezone.utc)
     await db.commit()
-    return {'imported': imported, 'total': len(raw_messages)}
+    return {
+        'imported': imported,
+        'total': len(raw_messages),
+        'since': since.isoformat() if since else None,
+    }
 
 
 async def _find_lead_for_email(db: AsyncSession, sender: str, recipients: str, cc: str) -> Lead | None:

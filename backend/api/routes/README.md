@@ -69,7 +69,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `webhooks_bitrix.py` | `/api/webhooks/bitrix` | Исходящие события Битрикс24 (ONCRMLEADADD) |
 | `leads/` | `/api/leads` | См. пакет выше |
 | `tasks.py` | `/api/tasks` | Задачи по лидам, SLA, фильтр `lead_id` |
-| `email.py` | `/api/email` | Настройки IMAP/SMTP, синхронизация |
+| `email.py` | `/api/email` | IMAP/SMTP, connect, `POST /sync`, `POST /accounts/{id}/sync` |
 | `agent_email.py` | `/api/agent-email` | AI-черновики писем по лиду |
 | `search.py` | `/api/search` | Поиск компаний (RAG + веб) |
 | `rag.py` | `/api/rag` | Загрузка документов, поиск в Chroma |
