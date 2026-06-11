@@ -1,3 +1,4 @@
+import os
 import re
 from datetime import datetime, timezone
 from email.utils import getaddresses, parsedate_to_datetime
@@ -62,7 +63,8 @@ def _fetch_imap_messages(account: EmailAccount) -> list[dict[str, Any]]:
     mailbox_cls = MailBox if account.use_ssl else MailBoxUnencrypted
     with mailbox_cls(host=account.imap_server, port=account.imap_port) as mailbox:
         mailbox.login(account.username, decrypt(account.password))
-        for msg in mailbox.fetch(limit=1000, reverse=True):
+        fetch_limit = int(os.getenv("EMAIL_IMAP_FETCH_LIMIT", "100"))
+        for msg in mailbox.fetch(limit=max(1, fetch_limit), reverse=True):
             subject = msg.subject or ''
             body = to_text(msg.text or '', msg.html or '')
             sent_at = None

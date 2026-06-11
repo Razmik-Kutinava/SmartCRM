@@ -1,26 +1,35 @@
-import sys
+"""Legacy live IMAP — только с EMAIL_SYNC_LIVE=1 и реальными кредами в .env."""
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../backend')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-
-import pytest
-from backend.email_sync.sync import _fetch_imap_messages
 from types import SimpleNamespace
 
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    os.getenv("EMAIL_SYNC_LIVE", "").strip().lower() not in ("1", "true", "yes"),
+    reason="live IMAP: задайте EMAIL_SYNC_LIVE=1 и EMAIL_APP_PASSWORD",
+)
+
+
 @pytest.mark.asyncio
-async def test_fetch_imap_messages_yandex():
-    # Используй реальные тестовые данные или мок
+async def test_fetch_imap_messages_live():
+    from email_sync.sync import _fetch_imap_messages
+
+    user = os.getenv("EMAIL_ACCOUNT_2_USER") or os.getenv("EMAIL_LIVE_USER", "")
+    pwd = os.getenv("EMAIL_APP_PASSWORD") or os.getenv("EMAIL_PASSWORD", "")
+    host = os.getenv("EMAIL_IMAP_HOST", "imap.yandex.com")
+    if not user or not pwd:
+        pytest.skip("нет EMAIL_ACCOUNT_2_USER / EMAIL_APP_PASSWORD")
+
     account = SimpleNamespace(
-        imap_server='imap.yandex.com',
-        imap_port=993,
         use_ssl=True,
-        username='test@yandex.com',
-        password='app-password',
+        imap_server=host,
+        imap_port=993,
+        username=user,
+        password=pwd,
     )
-    try:
+    # password в sync расшифровывается — для live подставим plain через patch decrypt
+    from unittest.mock import patch
+
+    with patch("email_sync.sync.decrypt", side_effect=lambda x: x):
         messages = _fetch_imap_messages(account)
-        assert isinstance(messages, list)
-        print(f"Fetched {len(messages)} messages from Yandex")
-    except Exception as e:
-        print(f"IMAP fetch failed: {e}")
-        assert False, f"IMAP fetch failed: {e}"
+    assert isinstance(messages, list)

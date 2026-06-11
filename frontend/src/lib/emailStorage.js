@@ -1,135 +1,87 @@
-import { browser } from '$app/environment';
+import { apiFetch } from './api.js';
 
-function apiBase() {
-    if (!browser) return 'http://127.0.0.1:8000';
-    const pub = import.meta.env.PUBLIC_API_URL;
-    if (pub) return String(pub).replace(/\/$/, '');
-    return '';
+const EMAIL_API = '/api/email';
+
+async function emailJson(path, options = {}) {
+	const r = await apiFetch(`${EMAIL_API}${path}`, options);
+	if (!r.ok) {
+		const text = await r.text().catch(() => '');
+		throw new Error(`${r.status} ${text}`);
+	}
+	return r.json();
 }
 
-const EMAIL_API = () => `${apiBase()}/api/email`;
-
 export async function fetchEmailAccounts() {
-    const r = await fetch(`${EMAIL_API()}/accounts`);
-    if (!r.ok) throw new Error('Ошибка при загрузке почтовых аккаунтов');
-    return r.json();
+	return emailJson('/accounts');
 }
 
 export async function connectEmailAccount(body) {
-    const r = await fetch(`${EMAIL_API()}/accounts/connect`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    if (!r.ok) {
-        const text = await r.text().catch(() => '');
-        throw new Error(`Ошибка подключения: ${r.status} ${text}`);
-    }
-    return r.json();
+	return emailJson('/accounts/connect', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
 }
 
 export async function fetchLeadEmails(leadId) {
-    const r = await fetch(`${apiBase()}/api/leads/${leadId}/email`);
-    if (!r.ok) throw new Error('Ошибка загрузки писем лида');
-    return r.json();
+	const r = await apiFetch(`/api/leads/${leadId}/email`);
+	if (!r.ok) throw new Error('Ошибка загрузки писем лида');
+	return r.json();
 }
 
 export async function sendEmail(body) {
-    const r = await fetch(`${EMAIL_API()}/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    if (!r.ok) {
-        const text = await r.text().catch(() => '');
-        throw new Error(`Ошибка отправки: ${r.status} ${text}`);
-    }
-    return r.json();
+	return emailJson('/send', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
 }
 
 export async function sendLeadEmail(body) {
-    const r = await fetch(`${EMAIL_API()}/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    if (!r.ok) {
-        const text = await r.text().catch(() => '');
-        throw new Error(`Ошибка отправки письма: ${r.status} ${text}`);
-    }
-    return r.json();
+	return sendEmail(body);
 }
 
 export async function replyToEmail(body) {
-    const r = await fetch(`${EMAIL_API()}/reply`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    if (!r.ok) {
-        const text = await r.text().catch(() => '');
-        throw new Error(`Ошибка ответа: ${r.status} ${text}`);
-    }
-    return r.json();
+	return emailJson('/reply', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
 }
 
 export async function createCampaign(body) {
-    const r = await fetch(`${EMAIL_API()}/campaigns`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    if (!r.ok) {
-        const text = await r.text().catch(() => '');
-        throw new Error(`Ошибка кампании: ${r.status} ${text}`);
-    }
-    return r.json();
+	return emailJson('/campaigns', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
 }
 
 export async function fetchEmailCampaigns() {
-    const r = await fetch(`${EMAIL_API()}/campaigns`);
-    if (!r.ok) {
-        const text = await r.text().catch(() => '');
-        throw new Error(`Ошибка загрузки кампаний: ${r.status} ${text}`);
-    }
-    return r.json();
+	return emailJson('/campaigns');
 }
 
 export async function bindEmailToLead(body) {
-    const r = await fetch(`${EMAIL_API()}/bind-lead`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    if (!r.ok) {
-        const text = await r.text().catch(() => '');
-        throw new Error(`Ошибка привязки: ${r.status} ${text}`);
-    }
-    return r.json();
+	return emailJson('/bind-lead', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
 }
 
 export async function fetchEmailThreads(params = {}) {
-    const query = new URLSearchParams(params).toString();
-    const r = await fetch(`${EMAIL_API()}/threads?${query}`);
-    if (!r.ok) throw new Error('Ошибка загрузки тредов');
-    return r.json();
+	const query = new URLSearchParams(params).toString();
+	return emailJson(`/threads?${query}`);
 }
 
 export async function fetchThreadMessages(threadId) {
-    const r = await fetch(`${EMAIL_API()}/threads/${threadId}/messages`);
-    if (!r.ok) throw new Error('Ошибка загрузки сообщений треда');
-    return r.json();
+	return emailJson(`/threads/${threadId}/messages`);
 }
 
 export async function archiveEmail(emailId) {
-    const r = await fetch(`${EMAIL_API()}/archive`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email_id: emailId }),
-    });
-    if (!r.ok) {
-        const text = await r.text().catch(() => '');
-        throw new Error(`Ошибка архивации: ${r.status} ${text}`);
-    }
-    return r.json();
+	return emailJson('/archive', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ email_id: emailId }),
+	});
 }

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Email: live connect ib@agneko.com (Яндекс IMAP)
+
+**Сделано:** `emailStorage.js` → `apiFetch`; лимит `EMAIL_IMAP_FETCH_LIMIT`; `smoke_email_connect.py`; mock pytest; DevTools `/email` 504 треда; `EMAIL_CONNECT_ACCEPTANCE.md`. **Хвост:** `me@agneko.am` на `mail.agneko.am` — отдельный пароль.
+
 ## 2026-06-11 — Ops: baseline Ф1 formalized
 
 **Сделано:** аудит `/ops` (реальные API, без UI-моков); `smoke_ops_baseline.py` 33 pytest; DevTools `/ops`, `/ops/agents`; `OPS_BASELINE_ACCEPTANCE.md`.

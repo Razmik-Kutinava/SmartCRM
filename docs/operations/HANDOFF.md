@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Ф1/Ф2] | Задача:[Ops baseline] | Статус:Ops Ф1 ✅ · версионирование промптов → Ф2`
+`Спринт:[Ф1] | Задача:[Email connect] | Статус:ib@agneko.com ✅ · me@agneko.am ждёт пароль mail.agneko.am`
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
@@ -20,7 +20,9 @@
 
 **Ops Ф1 ✅** — `OPS_BASELINE_ACCEPTANCE.md`, `smoke_ops_baseline.py` (33 pytest).
 
-**Следующий `go`:** Агенты (MAP) перепроход **или** Ф2 §8 live leadgen **или** §1 Voice Layer.
+**Email connect 🟡** — `EMAIL_CONNECT_ACCEPTANCE.md`: `ib@agneko.com` (Yandex IMAP) ✅; `me@agneko.am` → `mail.agneko.am` — нужен свой пароль в `.env`.
+
+**Следующий `go`:** пароль `me@agneko.am` **или** Агенты (MAP) перепроход **или** Ф2 §8 live leadgen.
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 
