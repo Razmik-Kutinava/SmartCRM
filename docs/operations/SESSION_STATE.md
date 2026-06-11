@@ -13,6 +13,8 @@
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
 
+2026-06-11 | Действие: Email fix — парсинг дат IMAP, repair 362 UID, inbox filter (support/pricing), DevTools=Yandex сегодня. | Коммит: `dae7f08` | Хвост A: me@agneko.am — пароль | Хвост B: EMAIL_IMAP_FETCH_LIMIT=500 в .env | Хвост C: нет | Следующий шаг: go Ф2 рассылки или Агенты. | Статус: done
+
 2026-06-11 | Действие: Email Sync — POST /sync, IMAP SINCE, кнопка 🔄 на /email, smoke_email_sync, 7 pytest, live+DevTools ib@ OK. | Коммит: `b20b2d9` | Хвост A: me@agneko.am — пароль | Хвост B: автофон sync → Ф2 | Хвост C: нет | Следующий шаг: go Агенты MAP или Ф2 рассылки. | Статус: done
 
 2026-06-11 | Действие: Email connect — `emailStorage.js` apiFetch, `EMAIL_IMAP_FETCH_LIMIT`, smoke+mock pytest, ib@agneko.com live (504 треда), DevTools /email OK; acceptance+MAP. | Коммит: `6d84234` | Хвост A: me@agneko.am — пароль mail.agneko.am | Хвост B: рассылки/UX почты → Ф2 | Хвост C: нет | Следующий шаг: go Агенты MAP или пароль me@. | Статус: done
