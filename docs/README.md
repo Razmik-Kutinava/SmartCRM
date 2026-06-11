@@ -8,7 +8,7 @@
 
 | Задача | Файл |
 |--------|------|
-| Чеклисты фаз (проходим по порядку) | [product/PRD_MAP.md](product/PRD_MAP.md) — `[x]`=код+smoke, **⚠️**=хвост BACKLOG, сводка смотрит на ⚠️ |
+| Чеклисты фаз (проходим по порядку) | [product/PRD_MAP.md](product/PRD_MAP.md) — сценарии Ф1 → техтаблицы; **⚠️**=хвост BACKLOG |
 | Полный PRD | [product/PRD.md](product/PRD.md) |
 | Черновики и детали модулей | [product/PRD_NOTES.md](product/PRD_NOTES.md) |
 | Понять устройство системы | [product/ARCHITECTURE.md](product/ARCHITECTURE.md) |
