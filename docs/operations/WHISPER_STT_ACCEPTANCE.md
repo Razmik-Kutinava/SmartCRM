@@ -25,10 +25,15 @@ cd backend && python scripts/smoke_whisper_stt.py
 - `POST /api/voice/transcribe` — **503** с текстом, если нет `GROQ_API_KEY`
 - `WS /ws/voice` audio — **`error`** вместо «Внутренняя ошибка» при сбое STT
 
-## DevTools (ручной)
+## E2E микрофон (2026-06-11)
 
-- `/leads/list` — голосовая панель в layout, WS `connect()` OK
-- Микрофон → реальная речь — ручная проверка (не в CI)
+- Автомат: `python scripts/smoke_voice_mic_e2e.py` — WS `send_bytes` = путь `sendAudio(blob)`
+- Dev UI: `data-testid="voice-simulate-mic"` (кнопка 🎤 sim) + `voice_mic_fixture.wav`
+- Док: `VOICE_MIC_E2E_ACCEPTANCE.md`
+
+## DevTools (опционально)
+
+- `/leads/list` — `data-testid="voice-mic-button"` + живая речь (spot-check)
 
 ## Хвост (не блокер STT)
 

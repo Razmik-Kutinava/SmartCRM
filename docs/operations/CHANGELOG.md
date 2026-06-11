@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Голос: mic E2E + Ф1 DoD закрыт + Ф2 leadgen voice smoke
+
+**Сделано:** `test_voice_mic_ws_e2e.py`, `smoke_voice_mic_e2e.py`, dev `voice-simulate-mic`, `test_leadgen_voice_ws.py`; `VOICE_MIC_E2E_ACCEPTANCE.md`; MAP/BACKLOG DoD 6/6.
+
 ## 2026-06-10 — PRD_MAP: выровнен (финал MAP-doc)
 
 **Сделано:** «Поиск и RAG» — одна таблица без дублей; шапки «чеклист = таблица» в Лиды/Баллы/Поиск; пометка в шапке MAP. MAP-doc pass закрыт.

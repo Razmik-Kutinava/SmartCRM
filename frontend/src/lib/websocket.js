@@ -131,6 +131,14 @@ export function sendText(text, pageContext = '') {
 	}
 }
 
+/** Dev/E2E: имитация микрофона — тот же WS bytes, что после MediaRecorder. */
+export async function sendFixtureAudio(url = '/fixtures/voice_mic_fixture.wav') {
+	const r = await fetch(url);
+	if (!r.ok) throw new Error(`fixture audio: ${r.status}`);
+	const blob = await r.blob();
+	sendAudio(blob);
+}
+
 export function sendAudio(blob) {
 	if (!blob || blob.size === 0) return;
 

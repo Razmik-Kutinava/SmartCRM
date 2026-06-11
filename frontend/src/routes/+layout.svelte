@@ -2,7 +2,8 @@
 	import '../app.css';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { getApiUrl, connect, sendText, sendAudio, onMessage } from '$lib/websocket.js';
+	import { dev } from '$app/environment';
+	import { getApiUrl, connect, sendText, sendAudio, sendFixtureAudio, onMessage } from '$lib/websocket.js';
 	import { handleVoiceAction } from '$lib/voice/voiceAction.js';
 	import VoiceActionHost from '../components/VoiceActionHost.svelte';
 	import { goto } from '$app/navigation';
@@ -151,6 +152,21 @@
 		}
 	}
 
+	async function voiceSimulateMic() {
+		if (voice_processing) return;
+		try {
+			voice_status = 'processing';
+			voice_processing = true;
+			voice_transcript = 'Распознаю...';
+			await sendFixtureAudio();
+		} catch (e) {
+			voice_status = 'error';
+			voice_reply = e?.message || 'Ошибка имитации микрофона';
+			voice_processing = false;
+			setTimeout(() => { voice_status = 'idle'; voice_reply = ''; }, 4000);
+		}
+	}
+
 	async function voiceToggle() {
 		if (voice_recording) {
 			mediaRecorder?.stop();
@@ -275,6 +291,7 @@
 				<button
 					onclick={voiceToggle}
 					disabled={voice_processing}
+					data-testid="voice-mic-button"
 					title={voice_recording ? 'Стоп' : 'Голосовая команда'}
 					class="flex items-center justify-center w-9 h-9 rounded-full shrink-0 transition-all
 						{voice_recording
@@ -346,6 +363,19 @@
 						/>
 					{/if}
 				</div>
+
+				{#if dev}
+					<button
+						type="button"
+						onclick={voiceSimulateMic}
+						disabled={voice_processing}
+						data-testid="voice-simulate-mic"
+						title="Имитация микрофона (fixture WAV → WS)"
+						class="text-xs px-2 py-1 rounded bg-indigo-900/60 text-indigo-300 hover:bg-indigo-800 disabled:opacity-40 shrink-0"
+					>
+						🎤 sim
+					</button>
+				{/if}
 
 				<!-- Контекст страницы + WS статус -->
 				<div class="flex items-center gap-2 shrink-0 text-xs">
