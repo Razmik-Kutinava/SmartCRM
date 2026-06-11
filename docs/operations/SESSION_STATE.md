@@ -12,6 +12,9 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+
+2026-06-11 | Действие: Email connect — `emailStorage.js` apiFetch, `EMAIL_IMAP_FETCH_LIMIT`, smoke+mock pytest, ib@agneko.com live (504 треда), DevTools /email OK; acceptance+MAP. | Коммит: `6d84234` | Хвост A: me@agneko.am — пароль mail.agneko.am | Хвост B: рассылки/UX почты → Ф2 | Хвост C: нет | Следующий шаг: go Агенты MAP или пароль me@. | Статус: done
+
 2026-06-11 | Действие: Ops Ф1 — аудит 12 вкладок (реальные API), `smoke_ops_baseline.py` 33 pytest, DevTools /ops+/agents, acceptance+MAP. | Коммит: `d561372` | Хвост A: нет | Хвост B: версионирование промптов → Ф2 | Хвост C: нет | Следующий шаг: go Агенты MAP или Ф2. | Статус: done
 
 2026-06-11 | Действие: PDF extract — `smoke_tender_pdf_extract.py`, curl/PowerShell в acceptance (корневой .env, пути cwd), в tenders baseline. | Коммит: `0350f79` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ops или Ф2. | Статус: done
