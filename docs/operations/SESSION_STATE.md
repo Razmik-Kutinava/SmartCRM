@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-11 | Действие: аналитика Ф1 — KPI /leads/analytics, API summary/export, убран mock /analytics, 10 pytest, DevTools+Puppeteer (3184 лида, CSV 200). | Коммит: `5eeeff8` | Хвост A: нет | Хвост B: голос по метрикам → Ф2 | Хвост C: средний чек/цикл «—» пока нет выигранных | Следующий шаг: go Ops перепроход или Ф2. | Статус: done
+
 2026-06-11 | Действие: apiFetch в tenderApi + DevTools UI PDF OK (23 симв, extract 200). | Коммит: `21c88fd` | Хвост A: frontend/.env локально (gitignore) | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф2. | Статус: done
 
 2026-06-11 | Действие: PDF→текст — `/documents/extract`, UI upload→analyze, pytest+fixture, DevTools /tenders (uvicorn :8000 завис — перезапуск). | Коммит: `1f3eaeb` | Хвост A: нет | Хвост B: live UI upload после рестарта API | Хвост C: нет | Следующий шаг: go Ф2. | Статус: done
