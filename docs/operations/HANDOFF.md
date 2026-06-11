@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Ф1/Ф2] | Задача:[тендеры хвосты] | Статус:Тендеры Ф1 ✅ baseline закрыт (п.2–7)`
+`Спринт:[Ф1/Ф2] | Задача:[тендеры PDF] | Статус:Тендеры Ф1 ✅ + PDF extract в analyze`
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 

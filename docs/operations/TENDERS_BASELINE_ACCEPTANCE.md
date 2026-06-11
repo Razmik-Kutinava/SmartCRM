@@ -19,6 +19,7 @@ cd backend && python scripts/smoke_tenders_baseline.py
 | 5 | Serper + Tavily | `web_search.py` в `/search`, `sources.serper/tavily` |
 | 6 | Лимиты Ops | `/api/usage/stats` |
 | 7 | Агенты | `POST /api/tenders/analyze` (LLM), сохранение анализа в БД |
+| 8 | PDF/DOCX → текст | `POST /api/tenders/documents/extract` · UI → `document_text` в analyze |
 
 ## Live (нужны ключи)
 
@@ -28,6 +29,5 @@ cd backend && python scripts/smoke_tenders_baseline.py
 
 ## Опционально позже
 
-- PDF → текст для analyze
 - Ф2 §7: голосовые команды по тендерам
 - Платный API Контур (gate по сделке)

@@ -37,6 +37,17 @@ export async function patchTenderSaved(id, patch) {
 	return r.json();
 }
 
+export async function extractTenderDocument(file) {
+	const fd = new FormData();
+	fd.append('file', file);
+	const r = await fetch(`${API()}/api/tenders/documents/extract`, {
+		method: 'POST',
+		body: fd,
+	});
+	if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+	return r.json();
+}
+
 export async function analyzeTender(tender, agent, documentText = '') {
 	const r = await fetch(`${API()}/api/tenders/analyze`, {
 		method: 'POST',

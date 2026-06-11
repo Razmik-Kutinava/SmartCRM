@@ -49,6 +49,8 @@ CRUD лидов, вовлечённость, Битрикс.
 | `detail_routes.py` | Карточка тендера, `POST /save` в БД |
 | `saved_routes.py` | Мои/Архив: `GET/POST/PATCH /saved` |
 | `analyze_routes.py` | `POST /analyze` — коммерческий/тех. агент |
+| `document_routes.py` | `POST /documents/extract` — текст из PDF/DOCX/XLSX |
+| `doc_extract.py` | Парсинг документов для тендеров (pypdf и др.) |
 | `plans_routes.py` | Планы закупок |
 | `classifiers_routes.py` | Классификаторы ОКПД/ОКВЭД |
 | `helpers.py` | Фильтры, релевантность, нормализация для UI |

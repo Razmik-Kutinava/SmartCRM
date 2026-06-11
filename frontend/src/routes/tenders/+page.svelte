@@ -3,6 +3,7 @@
 	import { getApiUrl } from '$lib/websocket.js';
 	import {
 		analyzeTender,
+		extractTenderDocument,
 		fetchSavedTenders,
 		patchTenderSaved,
 		saveTender,
@@ -219,18 +220,50 @@
 		const files = Array.from(e.target.files || []);
 		if (!files.length) return;
 		upload_loading = true;
-		await new Promise(r => setTimeout(r, 600));
-		uploaded_files = [...uploaded_files, ...files.map(f => ({
-			name: f.name,
-			size: f.size,
-			status: 'ready',
-		}))];
+		const base = uploaded_files.length;
+		uploaded_files = [
+			...uploaded_files,
+			...files.map((f) => ({
+				name: f.name,
+				size: f.size,
+				status: 'loading',
+				text: '',
+				chars: 0,
+				error: '',
+			})),
+		];
+		await Promise.all(
+			files.map(async (file, i) => {
+				const idx = base + i;
+				try {
+					const res = await extractTenderDocument(file);
+					uploaded_files[idx] = {
+						...uploaded_files[idx],
+						status: 'ready',
+						text: res.text || '',
+						chars: res.chars || 0,
+						format: res.format,
+					};
+				} catch (err) {
+					uploaded_files[idx] = {
+						...uploaded_files[idx],
+						status: 'error',
+						error: err.message || 'ошибка извлечения',
+					};
+				}
+			}),
+		);
+		uploaded_files = [...uploaded_files];
 		upload_loading = false;
 		e.target.value = '';
 	}
 
 	// ── Запуск агентов ────────────────────────────────────────────────────────
 	function documentContext() {
+		const withText = uploaded_files.filter((f) => f.status === 'ready' && f.text);
+		if (withText.length) {
+			return withText.map((f) => `### ${f.name}\n${f.text}`).join('\n\n');
+		}
 		return uploaded_files.map((f) => f.name).join(', ');
 	}
 
@@ -710,10 +743,24 @@
 												</span>
 												<div>
 													<div class="text-xs text-gray-200">{f.name}</div>
-													<div class="text-xs text-gray-600">{fmtFileSize(f.size)}</div>
+													<div class="text-xs text-gray-600">
+														{fmtFileSize(f.size)}
+														{#if f.chars}
+															· {f.chars.toLocaleString('ru-RU')} симв.
+														{/if}
+													</div>
+													{#if f.error}
+														<div class="text-xs text-red-400 mt-0.5">{f.error}</div>
+													{/if}
 												</div>
 											</div>
-											<span class="text-xs text-green-400">✓ готов</span>
+											{#if f.status === 'loading'}
+												<span class="text-xs text-indigo-400 animate-pulse">извлекаю текст…</span>
+											{:else if f.status === 'error'}
+												<span class="text-xs text-red-400">ошибка</span>
+											{:else}
+												<span class="text-xs text-green-400">✓ текст готов</span>
+											{/if}
 										</div>
 									{/each}
 								</div>

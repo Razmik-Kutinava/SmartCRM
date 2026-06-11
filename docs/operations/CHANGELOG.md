@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Тендеры: PDF → текст в analyze
+
+**Сделано:** `POST /documents/extract`, UI загрузка → `document_text`, pytest + fixture `sample_tz.pdf`.
+
 ## 2026-06-11 — Тендеры: закрыты хвосты п.2–5, п.7
 
 **Сделано:** Serper/Tavily в `/search`; `tender_saved` + Мои/Архив; `POST /analyze` LLM; Gosplan UI; fix 400; тесты saved/web.

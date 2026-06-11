@@ -16,6 +16,7 @@ PYTEST_PATHS = [
     "tests/smoke/test_tenders_baseline_smoke.py",
     "tests/api/test_tenders_saved_api.py",
     "tests/api/test_tenders_web_search.py",
+    "tests/api/test_tenders_document_extract.py",
 ]
 
 

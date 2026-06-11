@@ -28,7 +28,8 @@
 | GET | `/api/tenders/saved` | Список сохранённых (`status=saved\|archived`) |
 | POST | `/api/tenders/saved` | Upsert карточки в «Мои» |
 | PATCH | `/api/tenders/saved/{id}` | Архив / восстановление, доп. анализы |
-| POST | `/api/tenders/analyze` | LLM-анализ: `agent=tender\|tech` |
+| POST | `/api/tenders/analyze` | LLM-анализ: `agent=tender\|tech` + `document_text` |
+| POST | `/api/tenders/documents/extract` | Multipart: PDF/DOCX/XLSX → `{ text, chars }` |
 | GET | `/api/tenders/plans/search` | Поиск планов закупок (TenderGuru `planzakup`) |
 | GET | `/api/tenders/plans/detail` | Детальная карточка плана (TenderGuru `plans`) |
 | GET | `/api/tenders/enrich/{inn}` | Ручное обогащение контрагента через DataNewton (несколько методов API на один ИНН) |

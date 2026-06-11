@@ -46,6 +46,7 @@ pytest tests/api/ -q
 | `smoke/test_tenders_baseline_smoke.py` | Смоук `/api/tenders/search`, save, web |
 | `api/test_tenders_saved_api.py` | Мои/Архив, analyze, POST /save |
 | `api/test_tenders_web_search.py` | Маппинг Serper/Tavily → карточки |
+| `api/test_tenders_document_extract.py` | PDF extract + document_text в analyze |
 | `test_stage_transition.py` | Переходы стадий CRM |
 | `lib/test_funnel_dnd.py` | Воронка Kanban DnD (зеркало funnelDnD.js) |
 | `lib/test_lead_list_filter.py` | Фильтры и сортировка списка лидов |
