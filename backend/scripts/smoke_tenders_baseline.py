@@ -14,6 +14,8 @@ BACKEND = Path(__file__).resolve().parents[1]
 PYTEST_PATHS = [
     "tests/test_tender_sources.py",
     "tests/smoke/test_tenders_baseline_smoke.py",
+    "tests/api/test_tenders_saved_api.py",
+    "tests/api/test_tenders_web_search.py",
 ]
 
 

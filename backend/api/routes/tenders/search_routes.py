@@ -22,6 +22,7 @@ from .helpers import (
     _to_number,
     _tokenize_query,
 )
+from .web_search import append_web_tenders
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -58,6 +59,7 @@ async def search_tenders(
             raise HTTPException(400, detail=f"Невалидная дата: {e.args[0] if e.args else 'формат ISO'}")
 
         logger.info(f"Starting tender search: q={q}, law={law}")
+        serper_n = tavily_n = 0
 
         # Инициализируем клиентов для всех источников
         fz = None if law == "all" else law
@@ -241,6 +243,18 @@ async def search_tenders(
                     formatted_tenders.append(tender)
                     all_ids.add(item_id)
 
+        serper_n, tavily_n = await append_web_tenders(
+            formatted_tenders,
+            all_ids,
+            q,
+            law,
+            region,
+            price_min,
+            price_max,
+            date_start,
+            date_end,
+        )
+
         # Сортируем по релевантности
         formatted_tenders.sort(key=lambda x: x.get("relevance", 0), reverse=True)
 
@@ -335,6 +349,16 @@ async def search_tenders(
                     "status": "classifier_only",
                     "role": "classifier",
                     "note": "Справочник ОКПД-2/КТРУ. Поискового эндпоинта по тендерам не предоставляет.",
+                },
+                "serper": {
+                    "count": serper_n,
+                    "status": "success" if serper_n else ("not_configured" if not os.getenv("SERPER_API_KEY") else "no_data"),
+                    "role": "web_search",
+                },
+                "tavily": {
+                    "count": tavily_n,
+                    "status": "success" if tavily_n else ("not_configured" if not os.getenv("TAVILY_API_KEY") else "no_data"),
+                    "role": "web_search",
                 },
             },
             "message": (

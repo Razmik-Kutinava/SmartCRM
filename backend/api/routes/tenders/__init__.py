@@ -1,7 +1,7 @@
 """Tenders API — сборка роутера."""
 from fastapi import APIRouter
 
-from . import classifiers_routes, detail_routes, plans_routes, search_routes
+from . import analyze_routes, classifiers_routes, detail_routes, plans_routes, saved_routes, search_routes
 from .helpers import (
     _estimate_relevance,
     _normalize_item_for_ui,
@@ -14,6 +14,8 @@ from .helpers import (
 router = APIRouter(prefix="/api/tenders", tags=["tenders"])
 
 router.include_router(search_routes.router)
+router.include_router(saved_routes.router)
+router.include_router(analyze_routes.router)
 router.include_router(plans_routes.router)
 router.include_router(classifiers_routes.router)
 router.include_router(detail_routes.router)

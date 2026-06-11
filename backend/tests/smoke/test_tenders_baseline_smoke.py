@@ -44,6 +44,9 @@ async def test_tenders_search_returns_sources(client):
         new_callable=AsyncMock,
         return_value=_tenderguru_hit(),
     ), patch(
+        "api.routes.tenders.search_routes.append_web_tenders",
+        AsyncMock(return_value=(2, 1)),
+    ), patch(
         "api.routes.tenders.search_routes.TENDERGURU_API_KEY",
         "test-tg-key",
     ), patch(
@@ -56,6 +59,8 @@ async def test_tenders_search_returns_sources(client):
     assert body["total"] >= 1
     assert "sources" in body
     assert body["sources"]["gosplan"]["count"] >= 1
+    assert body["sources"]["serper"]["count"] == 2
+    assert body["sources"]["tavily"]["count"] == 1
     row = body["tenders"][0]
     assert row.get("title") or row.get("name")
 
@@ -91,12 +96,17 @@ async def test_tenders_plans_search_mocked(client):
 
 
 @pytest.mark.asyncio
-async def test_tenders_save_analysis_stub(client):
-    r = await client.post("/api/tenders/save", json={"tender_id": 42})
+async def test_tenders_save_analysis_persisted(client):
+    r = await client.post(
+        "/api/tenders/save",
+        json={
+            "external_id": "smoke:42",
+            "snapshot": {"id": "42", "title": "Smoke tender", "source": "gosplan"},
+        },
+    )
     assert r.status_code == 200
     body = r.json()
-    assert body["status"] == "accepted"
-    assert body["persisted"] is False
+    assert body["persisted"] is True
 
 
 @pytest.mark.asyncio

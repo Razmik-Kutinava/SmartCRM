@@ -2,10 +2,13 @@
 import asyncio
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
-from fastapi import APIRouter, Body, HTTPException, Query
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from db.session import get_db
 
 from core.stats import track_api
 from services.datanewton import DataNewtonClient
@@ -181,33 +184,69 @@ async def enrich_counterparty(inn: str) -> dict:
         raise HTTPException(status_code=500, detail="Ошибка обогащения контрагента")
 
 
+class SaveTenderBody(BaseModel):
+    external_id: str = ""
+    source: str = ""
+    snapshot: dict | None = None
+    tender_id: int | None = None
+    tender_specialist_analysis: str | dict | None = None
+    tech_specialist_analysis: str | dict | None = None
+    status: str = "saved"
+
+
 @router.post("/save")
-async def save_tender_analysis(
-    tender_id: int = Body(..., embed=True, description="ID тендера"),
-    tender_specialist_analysis: dict | None = Body(None, embed=True),
-    tech_specialist_analysis: dict | None = Body(None, embed=True),
-) -> dict:
-    """
-    Сохранить анализ тендера от специалистов.
+async def save_tender_analysis(body: SaveTenderBody, db: AsyncSession = Depends(get_db)) -> dict:
+    """Сохранить карточку и анализ в tender_saved."""
+    from sqlalchemy import select
 
-    TODO: Реализовать запись в БД. Сейчас эндпоинт логирует факт вызова
-    и возвращает 202 Accepted, чтобы фронтенд не ломался в отсутствие стораджа.
-    """
+    from db.models.tender_saved import TenderSaved
+
+    snap = body.snapshot or {}
+    eid = (body.external_id or "").strip()
+    if not eid and body.tender_id is not None:
+        eid = f"tenderguru:{body.tender_id}"
+    if not eid:
+        eid = str(snap.get("id") or "")
+    if not eid:
+        raise HTTPException(400, detail="external_id или snapshot.id обязателен")
+
+    def _as_text(v):
+        if v is None:
+            return None
+        if isinstance(v, str):
+            return v
+        if isinstance(v, dict):
+            return v.get("analysis") or v.get("text") or str(v)
+        return str(v)
+
     try:
-        logger.info(
-            "Tender analysis received (persistence not implemented): "
-            "tender_id=%s has_tender_analysis=%s has_tech_analysis=%s",
-            tender_id,
-            bool(tender_specialist_analysis),
-            bool(tech_specialist_analysis),
-        )
-        return {
-            "status": "accepted",
-            "persisted": False,
-            "tender_id": tender_id,
-            "timestamp": datetime.now().isoformat(),
-        }
-
+        row = (await db.execute(select(TenderSaved).where(TenderSaved.external_id == eid))).scalar_one_or_none()
+        now = datetime.now(timezone.utc)
+        ta = _as_text(body.tender_specialist_analysis)
+        tt = _as_text(body.tech_specialist_analysis)
+        if row:
+            if snap:
+                row.snapshot_json = snap
+            if ta is not None:
+                row.tender_analysis = ta
+            if tt is not None:
+                row.tech_analysis = tt
+            row.updated_at = now
+        else:
+            row = TenderSaved(
+                external_id=eid,
+                source=body.source or str(snap.get("source") or ""),
+                status=body.status if body.status in ("saved", "archived") else "saved",
+                snapshot_json=snap,
+                tender_analysis=ta,
+                tech_analysis=tt,
+            )
+            db.add(row)
+        await db.commit()
+        await db.refresh(row)
+        return {"status": "ok", "persisted": True, "item": row.to_dict(), "timestamp": now.isoformat()}
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Save tender error: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail="Ошибка сохранения анализа тендера")
+        logger.error("Save tender error: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail="Ошибка сохранения тендера") from e

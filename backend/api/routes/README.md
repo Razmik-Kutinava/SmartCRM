@@ -44,8 +44,11 @@ CRUD лидов, вовлечённость, Битрикс.
 | Файл | За что |
 |------|--------|
 | `__init__.py` | Сборка роутера |
-| `search_routes.py` | Поиск тендеров |
-| `detail_routes.py` | Карточка тендера |
+| `search_routes.py` | Поиск тендеров (Gosplan, TenderGuru, Serper/Tavily) |
+| `web_search.py` | Serper+Tavily → карточки тендеров в `/search` |
+| `detail_routes.py` | Карточка тендера, `POST /save` в БД |
+| `saved_routes.py` | Мои/Архив: `GET/POST/PATCH /saved` |
+| `analyze_routes.py` | `POST /analyze` — коммерческий/тех. агент |
 | `plans_routes.py` | Планы закупок |
 | `classifiers_routes.py` | Классификаторы ОКПД/ОКВЭД |
 | `helpers.py` | Фильтры, релевантность, нормализация для UI |

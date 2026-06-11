@@ -1,6 +1,6 @@
 # Тендеры baseline — acceptance (2026-06-11)
 
-PRD_MAP: **«Тендеры `/tenders`»** · Ф1 baseline.
+PRD_MAP: **«Тендеры `/tenders`»** · Ф1 baseline **закрыт**.
 
 ## Команда
 
@@ -8,39 +8,26 @@ PRD_MAP: **«Тендеры `/tenders`»** · Ф1 baseline.
 cd backend && python scripts/smoke_tenders_baseline.py
 ```
 
-Или только pytest:
+## Закрыто
 
-```bash
-cd backend && python -m pytest tests/test_tender_sources.py tests/smoke/test_tenders_baseline_smoke.py -q
-```
+| # | Пункт | Проверка |
+|---|--------|----------|
+| 1 | UI + API | `/tenders`, `/api/tenders/*` |
+| 2 | Поиск + Gosplan tail | бейдж «без совпадения», баннер, кнопка «Скрыть» |
+| 3 | Планы | `GET /api/tenders/plans/search` |
+| 4 | Мои / Архив | `tender_saved`, `GET/POST/PATCH /api/tenders/saved` |
+| 5 | Serper + Tavily | `web_search.py` в `/search`, `sources.serper/tavily` |
+| 6 | Лимиты Ops | `/api/usage/stats` |
+| 7 | Агенты | `POST /api/tenders/analyze` (LLM), сохранение анализа в БД |
 
-## Что закрыто
+## Live (нужны ключи)
 
-| # | Пункт MAP | Проверка |
-|---|-----------|----------|
-| 1 | UI + API | `/tenders` (frontend); `/api/tenders/search`, `plans/search`, `save` |
-| 2 | Поиск 44/223, фильтры | mocked WS search; невалидная дата → **400** (не 500) |
-| 3 | Планы закупок | `GET /api/tenders/plans/search` (mock TenderGuru) |
-| 5 | TenderGuru + Gosplan | `sources.gosplan` / `sources.tenderguru` в ответе search |
-| 6 | Лимиты Ops | `GET /api/usage/stats` — сервисы `gosplan`, `datanewton` |
+- `TENDERGURU_API_KEY`, `GROQ_API_KEY` — поиск и анализ
+- `SERPER_API_KEY`, `TAVILY_API_KEY` — веб-результаты в выдаче
+- `DATANEWTON_API_KEY` — обогащение заказчика (опц.)
 
-## Хвосты (не блокер baseline)
+## Опционально позже
 
-| Хвост | Где |
-|-------|-----|
-| «Мои тендеры» / «Архив» — заглушки UI | `BACKLOG.md` 🟡 |
-| Gosplan free: unfiltered tail в выдаче | `BACKLOG.md` 🟡 |
-| Serper/Tavily в тендерах | только `/search`, не `/api/tenders` |
-| Агенты на карточке — MOCK | Ф2 §7 |
-| `POST /save` — `persisted: false` | Ф2 §7 + БД |
-
-## DevTools (опционально)
-
-1. Backend `:8000`, `npm run dev`
-2. `/tenders` → поиск по ключевым словам → список + панель карточки
-3. `/ops/api-limits` — счётчики gosplan/datanewton после поиска
-
-## Связь MAP
-
-- Блок «Тендеры» → ✅ baseline
-- Ф2 очередь **9** §7 — агентский анализ (не этот шаг)
+- PDF → текст для analyze
+- Ф2 §7: голосовые команды по тендерам
+- Платный API Контур (gate по сделке)

@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Ф1/Ф2] | Задача:[тендеры baseline] | Статус:Тендеры Ф1 ✅ baseline; хвосты в BACKLOG 🟡`
+`Спринт:[Ф1/Ф2] | Задача:[тендеры хвосты] | Статус:Тендеры Ф1 ✅ baseline закрыт (п.2–7)`
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
@@ -14,9 +14,9 @@
 
 **MAP-doc:** **закрыт** (2026-06-11) — PRD синхрон (Ф1 ✅, навигация); MAP: DoD Ф2, сценарии Ф2, TOC, `LEADGEN_VOICE_ACCEPTANCE.md`, сводка «✅ (хвосты 🟡)».
 
-**Тендеры Ф1:** таблица MAP + `TENDERS_BASELINE_ACCEPTANCE.md` + `smoke_tenders_baseline.py`; фикс 400 на невалидную дату search.
+**Тендеры Ф1:** Serper/Tavily, Мои/Архив БД, LLM analyze, Gosplan UI — `2acf0da`+.
 
-**Следующий `go`:** Ф2 §8 live leadgen voice **или** §1 Voice Layer **или** тендеры п.4 «Мои/Архив».
+**Следующий `go`:** Ф2 §8 live leadgen **или** §1 Voice Layer **или** Ф2 §7 голос по тендерам.
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 

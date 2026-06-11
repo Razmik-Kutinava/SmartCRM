@@ -208,6 +208,16 @@ KNOWN_LIMITS: dict[str, dict] = {
         "reset": "monthly",
         "docs": "https://tavily.com/pricing",
     },
+    "serper": {
+        "name": "Serper (Google)",
+        "plan": "free",
+        "limit_day_calls": None,
+        "limit_month_calls": 2_500,
+        "limit_day_tokens": None,
+        "limit_month_tokens": None,
+        "reset": "monthly",
+        "docs": "https://serper.dev/pricing",
+    },
     "brave": {
         "name": "Brave Search",
         "plan": "free",

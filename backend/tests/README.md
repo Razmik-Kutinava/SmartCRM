@@ -43,6 +43,9 @@ pytest tests/api/ -q
 | `voice/test_lead_context.py` | Загрузка истории лида |
 | `smoke/test_voice_lead_scenarios.py` | Матрица S01–S09 голосовых сценариев лидов |
 | `test_tender_sources.py` | Источники тендеров |
+| `smoke/test_tenders_baseline_smoke.py` | Смоук `/api/tenders/search`, save, web |
+| `api/test_tenders_saved_api.py` | Мои/Архив, analyze, POST /save |
+| `api/test_tenders_web_search.py` | Маппинг Serper/Tavily → карточки |
 | `test_stage_transition.py` | Переходы стадий CRM |
 | `lib/test_funnel_dnd.py` | Воронка Kanban DnD (зеркало funnelDnD.js) |
 | `lib/test_lead_list_filter.py` | Фильтры и сортировка списка лидов |

@@ -1,5 +1,14 @@
 <script>
+	import { onMount } from 'svelte';
 	import { getApiUrl } from '$lib/websocket.js';
+	import {
+		analyzeTender,
+		fetchSavedTenders,
+		patchTenderSaved,
+		saveTender,
+		sourceLabel,
+		tenderExternalId,
+	} from '$lib/tenders/tenderApi.js';
 	const API = getApiUrl();
 
 	// ── Вкладки верхнего уровня ──────────────────────────────────────────────
@@ -30,6 +39,12 @@
 	let searched    = $state(false);
 	/** Подсказки Мои-Закупки (ОКПД-2 / КТРУ) с бэкенда */
 	let classifiers = $state(null);
+	let search_sources = $state(null);
+
+	// ── Сохранённые (Мои / Архив) ─────────────────────────────────────────────
+	let my_items = $state([]);
+	let archive_items = $state([]);
+	let save_notice = $state('');
 
 	// ── Выбранный тендер (правая панель) ──────────────────────────────────────
 	let selected    = $state(null);
@@ -44,121 +59,39 @@
 	let tech_analysis   = $state(null);
 	let agent_loading   = $state(false);
 
-	// ── Mock-данные для демонстрации UI ───────────────────────────────────────
-	const MOCK_RESULTS = [
-		{
-			id: '0373100080526000001',
-			title: 'Поставка программного обеспечения для мониторинга ИТ-инфраструктуры',
-			customer: 'ФГБУ «Центр информационных технологий»',
-			law: '44-ФЗ',
-			budget: 4200000,
-			deadline: '2026-05-10',
-			published: '2026-04-12',
-			region: 'Москва',
-			okpd: '62.01.29',
-			source: 'ЕИС',
-			status: 'active',
-			relevance: 97,
-			url: 'https://zakupki.gov.ru/epz/order/notice/ea44/view/common-info.html?regNumber=0373100080526000001',
-			description: 'Закупка включает поставку лицензий ПО для мониторинга серверной инфраструктуры, сетевых устройств и приложений. Требуется поддержка SNMP, WMI, агентный и безагентный мониторинг.',
-			doc_md: null,
-		},
-		{
-			id: '0348100003226000042',
-			title: 'Оказание услуг технической поддержки системы управления ИТ-активами (ITAM)',
-			customer: 'АО «Государственная транспортная корпорация»',
-			law: '223-ФЗ',
-			budget: 1850000,
-			deadline: '2026-04-28',
-			published: '2026-04-10',
-			region: 'Санкт-Петербург',
-			okpd: '62.02.30',
-			source: 'ЕИС',
-			status: 'active',
-			relevance: 91,
-			url: '#',
-			description: 'Техническая поддержка, обновление и развитие ITAM-системы. Требуется опыт работы с решениями класса ITSM/ITAM не менее 3 лет.',
-			doc_md: null,
-		},
-		{
-			id: '0160200005026000018',
-			title: 'Поставка и внедрение системы защиты информации (SIEM)',
-			customer: 'ГКУ «Управление информационных технологий Краснодарского края»',
-			law: '44-ФЗ',
-			budget: 9700000,
-			deadline: '2026-05-20',
-			published: '2026-04-09',
-			region: 'Краснодар',
-			okpd: '62.01.21',
-			source: 'ЕИС',
-			status: 'active',
-			relevance: 85,
-			url: '#',
-			description: 'Требуется поставка, установка, настройка и ввод в эксплуатацию SIEM-системы. ПО должно быть включено в реестр российского ПО. Интеграция с Active Directory, Syslog.',
-			doc_md: null,
-		},
-	];
+	onMount(() => {
+		loadSavedLists();
+	});
 
-	const MOCK_TENDER_ANALYSIS = `## Анализ тендера — Тендерный специалист
+	async function loadSavedLists() {
+		try {
+			const [my, arch] = await Promise.all([
+				fetchSavedTenders('saved'),
+				fetchSavedTenders('archived'),
+			]);
+			my_items = (my.items || []).map(savedRowToCard);
+			archive_items = (arch.items || []).map(savedRowToCard);
+		} catch {
+			my_items = [];
+			archive_items = [];
+		}
+	}
 
-**Вердикт: Участвовать ✅**
+	function savedRowToCard(row) {
+		const snap = row.snapshot || {};
+		return {
+			...snap,
+			_dbId: row.id,
+			_status: row.status,
+			title: snap.title || row.title || '',
+			tender_analysis: row.tenderAnalysis,
+			tech_analysis: row.techAnalysis,
+		};
+	}
 
-### Ключевые параметры
-| Параметр | Значение |
-|---|---|
-| НМЦ | 4 200 000 ₽ |
-| Закон | 44-ФЗ |
-| Срок подачи | 10 мая 2026 |
-| Регион | Москва |
-| Способ закупки | Электронный аукцион |
-
-### Риски
-- ⚠️ Короткий срок подачи — 28 дней с даты публикации
-- ⚠️ Требуется лицензия ФСТЭК (уточнить наличие)
-- ✅ Нет требования о местонахождении поставщика
-
-### Требования к участнику
-- Опыт аналогичных поставок (контракты на сумму не менее 20% НМЦ)
-- Наличие партнёрского статуса вендора
-- Обеспечение заявки: 3% от НМЦ = **126 000 ₽**
-
-### Подводные камни
-- Техническое задание содержит специфичные требования к версии ПО — необходимо уточнить у вендора совместимость
-- Критерий «цена/качество» — возможен демпинг со стороны конкурентов
-
-### Рекомендация
-Участие целесообразно. Запросить у технического специалиста подтверждение соответствия продукта ТЗ.`;
-
-	const MOCK_TECH_ANALYSIS = `## Анализ тендера — Технический специалист
-
-**Продукт: ManageEngine OpManager** ✅
-
-### Соответствие техническим требованиям
-
-| Требование из ТЗ | Наш продукт | Статус |
-|---|---|---|
-| Мониторинг серверов (Windows/Linux) | OpManager | ✅ Полное |
-| SNMP v1/v2c/v3 | OpManager | ✅ Полное |
-| Агентный мониторинг | OpManager Agent | ✅ Есть |
-| Безагентный мониторинг | OpManager | ✅ Есть |
-| Dashboard и отчёты | OpManager | ✅ Полное |
-| Реестр российского ПО | — | ⚠️ Уточнить |
-| API интеграция | REST API | ✅ Полное |
-
-### Рекомендуемая конфигурация
-- **ManageEngine OpManager Standard** — до 500 устройств
-- Лицензия: годовая подписка или бессрочная
-- Стоимость для нас: ~1 800 000 ₽ (маржа ~57%)
-
-### Что нужно уточнить
-1. Статус реестра Минцифры — критично для 44-ФЗ
-2. Версия продукта под требование ТЗ (12.x или 13.x)
-3. Наличие сертификата ФСТЭК
-
-### Документы для заявки
-- Карточка продукта (есть в базе)
-- Сертификат соответствия
-- Письмо от вендора о партнёрстве`;
+	function hideUnfiltered() {
+		results = results.filter((t) => !t.unfiltered);
+	}
 
 	// ── Поиск ─────────────────────────────────────────────────────────────────
 	async function search() {
@@ -215,6 +148,7 @@
 				url: item.url || item.external_url || item.inner_url || '#',
 			}));
 			classifiers = search_mode === 'tenders' ? (data.classifiers ?? null) : null;
+			search_sources = search_mode === 'tenders' ? (data.sources ?? null) : null;
 			searched = true;
 
 			if (results.length === 0) {
@@ -235,9 +169,49 @@
 	function selectTender(t) {
 		selected = t;
 		detail_tab = 'doc';
-		tender_analysis = null;
-		tech_analysis = null;
+		tender_analysis = t.tender_analysis ?? null;
+		tech_analysis = t.tech_analysis ?? null;
 		uploaded_files = [];
+		save_notice = '';
+	}
+
+	async function saveCurrentTender() {
+		if (!selected) return;
+		save_notice = '';
+		try {
+			const payload = {
+				external_id: tenderExternalId(selected),
+				source: selected.source || '',
+				snapshot: { ...selected, _dbId: undefined, _status: undefined },
+				tender_analysis: tender_analysis,
+				tech_analysis: tech_analysis,
+				status: 'saved',
+			};
+			const res = await saveTender(payload);
+			save_notice = 'Сохранено в «Мои тендеры»';
+			await loadSavedLists();
+			if (res.item?.id) selected._dbId = res.item.id;
+		} catch (e) {
+			save_notice = e.message || 'Ошибка сохранения';
+		}
+	}
+
+	async function archiveSelected() {
+		if (!selected?._dbId) {
+			await saveCurrentTender();
+		}
+		const id = selected?._dbId;
+		if (!id) return;
+		await patchTenderSaved(id, { status: 'archived' });
+		save_notice = 'Перенесено в архив';
+		selected = null;
+		await loadSavedLists();
+	}
+
+	async function restoreFromArchive(item) {
+		if (!item._dbId) return;
+		await patchTenderSaved(item._dbId, { status: 'saved' });
+		await loadSavedLists();
 	}
 
 	// ── Загрузка файлов ───────────────────────────────────────────────────────
@@ -256,14 +230,25 @@
 	}
 
 	// ── Запуск агентов ────────────────────────────────────────────────────────
+	function documentContext() {
+		return uploaded_files.map((f) => f.name).join(', ');
+	}
+
 	async function runTenderAgent() {
 		if (!selected) return;
 		agent_loading = true;
 		tender_analysis = null;
 		detail_tab = 'tender_agent';
-		await new Promise(r => setTimeout(r, 1400));
-		tender_analysis = MOCK_TENDER_ANALYSIS;
-		agent_loading = false;
+		error = '';
+		try {
+			const res = await analyzeTender(selected, 'tender', documentContext());
+			tender_analysis = res.analysis;
+			await saveCurrentTender();
+		} catch (e) {
+			error = 'Агент: ' + (e.message || 'ошибка LLM');
+		} finally {
+			agent_loading = false;
+		}
 	}
 
 	async function runTechAgent() {
@@ -271,9 +256,16 @@
 		agent_loading = true;
 		tech_analysis = null;
 		detail_tab = 'tech_agent';
-		await new Promise(r => setTimeout(r, 1200));
-		tech_analysis = MOCK_TECH_ANALYSIS;
-		agent_loading = false;
+		error = '';
+		try {
+			const res = await analyzeTender(selected, 'tech', documentContext());
+			tech_analysis = res.analysis;
+			await saveCurrentTender();
+		} catch (e) {
+			error = 'Агент: ' + (e.message || 'ошибка LLM');
+		} finally {
+			agent_loading = false;
+		}
 	}
 
 	// ── Утилиты ───────────────────────────────────────────────────────────────
@@ -496,6 +488,13 @@
 					<span class="text-xs text-gray-600">по релевантности</span>
 				</div>
 
+				{#if search_sources?.gosplan?.unfiltered_count > 0}
+					<div class="mx-3 mb-2 p-2.5 rounded-lg bg-amber-900/30 border border-amber-700/50 text-xs text-amber-200/90 shrink-0 flex justify-between gap-2">
+						<span>ЕИС: {search_sources.gosplan.unfiltered_count} без совпадения с запросом</span>
+						<button type="button" onclick={hideUnfiltered} class="text-amber-300 hover:text-white underline">Скрыть</button>
+					</div>
+				{/if}
+
 				{#if classifiers && (classifiers.okpd2 || classifiers.ktru_search || classifiers.error)}
 					<div class="mx-3 mb-2 p-3 rounded-lg bg-gray-800/60 border border-gray-700/80 text-xs space-y-1.5 shrink-0">
 						<div class="text-gray-400 font-medium">Мои-Закупки · справочники</div>
@@ -535,7 +534,13 @@
 							<!-- Метки -->
 							<div class="flex flex-wrap gap-1.5 mb-2">
 								<span class="text-xs px-1.5 py-0.5 rounded bg-indigo-900/60 text-indigo-300 font-medium">{t.law}</span>
-								<span class="text-xs px-1.5 py-0.5 rounded bg-gray-800 text-gray-400">{t.source}</span>
+								<span class="text-xs px-1.5 py-0.5 rounded bg-gray-800 text-gray-400">{sourceLabel(t.source)}</span>
+								{#if t.unfiltered}
+									<span class="text-xs px-1.5 py-0.5 rounded bg-amber-900/50 text-amber-300">без совпадения</span>
+								{/if}
+								{#if t.web_hint}
+									<span class="text-xs px-1.5 py-0.5 rounded bg-sky-900/40 text-sky-300">веб</span>
+								{/if}
 								{#if t.region}
 									<span class="text-xs px-1.5 py-0.5 rounded bg-gray-800 text-gray-500">{t.region}</span>
 								{/if}
@@ -577,10 +582,23 @@
 							<div class="text-sm font-medium text-white leading-snug mb-1">{selected.title}</div>
 							<div class="text-xs text-gray-400">{selected.customer}</div>
 						</div>
-						<div class="flex gap-2 shrink-0">
+						<div class="flex gap-2 shrink-0 items-center">
+							{#if save_notice}
+								<span class="text-xs text-emerald-400">{save_notice}</span>
+							{/if}
+							<button type="button" onclick={saveCurrentTender}
+								class="text-xs px-2.5 py-1.5 rounded-lg bg-indigo-700 text-white hover:bg-indigo-600">
+								★ Сохранить
+							</button>
+							{#if selected._dbId}
+								<button type="button" onclick={archiveSelected}
+									class="text-xs px-2.5 py-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white">
+									В архив
+								</button>
+							{/if}
 							<a href={selected.url} target="_blank" rel="noopener"
 								class="text-xs px-2.5 py-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-all">
-								↗ ЕИС
+								↗ Источник
 							</a>
 						</div>
 					</div>
@@ -769,18 +787,44 @@
 
 	<!-- ── Мои тендеры ── -->
 	{:else if tab === 'my'}
-		<div class="flex flex-col items-center justify-center h-full text-center px-8">
-			<div class="text-5xl mb-4 opacity-10">◆</div>
-			<div class="text-sm text-gray-500">Здесь будут тендеры, которые вы сохранили для работы</div>
-			<div class="text-xs text-gray-600 mt-2">Функция в разработке</div>
+		<div class="flex flex-1 overflow-hidden">
+			<div class="w-96 border-r border-gray-800 overflow-y-auto divide-y divide-gray-800/60">
+				{#if my_items.length === 0}
+					<div class="p-8 text-center text-sm text-gray-500">Нет сохранённых тендеров. Найдите в поиске и нажмите «Сохранить».</div>
+				{:else}
+					{#each my_items as t}
+						<button type="button" onclick={() => { tab = 'search'; selectTender(t); }}
+							class="w-full text-left px-4 py-3 hover:bg-gray-800/50 text-xs">
+							<div class="text-gray-200 font-medium line-clamp-2">{t.title}</div>
+							<div class="text-gray-500 mt-1">{sourceLabel(t.source)} · {fmtMoney(t.budget)}</div>
+						</button>
+					{/each}
+				{/if}
+			</div>
+			<div class="flex-1 flex items-center justify-center text-gray-500 text-sm">Выберите тендер слева или в поиске</div>
 		</div>
 
 	<!-- ── Архив ── -->
 	{:else if tab === 'archive'}
-		<div class="flex flex-col items-center justify-center h-full text-center px-8">
-			<div class="text-5xl mb-4 opacity-10">◈</div>
-			<div class="text-sm text-gray-500">История участия в тендерах и результаты</div>
-			<div class="text-xs text-gray-600 mt-2">Функция в разработке</div>
+		<div class="flex flex-1 overflow-hidden">
+			<div class="w-96 border-r border-gray-800 overflow-y-auto divide-y divide-gray-800/60">
+				{#if archive_items.length === 0}
+					<div class="p-8 text-center text-sm text-gray-500">Архив пуст.</div>
+				{:else}
+					{#each archive_items as t}
+						<div class="px-4 py-3 text-xs flex gap-2 items-start">
+							<button type="button" onclick={() => { tab = 'search'; selectTender(t); }}
+								class="flex-1 text-left hover:text-white text-gray-300">
+								<div class="font-medium line-clamp-2">{t.title}</div>
+								<div class="text-gray-500 mt-1">{sourceLabel(t.source)}</div>
+							</button>
+							<button type="button" onclick={() => restoreFromArchive(t)}
+								class="text-indigo-400 hover:text-indigo-300 shrink-0">↩</button>
+						</div>
+					{/each}
+				{/if}
+			</div>
+			<div class="flex-1 flex items-center justify-center text-gray-500 text-sm">Архивные тендеры</div>
 		</div>
 	{/if}
 

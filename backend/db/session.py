@@ -84,6 +84,7 @@ async def init_db():
     from db.models.email import EmailAccount, EmailThread, EmailMessage, EmailCampaign  # noqa: F401
     from db.models.eval_scenario import EvalScenario  # noqa: F401
     from db.models.training_dataset import TrainingDataset, TrainingRecord  # noqa: F401
+    from db.models.tender_saved import TenderSaved  # noqa: F401
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         # ── лёгкие миграции: добавляем колонки которых может не быть ──
