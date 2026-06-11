@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-11 | Действие: PDF→текст — `/documents/extract`, UI upload→analyze, pytest+fixture, DevTools /tenders (uvicorn :8000 завис — перезапуск). | Коммит: `1f3eaeb` | Хвост A: нет | Хвост B: live UI upload после рестарта API | Хвост C: нет | Следующий шаг: go Ф2. | Статус: done
+
 2026-06-11 | Действие: тендеры хвосты закрыты — Serper/Tavily, tender_saved, analyze LLM, Gosplan UI, 29 pytest. | Коммит: `21e9e1d` | Хвост A: PDF→analyze опц. | Хвост B: live spot-check ключей 🟢 | Хвост C: нет | Следующий шаг: go Ф2 §8 или §1 Voice. | Статус: done
 
 2026-06-11 | Действие: тендеры Ф1 baseline — MAP таблица, smoke+pytest, acceptance, fix search 400, BACKLOG хвосты. | Коммит: `2acf0da` | Хвост A: нет | Хвост B: Мои/Архив UI, Gosplan tail 🟡 | Хвост C: Ф2 §7 агент MOCK | Следующий шаг: go Ф2 или тендеры п.4. | Статус: done
