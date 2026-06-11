@@ -190,3 +190,10 @@ final_reply + decision + next_action
 **Данные:** `backend/data/qa_lab.sqlite3`.
 
 **Связь:** использует те же метрики и скрипты, что описаны в `docs/stack/LLM.md` (rollout, gate). Подробнее — docstring и константы в `qa_agent.py`.
+
+---
+
+## Quality gates (Фаза 2)
+
+Ф1: 5 агентов в чате + RAG ✅ — см. [`PRD_MAP.md`](../product/PRD_MAP.md) § «Агенты».  
+Ф2: latency, RAG-контекст, fallback «не знаю» — закрытие через **`/ops/eval`**, **`/ops/traces`**, acceptance `HERMES_*`, не галочка MAP без цифр.
