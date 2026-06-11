@@ -118,8 +118,8 @@ async def voice_websocket(ws: WebSocket):
 
                 try:
                     result = await process_audio(audio_bytes)
-                except RuntimeError as e:
-                    await ws.send_json({"type": "error", "message": str(e)})
+                except RuntimeError:
+                    await ws.send_json({"type": "error", "message": "Ошибка распознавания речи"})
                     continue
 
                 await ws.send_json({"type": "transcript", "text": result["transcript"]})

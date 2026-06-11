@@ -95,6 +95,7 @@ class TestHermesParser:
 HERMES_AVAILABLE = bool(os.getenv("GROQ_API_KEY") or os.getenv("OLLAMA_HOST"))
 
 
+@pytest.mark.live_eval
 @pytest.mark.skipif(not HERMES_AVAILABLE, reason="GROQ/Ollama недоступны — пропускаем интеграционные тесты Hermes")
 class TestHermesIntents:
 

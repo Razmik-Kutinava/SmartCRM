@@ -2,12 +2,15 @@
 
 ```bash
 cd backend
-pytest                    # всё
+pip install -r requirements-dev.txt
+pytest                    # регрессия (без live_eval)
+pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing   # coverage baseline
+pytest -m live_eval tests/core/test_hermes_eval.py   # live LLM eval
 pytest tests/test_leadgen.py -q
 pytest tests/api/ -q
 ```
 
-Конфиг: `pytest.ini`, фикстуры: `conftest.py`.
+Конфиг: `pytest.ini`, `.coveragerc`, фикстуры: `conftest.py`. Baseline %: `docs/operations/COVERAGE_BASELINE.md`.
 
 ---
 

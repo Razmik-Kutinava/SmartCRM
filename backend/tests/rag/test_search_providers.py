@@ -51,6 +51,10 @@ async def test_serper_maps_organic_and_news(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_brave_maps_web_results(monkeypatch):
+    from rag.search import brave_limit
+
+    brave_limit._BRAVE_BACKOFF_UNTIL = 0.0
+    brave_limit.brave_cache_clear()
     monkeypatch.setenv("BRAVE_API_KEY", "test-key")
     _mock_client(
         monkeypatch,

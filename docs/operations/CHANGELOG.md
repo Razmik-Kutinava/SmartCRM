@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Coverage: pytest-cov baseline 51.4%
+
+**Сделано:** `requirements-dev.txt` (pytest-cov); `backend/.coveragerc`; команда `pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing`; baseline **51.4%** в `COVERAGE_BASELINE.md`; MAP ориентиры Ф2/Ф3; маркер `live_eval` (исключён из регрессии); фиксы: voice WS без `str(e)`, RAG stubs не ломают suite, brave backoff reset.
+
 ## 2026-06-11 — Email: fix дат IMAP + inbox filter
 
 **Сделано:** `_parse_msg_date` для datetime; repair 362 битых дат по UID; inbox показывает все категории (не только inbound); DevTools = Yandex «Сегодня».

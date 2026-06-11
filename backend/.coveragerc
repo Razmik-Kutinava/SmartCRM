@@ -1,0 +1,21 @@
+[run]
+source =
+    api
+    core
+    agents
+    db
+    services
+    email_sync
+    leadgen
+    rag
+    integrations
+    voice
+omit =
+    tests/*
+    scripts/*
+    */__init__.py
+
+[report]
+skip_empty = True
+show_missing = True
+precision = 1

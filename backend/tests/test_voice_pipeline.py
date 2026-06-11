@@ -54,24 +54,33 @@ for mod_name in [
     if mod_name not in sys.modules:
         _stub_module(mod_name)
 
-# ── Мок rag.chroma_store чтобы не нужен chromadb ────────────────────────────
-chroma_mock = _stub_module("rag.chroma_store")
-chroma_mock.query_documents = AsyncMock(return_value=[])
-chroma_mock.add_documents = AsyncMock(return_value=None)
+# ── Мок rag (не перетираем, если модуль уже загружен — иначе ломаем tests/rag/) ─
+if "rag.chroma_store" not in sys.modules:
+    chroma_mock = _stub_module("rag.chroma_store")
+    chroma_mock.query_documents = AsyncMock(return_value=[])
+    chroma_mock.add_documents = AsyncMock(return_value=None)
 
-retrieve_mock = _stub_module("rag.retrieve")
-async def _mock_attach_rag(slots, transcript=""):
-    return slots
-retrieve_mock.attach_rag_to_slots = _mock_attach_rag
-retrieve_mock.rag_block = AsyncMock(return_value="")
+if "rag.retrieve" not in sys.modules:
+    retrieve_mock = _stub_module("rag.retrieve")
 
-# ── Мок agents.tools ─────────────────────────────────────────────────────────
-tools_mock = _stub_module("agents.tools")
-tools_mock.read_leads = AsyncMock(return_value=[])
-tools_mock.read_lead_by_company = AsyncMock(return_value=None)
-tools_mock.update_lead_score = AsyncMock(return_value=None)
-tools_mock.compute_lead_score = MagicMock(return_value=50)
-tools_mock.read_tasks = AsyncMock(return_value=[])
+    async def _mock_attach_rag(slots, transcript=""):
+        return slots
+
+    retrieve_mock.attach_rag_to_slots = _mock_attach_rag
+    retrieve_mock.rag_block = AsyncMock(return_value="")
+
+# ── Мок agents.tools (не перетираем, если модуль уже загружен) ───────────────
+if "agents.tools" not in sys.modules:
+    tools_mock = _stub_module("agents.tools")
+    tools_mock.read_leads = AsyncMock(return_value=[])
+    tools_mock.read_lead_by_company = AsyncMock(return_value=None)
+    tools_mock.read_lead_by_id = AsyncMock(return_value=None)
+    tools_mock.read_lead_audit = AsyncMock(return_value=[])
+    tools_mock.read_lead_comments = AsyncMock(return_value=[])
+    tools_mock.read_lead_communications = AsyncMock(return_value=[])
+    tools_mock.update_lead_score = AsyncMock(return_value=None)
+    tools_mock.compute_lead_score = MagicMock(return_value=50)
+    tools_mock.read_tasks = AsyncMock(return_value=[])
 
 
 # ─────────────────────────────────────────────────────────────

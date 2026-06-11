@@ -1,11 +1,7 @@
 """Тесты загрузки истории лида для голоса."""
-import os
-import sys
 from unittest.mock import AsyncMock, patch
 
 import pytest
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from voice.lead_context import fetch_lead_history
 

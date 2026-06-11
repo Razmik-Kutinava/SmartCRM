@@ -36,7 +36,9 @@ uvicorn main:app --reload --port 8000
 | Файл | За что |
 |------|--------|
 | `requirements.txt` | Зависимости Python |
-| `pytest.ini` | Настройки pytest |
+| `requirements-dev.txt` | pytest, pytest-cov, aiosqlite (тесты) |
+| `pytest.ini` | Настройки pytest (+ маркер `live_eval`) |
+| `.coveragerc` | Источники coverage (без tests/scripts) |
 | `eval_benchmark_data.py` | Данные для eval-бенчмарков Hermes |
 
 ## Поток запроса (упрощённо)
