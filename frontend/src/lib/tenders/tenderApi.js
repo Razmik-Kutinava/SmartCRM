@@ -1,7 +1,5 @@
 /** API тендеров: сохранённые, анализ, external_id. */
-import { getApiUrl } from '$lib/websocket.js';
-
-const API = () => getApiUrl();
+import { apiFetch } from '$lib/api.js';
 
 export function tenderExternalId(t) {
 	if (!t) return '';
@@ -11,51 +9,51 @@ export function tenderExternalId(t) {
 	return `${src}:${id}`;
 }
 
-export async function fetchSavedTenders(status = 'saved') {
-	const r = await fetch(`${API()}/api/tenders/saved?status=${status}`);
+async function parseJson(r) {
 	if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
 	return r.json();
 }
 
+export async function fetchSavedTenders(status = 'saved') {
+	const r = await apiFetch(`/api/tenders/saved?status=${status}`);
+	return parseJson(r);
+}
+
 export async function saveTender(payload) {
-	const r = await fetch(`${API()}/api/tenders/saved`, {
+	const r = await apiFetch('/api/tenders/saved', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(payload),
 	});
-	if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
-	return r.json();
+	return parseJson(r);
 }
 
 export async function patchTenderSaved(id, patch) {
-	const r = await fetch(`${API()}/api/tenders/saved/${id}`, {
+	const r = await apiFetch(`/api/tenders/saved/${id}`, {
 		method: 'PATCH',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(patch),
 	});
-	if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
-	return r.json();
+	return parseJson(r);
 }
 
 export async function extractTenderDocument(file) {
 	const fd = new FormData();
 	fd.append('file', file);
-	const r = await fetch(`${API()}/api/tenders/documents/extract`, {
+	const r = await apiFetch('/api/tenders/documents/extract', {
 		method: 'POST',
 		body: fd,
 	});
-	if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
-	return r.json();
+	return parseJson(r);
 }
 
 export async function analyzeTender(tender, agent, documentText = '') {
-	const r = await fetch(`${API()}/api/tenders/analyze`, {
+	const r = await apiFetch('/api/tenders/analyze', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ tender, agent, document_text: documentText }),
 	});
-	if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
-	return r.json();
+	return parseJson(r);
 }
 
 export function sourceLabel(source) {

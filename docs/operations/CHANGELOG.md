@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Тендеры: apiFetch + DevTools PDF UI OK
+
+**Сделано:** tenderApi на apiFetch (X-API-Key); DevTools: upload PDF → «✓ текст готов · 23 симв.»; .env.example SMARTCRM_API_KEY.
+
 ## 2026-06-11 — Тендеры: PDF → текст в analyze
 
 **Сделано:** `POST /documents/extract`, UI загрузка → `document_text`, pytest + fixture `sample_tz.pdf`.
