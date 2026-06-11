@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-11 | Действие: doc-sync — PRD навигация+Ф1✅; MAP TOC/DoD Ф2/сценарии Ф2/coverage/сводка; LEADGEN_VOICE_ACCEPTANCE.md; waitForWsOpen. | Коммит: `30f7460` | Хвост A: нет | Хвост B: spot-check approve/fanout 🟡 | Хвост C: Ф2 §8 live UI | Следующий шаг: Ф2 §8 live или §1 Voice Layer — ждём go. | Статус: done
+
 2026-06-11 | Действие: mic E2E — WS audio tests, dev voice-simulate-mic, leadgen voice smoke; Ф1 DoD 6/6; MAP/BACKLOG/HANDOFF. | Коммит: `8d2d196` | Хвост A: нет | Хвост B: spot-check approve/fanout 🟡 | Хвост C: Ф2 §8 live UI pipeline | Следующий шаг: Ф2 §8 live или §1 Voice Layer. | Статус: done
 
 2026-06-10 | Действие: MAP-doc финал — Поиск/RAG таблица, шапки Лиды/Баллы/Поиск; HANDOFF «MAP выровнен». | Коммит: `2890523` | Хвост A: нет (MAP-doc закрыт) | Хвост B: микрофон 🔴, DoD п.6 | Хвост C: go Ф2 оч.1/5 | Следующий шаг: продукт по `go`. | Статус: done
