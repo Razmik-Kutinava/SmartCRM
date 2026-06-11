@@ -69,6 +69,39 @@ async function drainPendingAudio() {
 	}
 }
 
+export function isWsOpen() {
+	return !!(ws && ws.readyState === WebSocket.OPEN);
+}
+
+/** Ждём OPEN (или reject по таймауту) — иначе sendAudio молча зависает в UI. */
+export function waitForWsOpen(timeoutMs = 8000) {
+	if (isWsOpen()) return Promise.resolve();
+	connect();
+	return new Promise((resolve, reject) => {
+		const timer = setTimeout(() => {
+			unsub();
+			reject(new Error('WebSocket: нет соединения с сервером'));
+		}, timeoutMs);
+		const unsub = onMessage((data) => {
+			if (data.type === 'connected') {
+				clearTimeout(timer);
+				unsub();
+				resolve();
+			}
+			if (data.type === 'error') {
+				clearTimeout(timer);
+				unsub();
+				reject(new Error(data.message || 'WebSocket ошибка соединения'));
+			}
+		});
+		if (isWsOpen()) {
+			clearTimeout(timer);
+			unsub();
+			resolve();
+		}
+	});
+}
+
 export function connect() {
 	if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
 
@@ -136,6 +169,7 @@ export async function sendFixtureAudio(url = '/fixtures/voice_mic_fixture.wav') 
 	const r = await fetch(url);
 	if (!r.ok) throw new Error(`fixture audio: ${r.status}`);
 	const blob = await r.blob();
+	await waitForWsOpen();
 	sendAudio(blob);
 }
 

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — PRD/MAP: синхрон после ревью доков
+
+**Сделано:** `PRD.md` — навигация, Ф1 ✅, P2→Ф1 drift; `PRD_MAP.md` — TOC, DoD Ф2, сценарии Ф2, coverage ориентир, сводка голос/лидоген; `LEADGEN_VOICE_ACCEPTANCE.md`.
+
 ## 2026-06-11 — Голос: mic E2E + Ф1 DoD закрыт + Ф2 leadgen voice smoke
 
 **Сделано:** `test_voice_mic_ws_e2e.py`, `smoke_voice_mic_e2e.py`, dev `voice-simulate-mic`, `test_leadgen_voice_ws.py`; `VOICE_MIC_E2E_ACCEPTANCE.md`; MAP/BACKLOG DoD 6/6.

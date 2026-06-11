@@ -18,9 +18,10 @@ cd backend && python scripts/smoke_voice_mic_e2e.py
 
 ## DevTools (опционально)
 
-1. Backend `:8000`, frontend `npm run dev`
+1. Backend `:8000` **отвечает** (`GET /api/ops/agents` < 2 с), frontend `npm run dev`
 2. `/leads/list` → кнопка **🎤 sim** (только dev)
 3. Ожидание: «Обрабатываю…» → transcript → reply (нужен `GROQ_API_KEY` для live STT)
+4. Если бэкенд завис — WS `off`, через 8 с ошибка «нет соединения» (не вечный processing)
 
 ## Реальный микрофон
 
