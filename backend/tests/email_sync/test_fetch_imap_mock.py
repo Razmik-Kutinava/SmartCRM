@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 from imap_tools import AND
 
-from email_sync.sync import _fetch_imap_messages, _imap_since_date
+from email_sync.sync import _fetch_imap_messages, _imap_since_date, _parse_msg_date
 
 
 def test_fetch_imap_messages_mocked():
@@ -42,14 +42,23 @@ def test_fetch_imap_messages_mocked():
     assert len(rows) == 1
     assert rows[0]["subject"] == "Test"
     mailbox.fetch.assert_called_once()
-    assert "criteria" not in mailbox.fetch.call_args.kwargs
+    mailbox.folder.set.assert_called_with("INBOX")
 
 
-def test_imap_since_date_with_last_sync():
-    account = SimpleNamespace(
-        last_synced_at=datetime(2026, 6, 11, 15, 0, tzinfo=timezone.utc),
-    )
-    assert _imap_since_date(account).isoformat() == "2026-06-10"
+def test_parse_msg_date_from_datetime():
+    dt = datetime(2026, 6, 11, 10, 53, 15, tzinfo=timezone.utc)
+    assert _parse_msg_date(dt) == dt
+
+
+def test_parse_msg_date_from_rfc_string():
+    dt = _parse_msg_date("Thu, 11 Jun 2026 10:53:15 +0000")
+    assert dt.year == 2026 and dt.month == 6 and dt.day == 11
+
+
+def test_imap_since_date_window():
+    account = SimpleNamespace(last_synced_at=datetime(2026, 6, 11, 15, 0, tzinfo=timezone.utc))
+    since = _imap_since_date(account)
+    assert (datetime.now(timezone.utc).date() - since).days >= 29
 
 
 def test_fetch_imap_uses_since_criteria():

@@ -79,10 +79,12 @@
     }
     onMount(load);
 
+    const HIDDEN_IN_INBOX = new Set(['outbound', 'campaign', 'archive']);
+
     // ─── фильтрация ──────────────────────────────────────────────
     function getFiltered() {
         let list = threads;
-        if (activeFolder === 'inbox')    list = list.filter(t => (t.category === 'inbound' || t.category === 'general') && !t.isArchived);
+        if (activeFolder === 'inbox')    list = list.filter(t => !HIDDEN_IN_INBOX.has(t.category) && !t.isArchived);
         if (activeFolder === 'sent')     list = list.filter(t => t.category === 'outbound');
         if (activeFolder === 'zoho')     list = list.filter(t => /zoho/i.test(t.subject + ' ' + t.snippet));
         if (activeFolder === 'campaign') list = list.filter(t => t.category === 'campaign');
@@ -127,7 +129,7 @@
     let grouped = $derived(groupByDate(getFiltered()));
 
     function folderCount(key) {
-        if (key === 'inbox')    return threads.filter(t => (t.category === 'inbound' || t.category === 'general') && !t.isArchived).length;
+        if (key === 'inbox')    return threads.filter(t => !HIDDEN_IN_INBOX.has(t.category) && !t.isArchived).length;
         if (key === 'sent')     return threads.filter(t => t.category === 'outbound').length;
         if (key === 'zoho')     return threads.filter(t => /zoho/i.test(t.subject + ' ' + t.snippet)).length;
         if (key === 'campaign') return threads.filter(t => t.category === 'campaign').length;
@@ -206,9 +208,12 @@
             accounts = await fetchEmailAccounts();
             threads  = await fetchEmailThreads();
             const n = result.imported ?? 0;
+            const u = (result.updated ?? 0) + (result.fake_fixed ?? 0);
             success = n > 0
-                ? `✅ Синхронизировано: +${n} новых писем`
-                : '✅ Актуально — новых писем нет';
+                ? `✅ +${n} новых писем`
+                : u > 0
+                    ? `✅ Обновлено ${u} писем (даты и порядок)`
+                    : '✅ Актуально — новых писем нет';
         } catch (e) { error = `❌ ${e.message}`; }
         finally { syncLoading = false; }
     }

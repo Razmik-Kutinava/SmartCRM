@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Email: fix дат IMAP + inbox filter
+
+**Сделано:** `_parse_msg_date` для datetime; repair 362 битых дат по UID; inbox показывает все категории (не только inbound); DevTools = Yandex «Сегодня».
+
 ## 2026-06-11 — Email: кнопка Sync + POST /api/email/sync
 
 **Сделано:** отдельная синхронизация без пароля; IMAP SINCE `last_synced_at−1д`; UI «🔄 Синхронизировать»; `smoke_email_sync.py`; 7 pytest; DevTools OK.

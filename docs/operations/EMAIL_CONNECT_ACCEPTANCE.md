@@ -34,7 +34,9 @@ pytest tests/api/test_email_sync_api.py tests/email_sync/test_fetch_imap_mock.py
 | `POST /api/email/sync` | Все аккаунты |
 | `POST /api/email/accounts/{id}/sync` | Один аккаунт |
 
-IMAP: письма **с `last_synced_at − 1 день`** (SINCE), лимит `EMAIL_IMAP_FETCH_LIMIT` (default 200). Автофона нет.
+IMAP: окно `EMAIL_IMAP_SINCE_DAYS` (30), лимит `EMAIL_IMAP_FETCH_LIMIT` (500). Чинит битые даты импорта (UID fetch). Автофона нет.
+
+**Баг 2026-06-11:** даты — `imap_tools` отдаёт `datetime`, не строку; inbox UI фильтровал только `inbound|general` — исправлено.
 
 ## Закрыто
 
