@@ -166,13 +166,20 @@
 
 ### Тендеры `/tenders` (baseline)
 
-- [x] UI + API
-- [x] Поиск 44-ФЗ / 223-ФЗ, НМЦ, регион, ОКПД2
-- [x] Планы закупок, избранное, архив
-- [x] TenderGuru + ЕИС + Serper/Tavily
-- [x] Лимиты в Ops → API Лимиты
-- [ ] Агентский анализ ТЗ → **Фаза 2**
-- [ ] Платный API (Контур) → после 1-й тендерной сделки ([`tenders.md`](../modules/tenders.md#экономика-и-gate-платного-api))
+> **Перепроход (2026-06-11):** чеклист = таблица ниже. **Статус блока:** ✅ baseline (хвосты ⚠️ → `BACKLOG`).
+
+| # | Пункт | Перепроход | Итог |
+|---|--------|------------|------|
+| 1 | UI `/tenders` + API `/api/tenders` | 2026-06-11 | ✅ **OK** — страница + роутер `tenders/*`; `smoke_tenders_baseline.py` |
+| 2 | Поиск 44/223, НМЦ, регион, ОКПД2 | 2026-06-11 | ✅ код · **⚠️** Gosplan free — до 5 «свежих» без keyword match → `BACKLOG` 🟡 |
+| 3 | Планы закупок (`/plans/search`) | 2026-06-11 | ✅ **OK** — TenderGuru planzakup; pytest mocked |
+| 4 | Избранное / «Мои» / Архив | 2026-06-11 | **⚠️** UI-заглушки («в разработке») → `BACKLOG` 🟡 |
+| 5 | TenderGuru + Gosplan (ЕИС) | 2026-06-11 | ✅ **OK** — агрегация в `/search` · **⚠️** Serper/Tavily — модуль `/search`, не tenders API |
+| 6 | Лимиты Ops → API Limits | 2026-06-11 | ✅ **OK** — `track_api` gosplan/datanewton · `GET /api/usage/stats` |
+| 7 | Агентский анализ ТЗ (UI) | — | **⚠️** MOCK на фронте → **Ф2 §7** |
+| 8 | Платный API (Контур) | — | 🔲 → после 1-й сделки ([`tenders.md`](../modules/tenders.md#экономика-и-gate-платного-api)) |
+
+**Acceptance:** [`TENDERS_BASELINE_ACCEPTANCE.md`](../operations/TENDERS_BASELINE_ACCEPTANCE.md)
 
 ### Аналитика (базовая)
 
@@ -440,7 +447,7 @@
 | Поиск/RAG | 1→2 | ✅ база | Ф2 §4: кэш enrich, авто-чанки |
 | Лиды enrich | 2 | 🔲 | Ф2 §9: кнопка на карточке |
 | Лидоген | 1→2 | ✅ Ф1 | **Ф2 §8:** голос ⚠️ smoke · `LEADGEN_VOICE_ACCEPTANCE.md` |
-| Тендеры | 1→2→3 | ✅ база | Ф2 §7: агент-анализ |
+| Тендеры | 1→2→3 | ✅ baseline (хвосты 🟡) | `TENDERS_BASELINE_ACCEPTANCE.md` · Ф2 §7 агент |
 | Email | 2→3 | 🔲 | Ф2 §3: IMAP |
 | Оркестрация | 2 | 🔲 | Ф2 §2: fanout |
 | Агенты | 1→2 | ✅ чат | Ф2 quality gates → `/ops/eval` |

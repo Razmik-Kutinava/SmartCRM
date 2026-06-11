@@ -135,7 +135,7 @@ def test_main_cors_reads_env():
 
 def test_tenders_invalid_date_is_caught():
     src = open(
-        os.path.join(os.path.dirname(__file__), "..", "api", "routes", "tenders.py"),
+        os.path.join(os.path.dirname(__file__), "..", "api", "routes", "tenders", "search_routes.py"),
         encoding="utf-8",
     ).read()
     assert "Невалидная дата" in src
@@ -172,7 +172,7 @@ def test_email_smtp_validate_certs_and_sanitized():
 
 def test_tenders_cancels_scheduled_on_abort():
     src = open(
-        os.path.join(os.path.dirname(__file__), "..", "api", "routes", "tenders.py"),
+        os.path.join(os.path.dirname(__file__), "..", "api", "routes", "tenders", "search_routes.py"),
         encoding="utf-8",
     ).read()
     assert "_t.cancel()" in src

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — Тендеры: Ф1 baseline formalized
+
+**Сделано:** таблица MAP, `TENDERS_BASELINE_ACCEPTANCE.md`, `smoke_tenders_baseline.py`, `test_tenders_baseline_smoke.py`; фикс HTTP 400→500 на `/api/tenders/search`; BACKLOG хвосты (Мои/Архив MOCK, Gosplan tail).
+
 ## 2026-06-11 — PRD/MAP: синхрон после ревью доков
 
 **Сделано:** `PRD.md` — навигация, Ф1 ✅, P2→Ф1 drift; `PRD_MAP.md` — TOC, DoD Ф2, сценарии Ф2, coverage ориентир, сводка голос/лидоген; `LEADGEN_VOICE_ACCEPTANCE.md`.

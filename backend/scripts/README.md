@@ -44,6 +44,7 @@
 | `smoke_hermes_leads_full.py` | Смоук полных интентов лидов (analyze, history, фильтры) |
 | `smoke_voice_lead_scenarios.py` | Полный смоук блока «Голос → лиды» (п.1–5 chain) |
 | `smoke_voice_mic_e2e.py` | E2E mic-путь: WS audio bytes + leadgen voice smoke |
+| `smoke_tenders_baseline.py` | Ф1 тендеры: pytest sources + baseline smoke + опц. /tenders |
 | `smoke_search_providers.py` | Смоук Serper/Brave/Tavily (PRD_MAP RAG п.1) |
 | `smoke_search_modes.py` | Смоук 6 режимов поиска (PRD_MAP RAG п.2) |
 | `smoke_rag_chroma.py` | Смоук Chroma RAG + агенты (PRD_MAP RAG п.3) |

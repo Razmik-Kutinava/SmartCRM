@@ -17,7 +17,7 @@
 
 ## Бэкенд
 
-- Роутер: `backend/api/routes/tenders.py`, префикс **`/api/tenders`**.
+- Роутер: `backend/api/routes/tenders/` (пакет: search, plans, detail, classifiers), префикс **`/api/tenders`**.
 - Подключение в приложении: `backend/main.py` (импорт и `include_router` для роутера тендеров).
 
 ### Основные эндпоинты

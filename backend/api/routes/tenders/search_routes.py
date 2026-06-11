@@ -361,6 +361,8 @@ async def search_tenders(
 
         return result
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Tender search error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Ошибка поиска тендеров")
