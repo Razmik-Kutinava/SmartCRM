@@ -34,4 +34,4 @@ pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing
 
 | Дата | % | Коммит | Комментарий |
 |------|---|--------|-------------|
-| 2026-06-11 | 51.4% | — | Первый baseline: pytest-cov, requirements-dev, .coveragerc |
+| 2026-06-11 | 51.4% | `878e159` | Первый baseline: pytest-cov, requirements-dev, .coveragerc |

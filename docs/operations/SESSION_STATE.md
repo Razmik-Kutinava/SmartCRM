@@ -13,6 +13,8 @@
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
 
+2026-06-11 | Действие: Coverage — pytest-cov, requirements-dev.txt, .coveragerc, baseline 51.4%, live_eval marker, fix voice str(e)+RAG stubs+brave backoff; 498 pytest. | Коммит: `878e159` | Хвост A: CI cov gate — отдельный шаг | Хвост B: me@agneko.am пароль | Хвост C: нет | Следующий шаг: go Ф2 или CI cov. | Статус: done
+
 2026-06-11 | Действие: Email fix — парсинг дат IMAP, repair 362 UID, inbox filter (support/pricing), DevTools=Yandex сегодня. | Коммит: `dae7f08` | Хвост A: me@agneko.am — пароль | Хвост B: EMAIL_IMAP_FETCH_LIMIT=500 в .env | Хвост C: нет | Следующий шаг: go Ф2 рассылки или Агенты. | Статус: done
 
 2026-06-11 | Действие: Email Sync — POST /sync, IMAP SINCE, кнопка 🔄 на /email, smoke_email_sync, 7 pytest, live+DevTools ib@ OK. | Коммит: `b20b2d9` | Хвост A: me@agneko.am — пароль | Хвост B: автофон sync → Ф2 | Хвост C: нет | Следующий шаг: go Агенты MAP или Ф2 рассылки. | Статус: done
