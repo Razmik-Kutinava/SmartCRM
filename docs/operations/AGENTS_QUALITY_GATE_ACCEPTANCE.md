@@ -25,14 +25,16 @@
 
 | Агент | Pass | Fail | Pass rate | Порог | Gate | Дата | Артефакт |
 |-------|------|------|-----------|-------|------|------|----------|
-| Hermes | — | — | — | 85% | 🔲 | — | — |
-| Analyst | — | — | — | 75% | 🔲 | — | — |
-| Economist | — | — | — | 75% | 🔲 | — | — |
-| Marketer | — | — | — | 75% | 🔲 | — | — |
-| Strategist | — | — | — | 75% | 🔲 | — | — |
-| Tech | — | — | — | 75% | 🔲 | — | — |
+| Hermes | 0 | 2* | 0%* | 85% | 🔴 | 2026-06-12 | smoke `agents_gate_20260612_154027.json` |
+| Analyst | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke (кейс без lead_id — исправлено) |
+| Economist | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
+| Marketer | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
+| Strategist | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
+| Tech | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
 
-*Пока нет live-прогона — инфра и рамка в шаге 0–1 (2026-06-12).*
+\*Smoke-прогон (2 Hermes + 1/агент): Hermes ReadTimeout @180s; агенты ~60s/кейс через Ollama.  
+**Полный прогон** (36+75 кейсов): `python scripts/run_agents_quality_gate.py` — timeout 600s, прогрев модели.  
+**`[x]` в MAP** — только после полного зелёного gate.
 
 ---
 
@@ -78,8 +80,8 @@ python scripts/run_agents_quality_gate.py
 - [x] Цикл обучения: `AGENTS_LEARNING_MAP.md`
 - [x] Решение: eval через **Ollama**, не Groq
 - [x] Eval-кейсы ≥N на агента (шаг 2)
-- [ ] Скрипт `run_agents_quality_gate.py`
-- [ ] Live-прогон + JSON-артефакт
+- [x] Скрипт `run_agents_quality_gate.py` + `POST /api/ops/eval/agents-gate` (шаг 3)
+- [ ] Полный live-прогон ≥ порогов (smoke 🔴 2026-06-12)
 - [ ] UI фильтр / failed → датасет
 - [ ] `[x]` в PRD_MAP
 

@@ -18,7 +18,8 @@ def response_to_text(raw: Any) -> str:
         return raw
     if isinstance(raw, dict):
         parts: list[str] = []
-        for v in raw.values():
+        for k, v in raw.items():
+            parts.append(str(k))
             if isinstance(v, (str, int, float)):
                 parts.append(str(v))
             elif isinstance(v, list):

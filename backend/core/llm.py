@@ -142,7 +142,8 @@ async def _ollama_chat(
     if json_mode:
         payload["format"] = "json"
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    ollama_timeout = float(_env("OLLAMA_CHAT_TIMEOUT", _env("EVAL_OLLAMA_TIMEOUT", "120")))
+    async with httpx.AsyncClient(timeout=ollama_timeout) as client:
         response = await client.post(
             f"{_ollama_host()}/api/chat",
             json=payload,

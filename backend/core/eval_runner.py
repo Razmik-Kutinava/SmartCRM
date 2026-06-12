@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 HERMES_MODEL = os.getenv("HERMES_MODEL", "hermes3:latest")
-EVAL_OLLAMA_TIMEOUT = float(os.getenv("EVAL_OLLAMA_TIMEOUT", "60"))
+def _ollama_timeout() -> float:
+    return float(os.getenv("EVAL_OLLAMA_TIMEOUT", "120"))
 
 
 async def _ollama_eval(messages: list[dict], model: str, timeout: float) -> str:
@@ -50,7 +51,7 @@ async def eval_one_case(text: str, expected: Optional[str], model_name: str) -> 
             actual_model = GROQ_HERMES_MODEL
         elif model_name in ("hermes3", "ollama"):
             ollama_model = HERMES_MODEL if model_name == "hermes3" else os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
-            raw = await _ollama_eval(messages, ollama_model, timeout=EVAL_OLLAMA_TIMEOUT)
+            raw = await _ollama_eval(messages, ollama_model, timeout=_ollama_timeout())
             parsed = _parse_json(raw)
             actual_model = ollama_model
         else:

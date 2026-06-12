@@ -1,9 +1,9 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус:шаг 2 кейсы ✅ · gate script 🔲 · live 🔲`
+`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус:шаг 3 script+API ✅ · полный live 🔴 smoke`
 
 **Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · обучение [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md).  
-**Следующий `go`:** шаг 3 — `run_agents_quality_gate.py` + API + live Ollama.
+**Следующий `go`:** дождаться полного `run_agents_quality_gate.py` (Ollama CPU ~часы) → шаг 5 UI.
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 

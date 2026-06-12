@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-12 — Agents quality gates: прогон Ollama + gate script/API (шаг 3)
+
+**Сделано:** `run_agents_quality_gate.py`, `core/agent_eval/gate.py`, `POST/GET /api/ops/eval/agents-gate`; Ollama check+warmup; timeout 600s; smoke live (Ollama hermes3) — пороги не пройдены на smoke.
+
 ## 2026-06-12 — Agents quality gates: eval-кейсы 6 агентов (шаг 2)
 
 **Сделано:** `eval/agents/*.jsonl` (15×5), Hermes 36 в `cases.jsonl`; `core/agent_eval` (load + score); `seed_agent_eval_cases.py`; pytest smoke 12 тестов.
