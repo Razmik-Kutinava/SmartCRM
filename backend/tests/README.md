@@ -12,6 +12,10 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 
 Конфиг: `pytest.ini`, `.coveragerc`, фикстуры: `conftest.py`. Baseline %: `docs/operations/COVERAGE_BASELINE.md`. CI: `.github/workflows/ci.yml`, `docs/operations/CI_BASELINE.md`.
 
+## Правило: тест на фичу
+
+Каждый PR с новым/изменённым backend-кодом → **≥1 pytest** в зеркальной папке `tests/` (happy path, моки). Чеклист: `docs/dev/PR_CHECKLIST.md`. Регрессия в CI без `--cov-fail-under`.
+
 **По умолчанию:** `14 deselected` = маркер `live_eval` (live Groq) — не баг. Запуск: `python -m pytest -m live_eval tests/core/test_hermes_eval.py`.
 
 ---
@@ -91,7 +95,12 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `test_email_sync.py` | Live IMAP только при `EMAIL_SYNC_LIVE=1` |
 | `test_bitrix_integration.py` | Битрикс live (REST вебхук) |
 | `integrations/test_bitrix_row_map.py` | Маппинг полей Битрикс → Lead |
+| `integrations/test_bitrix_sync_state.py` | sync state + poll skip + upsert mock |
 | `integrations/test_bitrix_webhook.py` | Исходящий вебхук ONCRMLEADADD |
+| `leadgen/test_checko_http_client.py` | Checko HTTP без live API |
+| `leadgen/test_crm_threshold.py` | Порог автосохранения в CRM |
+| `email_sync/test_sync_helpers.py` | classify/normalize/to_text |
+| `lib/test_pr_checklist_policy.py` | Политика «тест на фичу» в доках |
 
 ---
 
