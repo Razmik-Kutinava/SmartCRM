@@ -2,6 +2,11 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-11 — fix: pytest warnings (email + starlette)
+
+**Было:** 5 warnings — email-тесты `return bool`, StarletteDeprecationWarning httpx testclient.  
+**Стало:** `test_email_integration.py` на `assert`; `filterwarnings` в `pytest.ini`; 500 passed без warnings.
+
 ## 2026-06-11 — fix: cryptography в requirements + venv/docs
 
 **Сделано:** `cryptography` в `requirements.txt` (venv падал на `core/crypto`); доки/CI — `python -m pytest`, venv в SETUP/README/COVERAGE/CI_BASELINE.

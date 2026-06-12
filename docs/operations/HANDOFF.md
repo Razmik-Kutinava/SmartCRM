@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[venv+deps] | Статус:cryptography ✅ · venv+python -m pytest в доках`
+`Спринт:[Ф1→Ф2] | Задача:[pytest clean] | Статус:500 passed 0 warnings · ci_smoke OK · push+branch protection`
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 

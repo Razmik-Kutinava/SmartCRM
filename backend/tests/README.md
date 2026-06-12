@@ -12,6 +12,8 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 
 Конфиг: `pytest.ini`, `.coveragerc`, фикстуры: `conftest.py`. Baseline %: `docs/operations/COVERAGE_BASELINE.md`. CI: `.github/workflows/ci.yml`, `docs/operations/CI_BASELINE.md`.
 
+**По умолчанию:** `14 deselected` = маркер `live_eval` (live Groq) — не баг. Запуск: `python -m pytest -m live_eval tests/core/test_hermes_eval.py`.
+
 ---
 
 ## Подпапки (зеркало кода)

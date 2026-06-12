@@ -13,6 +13,8 @@
 
 Live Groq, IMAP (`EMAIL_SYNC_LIVE`), Bitrix webhook, frontend DevTools — **не** в CI.
 
+**`14 deselected`** в отчёте pytest — норма: маркер `live_eval` (Groq). Не в CI, локально: `python -m pytest -m live_eval`.
+
 ## Локально
 
 ```bash
