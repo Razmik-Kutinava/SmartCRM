@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-12 | Действие: agents quality gates шаг 5 — UI eval+insights, API latest/failed→dataset; BACKLOG незакрытый live; 9 pytest gate. | Коммит: `27e4925` | Хвост A: ночной full gate Hermes+агенты | Хвост B: [x] MAP после зелёного | Хвост C: agents-only фон оборвался | Следующий шаг: live gate EVAL_OLLAMA_TIMEOUT=1200. | Статус: done
+
 2026-06-12 | Действие: agents quality gates шаг 4 — acceptance_sync, --write-acceptance, GATE_GAPS, BACKLOG; live --agents-only 🔄; MAP 🔲. | Коммит: `2161abc` | Хвост A: полный live Hermes+агенты | Хвост B: UI шаг 5 | Хвост C: Hermes CPU timeout | Следующий шаг: дождаться live 5 агентов / Hermes ночью. | Статус: done
 
 2026-06-12 | Действие: agents quality gates шаг 3 — run_agents_quality_gate.py, POST /api/ops/eval/agents-gate, Ollama smoke+full run; 16 pytest gate. | Коммит: `adf4568` | Хвост A: полный live gate ≥ порогов | Хвост B: UI /ops/eval шаг 5 | Хвост C: Hermes CPU медленный — EVAL_OLLAMA_TIMEOUT=600 | Следующий шаг: дождаться полного gate / тюнинг. | Статус: done
