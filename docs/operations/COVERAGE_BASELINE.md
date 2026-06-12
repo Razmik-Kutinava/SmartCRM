@@ -37,5 +37,5 @@ python -m pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing
 
 | Дата | % | Коммит | Комментарий |
 |------|---|--------|-------------|
-| 2026-06-12 | 51.7% | — | Smoke: bitrix_sync, checko http, email helpers, crm_threshold |
+| 2026-06-12 | 51.7% | `1ab5410` | Smoke: bitrix_sync, checko http, email helpers, crm_threshold |
 | 2026-06-11 | 51.4% | `878e159` | Первый baseline: pytest-cov, requirements-dev, .coveragerc |

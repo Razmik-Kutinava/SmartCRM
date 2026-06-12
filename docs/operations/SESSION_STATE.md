@@ -13,6 +13,8 @@
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
 
+2026-06-12 | Действие: coverage hygiene — PR checklist+тест на фичу (4c09615), smoke 51.7% (1ab5410), CI cov term (3ab71b3); 516 pytest. | Коммит: `3ab71b3` | Хвост A: MAP п.3–5 | Хвост B: me@agneko.am | Хвост C: нет | Следующий шаг: push+go Ф2. | Статус: done
+
 2026-06-12 | Действие: push+CI green run #3 + branch protection main (pytest+smoke required). | Коммит: `7346885` | Хвост A: MAP п.3–5 milestones | Хвост B: me@agneko.am | Хвост C: нет | Следующий шаг: go Ф2. | Статус: done
 
 2026-06-12 | Действие: CI green path — fix rescue create_task до list_leads (eval-007); HERMES_ENABLE_FASTPATH=0 в ci.yml. | Коммит: `6fca8ca` | Хвост A: push+branch protection | Хвост B: MAP п.3–5 | Хвост C: нет | Следующий шаг: push. | Статус: done
