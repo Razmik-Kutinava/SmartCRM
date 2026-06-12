@@ -13,6 +13,8 @@
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
 
+2026-06-12 | Действие: agents quality gates шаг 0–1 — пороги, AGENTS_LEARNING_MAP, AGENTS_QUALITY_GATE_ACCEPTANCE, PRD_MAP/BACKLOG; Ollama eval. | Коммит: `363d1dd` | Хвост A: eval-кейсы+скрипт gate | Хвост B: UI /ops/eval | Хвост C: me@agneko.am | Следующий шаг: шаг 2 кейсы. | Статус: done
+
 2026-06-12 | Действие: coverage hygiene — PR checklist+тест на фичу (4c09615), smoke 51.7% (1ab5410), CI cov term (3ab71b3); 516 pytest. | Коммит: `3ab71b3` | Хвост A: MAP п.3–5 | Хвост B: me@agneko.am | Хвост C: нет | Следующий шаг: push+go Ф2. | Статус: done
 
 2026-06-12 | Действие: push+CI green run #3 + branch protection main (pytest+smoke required). | Коммит: `7346885` | Хвост A: MAP п.3–5 milestones | Хвост B: me@agneko.am | Хвост C: нет | Следующий шаг: go Ф2. | Статус: done
