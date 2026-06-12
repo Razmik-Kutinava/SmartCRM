@@ -57,12 +57,27 @@ python scripts/run_agents_quality_gate.py
 
 ---
 
-## Что сделано в шаге 0–1
+## Eval-кейсы (шаг 2, 2026-06-12)
+
+| Агент | Файл | N | Эталоны |
+|-------|------|---|---------|
+| Hermes | `eval/cases.jsonl` | **36** | intent + slots |
+| Analyst | `eval/agents/analyst.jsonl` | **15** | must_contain / must_not_contain |
+| Economist | `eval/agents/economist.jsonl` | **15** | то же |
+| Marketer | `eval/agents/marketer.jsonl` | **15** | то же |
+| Strategist | `eval/agents/strategist.jsonl` | **15** | то же + `state_overrides` |
+| Tech | `eval/agents/tech_specialist.jsonl` | **15** | то же |
+
+Загрузка: `core.agent_eval` · smoke: `pytest tests/core/agent_eval/test_cases.py` · сид: `scripts/seed_agent_eval_cases.py`.
+
+---
+
+## Что сделано
 
 - [x] Пороги X% и N на агента (таблица выше)
 - [x] Цикл обучения: `AGENTS_LEARNING_MAP.md`
 - [x] Решение: eval через **Ollama**, не Groq
-- [ ] Eval-кейсы ≥N на агента (Hermes: 36 в `cases.jsonl`, порог 30 — ок по количеству)
+- [x] Eval-кейсы ≥N на агента (шаг 2)
 - [ ] Скрипт `run_agents_quality_gate.py`
 - [ ] Live-прогон + JSON-артефакт
 - [ ] UI фильтр / failed → датасет

@@ -245,7 +245,7 @@
 
 > **Пороги (черновик):** Hermes ≥85% / 30 кейсов; Analyst, Economist, Marketer, Strategist, Tech ≥75% / 15.  
 > **`[x]` по gate** — только после зелёной таблицы в acceptance (не «инфра есть»).  
-> **Осталось:** eval-кейсы агентов → `run_agents_quality_gate.py` → live Ollama → UI `/ops/intents/eval`.
+> **Осталось:** `run_agents_quality_gate.py` → live Ollama → UI `/ops/intents/eval`. Eval-кейсы ✅ (Hermes 36, агенты 15×5 — `eval/agents/`).
 
 ### Инфра — dev (Фаза 1)
 

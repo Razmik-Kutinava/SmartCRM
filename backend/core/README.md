@@ -55,6 +55,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `traces.py` | Логирование трейсов Hermes |
 | `stats.py` | Счётчики вызовов внешних API |
 | `eval_runner.py` | Прогон eval-сценариев |
+| `agent_eval/` | Загрузка `eval/agents/*.jsonl` и скоринг must_contain / must_not_contain |
 | `training_import.py` | Импорт training-датасетов |
 | `ops_store.py` | Снимки ops-очереди |
 | `ops_log_buffer.py` | Буфер логов для `/api/ops/logs` |

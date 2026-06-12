@@ -32,6 +32,7 @@
 | Скрипт | За что |
 |--------|--------|
 | `seed_eval_benchmark_leads.py` | Seed лидов для eval |
+| `seed_agent_eval_cases.py` | Генерация `eval/agents/*.jsonl` (15 кейсов × 5 агентов) |
 
 ## Служебные
 
