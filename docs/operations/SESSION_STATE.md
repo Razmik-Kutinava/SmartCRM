@@ -13,6 +13,8 @@
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
 
+2026-06-12 | Действие: CI green path — fix rescue create_task до list_leads (eval-007); HERMES_ENABLE_FASTPATH=0 в ci.yml; push + branch protection main. | Коммит: `6fca8ca` | Хвост A: MAP п.3–5 milestones | Хвост B: me@agneko.am | Хвост C: нет | Следующий шаг: go Ф2. | Статус: done
+
 2026-06-11 | Действие: pytest clean — email assert, filterwarnings starlette, live_eval в доках; 500 passed 0 warnings, ci_smoke OK. | Коммит: `f3974c2` | Хвост A: push+branch protection GitHub | Хвост B: MAP п.3–5 milestones | Хвост C: me@agneko.am | Следующий шаг: push. | Статус: done
 
 2026-06-11 | Действие: fix venv — cryptography в requirements.txt; доки python -m pytest+venv; CI python -m pytest; тест deps. | Коммит: `58d7a2d` | Хвост A: (.venv) pip install -r requirements.txt заново | Хвост B: push+branch protection | Хвост C: me@agneko.am | Следующий шаг: в venv `python -m pytest -q`. | Статус: done
