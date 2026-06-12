@@ -236,7 +236,7 @@
 
 | Критерий | Статус | Где мерить / закрывать |
 |----------|--------|-------------------------|
-| **6 агентов: pass rate ≥ порога** | 🔲 live | [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · Ollama `hermes3` |
+| **6 агентов: pass rate ≥ порога** | 🔲 live 🔴 | [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · Ollama `hermes3` |
 | Рамка порогов + цикл обучения | ✅ 2026-06-12 | [`AGENTS_LEARNING_MAP.md`](../operations/AGENTS_LEARNING_MAP.md) |
 | Latency ответа p95 &lt; 3 с | 🔲 | `/ops/stats`, трейсы · [`langgraph.md`](../agents/langgraph.md) |
 | RAG-контекст в ответе корректен | 🔲 | `/ops/eval`, `/ops/traces` · gate JSON |
@@ -245,7 +245,8 @@
 
 > **Пороги (черновик):** Hermes ≥85% / 30 кейсов; Analyst, Economist, Marketer, Strategist, Tech ≥75% / 15.  
 > **`[x]` по gate** — только после зелёной таблицы в acceptance (не «инфра есть»).  
-> **Осталось:** полный live gate ≥ порогов → UI `/ops/intents/eval`. Инфра ✅ (`run_agents_quality_gate.py`, `POST /api/ops/eval/agents-gate`).
+> **Осталось:** полный live gate ≥ порогов → UI `/ops/intents/eval`. Инфра ✅ (шаг 3).  
+> **Дыры (шаг 4, 2026-06-12):** Hermes ReadTimeout CPU; 5 агентов — полный прогон; `[x]` не ставим → см. `GATE_GAPS` в acceptance.
 
 ### Инфра — dev (Фаза 1)
 

@@ -25,6 +25,7 @@ os.environ["OLLAMA_MODEL"] = os.environ["HERMES_MODEL"]
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from core.agent_eval.acceptance_sync import patch_acceptance_md  # noqa: E402
 from core.agent_eval.gate import run_agents_quality_gate, save_gate_artifact  # noqa: E402
 from core.agent_eval.ollama_check import check_ollama_ready  # noqa: E402
 
@@ -40,11 +41,19 @@ async def _main(args: argparse.Namespace) -> int:
         hermes_limit=args.hermes_limit,
         agent_limit=args.agent_limit,
         skip_agents=args.hermes_only,
+        skip_hermes=args.agents_only,
     )
     path = save_gate_artifact(report)
+    if args.write_acceptance:
+        patch_acceptance_md(report, path.name)
+        print(f"Acceptance обновлён: docs/operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     print(f"\nАртефакт: {path}")
     print(f"Overall gate: {report['overall_gate']}")
+    if report.get("gaps"):
+        print("\n--- Дыры ---")
+        for g in report["gaps"]:
+            print(f"  - {g}")
     return 0 if report["overall_gate"] != "fail" else 1
 
 
@@ -54,6 +63,8 @@ def main() -> None:
     ap.add_argument("--hermes-limit", type=int, default=0, help="Лимит кейсов Hermes (0=все)")
     ap.add_argument("--agent-limit", type=int, default=0, help="Лимит кейсов на агента (0=все)")
     ap.add_argument("--hermes-only", action="store_true", help="Только Hermes, без 5 агентов")
+    ap.add_argument("--agents-only", action="store_true", help="Только 5 агентов, без Hermes")
+    ap.add_argument("--write-acceptance", action="store_true", help="Обновить acceptance-таблицу в docs")
     args = ap.parse_args()
     try:
         raise SystemExit(asyncio.run(_main(args)))

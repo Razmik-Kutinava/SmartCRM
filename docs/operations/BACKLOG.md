@@ -43,7 +43,7 @@
 
 ## Записи
 
-`[2026-06-12] | PRD_MAP: Агенты quality gates | Шаг 0–1 ✅: пороги, AGENTS_LEARNING_MAP, AGENTS_QUALITY_GATE_ACCEPTANCE, PRD_MAP | Осталось: eval-кейсы 5 агентов, run_agents_quality_gate.py, live Ollama, UI, [x] после зелёного % | Eval: Ollama hermes3, Groq нет`
+`[2026-06-12] | PRD_MAP: Агенты quality gates | Шаг 0–4: пороги, кейсы, gate script+API, acceptance sync | Осталось: полный live ≥ порогов (Hermes CPU timeout), UI /ops/eval, [x] MAP | Eval: Ollama hermes3`
 
 `[2026-06-11] | PRD_MAP: инфра email me@agneko.am | Отложено: отдельный пароль на mail.agneko.am | Сейчас: ib@agneko.com подключён (Яндекс IMAP) | Действие: EMAIL_ACCOUNT_1_APP_PASSWORD в .env`
 
@@ -111,7 +111,10 @@
 
 | Приоритет | PRD_MAP | Что | Фаза MAP | Кто |
 |-----------|---------|-----|----------|-----|
-| 🔴 | Агенты · quality gates | Eval-кейсы 6× → `run_agents_quality_gate.py` → live Ollama → UI eval | **2** | агент · [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) |
+| 🔴 | Агенты · quality gates | **Полный live Ollama** ≥ порогов (Hermes 36 @ CPU timeout; 5×15 агентов) | **2** | `run_agents_quality_gate.py --write-acceptance` |
+| 🟡 | Агенты · quality gates | UI `/ops/intents/eval` — фильтр агента, failed→датасет (шаг 5) | **2** | агент по `go` |
+| 🟡 | Агенты · quality gates | Hermes eval: GPU / `EVAL_OLLAMA_TIMEOUT=1200` / ночной прогон | **2** | 👤/агент |
+| 🟢 | Агенты · quality gates | Тюнинг `must_contain` кейсов под hermes3 JSON | **2** | агент |
 | 🟡 | Голос → лиды п.3, п.5 | Spot-check approve / fanout | **1** | 👤 ты |
 | 🟡 | Ф2 §4 / §9 | Кэш enrich + кнопка на карточке лида | **2** | агент по `go` |
 | 🟡 | Лиды п.2 Битрикс синк | Туннель :8000 + вебхук | **2** / DevOps | 👤 ты |

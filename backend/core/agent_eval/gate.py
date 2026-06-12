@@ -130,6 +130,7 @@ async def run_agents_quality_gate(
     hermes_limit: int = 0,
     agent_limit: int = 0,
     skip_agents: bool = False,
+    skip_hermes: bool = False,
 ) -> dict[str, Any]:
     force_ollama_env()
     ollama = await check_ollama_ready()
@@ -139,12 +140,17 @@ async def run_agents_quality_gate(
         "ollama": ollama,
         "agents": {},
     }
-    report["agents"]["hermes"] = await run_hermes_gate(limit=hermes_limit)
+    if not skip_hermes:
+        report["agents"]["hermes"] = await run_hermes_gate(limit=hermes_limit)
     if not skip_agents:
         for aid in AGENT_IDS:
+            print(f"[gate] {aid} …", flush=True)
             report["agents"][aid] = await run_single_agent_gate(aid, limit=agent_limit)
     gates = [v["summary"]["gate"] for v in report["agents"].values()]
     report["overall_gate"] = "fail" if "fail" in gates else ("warn" if "warn" in gates else "pass")
+    from core.agent_eval.acceptance_sync import build_gaps
+
+    report["gaps"] = build_gaps(report)
     return report
 
 

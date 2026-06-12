@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-12 — Agents quality gates: acceptance sync + дыры MAP (шаг 4)
+
+**Сделано:** `acceptance_sync.py`, `--write-acceptance`, `--agents-only`, маркеры GATE_STATUS/GAPS; BACKLOG хвост шага 3; MAP 🔲 + список дыр; live прогон 5 агентов запущен.
+
 ## 2026-06-12 — Agents quality gates: прогон Ollama + gate script/API (шаг 3)
 
 **Сделано:** `run_agents_quality_gate.py`, `core/agent_eval/gate.py`, `POST/GET /api/ops/eval/agents-gate`; Ollama check+warmup; timeout 600s; smoke live (Ollama hermes3) — пороги не пройдены на smoke.

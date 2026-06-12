@@ -23,18 +23,26 @@
 
 ## Статус прогона (обновлять после live gate)
 
+<!-- GATE_STATUS_START -->
 | Агент | Pass | Fail | Pass rate | Порог | Gate | Дата | Артефакт |
 |-------|------|------|-----------|-------|------|------|----------|
 | Hermes | 0 | 2* | 0%* | 85% | 🔴 | 2026-06-12 | smoke `agents_gate_20260612_154027.json` |
-| Analyst | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke (кейс без lead_id — исправлено) |
+| Analyst | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
 | Economist | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
 | Marketer | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
 | Strategist | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
 | Tech | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
+<!-- GATE_STATUS_END -->
 
-\*Smoke-прогон (2 Hermes + 1/агент): Hermes ReadTimeout @180s; агенты ~60s/кейс через Ollama.  
-**Полный прогон** (36+75 кейсов): `python scripts/run_agents_quality_gate.py` — timeout 600s, прогрев модели.  
-**`[x]` в MAP** — только после полного зелёного gate.
+Автообновление: `python scripts/run_agents_quality_gate.py --write-acceptance`
+
+## Дыры (блокеры `[x]` в MAP)
+
+<!-- GATE_GAPS_START -->
+- **Hermes**: ReadTimeout на CPU @600s — полный прогон 36 кейсов не завершён
+- **Все агенты**: smoke 🔴 — нужен полный live `run_agents_quality_gate.py`
+- **MAP `[x]`** — не ставить, пока `overall_gate` ≠ pass
+<!-- GATE_GAPS_END -->
 
 ---
 
@@ -81,9 +89,10 @@ python scripts/run_agents_quality_gate.py
 - [x] Решение: eval через **Ollama**, не Groq
 - [x] Eval-кейсы ≥N на агента (шаг 2)
 - [x] Скрипт `run_agents_quality_gate.py` + `POST /api/ops/eval/agents-gate` (шаг 3)
-- [ ] Полный live-прогон ≥ порогов (smoke 🔴 2026-06-12)
-- [ ] UI фильтр / failed → датасет
-- [ ] `[x]` в PRD_MAP
+- [x] Acceptance sync: таблица + дыры (`acceptance_sync.py`, `--write-acceptance`)
+- [ ] Полный live-прогон ≥ порогов (smoke 🔴; Hermes timeout CPU)
+- [ ] UI фильтр / failed → датасет (шаг 5)
+- [ ] `[x]` в PRD_MAP (только при `overall_gate: pass`)
 
 ---
 
