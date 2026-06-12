@@ -36,4 +36,4 @@ Required checks на `main`:
 - `pytest (sqlite)`
 - `smoke (ops / leads / voice)`
 
-Настраивается через `gh api` или Settings → Branches. Падение любого job → красный PR.
+**Статус (2026-06-12):** включено на `main` через API — `strict: true`, оба check обязательны. Падение любого job → красный PR / блок merge.

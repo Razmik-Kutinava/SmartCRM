@@ -13,7 +13,9 @@
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
 
-2026-06-12 | Действие: CI green path — fix rescue create_task до list_leads (eval-007); HERMES_ENABLE_FASTPATH=0 в ci.yml; push + branch protection main. | Коммит: `6fca8ca` | Хвост A: MAP п.3–5 milestones | Хвост B: me@agneko.am | Хвост C: нет | Следующий шаг: go Ф2. | Статус: done
+2026-06-12 | Действие: push+CI green run #3 + branch protection main (pytest+smoke required). | Коммит: `7346885` | Хвост A: MAP п.3–5 milestones | Хвост B: me@agneko.am | Хвост C: нет | Следующий шаг: go Ф2. | Статус: done
+
+2026-06-12 | Действие: CI green path — fix rescue create_task до list_leads (eval-007); HERMES_ENABLE_FASTPATH=0 в ci.yml. | Коммит: `6fca8ca` | Хвост A: push+branch protection | Хвост B: MAP п.3–5 | Хвост C: нет | Следующий шаг: push. | Статус: done
 
 2026-06-11 | Действие: pytest clean — email assert, filterwarnings starlette, live_eval в доках; 500 passed 0 warnings, ci_smoke OK. | Коммит: `f3974c2` | Хвост A: push+branch protection GitHub | Хвост B: MAP п.3–5 milestones | Хвост C: me@agneko.am | Следующий шаг: push. | Статус: done
 
