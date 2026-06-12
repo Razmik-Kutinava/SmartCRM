@@ -20,7 +20,7 @@ jobs:
         working-directory: backend
 
     env:
-      DATABASE_URL: sqlite+aiosqlite:///:memory:
+      DATABASE_URL: "sqlite+aiosqlite:///:memory:"
       GROQ_API_KEY: ci-mock-groq-key
       SECRET_KEY: xWDufOhTgFDbrrzD5DoSfUjU2cX8hL9298nfWALBTJA=
       SMARTCRM_API_KEY: pytest-smartcrm-key
@@ -48,7 +48,7 @@ jobs:
         run: python -m pytest -q --tb=short
 
   smoke:
-    name: smoke (ops · leads · voice)
+    name: smoke (ops / leads / voice)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     defaults:
@@ -56,7 +56,7 @@ jobs:
         working-directory: backend
 
     env:
-      DATABASE_URL: sqlite+aiosqlite:///:memory:
+      DATABASE_URL: "sqlite+aiosqlite:///:memory:"
       GROQ_API_KEY: ci-mock-groq-key
       SECRET_KEY: xWDufOhTgFDbrrzD5DoSfUjU2cX8hL9298nfWALBTJA=
       SMARTCRM_API_KEY: pytest-smartcrm-key

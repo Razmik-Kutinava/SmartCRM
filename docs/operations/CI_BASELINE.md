@@ -30,6 +30,6 @@ python scripts/ci_smoke.py
 Settings → Branches → `main` → Require status checks:
 
 - `pytest (sqlite)`
-- `smoke (ops · leads · voice)`
+- `smoke (ops / leads / voice)`
 
 Падение любого job → красный PR (не только ai-review).
