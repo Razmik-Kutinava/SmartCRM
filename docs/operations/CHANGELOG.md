@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-12 — Coverage hygiene: policy + smoke + CI cov log
+
+**Сделано:** `PR_CHECKLIST.md` (тест на фичу); 16 smoke-тестов leadgen/email_sync/integrations; CI pytest печатает `TOTAL %` без fail-under; cov **51.7%** (+0.3).
+
 ## 2026-06-12 — CI: rescue eval-007 + branch protection
 
 **Было:** GitHub Actions run #2 — оба job красные: `eval-007` «создай задачу… из лида» → `list_leads` (на CI нет `.env`, fastpath выкл).  

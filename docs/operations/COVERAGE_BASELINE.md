@@ -1,7 +1,7 @@
 # Coverage baseline (pytest-cov)
 
 **Дата замера:** 2026-06-11  
-**Baseline:** **51.4%** (line coverage, `TOTAL` в отчёте)
+**Baseline:** **51.4%** (2026-06-11) · **текущий:** **51.7%** (2026-06-12, smoke leadgen/email_sync/integrations)
 
 ## Команда
 
@@ -30,10 +30,12 @@ python -m pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing
 - Регрессия по умолчанию: `python -m pytest` (без `live_eval`; см. `pytest.ini`).
 - Live LLM eval: `python -m pytest -m live_eval tests/core/test_hermes_eval.py`.
 - `cryptography` обязателен (`core/crypto.py`) — в `requirements.txt`.
-- CI с `--cov` и fail-under — отдельный шаг (PRD_MAP).
+- CI: `--cov-report=term` в job pytest (**без fail-under**) — смотреть `TOTAL` в логе Actions.
+- Правило PR: `docs/dev/PR_CHECKLIST.md` — тест на каждую фичу.
 
 ## История
 
 | Дата | % | Коммит | Комментарий |
 |------|---|--------|-------------|
+| 2026-06-12 | 51.7% | — | Smoke: bitrix_sync, checko http, email helpers, crm_threshold |
 | 2026-06-11 | 51.4% | `878e159` | Первый baseline: pytest-cov, requirements-dev, .coveragerc |

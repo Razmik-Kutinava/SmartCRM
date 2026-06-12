@@ -1,6 +1,6 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[CI + branch protection] | Статус:CI fix eval-007 · push · required checks main`
+`Спринт:[Ф1→Ф2] | Задача:[coverage hygiene] | Статус:51.7% · PR checklist · CI cov log · 516 pytest`
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 

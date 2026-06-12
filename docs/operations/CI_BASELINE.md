@@ -8,7 +8,7 @@
 
 | Job | Что | БД |
 |-----|-----|-----|
-| **pytest** | Полная регрессия (`pytest -q`), без `live_eval` | sqlite in-memory (`conftest`) |
+| **pytest** | Полная регрессия + **cov в логе** (`--cov-report=term`, без fail-under) | sqlite in-memory (`conftest`) |
 | **smoke** | `python scripts/ci_smoke.py` — ops, leads, voice | то же |
 
 Live Groq, IMAP (`EMAIL_SYNC_LIVE`), Bitrix webhook, frontend DevTools — **не** в CI.

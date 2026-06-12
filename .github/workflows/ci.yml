@@ -46,7 +46,7 @@ jobs:
           pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Run pytest
-        run: python -m pytest -q --tb=short
+        run: python -m pytest -q --tb=short --cov=. --cov-config=.coveragerc --cov-report=term --no-cov-on-fail
 
   smoke:
     name: smoke (ops / leads / voice)
