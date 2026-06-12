@@ -13,6 +13,8 @@
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
 
+2026-06-11 | Действие: pytest clean — email assert, filterwarnings starlette, live_eval в доках; 500 passed 0 warnings, ci_smoke OK. | Коммит: `f3974c2` | Хвост A: push+branch protection GitHub | Хвост B: MAP п.3–5 milestones | Хвост C: me@agneko.am | Следующий шаг: push. | Статус: done
+
 2026-06-11 | Действие: fix venv — cryptography в requirements.txt; доки python -m pytest+venv; CI python -m pytest; тест deps. | Коммит: `58d7a2d` | Хвост A: (.venv) pip install -r requirements.txt заново | Хвост B: push+branch protection | Хвост C: me@agneko.am | Следующий шаг: в venv `python -m pytest -q`. | Статус: done
 
 2026-06-11 | Действие: CI — GitHub Actions ci.yml (pytest+smoke jobs), ci_smoke.py ops/leads/voice, CI_BASELINE.md; локально 498+132 pytest OK. | Коммит: `0477431` | Хвост A: branch protection в GitHub вручную | Хвост B: cov fail-under в CI — отдельно | Хвост C: me@agneko.am пароль | Следующий шаг: push + включить required checks. | Статус: done
