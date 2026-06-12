@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-12 — Agents quality gates: рамка + карта обучения (шаг 0–1)
+
+**Сделано:** пороги Hermes 85%/30, агенты 75%/15; `AGENTS_LEARNING_MAP.md`, `AGENTS_QUALITY_GATE_ACCEPTANCE.md`; PRD_MAP/BACKLOG/langgraph — eval через Ollama, `[x]` только после live gate.
+
 ## 2026-06-12 — Coverage hygiene: policy + smoke + CI cov log
 
 **Сделано:** `PR_CHECKLIST.md` (тест на фичу); 16 smoke-тестов leadgen/email_sync/integrations; CI pytest печатает `TOTAL %` без fail-under; cov **51.7%** (+0.3).

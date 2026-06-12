@@ -43,6 +43,8 @@
 
 ## Записи
 
+`[2026-06-12] | PRD_MAP: Агенты quality gates | Шаг 0–1 ✅: пороги, AGENTS_LEARNING_MAP, AGENTS_QUALITY_GATE_ACCEPTANCE, PRD_MAP | Осталось: eval-кейсы 5 агентов, run_agents_quality_gate.py, live Ollama, UI, [x] после зелёного % | Eval: Ollama hermes3, Groq нет`
+
 `[2026-06-11] | PRD_MAP: инфра email me@agneko.am | Отложено: отдельный пароль на mail.agneko.am | Сейчас: ib@agneko.com подключён (Яндекс IMAP) | Действие: EMAIL_ACCOUNT_1_APP_PASSWORD в .env`
 
 `[2026-06-11] | PRD_MAP: «Ops /ops» п.10 версионирование промптов | Отложено: git-like версии override промптов | Причина: scope Ф2 | Сейчас: PUT/DELETE override в `backend/data/agent_prompt_*.txt` | Действие: Ф2 ops versioning`
@@ -109,6 +111,7 @@
 
 | Приоритет | PRD_MAP | Что | Фаза MAP | Кто |
 |-----------|---------|-----|----------|-----|
+| 🔴 | Агенты · quality gates | Eval-кейсы 6× → `run_agents_quality_gate.py` → live Ollama → UI eval | **2** | агент · [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) |
 | 🟡 | Голос → лиды п.3, п.5 | Spot-check approve / fanout | **1** | 👤 ты |
 | 🟡 | Ф2 §4 / §9 | Кэш enrich + кнопка на карточке лида | **2** | агент по `go` |
 | 🟡 | Лиды п.2 Битрикс синк | Туннель :8000 + вебхук | **2** / DevOps | 👤 ты |

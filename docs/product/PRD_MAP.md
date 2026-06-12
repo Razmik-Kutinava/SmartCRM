@@ -236,10 +236,16 @@
 
 | Критерий | Статус | Где мерить / закрывать |
 |----------|--------|-------------------------|
+| **6 агентов: pass rate ≥ порога** | 🔲 live | [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · Ollama `hermes3` |
+| Рамка порогов + цикл обучения | ✅ 2026-06-12 | [`AGENTS_LEARNING_MAP.md`](../operations/AGENTS_LEARNING_MAP.md) |
 | Latency ответа p95 &lt; 3 с | 🔲 | `/ops/stats`, трейсы · [`langgraph.md`](../agents/langgraph.md) |
-| RAG-контекст в ответе корректен | 🔲 | `/ops/eval`, `/ops/traces` · `HERMES_*` / eval cases |
+| RAG-контекст в ответе корректен | 🔲 | `/ops/eval`, `/ops/traces` · gate JSON |
 | Fallback «не знаю» без галлюцинации | 🔲 | eval + `HERMES_LEADS_FULL_ACCEPTANCE.md` |
 | A/B промптов по трейсам | 🔲 | **Фаза 3** · `qa_agent.py`, Dr. QA |
+
+> **Пороги (черновик):** Hermes ≥85% / 30 кейсов; Analyst, Economist, Marketer, Strategist, Tech ≥75% / 15.  
+> **`[x]` по gate** — только после зелёной таблицы в acceptance (не «инфра есть»).  
+> **Осталось:** eval-кейсы агентов → `run_agents_quality_gate.py` → live Ollama → UI `/ops/intents/eval`.
 
 ### Инфра — dev (Фаза 1)
 

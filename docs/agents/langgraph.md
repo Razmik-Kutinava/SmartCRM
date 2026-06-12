@@ -196,4 +196,5 @@ final_reply + decision + next_action
 ## Quality gates (Фаза 2)
 
 Ф1: 5 агентов в чате + RAG ✅ — см. [`PRD_MAP.md`](../product/PRD_MAP.md) § «Агенты».  
-Ф2: latency, RAG-контекст, fallback «не знаю» — закрытие через **`/ops/eval`**, **`/ops/traces`**, acceptance `HERMES_*`, не галочка MAP без цифр.
+Ф2: **6 ролей** (Hermes + 5 агентов) — pass rate по [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md); обучение — [`AGENTS_LEARNING_MAP.md`](../operations/AGENTS_LEARNING_MAP.md).  
+Eval: **Ollama** `hermes3` (Groq опционально). `[x]` в MAP только после live JSON-отчёта.

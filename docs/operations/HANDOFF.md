@@ -1,6 +1,9 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[coverage hygiene] | Статус:51.7% · PR checklist · CI cov log · 516 pytest`
+`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус:шаг 0–1 docs ✅ · live gate 🔲 · Ollama hermes3`
+
+**Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · обучение [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md).  
+**Следующий `go`:** шаг 2 — eval-кейсы 6 агентов + `run_agents_quality_gate.py`.
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
