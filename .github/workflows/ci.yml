@@ -24,6 +24,7 @@ jobs:
       GROQ_API_KEY: ci-mock-groq-key
       SECRET_KEY: xWDufOhTgFDbrrzD5DoSfUjU2cX8hL9298nfWALBTJA=
       SMARTCRM_API_KEY: pytest-smartcrm-key
+      HERMES_ENABLE_FASTPATH: "0"
       CI: "1"
 
     steps:
@@ -60,6 +61,7 @@ jobs:
       GROQ_API_KEY: ci-mock-groq-key
       SECRET_KEY: xWDufOhTgFDbrrzD5DoSfUjU2cX8hL9298nfWALBTJA=
       SMARTCRM_API_KEY: pytest-smartcrm-key
+      HERMES_ENABLE_FASTPATH: "0"
       CI: "1"
 
     steps:

@@ -25,11 +25,15 @@ python -m pytest -q --tb=short
 python scripts/ci_smoke.py
 ```
 
-## Branch protection (ручная настройка в GitHub)
+## CI env (без `.env`)
 
-Settings → Branches → `main` → Require status checks:
+В workflow явно: `HERMES_ENABLE_FASTPATH=0` — как на GitHub Actions без локального `.env` (иначе rescue/fastpath расходятся с dev).
+
+## Branch protection
+
+Required checks на `main`:
 
 - `pytest (sqlite)`
 - `smoke (ops / leads / voice)`
 
-Падение любого job → красный PR (не только ai-review).
+Настраивается через `gh api` или Settings → Branches. Падение любого job → красный PR.

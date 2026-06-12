@@ -79,9 +79,29 @@ def rescue_route(text: str) -> dict | None:
         slots_h: dict = {"company": comp} if comp else {}
         return out("lead_history", ["analyst"], "Показываю историю лида.", slots_h)
 
+    if (
+        "задач" in t
+        or "напоминал" in t
+        or "таск" in t
+        or ("заметк" in t and "позвон" in t and "создай" not in t and "лид" not in t)
+        or ("создал" in t and "сервис" in t)
+    ):
+        slots_task: dict = {}
+        m_title = re.search(r":\s*(.+)$", text)
+        if m_title:
+            slots_task["title"] = m_title.group(1).strip()[:120]
+        if "завтра" in t:
+            slots_task["due"] = "завтра"
+        from .slot_normalize import _extract_company
+
+        comp = _extract_company(text)
+        if comp:
+            slots_task["related_lead"] = comp
+        return out("create_task", ["analyst"], "Создаю задачу.", slots_task)
+
     if ("покажи" in t or "pokazi" in t or "список" in t or "дай список" in t) and (
         "лид" in t or "сделк" in t or "lidy" in t or "lid" in t
-    ):
+    ) and "задач" not in t:
         filt = "hot" if "горяч" in t else "new" if "нов" in t else "all"
         slots: dict = {"filter": filt}
         if "где" in t or "назван" in t:
@@ -96,7 +116,7 @@ def rescue_route(text: str) -> dict | None:
             slots["city"] = m_city.group(1).strip()
         return out("list_leads", ["analyst"], "Показываю лиды.", slots)
 
-    if ("лид" in t or "сделк" in t) and ("из " in t or "город" in t):
+    if ("лид" in t or "сделк" in t) and ("из " in t or "город" in t) and "задач" not in t:
         slots_lc: dict = {"filter": "all"}
         m_city2 = re.search(r"(?:из|город)\s+([a-zа-яё][a-zа-яё\s\-]{2,30})", t, re.I)
         if m_city2:
@@ -128,15 +148,6 @@ def rescue_route(text: str) -> dict | None:
         or "контакт не" in t
         or "юридический адрес" in t
     )
-
-    if (
-        "задач" in t
-        or "напоминал" in t
-        or "таск" in t
-        or ("заметк" in t and "позвон" in t and "создай" not in t and "лид" not in t)
-        or ("создал" in t and "сервис" in t)
-    ):
-        return out("create_task", ["analyst"], "Создаю задачу.")
 
     if is_update_cue:
         from .slot_normalize import _extract_company, _extract_update_field_value

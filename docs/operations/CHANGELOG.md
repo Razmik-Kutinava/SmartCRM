@@ -2,6 +2,11 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-12 — CI: rescue eval-007 + branch protection
+
+**Было:** GitHub Actions run #2 — оба job красные: `eval-007` «создай задачу… из лида» → `list_leads` (на CI нет `.env`, fastpath выкл).  
+**Стало:** `rescue.py` — `create_task` раньше city-filter `list_leads`; `HERMES_ENABLE_FASTPATH=0` в CI; push; required checks на `main`.
+
 ## 2026-06-11 — fix: pytest warnings (email + starlette)
 
 **Было:** 5 warnings — email-тесты `return bool`, StarletteDeprecationWarning httpx testclient.  
