@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-12 | Действие: agents quality gates шаг 3 — run_agents_quality_gate.py, POST /api/ops/eval/agents-gate, Ollama smoke+full run; 16 pytest gate. | Коммит: `adf4568` | Хвост A: полный live gate ≥ порогов | Хвост B: UI /ops/eval шаг 5 | Хвост C: Hermes CPU медленный — EVAL_OLLAMA_TIMEOUT=600 | Следующий шаг: дождаться полного gate / тюнинг. | Статус: done
+
 2026-06-12 | Действие: agents quality gates шаг 2 — eval/agents 15×5, core/agent_eval, seed+pytest 12. | Коммит: `eecc65a` | Хвост A: run_agents_quality_gate.py | Хвост B: live Ollama gate | Хвост C: UI /ops/eval | Следующий шаг: шаг 3 gate script. | Статус: done
 
 2026-06-12 | Действие: agents quality gates шаг 0–1 — пороги, AGENTS_LEARNING_MAP, AGENTS_QUALITY_GATE_ACCEPTANCE, PRD_MAP/BACKLOG; Ollama eval. | Коммит: `363d1dd` | Хвост A: eval-кейсы+скрипт gate | Хвост B: UI /ops/eval | Хвост C: me@agneko.am | Следующий шаг: шаг 2 кейсы. | Статус: done
