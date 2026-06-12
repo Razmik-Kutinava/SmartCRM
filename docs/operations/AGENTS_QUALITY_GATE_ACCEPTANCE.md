@@ -39,9 +39,10 @@
 ## Дыры (блокеры `[x]` в MAP)
 
 <!-- GATE_GAPS_START -->
-- **Hermes**: ReadTimeout на CPU @600s — полный прогон 36 кейсов не завершён
-- **Все агенты**: smoke 🔴 — нужен полный live `run_agents_quality_gate.py`
+- **Hermes**: ReadTimeout на CPU @600–900s — полный прогон 36 кейсов не завершён
+- **5 агентов**: фоновый `--agents-only` оборвался на analyst (Ollama timeout/ошибка) — артефакт не обновлён
 - **MAP `[x]`** — не ставить, пока `overall_gate` ≠ pass
+- **UI ✅** — смотреть цифры: `/ops/intents/eval`, дыры: `/ops/insights`
 <!-- GATE_GAPS_END -->
 
 ---
@@ -91,7 +92,8 @@ python scripts/run_agents_quality_gate.py
 - [x] Скрипт `run_agents_quality_gate.py` + `POST /api/ops/eval/agents-gate` (шаг 3)
 - [x] Acceptance sync: таблица + дыры (`acceptance_sync.py`, `--write-acceptance`)
 - [ ] Полный live-прогон ≥ порогов (smoke 🔴; Hermes timeout CPU)
-- [ ] UI фильтр / failed → датасет (шаг 5)
+- [x] UI `/ops/intents/eval` — вкладки агента, pass rate, JSON, «В датасет» (шаг 5)
+- [x] `/ops/insights` — подсказки по gate-провалам
 - [ ] `[x]` в PRD_MAP (только при `overall_gate: pass`)
 
 ---

@@ -1,8 +1,11 @@
 <script>
+	import { onMount } from 'svelte';
+	import AgentGatePanel from '$components/ops/AgentGatePanel.svelte';
 	import { getApiUrl } from '$lib/websocket.js';
 	import { intentColor, modelLabel } from '$lib/opsCommon.js';
 
 	const API = getApiUrl();
+	let datasets = $state([]);
 
 	let evalResults = $state(null);
 	let evalRunning = $state(false);
@@ -49,6 +52,18 @@
 			evalRunning = false;
 		}
 	}
+
+	async function loadDatasets() {
+		try {
+			const r = await fetch(`${API}/api/ops/training-datasets`);
+			const d = await r.json();
+			datasets = d.items || [];
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	onMount(loadDatasets);
 
 	$effect(() => {
 		scenarioSource;
@@ -208,4 +223,6 @@
 			Идёт прогон {preview?.count ?? '…'} фраз через {modelsForRun().join(' + ')}…
 		</div>
 	{/if}
+
+	<AgentGatePanel {datasets} />
 </div>

@@ -1,6 +1,7 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import { getApiUrl } from '$lib/websocket.js';
+	import { gateEmoji } from '$lib/ops/agentEvalGate.js';
 
 	const API = getApiUrl();
 
@@ -45,6 +46,24 @@
 				<li>Доля негативного фидбека (где есть оценки): {insight.signals?.bad_feedback_ratio ?? 0}</li>
 			</ul>
 		</div>
+
+		{#if insight.gate?.found}
+			<div class="bg-gray-900 border border-violet-900/50 rounded-xl p-4 mb-8">
+				<h3 class="text-xs font-medium text-violet-400 uppercase tracking-wide mb-2">Quality gate</h3>
+				<p class="text-sm text-gray-300 mb-2">
+					{gateEmoji(insight.gate.overall_gate)} {insight.gate.overall_gate}
+					· <span class="text-gray-500">{insight.gate.artifact_name}</span>
+				</p>
+				{#if insight.gate.gaps?.length}
+					<ul class="text-xs text-gray-400 space-y-1 mb-2">
+						{#each insight.gate.gaps as g}
+							<li>• {g}</li>
+						{/each}
+					</ul>
+				{/if}
+				<a href="/ops/intents/eval" class="text-xs text-indigo-400 hover:underline">→ Eval / gate</a>
+			</div>
+		{/if}
 
 		<h2 class="text-sm font-medium text-gray-300 mb-3">Предложения</h2>
 		<div class="space-y-3">

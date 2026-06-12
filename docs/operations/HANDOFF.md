@@ -1,9 +1,9 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус:шаг 4 acceptance sync ✅ · live 5 агентов 🔄 · MAP 🔲`
+`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус:шаг 5 UI ✅ · live gate 🔴 · MAP 🔲`
 
 **Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · обучение [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md).  
-**Следующий `go`:** дождаться live `--agents-only` → Hermes ночной прогон → шаг 5 UI.
+**Следующий `go`:** ночной `run_agents_quality_gate.py --write-acceptance` (Hermes timeout) → `[x]` MAP если зелёно.
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 

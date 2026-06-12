@@ -245,8 +245,8 @@
 
 > **Пороги (черновик):** Hermes ≥85% / 30 кейсов; Analyst, Economist, Marketer, Strategist, Tech ≥75% / 15.  
 > **`[x]` по gate** — только после зелёной таблицы в acceptance (не «инфра есть»).  
-> **Осталось:** полный live gate ≥ порогов → UI `/ops/intents/eval`. Инфра ✅ (шаг 3).  
-> **Дыры (шаг 4, 2026-06-12):** Hermes ReadTimeout CPU; 5 агентов — полный прогон; `[x]` не ставим → см. `GATE_GAPS` в acceptance.
+> **UI eval ✅ (шаг 5):** `/ops/intents/eval` — gate, вкладки, датасет; `/ops/insights` — дыры.  
+> **Осталось:** полный live ≥ порогов → `[x]` в MAP. **Дыры:** Hermes ReadTimeout CPU; полный прогон 6× — см. `GATE_GAPS` в acceptance.
 
 ### Инфра — dev (Фаза 1)
 

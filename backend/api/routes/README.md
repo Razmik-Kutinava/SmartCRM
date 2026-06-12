@@ -31,7 +31,8 @@ CRUD лидов, вовлечённость, Битрикс.
 | `traces_routes.py` | История запросов Hermes |
 | `hermes_routes.py` | Настройки и тюнинг Hermes |
 | `voice_routes.py` | Голосовые настройки и смоук |
-| `eval_routes.py` | Прогон eval; `POST /eval/agents-gate` — live gate 6 агентов (Ollama) |
+| `eval_routes.py` | Прогон eval Hermes; статус Ollama |
+| `eval_gate_routes.py` | Gate: latest JSON, run, failed→датасет |
 | `eval_cases.py` | CRUD eval-кейсов |
 | `agents_routes.py` | Запуск и логи агентов |
 | `logs_routes.py` | Буфер логов для UI |

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-12 — Agents quality gates: UI eval + insights (шаг 5)
+
+**Сделано:** AgentGatePanel на `/ops/intents/eval` (вкладки, pass rate, в датасет); insights gate; API latest/run/failed-to-dataset; BACKLOG что не вышло на 3–4.
+
 ## 2026-06-12 — Agents quality gates: acceptance sync + дыры MAP (шаг 4)
 
 **Сделано:** `acceptance_sync.py`, `--write-acceptance`, `--agents-only`, маркеры GATE_STATUS/GAPS; BACKLOG хвост шага 3; MAP 🔲 + список дыр; live прогон 5 агентов запущен.

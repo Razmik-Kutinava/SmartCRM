@@ -269,7 +269,17 @@ def recompute_queue_and_suggestions(update_queue: bool = True) -> dict[str, Any]
 
 def generate_insights_only() -> dict[str, Any]:
     """Инсайты без перезаписи очереди (для частого опроса UI)."""
-    return recompute_queue_and_suggestions(update_queue=False)
+    out = recompute_queue_and_suggestions(update_queue=False)
+    try:
+        from core.agent_eval.gate_insights import gate_insights_block
+
+        gate = gate_insights_block()
+        out["gate"] = gate
+        for h in gate.get("hints") or []:
+            out["suggestions"].append(h)
+    except Exception:
+        out["gate"] = {"found": False, "hints": []}
+    return out
 
 
 def history_comparison() -> dict[str, Any]:
