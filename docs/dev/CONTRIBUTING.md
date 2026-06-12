@@ -85,10 +85,20 @@ refactor: рефактор LLM клиента
 
 Все backend-тесты — в **`backend/tests/`** (зеркало: `api/`, `core/`, `rag/`, …).
 
-```bash
-# Backend
-cd backend && pytest
+**Правило:** каждая новая или существенно изменённая фича → **минимум 1 pytest** на happy path (моки API/БД, без live Groq/IMAP). Чеклист PR: [PR_CHECKLIST.md](PR_CHECKLIST.md).
 
+```bash
+cd backend
+python -m venv .venv && .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt -r requirements-dev.txt
+python -m pytest -q
+python -m pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing   # раз в спринт
+python scripts/ci_smoke.py
+```
+
+CI печатает **TOTAL %** в логе pytest (без fail-under). Baseline: `docs/operations/COVERAGE_BASELINE.md`.
+
+```bash
 # Frontend
 cd frontend && npm run test
 ```
