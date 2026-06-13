@@ -64,7 +64,7 @@ def build_gaps(report: dict[str, Any]) -> list[str]:
         if timeouts:
             gaps.append(f"**{label}**: {len(timeouts)} кейсов ReadTimeout — поднять `EVAL_OLLAMA_TIMEOUT` или GPU")
     if report.get("overall_gate") != "pass":
-        gaps.append("**MAP `[x]`** — не ставить, пока `overall_gate` ≠ pass")
+        gaps.append("**MAP `[x]`** — не ставить, пока `overall_gate` != pass")
     return gaps
 
 

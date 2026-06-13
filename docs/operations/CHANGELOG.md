@@ -4,7 +4,7 @@
 
 ## 2026-06-13 — Agents quality gates: шаг 7 (pytest, без live LLM)
 
-**Сделано:** pytest gate block 34 passed — config/пороги, delta was→became, артефакты JSON, cases 36+15×5, API gate, acceptance_sync, CLI `--check-only`/`--log-file`. Live LLM gate **не** в CI (только ручной `run_agents_quality_gate.py`).
+**Сделано:** pytest gate block 34 passed — config/пороги, delta was→became, артефакты JSON, cases 36+15×5, API gate, acceptance_sync, CLI `--check-only`/`--log-file`. Live LLM gate **не** в CI. Fix cp1251 stdout (`_emit`, gaps `!=`, JSON ensure_ascii).
 
 ## 2026-06-13 — Gate CLI: --log-file + ASCII progress
 

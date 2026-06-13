@@ -43,7 +43,9 @@ _LOG_FH = None
 
 def _emit(msg: str, *, err: bool = False) -> None:
     stream = sys.stderr if err else sys.stdout
-    print(msg, file=stream, flush=True)
+    enc = getattr(stream, "encoding", None) or "utf-8"
+    safe = msg.encode(enc, errors="replace").decode(enc)
+    print(safe, file=stream, flush=True)
     if _LOG_FH:
         _LOG_FH.write(msg + "\n")
         _LOG_FH.flush()
@@ -74,7 +76,7 @@ async def _main(args: argparse.Namespace) -> int:
     if args.write_acceptance:
         patch_acceptance_md(report, path.name)
         _emit("Acceptance updated: docs/operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md")
-    _emit(json.dumps(report, ensure_ascii=False, indent=2))
+    _emit(json.dumps(report, ensure_ascii=True, indent=2))
     _emit(f"\nArtifact: {path}")
     _emit(f"Overall gate: {report['overall_gate']}")
     if report.get("gaps"):

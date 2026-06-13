@@ -1,13 +1,13 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус: шаг 7 pytest ✅ · live gate 🔄 · MAP 🔲`
+`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус: шаг 7 ✅ · full gate 🔄 · MAP 🟡`
 
-**Шаг 7 (2026-06-13):** pytest gate block **34 passed** — пороги, delta, JSON, cases, API, CLI; live LLM **не** в CI.
+**Шаг 7 (2026-06-13):** pytest gate **34 passed**; live LLM не в CI; cp1251 fix в CLI.
 
-**Live gate:** `hermes3:latest` re-pull после Ollama upgrade (~28% 🔄) → smoke → full gate.
+**Live gate (2026-06-13):** smoke ✅ `agents_gate_20260613_143114.json` (fail marketer/tech); **full gate 🔄** — `gate_full_20260613.log`, backend `:8000`. `[x]` MAP после green + «ок».
 
 **Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · обучение [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md).  
-**Следующий `go`:** commit gate-log + ops → дождаться green gate → `--write-acceptance` → `[x]` MAP если зелёно + «ок» пользователя.
+**Следующий `go`:** дождаться full gate → tuning если fail → `--write-acceptance` → MAP `[x]`.
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 

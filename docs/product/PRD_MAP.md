@@ -236,7 +236,7 @@
 
 | Критерий | Статус | Где мерить / закрывать |
 |----------|--------|-------------------------|
-| **6 агентов: pass rate ≥ порога** | 🔲 live 🔴 | [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · Ollama `hermes3` |
+| **6 агентов: pass rate ≥ порога** | 🟡 full run 🔄 | [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · smoke `agents_gate_20260613_143114.json` · full `gate_full_20260613.log` |
 | Рамка порогов + цикл обучения | ✅ 2026-06-12 | [`AGENTS_LEARNING_MAP.md`](../operations/AGENTS_LEARNING_MAP.md) |
 | Latency ответа p95 &lt; 3 с | 🔲 | `/ops/stats`, трейсы · [`langgraph.md`](../agents/langgraph.md) |
 | RAG-контекст в ответе корректен | 🔲 | `/ops/eval`, `/ops/traces` · gate JSON |
@@ -246,7 +246,7 @@
 > **Пороги (черновик):** Hermes ≥85% / 30 кейсов; Analyst, Economist, Marketer, Strategist, Tech ≥75% / 15.  
 > **`[x]` по gate** — только после зелёной таблицы в acceptance (не «инфра есть»).  
 > **UI eval ✅ (шаг 5):** `/ops/intents/eval` — gate, вкладки, датасет; `/ops/insights` — дыры.  
-> **Осталось:** полный live ≥ порогов → `[x]` в MAP. **Дыры:** Hermes ReadTimeout CPU; полный прогон 6× — см. `GATE_GAPS` в acceptance.
+> **Осталось:** дождаться full gate (111 кейсов, CPU ~2–4 ч) → green → `--write-acceptance` → `[x]` после «ок». Smoke 2026-06-13: marketer/tech fail на 2 кейсах.
 
 ### Инфра — dev (Фаза 1)
 
