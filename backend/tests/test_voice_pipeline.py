@@ -299,6 +299,7 @@ def test_hermes_prompt_contains_new_intents():
     required_intents = [
         "ask_economist", "ask_marketer", "ask_tech", "ask_strategist",
         "run_analysis", "search_web", "write_email",
+        "list_emails", "analytics_funnel", "ask_rag", "save_to_rag",
     ]
     for intent in required_intents:
         assert intent in SYSTEM_PROMPT, f"Интент {intent!r} отсутствует в системном промпте Hermes"

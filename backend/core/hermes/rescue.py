@@ -2,6 +2,7 @@
 import re
 
 from . import config
+from .module_contract import enrich_module_ui
 from .text_utils import normalize_text_for_cache
 
 
@@ -13,14 +14,14 @@ def rescue_route(text: str) -> dict | None:
     t = normalize_text_for_cache(text)
 
     def out(intent: str, agents: list[str], reply: str, slots: dict | None = None) -> dict:
-        return {
+        return enrich_module_ui({
             "intent": intent,
             "agents": agents,
             "slots": slots or {},
             "parallel": False,
             "reply": reply,
             "_model": "rescue",
-        }
+        })
 
     if re.search(r"\b(test command|hello|hi)\b", t):
         return out("noop", [], "Это не CRM команда.")
@@ -136,6 +137,69 @@ def rescue_route(text: str) -> dict | None:
                 slots["lead_id"] = m.group(1)
         return out("delete_lead", ["analyst"], "Удаляю лид.", slots)
 
+    if ("почт" in t or "email" in t or "письм" in t) and (
+        "открой" in t or "покажи" in t or "список" in t or "входящ" in t
+    ) and "напиш" not in t and "состав" not in t:
+        return out("list_emails", ["marketer"], "Открываю почту.", {})
+
+    if ("отправ" in t or "send" in t) and ("письм" in t or "email" in t or "почт" in t):
+        return out("send_email", ["marketer"], "Подтверди отправку письма.", {})
+
+    if ("найди" in t or "поищи" in t or "загугли" in t) and (
+        "интернет" in t or "в сети" in t or "новост" in t
+    ):
+        m_q = re.search(r"(?:про|о|об)\s+(.+)$", t, re.I)
+        query = m_q.group(1).strip()[:200] if m_q else t[:200]
+        return out("search_web", ["analyst"], "Ищу в интернете.", {"query": query})
+
+    if "воронк" in t and ("покаж" in t or "аналит" in t or "за " in t):
+        period = "month" if "месяц" in t else "year" if "год" in t else "week" if "недел" in t else ""
+        slots_an: dict = {"period": period} if period else {}
+        return out("analytics_funnel", ["analyst"], "Открываю воронку.", slots_an)
+
+    if "конверси" in t and ("источник" in t or "канал" in t):
+        return out("analytics_conversion", ["analyst"], "Смотрю конверсию по источникам.", {})
+
+    if ("цикл сделк" in t or "средн" in t and "чек" in t):
+        return out("analytics_cycle", ["analyst"], "Считаю цикл сделки и средний чек.", {})
+
+    if ("скор" in t or "score" in t) and ("лид" in t or ">" in t or "больше" in t):
+        m_sc = re.search(r"(?:[>≥]\s*(\d+)|больше\s+(\d+))", t)
+        slots_sc: dict = {}
+        if m_sc:
+            val = m_sc.group(1) or m_sc.group(2)
+            if val:
+                slots_sc["min_score"] = int(val)
+        return out("analytics_score", ["analyst"], "Фильтрую лидов по скору.", slots_sc)
+
+    if ("аналитик" in t or "отчёт" in t or "отчет" in t) and "лид" not in t:
+        return out("analytics_report", ["analyst"], "Открываю аналитику.", {})
+
+    if ("баз" in t or "rag" in t or "знан" in t) and (
+        "сохран" in t or "запиш" in t or "добав" in t
+    ):
+        return out("save_to_rag", ["analyst"], "Сохранить в базу знаний?", {"question": text[:500]})
+
+    if ("баз" in t or "rag" in t or "знан" in t) and (
+        "спроси" in t or "найди" in t or "что" in t or "расскаж" in t
+    ):
+        return out("ask_rag", ["analyst"], "Ищу в базе знаний.", {"question": text[:500]})
+
+    if ("экономист" in t or "выручк" in t or "прибыл" in t or "бюджет" in t) and "?" not in t:
+        return out("ask_economist", ["economist"], "Спрашиваю экономиста.", {"question": text[:500]})
+
+    if ("маркетолог" in t or "конкурент" in t) and "письм" not in t:
+        return out("ask_marketer", ["marketer"], "Спрашиваю маркетолога.", {"question": text[:500]})
+
+    if ("тех" in t or "стек" in t or "интеграц" in t) and "лид" not in t:
+        return out("ask_tech", ["tech_specialist"], "Спрашиваю тех. специалиста.", {"question": text[:500]})
+
+    if "стратег" in t or ("план" in t and "продаж" in t):
+        return out("ask_strategist", ["strategist"], "Спрашиваю стратега.", {"question": text[:500]})
+
+    if ("напиш" in t or "состав" in t) and ("письм" in t or "email" in t or "почт" in t):
+        return out("write_email", ["marketer"], "Маркетолог пишет письмо.", {})
+
     is_update_cue = (
         "исправ" in t
         or "обнов" in t
@@ -212,4 +276,6 @@ def post_verify(text: str, parsed: dict) -> dict:
         out["slots"] = slots
     if intent == "noop" and "создай два" in t:
         out["intent"] = "noop"
-    return out
+    from .module_contract import enrich_module_ui
+
+    return enrich_module_ui(out)

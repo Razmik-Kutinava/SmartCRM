@@ -6,7 +6,9 @@ SYSTEM_PROMPT = """Ты — роутер команд CRM. Извлекай ин
 Лиды: create_lead, update_lead, delete_lead, list_leads, analyze_lead, lead_history, add_communication
 Задачи: create_task, list_tasks, update_task, delete_task
 Аналитика/запросы: run_analysis, ask_economist, ask_marketer, ask_tech, ask_strategist, search_web
-Письма: write_email
+Аналитика CRM: analytics_funnel, analytics_conversion, analytics_cycle, analytics_score, analytics_report
+Письма: write_email, list_emails, send_email
+RAG: ask_rag, save_to_rag
 Лидогенерация: generate_lead, find_leads_portrait, cluster_company
 Прочее: noop
 
@@ -36,6 +38,15 @@ tech_specialist — IT-стек, технологии, интеграции, в�
 - ask_strategist: question, company, context
 - search_web: query
 - write_email: target, topic, tone (formal/friendly/urgent)
+- list_emails: filter (inbox/unread/all)
+- send_email: target, subject (требует апрув)
+- ask_rag: question
+- save_to_rag: question, content, source
+- analytics_funnel: period (week/month/quarter/year)
+- analytics_conversion: period, source
+- analytics_cycle: period
+- analytics_score: min_score
+- analytics_report: period
 - generate_lead: inn (ИНН), company_name, website, save (true/false)
 - find_leads_portrait: portrait (описание идеального клиента)
 - cluster_company: inn (ИНН якорной компании)
@@ -49,8 +60,12 @@ tech_specialist — IT-стек, технологии, интеграции, в�
 - Поиск в интернете без анализа → search_web + ["analyst"]
 - parallel=true только когда явно несколько независимых задач в одной команде
 
+═══ МОДУЛИ И UI ═══
+module: leads | tasks | email | search | analytics | agents | rag | leadgen
+ui_action: navigate | modal | filter | approve (опционально; если не указан — по intent)
+
 ═══ ФОРМАТ ═══
-{"intent":"<intent>","agents":["<agent>"],"slots":{<params>},"parallel":false,"reply":"<ответ по-русски>"}
+{"module":"<module>","intent":"<intent>","ui_action":"<ui>","agents":["<agent>"],"slots":{<params>},"parallel":false,"reply":"<ответ по-русски>"}
 
 ═══ ПРИМЕРЫ — ЛИДЫ ═══
 
@@ -158,7 +173,38 @@ Input: "составь дружелюбное follow-up письмо для Ро
 Output: {"intent":"write_email","agents":["marketer"],"slots":{"target":"Ромашка","topic":"follow-up","tone":"friendly"},"parallel":false,"reply":"Пишу follow-up письмо для Ромашки."}
 
 Input: "напиши срочное письмо директору Вектора про встречу завтра"
-Output: {"intent":"write_email","agents":["marketer"],"slots":{"target":"Вектор","topic":"встреча завтра","tone":"urgent"},"parallel":false,"reply":"Пишу срочное письмо для Вектора."}
+Output: {"module":"email","intent":"write_email","ui_action":"modal","agents":["marketer"],"slots":{"target":"Вектор","topic":"встреча завтра","tone":"urgent"},"parallel":false,"reply":"Пишу срочное письмо для Вектора."}
+
+Input: "открой входящие письма"
+Output: {"module":"email","intent":"list_emails","ui_action":"navigate","agents":["marketer"],"slots":{"filter":"inbox"},"parallel":false,"reply":"Открываю почту."}
+
+Input: "отправь это письмо клиенту"
+Output: {"module":"email","intent":"send_email","ui_action":"approve","agents":["marketer"],"slots":{},"parallel":false,"reply":"Подтверди отправку письма."}
+
+═══ ПРИМЕРЫ — АНАЛИТИКА CRM ═══
+
+Input: "покажи воронку за месяц"
+Output: {"module":"analytics","intent":"analytics_funnel","ui_action":"navigate","agents":["analyst"],"slots":{"period":"month"},"parallel":false,"reply":"Открываю воронку за месяц."}
+
+Input: "какая конверсия по источнику email"
+Output: {"module":"analytics","intent":"analytics_conversion","ui_action":"navigate","agents":["analyst"],"slots":{"source":"email"},"parallel":false,"reply":"Смотрю конверсию по email."}
+
+Input: "средний чек и цикл сделки"
+Output: {"module":"analytics","intent":"analytics_cycle","ui_action":"navigate","agents":["analyst"],"slots":{},"parallel":false,"reply":"Считаю цикл сделки и средний чек."}
+
+Input: "лиды со скором больше 70"
+Output: {"module":"analytics","intent":"analytics_score","ui_action":"filter","agents":["analyst"],"slots":{"min_score":70},"parallel":false,"reply":"Фильтрую лидов по скору."}
+
+Input: "открой аналитику"
+Output: {"module":"analytics","intent":"analytics_report","ui_action":"navigate","agents":["analyst"],"slots":{},"parallel":false,"reply":"Открываю аналитику CRM."}
+
+═══ ПРИМЕРЫ — RAG ═══
+
+Input: "что в базе знаний про интеграцию с 1С"
+Output: {"module":"rag","intent":"ask_rag","ui_action":"modal","agents":["analyst"],"slots":{"question":"интеграция с 1С"},"parallel":false,"reply":"Ищу в базе знаний."}
+
+Input: "сохрани этот ответ в базу знаний"
+Output: {"module":"rag","intent":"save_to_rag","ui_action":"approve","agents":["analyst"],"slots":{"question":"ответ из диалога"},"parallel":false,"reply":"Сохранить в RAG?"}
 
 ═══ ПРИМЕРЫ — ЭКОНОМИСТ ═══
 
@@ -284,17 +330,26 @@ Output: {"intent":"noop","agents":[],"slots":{},"parallel":false,"reply":"Для
 
 COMPACT_SYSTEM_PROMPT = """Ты — JSON-роутер CRM.
 Верни только JSON:
-{"intent":"...","agents":[...],"slots":{...},"parallel":false,"reply":"..."}
+{"module":"...","intent":"...","ui_action":"...","agents":[...],"slots":{...},"parallel":false,"reply":"..."}
+
+Модули: leads, tasks, email, search, analytics, agents, rag, leadgen
+ui_action: navigate, modal, filter, approve
 
 Интенты:
-create_lead, update_lead, delete_lead, list_leads,
+create_lead, update_lead, delete_lead, list_leads, analyze_lead, lead_history, add_communication,
 create_task, list_tasks, update_task, delete_task,
 run_analysis, ask_economist, ask_marketer, ask_tech, ask_strategist,
-search_web, write_email, generate_lead, find_leads_portrait, cluster_company, noop
+search_web, write_email, list_emails, send_email,
+analytics_funnel, analytics_conversion, analytics_cycle, analytics_score, analytics_report,
+ask_rag, save_to_rag,
+generate_lead, find_leads_portrait, cluster_company, noop
 
 Правила:
-- если команда не CRM -> noop
-- для финансовых вопросов -> ask_economist
+- если команда не CRM -> noop, module leads
+- email list/navigate -> list_emails; отправка -> send_email + approve
+- воронка/конверсия/аналитика -> analytics_* + navigate или filter
+- база знаний -> ask_rag modal; сохранить -> save_to_rag approve
+- для финансовых вопросов -> ask_economist, module agents, ui modal
 - маркетинг/конкуренты -> ask_marketer
 - IT/интеграции -> ask_tech
 - стратегия/план действий -> ask_strategist

@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from .module_contract import enrich_module_ui
 from .text_utils import normalize_text_for_cache
 
 _LEAD_INTENTS = frozenset({
@@ -243,5 +244,36 @@ def normalize_parsed_intent(text: str, parsed: dict[str, Any]) -> dict[str, Any]
     if intent in _INTENT_AGENTS:
         out["agents"] = list(_INTENT_AGENTS[intent])
 
+    if intent == "search_web" and not slots.get("query"):
+        t_norm = normalize_text_for_cache(text)
+        m_q = re.search(
+            r"(?:найди|поищи|загугли|интернет(?:е)?)\s+(?:информацию\s+)?(?:про|о|об)?\s*(.+)$",
+            t_norm,
+            re.I,
+        )
+        if m_q:
+            slots["query"] = m_q.group(1).strip()[:200]
+
+    if intent in ("ask_rag", "save_to_rag") and not slots.get("question"):
+        slots["question"] = text.strip()[:500]
+
+    if intent.startswith("analytics_") and not slots.get("period"):
+        t_norm = normalize_text_for_cache(text)
+        for token, period in (
+            ("за месяц", "month"),
+            ("за неделю", "week"),
+            ("за квартал", "quarter"),
+            ("за год", "year"),
+            ("прошлый год", "last_year"),
+        ):
+            if token in t_norm:
+                slots["period"] = period
+                break
+
+    if intent == "analytics_score":
+        m_sc = re.search(r"(?:скор|score)\s*[>≥]\s*(\d+)", normalize_text_for_cache(text), re.I)
+        if m_sc:
+            slots["min_score"] = int(m_sc.group(1))
+
     out["slots"] = slots
-    return out
+    return enrich_module_ui(out)

@@ -69,9 +69,16 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
 
     intent = intent_data.get("intent", "noop")
     slots = intent_data.get("slots", {})
+    module = intent_data.get("module")
     base_reply = intent_data.get("reply", "")
 
-    # Шаг 3: Агенты (только для лидовых интентов, чтобы не тормозить остальные)
+    _NAV_ONLY = frozenset({
+        "list_emails", "analytics_funnel", "analytics_conversion",
+        "analytics_cycle", "analytics_score", "analytics_report",
+        "save_to_rag", "list_emails",
+    })
+
+    # Шаг 3: Агенты / контекстные хэндлеры
     agent_result: dict = {}
     final_reply = base_reply
 
@@ -85,7 +92,13 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
             lid = agent_result.get("lead_id")
             if lid is not None:
                 slots = {**slots, "lead_id": lid}
-        else:
+        elif intent == "ask_rag":
+            from voice.rag_context import fetch_rag_answer
+
+            agent_result = await fetch_rag_answer(slots, text)
+            if agent_result.get("final_reply"):
+                final_reply = agent_result["final_reply"]
+        elif intent not in _NAV_ONLY:
             from agents.orchestrator import run_agents
 
             agent_result = await run_agents(
@@ -108,6 +121,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         agents=agents,
         agent_result=agent_result,
         ui_action=intent_data.get("ui_action"),
+        module=module,
         trace_id=trace["id"],
     )
 
@@ -115,6 +129,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         "transcript": text,
         "trace_id": trace["id"],
         "intent": intent,
+        "module": module,
         "agents": agents,
         "slots": slots,
         "parallel": intent_data.get("parallel", False),

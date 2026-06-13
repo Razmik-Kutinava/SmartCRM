@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Ф2 Voice Layer §1: Hermes module + intent + ui_action
+
+**Сделано:** контракт `module_contract.py`; промпт/rescue/slot_normalize; `voice_action` + `rag_context`; pipeline; pytest 47+10; `smoke_hermes_modules.py`; `HERMES_MODULES_ACCEPTANCE.md`. Модули: email, search, analytics, agents, rag.
+
 ## 2026-06-13 — Ops: упаковка `docs/operations/` по фазам
 
 **Сделано:** `session/`, `baselines/`, `phase1/{домен}/`, `phase2/agents/`, `debt/`; `operations/README.md`. Коммиты: `036fd61`, `f4cf977`.

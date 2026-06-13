@@ -116,6 +116,9 @@
 
 | Приоритет | PRD_MAP | Что | Фаза MAP | Кто |
 |-----------|---------|-----|----------|-----|
+| 🟡 | Ф2 §1 Voice Layer | UI: `payload.period` / `minScore` на `/leads/analytics` и списке | **2** | агент |
+| 🟡 | Ф2 §1 Voice Layer | LLM eval-кейсы analytics/RAG (не только rescue) | **2** | агент |
+| 🟢 | Ф2 §1 Voice Layer | Live `send_email` после approve | **2** | агент |
 | 🔴 | Агенты · quality gates | **Полный live Ollama** ≥ порогов — **не закрыто** (Hermes ReadTimeout CPU; прогон 5 агентов оборвался/долгий) | **2** | `run_agents_quality_gate.py --write-acceptance` |
 | 🟡 | Агенты · quality gates | Hermes: GPU / `EVAL_OLLAMA_TIMEOUT=1200` / ночной прогон 36 кейсов | **2** | 👤/агент |
 | 🟡 | Агенты · quality gates | `[x]` в MAP — только после зелёного `overall_gate` | **2** | после live |

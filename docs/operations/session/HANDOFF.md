@@ -1,16 +1,14 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[переход в Фазу 2] | Статус: Ф1 DoD ✅ · Ф2 старт (ждём go) · push ❌`
+`Спринт:[Ф2] | Задача:[Voice Layer §1 Hermes modules] | Статус: backend ✅ · UI voice_action — следующий шаг`
 
-> **→ Следующий агент:** [`operations/README.md`](../README.md) → [`session/PHASE2_ENTRY.md`](PHASE2_ENTRY.md)
+> **→ Следующий агент:** [`operations/README.md`](../README.md) → [`phase2/voice/HERMES_MODULES_ACCEPTANCE.md`](../phase2/voice/HERMES_MODULES_ACCEPTANCE.md)
 
-**Решение 2026-06-13:** Ф1 **не «идеально закрыта»** (🟡 хвосты в MAP L306–318), но **DoD 6/6 ✅** — **переходим к Ф2**. Код в коммитах; push **не делать** до go владельца.
+**2026-06-13 (Ф2 §1):** Hermes `module` + `intent` + `ui_action` для email, search, analytics, agents, RAG — **backend+rescue+pytest ✅**. Smoke: `python scripts/smoke_hermes_modules.py` (47 passed). Acceptance: `HERMES_MODULES_ACCEPTANCE.md`. MAP п.379 — 🟡 (галочка после «ок»).
 
-**Ф2:** работа **не начата** — ждём `go` с **номером очереди** из [`PRD_MAP § Порядок Ф2`](../product/PRD_MAP.md#порядок-фазы-2). Кандидаты: **1** Voice Layer или **5** leadgen+голос.
+**Следующий `go`:** Voice Layer §1 п.2–5 (WS voice_action UI) **или** §2 fanout **или** full live gate.
 
-**Quality gates (Ф2, фон):** pytest 34 ✅; smoke JSON есть; full gate мог быть 🔄 — см. `PHASE2_ENTRY.md`. MAP gate `[x]` — после green live.
-
-**Коммиты gate:** `3b91a58` … `596d2e1` (детали в `PHASE2_ENTRY.md`).
+**Quality gates (фон):** full live gate 🔲 — `GATE_FULL_RUNBOOK.md`.
 
 ---
 

@@ -376,7 +376,7 @@
 > **Не Ф1:** голосовой CRUD лидов + mic E2E уже в [«Голос → лиды»](#голос--лиды-базово) (✅ `VOICE_MIC_E2E_ACCEPTANCE.md`). **Здесь — остальные модули:** email, поиск, аналитика, RAG, агенты.  
 > Контракт: [`PRD.md`](PRD.md) Voice Layer · [`ARCHITECTURE.md`](ARCHITECTURE.md#контракт-voice_action)
 
-- [ ] Hermes: `module` + `intent` + `ui_action` для email, поиска, аналитики, агентов, RAG
+- [ ] Hermes: `module` + `intent` + `ui_action` для email, поиска, аналитики, агентов, RAG — 🟡 backend+rescue+pytest ✅ [`HERMES_MODULES_ACCEPTANCE.md`](../operations/phase2/voice/HERMES_MODULES_ACCEPTANCE.md)
 - [ ] Событие `voice_action` на фронте (WS `/ws/voice`)
 - [ ] UI: модалка с ответом агента
 - [ ] UI: навигация SvelteKit по голосу
