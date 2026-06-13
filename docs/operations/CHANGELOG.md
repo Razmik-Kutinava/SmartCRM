@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Переход Ф1 → Ф2 (handoff)
+
+**Сделано:** решение: DoD Ф1 6/6 ✅, идём в Ф2; `PHASE2_ENTRY.md` для следующего агента; HANDOFF + MAP § Ф2 обновлены. Push **не** делали — ждём go. Незакоммичено: только runtime `backend/data/*`.
+
 ## 2026-06-13 — Agents quality gates: шаг 7 (pytest, без live LLM)
 
 **Сделано:** pytest gate block 34 passed — config/пороги, delta was→became, артефакты JSON, cases 36+15×5, API gate, acceptance_sync, CLI `--check-only`/`--log-file`. Live LLM gate **не** в CI. Fix cp1251 stdout (`_emit`, gaps `!=`, JSON ensure_ascii).

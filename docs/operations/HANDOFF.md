@@ -1,15 +1,28 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус: шаг 7 ✅ · full gate 🔄 · MAP 🟡`
+`Спринт:[Ф1→Ф2] | Задача:[переход в Фазу 2] | Статус: Ф1 DoD ✅ · Ф2 старт (ждём go) · push ❌`
+
+> **→ Следующий агент:** читай [`PHASE2_ENTRY.md`](PHASE2_ENTRY.md) — git, хвосты Ф1, gate, порядок Ф2.
+
+**Решение 2026-06-13:** Ф1 **не «идеально закрыта»** (🟡 хвосты в MAP L306–318), но **DoD 6/6 ✅** — **переходим к Ф2**. Код в коммитах; push **не делать** до go владельца.
+
+**Ф2:** работа **не начата** — ждём `go` с **номером очереди** из [`PRD_MAP § Порядок Ф2`](../product/PRD_MAP.md#порядок-фазы-2). Кандидаты: **1** Voice Layer или **5** leadgen+голос.
+
+**Quality gates (Ф2, фон):** pytest 34 ✅; smoke JSON есть; full gate мог быть 🔄 — см. `PHASE2_ENTRY.md`. MAP gate `[x]` — после green live.
+
+**Коммиты gate:** `3b91a58` … `596d2e1` (детали в `PHASE2_ENTRY.md`).
+
+---
+
+`Спринт:[Ф1→Ф2] | Задача:[agents quality gates — хвост] | Статус: шаг 7 ✅ · live gate 🟡`
 
 **Шаг 7 (2026-06-13):** pytest gate **34 passed**; live LLM не в CI; cp1251 fix в CLI.
 
-**Live gate (2026-06-13):** smoke ✅ `agents_gate_20260613_143114.json` (fail marketer/tech); **full gate 🔄** — `gate_full_20260613.log`, backend `:8000`. `[x]` MAP после green + «ок».
+**Live gate:** smoke ✅ `agents_gate_20260613_143114.json`; full — см. `gate_full_20260613.log`.
 
-**Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · обучение [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md).  
-**Следующий `go`:** дождаться full gate → tuning если fail → `--write-acceptance` → MAP `[x]`.
+**Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md).
 
-**Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
+**Процесс:** `git commit` + ops — [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
 **Хвост Фазы 1 = только `BACKLOG.md`.** В `PRD_MAP.md` § «Открытые хвосты Ф1» — указатель; Hermes + voice_action **не** в хвосте (закрыты в таблице «Голос → лиды»).
 

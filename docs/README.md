@@ -21,7 +21,7 @@
 
 | Ситуация | Документ |
 |----------|----------|
-| Новая сессия агента | `operations/HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
+| Новая сессия агента | **`operations/PHASE2_ENTRY.md`** (Ф2) → `HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
 | Что строим | `product/PRD_MAP.md` → `product/PRD.md` |
 | Как устроено технически | `product/ARCHITECTURE.md` |
 | Стек, API, БД | `product/ARCHITECTURE.md#справочник-стека` |
@@ -82,6 +82,7 @@
 Обновляется агентами в процессе работы:
 
 - [CHANGELOG.md](operations/CHANGELOG.md) — **история** (формат записи, хронология, статус продукта)
+- [PHASE2_ENTRY.md](operations/PHASE2_ENTRY.md) — **вход в Ф2** (2026-06-13): git, хвосты Ф1, gate, порядок очереди
 - [HANDOFF.md](operations/HANDOFF.md) — статус задачи, следующий шаг
 - [SESSION_STATE.md](operations/SESSION_STATE.md) — краткий прогресс сессии
 - [ISSUES.md](operations/ISSUES.md) — баги и инциденты
