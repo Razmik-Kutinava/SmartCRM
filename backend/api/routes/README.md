@@ -32,7 +32,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `hermes_routes.py` | Настройки и тюнинг Hermes |
 | `voice_routes.py` | Голосовые настройки и смоук |
 | `eval_routes.py` | Прогон eval Hermes; статус Ollama |
-| `eval_gate_routes.py` | Gate: latest JSON, download, run (режимы/лимиты), ensure-dataset, failed→датасет bulk |
+| `eval_gate_routes.py` | Gate: latest+delta, download, run, ensure-dataset, failed→bulk |
 | `eval_cases.py` | CRUD eval-кейсов |
 | `agents_routes.py` | Запуск и логи агентов |
 | `logs_routes.py` | Буфер логов для UI |

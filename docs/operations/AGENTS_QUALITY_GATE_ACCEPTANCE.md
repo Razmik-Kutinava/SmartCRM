@@ -91,6 +91,8 @@ python scripts/run_agents_quality_gate.py
 - [x] Eval-кейсы ≥N на агента (шаг 2)
 - [x] Скрипт `run_agents_quality_gate.py` + `POST /api/ops/eval/agents-gate` (шаг 3)
 - [x] Acceptance sync: таблица + дыры (`acceptance_sync.py`, `--write-acceptance`)
+- [x] UI `/ops/tuning` — импорт failed из gate → `eval-failed-gate` (шаг 6, 2026-06-13)
+- [x] Дельта в отчёте gate: **было % → стало %** (`gate_delta.py`, карточки eval + insights)
 - [ ] Полный live-прогон ≥ порогов (smoke 🔴; Hermes timeout CPU)
 - [x] UI `/ops/intents/eval` — вкладки **Hermes eval** | **Quality gate**; download JSON; режимы all/hermes-only/agents-only + лимиты; bulk failed→`eval-failed-gate`; «В датасет» (2026-06-13)
 - [x] `/ops/insights` — pass rate grid 6 агентов + hint без артефакта

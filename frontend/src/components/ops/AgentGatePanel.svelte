@@ -5,8 +5,11 @@
 		DEFAULT_GATE_DATASET,
 		GATE_AGENTS,
 		GATE_RUN_MODES,
+		agentDelta,
 		agentSummaryCards,
+		deltaColor,
 		failedRowsForTab,
+		formatDeltaLine,
 		gateDownloadUrl,
 		gateEmoji,
 		gateRowsForAgent,
@@ -85,7 +88,8 @@
 				generated_at: rep.generated_at,
 				overall_gate: rep.overall_gate,
 				gaps: rep.gaps,
-				agents: rep.agents
+				agents: rep.agents,
+				delta_vs_previous: rep.delta_vs_previous
 			};
 			toast = `Готово: ${rep.overall_gate}`;
 		} catch (e) {
@@ -177,7 +181,17 @@
 			class="text-indigo-400 hover:underline"
 			data-testid="gate-artifact-download"
 		>⬇ {gateData.artifact_name}</a>
+		{#if gateData.delta_vs_previous?.has_previous}
+			<span class="text-gray-600">
+				· Δ vs {gateData.delta_vs_previous.previous_artifact_name || 'prev'}
+			</span>
+		{/if}
 	</div>
+	{#if gateData.delta_vs_previous?.has_previous}
+		<p class="text-xs text-gray-500 mb-2">
+			Overall: {gateData.delta_vs_previous.overall_was} → {gateData.delta_vs_previous.overall_became}
+		</p>
+	{/if}
 	<div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4 max-w-4xl">
 		{#each cards as c}
 			{#if !c.missing}
@@ -189,6 +203,10 @@
 					<div class="text-xs text-gray-500">{c.label}</div>
 					<div class="text-xl font-bold {rateColor(c.pass_rate, c.threshold)}">{c.pass_rate}%</div>
 					<div class="text-xs text-gray-600">{gateEmoji(c.gate)} {c.passed}/{c.total}</div>
+					{@const d = agentDelta(gateData.delta_vs_previous, c.id)}
+					{#if d}
+						<div class="text-[10px] mt-1 {deltaColor(d.delta_pct)}">{formatDeltaLine(d)}</div>
+					{/if}
 				</button>
 			{/if}
 		{/each}
@@ -275,13 +293,17 @@
 <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-4 mb-6 max-w-3xl">
 	<h3 class="text-xs text-violet-400 uppercase mb-2">Обучение после gate</h3>
 	<ol class="text-sm text-gray-400 space-y-1 list-decimal list-inside">
-		<li>Failed → датасет <code class="text-gray-500">{DEFAULT_GATE_DATASET}</code> (кнопки выше)</li>
 		<li>
-			Тюнинг промптов — <a href="/ops/tuning" class="text-indigo-400 hover:underline">/ops/tuning</a>,
-			<a href="/ops/agents" class="text-indigo-400 hover:underline">/ops/agents</a>
+			Failed → датасет на
+			<a href="/ops/tuning?dataset={DEFAULT_GATE_DATASET}" class="text-indigo-400 hover:underline">/ops/tuning</a>
+			(кнопки выше или «Импорт failed из gate»)
 		</li>
-		<li>Подгонка must_contain в eval/agents/*.jsonl под вывод hermes3</li>
-		<li>Повторный gate — кнопка «Запустить gate»</li>
+		<li>
+			Тюнинг промптов —
+			<a href="/ops/agents" class="text-indigo-400 hover:underline">/ops/agents</a>,
+			<a href="/ops/intents/improve" class="text-indigo-400 hover:underline">/ops/intents/improve</a>
+		</li>
+		<li>Повторный gate — смотрите дельту «было % → стало %» на карточках</li>
 	</ol>
 </div>
 

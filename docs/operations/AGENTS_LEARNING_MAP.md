@@ -62,14 +62,13 @@ flowchart LR
 |----------|--------|
 | `/ops/intents/eval` | Прогон кейсов, фильтр по агенту (шаг 2+) |
 | `/ops/intents/improve` | Few-shot / улучшение Hermes |
-| `/ops/tuning` | Датасеты, import bad traces, export |
+| `/ops/tuning` | Датасеты, import bad traces, **import failed из gate** (шаг 6), export |
 | `/ops/traces` | Сырые диалоги → источник для датасета |
 | `/ops/insights` | Подсказки: что чинить после провалов (шаг 5+) |
 
 ---
 
-## Следующие шаги (не этот коммит)
+## Следующие шаги (после шага 6 UI)
 
-1. Eval-кейсы ≥N на каждого из 6 агентов  
-2. `run_agents_quality_gate.py` + JSON в `backend/data/artifacts/eval/`  
-3. Live-прогон Ollama → зелёная acceptance-таблица → `[x]` в PRD_MAP
+1. Live-прогон Ollama → зелёная acceptance-таблица → `[x]` в PRD_MAP  
+2. Тюнинг `must_contain` под реальный вывод hermes3 (данные eval/agents)

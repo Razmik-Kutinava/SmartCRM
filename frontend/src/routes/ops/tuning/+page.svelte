@@ -1,6 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import GateTuningImport from '../../../components/ops/GateTuningImport.svelte';
 	import { getApiUrl } from '$lib/websocket.js';
+	import { DEFAULT_GATE_DATASET } from '$lib/ops/agentEvalGate.js';
 
 	const API = getApiUrl();
 
@@ -241,10 +244,25 @@
 		}
 	}
 
-	onMount(loadDatasets);
+	onMount(async () => {
+		await loadDatasets();
+		const want = $page.url.searchParams.get('dataset');
+		if (want) {
+			const ds = datasets.find((d) => d.name === want);
+			if (ds) await selectDataset(ds.id);
+		} else {
+			const def = datasets.find((d) => d.name === DEFAULT_GATE_DATASET);
+			if (def) await selectDataset(def.id);
+		}
+	});
+
+	function onGateImported(id) {
+		loadDatasets().then(() => selectDataset(id));
+	}
 </script>
 
 <div class="px-6 py-6 max-w-6xl">
+	<GateTuningImport onImported={onGateImported} />
 	<p class="text-sm text-gray-400 mb-4 max-w-3xl">
 		Датасеты для <strong class="text-gray-200">fine-tune на отдельной машине</strong>: загрузите CSV / JSON / JSONL с парами
 		или PDF (текст нарежется на чанки). Экспортируйте JSONL и передайте в обучение (LoRA и т.д.). Импорт 👎 трейсов —

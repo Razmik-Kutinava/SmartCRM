@@ -86,3 +86,41 @@ export function runModeToBody(mode, hermesLimit, agentLimit) {
 	if (mode === 'agents_only') body.agents_only = true;
 	return body;
 }
+
+/** Дельта pass rate: было → стало */
+export function agentDelta(deltaBlock, agentId) {
+	return deltaBlock?.agents?.[agentId] ?? null;
+}
+
+export function formatDeltaLine(d) {
+	if (!d || d.was_pct == null || d.became_pct == null) return '';
+	const sign = d.delta_pct > 0 ? '+' : '';
+	const deltaStr = d.delta_pct != null ? ` (${sign}${d.delta_pct}%)` : '';
+	return `${d.was_pct}% → ${d.became_pct}%${deltaStr}`;
+}
+
+export function deltaColor(deltaPct) {
+	if (deltaPct == null) return 'text-gray-500';
+	if (deltaPct > 0) return 'text-emerald-400';
+	if (deltaPct < 0) return 'text-red-400';
+	return 'text-gray-400';
+}
+
+export async function bulkGateFailedToDataset(apiBase, agentTab = 'all', datasetId = null) {
+	const r = await fetch(`${apiBase}/api/ops/eval/agents-gate/failed-to-dataset/bulk`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ dataset_id: datasetId, agent: agentTab })
+	});
+	if (!r.ok) {
+		const err = await r.json();
+		throw new Error(err.detail || 'Bulk import failed');
+	}
+	return r.json();
+}
+
+export async function ensureGateDataset(apiBase) {
+	const r = await fetch(`${apiBase}/api/ops/eval/agents-gate/ensure-dataset`, { method: 'POST' });
+	if (!r.ok) throw new Error('ensure-dataset failed');
+	return r.json();
+}

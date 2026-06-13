@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from core.agent_eval.acceptance_sync import _AGENT_LABELS, build_gaps
-from core.agent_eval.gate_artifacts import load_latest_gate
+from core.agent_eval.gate_artifacts import load_latest_gate, delta_for_report
 
 
 _NO_ARTIFACT_HINT = {
@@ -39,7 +39,7 @@ def gate_insights_block() -> dict[str, Any]:
             "title": f"Gate {label}: {gate}",
             "body": (
                 f"Pass rate {rate}% при пороге {thr}% — провалов {failed}. "
-                f"Откройте /ops/intents/eval → вкладка «{label}», добавьте failed в датасет."
+                f"Импорт failed: /ops/tuning → «eval-failed-gate» или /ops/intents/eval."
             ),
             "confidence": 0.85 if gate == "fail" else 0.65,
             "agent": key,
@@ -53,4 +53,5 @@ def gate_insights_block() -> dict[str, Any]:
         "agents": agents_summary,
         "gaps": gaps,
         "hints": hints,
+        "delta_vs_previous": delta_for_report(report),
     }

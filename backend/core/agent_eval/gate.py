@@ -155,7 +155,16 @@ async def run_agents_quality_gate(
 
 
 def save_gate_artifact(report: dict[str, Any], path: Path | None = None) -> Path:
+    from core.agent_eval.gate_artifacts import load_latest_gate
+    from core.agent_eval.gate_delta import compute_delta_vs_previous
+
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+    prev_path, prev = load_latest_gate()
+    report["delta_vs_previous"] = compute_delta_vs_previous(
+        report,
+        prev,
+        previous_artifact_name=prev_path.name if prev_path else None,
+    )
     if path is None:
         stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         path = ARTIFACTS_DIR / f"agents_gate_{stamp}.json"

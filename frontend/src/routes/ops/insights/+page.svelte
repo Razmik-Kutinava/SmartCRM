@@ -1,7 +1,7 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import { getApiUrl } from '$lib/websocket.js';
-	import { GATE_AGENTS, gateEmoji, rateColor } from '$lib/ops/agentEvalGate.js';
+	import { GATE_AGENTS, agentDelta, deltaColor, formatDeltaLine, gateEmoji, rateColor } from '$lib/ops/agentEvalGate.js';
 
 	const API = getApiUrl();
 
@@ -70,15 +70,28 @@
 					{gateEmoji(insight.gate.overall_gate)} {insight.gate.overall_gate}
 					· <span class="text-gray-500">{insight.gate.artifact_name}</span>
 				</p>
+				{#if insight.gate.delta_vs_previous?.has_previous}
+					<p class="text-xs text-gray-500 mb-2">
+						Overall Δ: {insight.gate.delta_vs_previous.overall_was} →
+						{insight.gate.delta_vs_previous.overall_became}
+					</p>
+				{/if}
 				<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
 					{#each agentRateCards(insight.gate) as c}
 						<div class="bg-gray-950 border border-gray-800 rounded-lg p-2">
 							<div class="text-xs text-gray-500">{c.label}</div>
 							<div class="text-lg font-bold {rateColor(c.pass_rate, c.threshold)}">{c.pass_rate}%</div>
 							<div class="text-xs text-gray-600">{gateEmoji(c.gate)} {c.passed}/{c.total}</div>
+							{@const d = agentDelta(insight.gate.delta_vs_previous, c.id)}
+							{#if d}
+								<div class="text-[10px] mt-0.5 {deltaColor(d.delta_pct)}">{formatDeltaLine(d)}</div>
+							{/if}
 						</div>
 					{/each}
 				</div>
+				<a href="/ops/tuning?dataset=eval-failed-gate" class="text-xs text-indigo-400 hover:underline block mb-2"
+					>→ Импорт failed в датасет (/ops/tuning)</a
+				>
 				{#if insight.gate.gaps?.length}
 					<ul class="text-xs text-gray-400 space-y-1 mb-2">
 						{#each insight.gate.gaps as g}

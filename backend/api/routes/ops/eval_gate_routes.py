@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.routes.training_datasets import RecordCreate, _dataset_or_404
 from core.agent_eval.acceptance_sync import patch_acceptance_md
 from core.agent_eval.gate import run_agents_quality_gate, save_gate_artifact
-from core.agent_eval.gate_artifacts import load_latest_gate
+from core.agent_eval.gate_artifacts import load_latest_gate, delta_for_report
 from core.agent_eval.gate_dataset import (
     DEFAULT_GATE_DATASET,
     DEFAULT_GATE_DATASET_DESC,
@@ -104,6 +104,7 @@ async def latest_agents_gate():
         "ollama": report.get("ollama"),
         "gaps": report.get("gaps", []),
         "agents": agents,
+        "delta_vs_previous": delta_for_report(report),
     }
 
 
