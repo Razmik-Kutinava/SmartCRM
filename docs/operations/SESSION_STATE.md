@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-13 | Действие: шаг 6 петля обучения — gate_delta was→became %; /ops/tuning импорт failed; insights+eval дельта; pytest 13 gate. | Коммит: `7be7bdb` | Хвост A: live gate MAP 🔲 | Хвост B: must_contain tuning | Хвост C: нет | Следующий шаг: full gate --write-acceptance. | Статус: done
+
 2026-06-13 | Действие: UI gate eval+insights финал — вкладки Hermes/gate, download JSON, режимы+лимиты, bulk→eval-failed-gate, insights pass rate; API download/ensure/bulk; pytest 15; fix import $components. | Коммит: `596d2e1` | Хвост A: live full gate MAP 🔲 | Хвост B: EVAL_OLLAMA_TIMEOUT=1200 | Хвост C: agents-only оборван analyst | Следующий шаг: утренний run_agents_quality_gate --write-acceptance. | Статус: done
 
 2026-06-12 | Действие: agents quality gates шаг 5 — UI eval+insights, API latest/failed→dataset; BACKLOG незакрытый live; 9 pytest gate. | Коммит: `27e4925` | Хвост A: ночной full gate Hermes+агенты | Хвост B: [x] MAP после зелёного | Хвост C: agents-only фон оборвался | Следующий шаг: live gate EVAL_OLLAMA_TIMEOUT=1200. | Статус: done

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Agents quality gates: петля обучения шаг 6
+
+**Сделано:** `gate_delta.py` (было % → стало % в JSON и API); `/ops/tuning` — «Импорт failed из gate»; дельта на карточках eval + insights; ссылки eval↔tuning. Коммит: `7be7bdb`. pytest gate 13.
+
 ## 2026-06-13 — Agents quality gates: UI eval+insights финал
 
 **Сделано:** вкладки Hermes/gate на `/ops/intents/eval`; скачивание JSON; режимы прогона + лимиты; default dataset `eval-failed-gate`; bulk failed; блок обучения; insights pass rate grid + empty hint; API download/ensure-dataset/bulk; pytest 15; Puppeteer smoke eval. Коммит: `596d2e1`.

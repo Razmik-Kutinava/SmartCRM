@@ -43,6 +43,8 @@
 
 ## Записи
 
+`[2026-06-13] | PRD_MAP: quality gates шаг 6 | Коммит 7be7bdb: tuning import failed, delta was→became % | **Не вышло:** live gate MAP 🔲 | Действие: EVAL_OLLAMA_TIMEOUT=1200`
+
 `[2026-06-13] | PRD_MAP: Агенты quality gates UI финал | Коммит 596d2e1: вкладки Hermes/gate, download, режимы, bulk→eval-failed-gate, insights pass rate | **Не вышло:** live gate MAP 🔲; agents-only оборван analyst | Действие: EVAL_OLLAMA_TIMEOUT=1200 --write-acceptance`
 
 
