@@ -18,7 +18,7 @@ _AGENT_LABELS = {
 }
 
 _REPO = Path(__file__).resolve().parents[3]
-ACCEPTANCE_PATH = _REPO / "docs" / "operations" / "AGENTS_QUALITY_GATE_ACCEPTANCE.md"
+ACCEPTANCE_PATH = _REPO / "docs" / "operations" / "phase2" / "agents" / "AGENTS_QUALITY_GATE_ACCEPTANCE.md"
 MARKER_START = "<!-- GATE_STATUS_START -->"
 MARKER_END = "<!-- GATE_STATUS_END -->"
 GAPS_START = "<!-- GATE_GAPS_START -->"

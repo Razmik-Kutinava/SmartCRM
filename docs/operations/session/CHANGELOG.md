@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Ops: упаковка `docs/operations/` по фазам
+
+**Сделано:** `session/`, `baselines/`, `phase1/{домен}/`, `phase2/agents/`, `debt/REPO_LAYOUT_DEBT.md`, `operations/README.md`; обновлены ссылки, pre-commit, `acceptance_sync`, REPO_LAYOUT.
+
 ## 2026-06-13 — Переход Ф1 → Ф2 (handoff)
 
 **Сделано:** решение: DoD Ф1 6/6 ✅, идём в Ф2; `PHASE2_ENTRY.md` для следующего агента; HANDOFF + MAP § Ф2 обновлены. Коммиты: `db8960e`, `4592830`. Push **не** делали — ждём go. Незакоммичено: только runtime `backend/data/*`.
@@ -44,7 +48,7 @@
 
 ## 2026-06-12 — Agents quality gates: рамка + карта обучения (шаг 0–1)
 
-**Сделано:** пороги Hermes 85%/30, агенты 75%/15; `AGENTS_LEARNING_MAP.md`, `AGENTS_QUALITY_GATE_ACCEPTANCE.md`; PRD_MAP/BACKLOG/langgraph — eval через Ollama, `[x]` только после live gate.
+**Сделано:** пороги Hermes 85%/30, агенты 75%/15; `phase2/agents/AGENTS_LEARNING_MAP.md`, `phase2/agents/AGENTS_QUALITY_GATE_ACCEPTANCE.md`; PRD_MAP/BACKLOG/langgraph — eval через Ollama, `[x]` только после live gate.
 
 ## 2026-06-12 — Coverage hygiene: policy + smoke + CI cov log
 
@@ -537,7 +541,7 @@ BACKLOG.md       — отложено по PRD_MAP
 
 | Артефакт | Суть |
 |----------|------|
-| `docs/operations/RULES_MATRIX.md` | Живая матрица правил + таблицы старта/регрессии/финиша |
+| `docs/operations/baselines/RULES_MATRIX.md` | Живая матрица правил + таблицы старта/регрессии/финиша |
 | `backend/scripts/check_agent_step.py` | Проверка ops перед «done» |
 | `smartcrm-*.mdc` | Таблица старта сессии; регрессия → что писать в отчёт; fix agent-workflow |
 | `PRD_MAP.md` | п.118 закрыт (P6 в git); убран устаревший хвост «коммит локальных» |
@@ -571,7 +575,7 @@ BACKLOG.md       — отложено по PRD_MAP
 
 ## 2026-06-07 — BACKLOG + правило хвоста (PRD_MAP)
 
-**Сделано:** `docs/operations/BACKLOG.md`; § бэклог в `smartcrm-task-workflow.mdc` — привязка **только к пунктам PRD_MAP**, фаза MAP опционально («когда закрывать»).
+**Сделано:** `docs/operations/session/BACKLOG.md`; § бэклог в `smartcrm-task-workflow.mdc` — привязка **только к пунктам PRD_MAP**, фаза MAP опционально («когда закрывать»).
 
 ---
 

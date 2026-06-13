@@ -17,14 +17,14 @@
 | [`smartcrm-repo-layout.mdc`](.cursor/rules/smartcrm-repo-layout.mdc) | структура репо, backend README |
 | [`smartcrm-code-split.mdc`](.cursor/rules/smartcrm-code-split.mdc) | лимит файлов, сплит |
 
-Матрица правил: [`RULES_MATRIX.md`](docs/operations/RULES_MATRIX.md).
+Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md).
 
 ## Документация
 
 - Карта: [`docs/README.md`](docs/README.md)
 - Чеклисты: [`docs/product/PRD_MAP.md`](docs/product/PRD_MAP.md)
 - Продукт: [`docs/product/PRD.md`](docs/product/PRD.md), [`docs/product/ARCHITECTURE.md`](docs/product/ARCHITECTURE.md)
-- Операционка: `docs/operations/` (HANDOFF, SESSION_STATE, ISSUES, BACKLOG, CHANGELOG)
+- Операционка: `docs/operations/` — [`README.md`](docs/operations/README.md): `session/`, `phase1/`, `phase2/`, `baselines/`, `debt/`
 - Backend-карта: [`backend/README.md`](backend/README.md)
 
 ## Контекст

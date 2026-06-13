@@ -49,14 +49,19 @@ docs/
 ├── api/                # HTTP API, OpenAPI
 ├── email/              # Почта
 ├── voice/              # Голосовые команды
-├── operations/         # HANDOFF, ISSUES, CHANGELOG, SESSION_STATE
+├── operations/         # Операционка — см. operations/README.md
+│   ├── session/        # HANDOFF, SESSION_STATE, CHANGELOG, ISSUES, BACKLOG
+│   ├── baselines/      # COVERAGE, CI, RULES_MATRIX
+│   ├── phase1/         # Acceptance Ф1 по доменам
+│   ├── phase2/         # Acceptance Ф2
+│   └── debt/           # Долг layout кода
 ├── dev/                # CONTRIBUTING, REPO_LAYOUT, LAYOUT_AUDIT, code-review
 ├── archive/            # Устаревшие доки
 └── reference/          # Внешний референс (CRM Points) — не прод-код
 ```
 
 Новый документ модуля → `docs/modules/{имя}.md`.  
-Операционные записи → только `docs/operations/`.
+Операционные записи → `docs/operations/session/`. Acceptance → `docs/operations/phase1|phase2/{домен}/`. Канон: `docs/operations/README.md`.
 
 ---
 

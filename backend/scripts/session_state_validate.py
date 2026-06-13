@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SESSION_STATE = REPO_ROOT / "docs" / "operations" / "SESSION_STATE.md"
+SESSION_STATE = REPO_ROOT / "docs" / "operations" / "session" / "SESSION_STATE.md"
 
 ENTRY_LINE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\s*\|")
 COMMIT_HASH_RE = re.compile(r"Коммит:\s*`([0-9a-f]{7,40})`", re.I)
@@ -88,7 +88,7 @@ def validate_text(text: str, *, only_lines: set[int] | None = None) -> list[str]
 
 def staged_session_state_text() -> str | None:
     proc = subprocess.run(
-        ["git", "show", ":docs/operations/SESSION_STATE.md"],
+        ["git", "show", ":docs/operations/session/SESSION_STATE.md"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,
@@ -109,7 +109,7 @@ def staged_added_journal_line_numbers() -> set[int] | None:
             "--cached",
             "--unified=0",
             "--",
-            "docs/operations/SESSION_STATE.md",
+            "docs/operations/session/SESSION_STATE.md",
         ],
         cwd=REPO_ROOT,
         capture_output=True,
@@ -139,7 +139,7 @@ def staged_added_journal_line_numbers() -> set[int] | None:
 
 def is_session_state_staged() -> bool:
     proc = subprocess.run(
-        ["git", "diff", "--cached", "--name-only", "--", "docs/operations/SESSION_STATE.md"],
+        ["git", "diff", "--cached", "--name-only", "--", "docs/operations/session/SESSION_STATE.md"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,

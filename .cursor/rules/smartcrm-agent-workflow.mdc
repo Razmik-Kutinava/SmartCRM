@@ -7,7 +7,7 @@ alwaysApply: true
 
 **Коммит и ops:** только [`smartcrm-commit-ops.mdc`](smartcrm-commit-ops.mdc) — других формулировок нет.
 
-Матрица: `docs/operations/RULES_MATRIX.md`.
+Матрица: `docs/operations/baselines/RULES_MATRIX.md`.
 
 ---
 

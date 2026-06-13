@@ -21,16 +21,16 @@
 
 | Ситуация | Документ |
 |----------|----------|
-| Новая сессия агента | **`operations/PHASE2_ENTRY.md`** (Ф2) → `HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
+| Новая сессия агента | **`operations/session/PHASE2_ENTRY.md`** (Ф2) → `HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
 | Что строим | `product/PRD_MAP.md` → `product/PRD.md` |
 | Как устроено технически | `product/ARCHITECTURE.md` |
 | Стек, API, БД | `product/ARCHITECTURE.md#справочник-стека` |
-| Что сломалось | `operations/ISSUES.md` |
-| Хвост / отложено | `operations/BACKLOG.md` |
+| Что сломалось | `operations/session/ISSUES.md` |
+| Хвост / отложено | `operations/session/BACKLOG.md` |
 | Как запустить | `start/RUNBOOK.md` |
 | Агенты / Hermes | `agents/langgraph.md` |
 | LLM политика | `stack/LLM.md` |
-| История изменений | `operations/CHANGELOG.md` |
+| История изменений | `operations/session/CHANGELOG.md` |
 
 **Три канона:** `PRD.md` (продукт) · `ARCHITECTURE.md` (техника) · `CHANGELOG.md` (история).
 
@@ -50,7 +50,7 @@
 | **[voice/](voice/)** | Голосовые команды и фразы для лидов |
 | **[agents/](agents/)** | AI-агенты LangGraph и Hermes |
 | **[stack/](stack/)** | Технологии: LLM, RAG, SvelteKit, LangGraph |
-| **[operations/](operations/)** | HANDOFF, ISSUES, BACKLOG, CHANGELOG, [RULES_MATRIX](operations/RULES_MATRIX.md) |
+| **[operations/](operations/)** | [`operations/README.md`](operations/README.md) — session, baselines, phase1/, phase2/, debt |
 | **[dev/](dev/)** | Для разработчиков: workflow, [REPO_LAYOUT](dev/REPO_LAYOUT.md), [LAYOUT_AUDIT](dev/LAYOUT_AUDIT.md), code review |
 | **[archive/](archive/)** | Старые отчёты и тест-планы (не актуальный канон) |
 | **[reference/](reference/)** | Клон референс-проекта CRM Points (только для сравнения) |
@@ -79,14 +79,16 @@
 
 ## Операционка (`operations/`)
 
+Структура: [`operations/README.md`](operations/README.md).
+
 Обновляется агентами в процессе работы:
 
-- [CHANGELOG.md](operations/CHANGELOG.md) — **история** (формат записи, хронология, статус продукта)
-- [PHASE2_ENTRY.md](operations/PHASE2_ENTRY.md) — **вход в Ф2** (2026-06-13): git, хвосты Ф1, gate, порядок очереди
-- [HANDOFF.md](operations/HANDOFF.md) — статус задачи, следующий шаг
-- [SESSION_STATE.md](operations/SESSION_STATE.md) — краткий прогресс сессии
-- [ISSUES.md](operations/ISSUES.md) — баги и инциденты
-- [BACKLOG.md](operations/BACKLOG.md) — отложено по PRD_MAP
+- [CHANGELOG.md](operations/session/CHANGELOG.md) — **история** (формат записи, хронология, статус продукта)
+- [PHASE2_ENTRY.md](operations/session/PHASE2_ENTRY.md) — **вход в Ф2** (2026-06-13): git, хвосты Ф1, gate, порядок очереди
+- [HANDOFF.md](operations/session/HANDOFF.md) — статус задачи, следующий шаг
+- [SESSION_STATE.md](operations/session/SESSION_STATE.md) — краткий прогресс сессии
+- [ISSUES.md](operations/session/ISSUES.md) — баги и инциденты
+- [BACKLOG.md](operations/session/BACKLOG.md) — отложено по PRD_MAP
 
 ---
 

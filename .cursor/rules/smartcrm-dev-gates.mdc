@@ -13,7 +13,7 @@ alwaysApply: true
 
 0. **`smartcrm-commit-ops.mdc`** — **всегда** `git commit` + ops при закрытии шага; **`git push`** — только по явному go.
 1. **Безопасность** — секреты, auth, prod
-2. **`docs/operations/ISSUES.md`** — открытые 🔴 блокеры
+2. **`docs/operations/session/ISSUES.md`** — открытые 🔴 блокеры
 3. **`smartcrm-task-workflow.mdc`** — go, тесты, honest report, BACKLOG, старт сессии
 4. **`smartcrm-dev-gates.mdc`** (этот файл) — миграции, API, регрессия, hot-path
 5. **`smartcrm-repo-layout.mdc`** + **`smartcrm-code-split.mdc`**
@@ -72,7 +72,7 @@ python scripts/run_zone_regression.py crm_leads   # одна зона
 | **SESSION_STATE.md** | зона (`p1`/`p6`/`crm_leads`/…) + результат |
 | **ISSUES.md** | если FAIL и не чиним в этом шаге |
 
-Полная таблица зон: `docs/operations/RULES_MATRIX.md` § Регрессия.
+Полная таблица зон: `docs/operations/baselines/RULES_MATRIX.md` § Регрессия.
 
 UI затронут → Chrome DevTools MCP или чеклист в отчёте (что кликнули / не кликали).
 

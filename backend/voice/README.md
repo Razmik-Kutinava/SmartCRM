@@ -12,4 +12,4 @@
 
 Настройки: `core/voice_settings.py`, `data/whisper_settings.json`.
 
-Смоук: `python scripts/smoke_whisper_stt.py` (см. `docs/operations/WHISPER_STT_ACCEPTANCE.md`).
+Смоук: `python scripts/smoke_whisper_stt.py` (см. `docs/operations/phase1/voice/WHISPER_STT_ACCEPTANCE.md`).

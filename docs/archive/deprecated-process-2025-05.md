@@ -15,4 +15,4 @@
 - `smartcrm-task-workflow.mdc` — PRD_MAP, go, тесты, honest report
 - `smartcrm-agent-workflow.mdc` — коммит, ops (всегда)
 - `smartcrm-dev-gates.mdc` — DoD, регрессия, миграции
-- Матрица: `docs/operations/RULES_MATRIX.md`
+- Матрица: `docs/operations/baselines/RULES_MATRIX.md`

@@ -1,7 +1,7 @@
 # SmartCRM — карта PRD
 
 > Навигатор и **рабочие чеклисты по фазам**. Детали — [`PRD.md`](PRD.md), черновики — [`PRD_NOTES.md`](PRD_NOTES.md).  
-> **MAP-doc:** выровнен 2026-06-10 — таблицы = истина; хвосты → [`BACKLOG.md`](../operations/BACKLOG.md).
+> **MAP-doc:** выровнен 2026-06-10 — таблицы = истина; хвосты → [`BACKLOG.md`](../operations/session/BACKLOG.md).
 >
 > **Легенда статусов**
 >
@@ -39,7 +39,7 @@
 2. `[x]` — не пропускаем: смоук, регрессия, баги в `ISSUES.md`.
 3. После прохода пункта: баг → фикс; ок → оставляем `[x]`.
 4. Источник деталей: `PRD_NOTES.md` (разделы по модулям).
-5. Хвосты и ручная работа → [`BACKLOG.md`](../operations/BACKLOG.md) (не дублировать здесь таблицами).
+5. Хвосты и ручная работа → [`BACKLOG.md`](../operations/session/BACKLOG.md) (не дублировать здесь таблицами).
 6. Колонка **«Итог»** с ⚠️ важнее слепого `[x]` в старых списках — сводка смотрит на ⚠️.
 
 ### Definition of Done — Фаза 1
@@ -51,7 +51,7 @@
 | # | Критерий | Статус |
 |---|----------|--------|
 | 1 | Все таблицы Ф1: ✅ / ⚠️ с хвостом в BACKLOG / явный `→ Ф2\|Ф3` | ✅ |
-| 2 | Хвосты в [`BACKLOG.md`](../operations/BACKLOG.md) или перенесены в Ф2–3; MAP — только указатель | ✅ |
+| 2 | Хвосты в [`BACKLOG.md`](../operations/session/BACKLOG.md) или перенесены в Ф2–3; MAP — только указатель | ✅ |
 | 3 | Смоук зон + регрессия зелёные (см. dev-gates по каждому пункту) | ✅ |
 | 4 | Acceptance на закрытые блоки (ссылки в колонке «Итог» таблиц) | ✅ |
 | 5 | Сценарий **«голосом создать / найти лид»**: E2E audio WS + dev simulate mic | ✅ `VOICE_MIC_E2E_ACCEPTANCE.md` |
@@ -179,7 +179,7 @@
 | 7 | Агентский анализ ТЗ | 2026-06-11 | ✅ **OK** — `POST /analyze` + LLM · сохранение в БД |
 | 8 | Платный API (Контур) | — | 🔲 → после 1-й сделки ([`tenders.md`](../modules/tenders.md#экономика-и-gate-платного-api)) |
 
-**Acceptance:** [`TENDERS_BASELINE_ACCEPTANCE.md`](../operations/TENDERS_BASELINE_ACCEPTANCE.md)
+**Acceptance:** [`TENDERS_BASELINE_ACCEPTANCE.md`](../operations/phase1/tenders/TENDERS_BASELINE_ACCEPTANCE.md)
 
 ### Аналитика (базовая)
 
@@ -197,7 +197,7 @@
 | 6 | Убрать mock `/analytics` | 2026-06-11 | ✅ **OK** — 308 → `/leads/analytics` |
 | 7 | Голос по метрикам | — | 🔲 → **Фаза 2** |
 
-**Acceptance:** [`ANALYTICS_BASELINE_ACCEPTANCE.md`](../operations/ANALYTICS_BASELINE_ACCEPTANCE.md)
+**Acceptance:** [`ANALYTICS_BASELINE_ACCEPTANCE.md`](../operations/phase1/analytics/ANALYTICS_BASELINE_ACCEPTANCE.md)
 
 ### Ops `/ops`
 
@@ -219,7 +219,7 @@
 | 9 | CRM-конфиг | 2026-06-11 | ✅ **OK** — `crm-settings` GET/PUT |
 | 10 | Версионирование промптов | — | 🔲 → **Фаза 2** |
 
-**Acceptance:** [`OPS_BASELINE_ACCEPTANCE.md`](../operations/OPS_BASELINE_ACCEPTANCE.md)
+**Acceptance:** [`OPS_BASELINE_ACCEPTANCE.md`](../operations/phase1/ops/OPS_BASELINE_ACCEPTANCE.md)
 
 ### Агенты (по отдельности)
 
@@ -236,8 +236,8 @@
 
 | Критерий | Статус | Где мерить / закрывать |
 |----------|--------|-------------------------|
-| **6 агентов: pass rate ≥ порога** | 🟡 full run 🔄 | [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · smoke `agents_gate_20260613_143114.json` · full `gate_full_20260613.log` |
-| Рамка порогов + цикл обучения | ✅ 2026-06-12 | [`AGENTS_LEARNING_MAP.md`](../operations/AGENTS_LEARNING_MAP.md) |
+| **6 агентов: pass rate ≥ порога** | 🟡 full run 🔄 | [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/phase2/agents/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · smoke `agents_gate_20260613_143114.json` · full `gate_full_20260613.log` |
+| Рамка порогов + цикл обучения | ✅ 2026-06-12 | [`AGENTS_LEARNING_MAP.md`](../operations/phase2/agents/AGENTS_LEARNING_MAP.md) |
 | Latency ответа p95 &lt; 3 с | 🔲 | `/ops/stats`, трейсы · [`langgraph.md`](../agents/langgraph.md) |
 | RAG-контекст в ответе корректен | 🔲 | `/ops/eval`, `/ops/traces` · gate JSON |
 | Fallback «не знаю» без галлюцинации | 🔲 | eval + `HERMES_LEADS_FULL_ACCEPTANCE.md` |
@@ -260,7 +260,7 @@
 | 4 | P6/CRM/лиды в git | ✅ |
 | 5 | `test_email_sync` / connect | 🟡 ib ✅ + кнопка Sync · `me@agneko.am` — свой пароль |
 
-**Acceptance:** [`EMAIL_CONNECT_ACCEPTANCE.md`](../operations/EMAIL_CONNECT_ACCEPTANCE.md)
+**Acceptance:** [`EMAIL_CONNECT_ACCEPTANCE.md`](../operations/phase1/email/EMAIL_CONNECT_ACCEPTANCE.md)
 
 ### Инфра — прод (Фаза 2–3)
 
@@ -299,27 +299,27 @@
 
 > **Обязательно:** регрессия по зонам + smoke + acceptance ([`smartcrm-dev-gates.mdc`](../../.cursor/rules/smartcrm-dev-gates.mdc)).  
 > **Coverage %:** **не gate** закрытия фазы; ориентир **soft ~40% Ф2**, **~60% к концу Ф2**, **~75% к концу Ф3**.  
-> **Baseline:** **51.4%** (2026-06-11) — [`COVERAGE_BASELINE.md`](../operations/COVERAGE_BASELINE.md); команда `cd backend && pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing`.  
-> **CI:** [`CI_BASELINE.md`](../operations/CI_BASELINE.md) — pytest + smoke на каждый push/PR (`main`). pytest-cov fail-under в CI — отдельный шаг.  
+> **Baseline:** **51.4%** (2026-06-11) — [`COVERAGE_BASELINE.md`](../operations/baselines/COVERAGE_BASELINE.md); команда `cd backend && pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing`.  
+> **CI:** [`CI_BASELINE.md`](../operations/baselines/CI_BASELINE.md) — pytest + smoke на каждый push/PR (`main`). pytest-cov fail-under в CI — отдельный шаг.  
 > **Агенты:** quality gates закрываются через `/ops/eval` с цифрами, не `[x]` в MAP без метрик.
 
 ### Открытые хвосты Фазы 1 → вернуться
 
-> **Канон:** детали и чеклисты — только [`BACKLOG.md`](../operations/BACKLOG.md). Здесь **указатель** (3–5 строк), таблицы BACKLOG **не копировать**.
+> **Канон:** детали и чеклисты — только [`BACKLOG.md`](../operations/session/BACKLOG.md). Здесь **указатель** (3–5 строк), таблицы BACKLOG **не копировать**.
 >
 > **Снято с хвоста (закрыто ✅):** «Расширить интенты Hermes», «UI voice_action», «Смоук голос + UI» — см. таблицу **«Голос → лиды»** выше; старый блок «Хвост Фазы 1» удалён.
 
 | Приоритет | Что | Где в BACKLOG |
 |-----------|-----|----------------|
-| 🟡 | Spot-check approve delete (S04) + fanout (S02/S06) | § [👤 Ручная работа](../operations/BACKLOG.md) |
-| 🟡 | Битрикс: туннель :8000 + исходящий вебхук | § [Записи](../operations/BACKLOG.md) · § [Активный хвост](../operations/BACKLOG.md) |
-| 🟢 | Live Hermes / whisper health (опц.) | § [👤 Ручная работа](../operations/BACKLOG.md) |
+| 🟡 | Spot-check approve delete (S04) + fanout (S02/S06) | § [👤 Ручная работа](../operations/session/BACKLOG.md) |
+| 🟡 | Битрикс: туннель :8000 + исходящий вебхук | § [Записи](../operations/session/BACKLOG.md) · § [Активный хвост](../operations/session/BACKLOG.md) |
+| 🟢 | Live Hermes / whisper health (опц.) | § [👤 Ручная работа](../operations/session/BACKLOG.md) |
 
 **Новый хвост:** запись в `BACKLOG.md` + одна строка в таблице выше — **не** отдельная таблица в MAP.
 
 ---
 
-**Статус:** ✅ **Ф1 DoD закрыта** (6/6); **→ работа Ф2** (2026-06-13, см. [`PHASE2_ENTRY.md`](../operations/PHASE2_ENTRY.md)). Хвосты L306–318 не блокируют.
+**Статус:** ✅ **Ф1 DoD закрыта** (6/6); **→ работа Ф2** (2026-06-13, см. [`PHASE2_ENTRY.md`](../operations/session/PHASE2_ENTRY.md)). Хвосты L306–318 не блокируют.
 
 ## Фаза 2 — Автоматизация
 
@@ -357,7 +357,7 @@
 
 ### Безопасность — Фаза 2 (перед продом)
 
-> Не очередь «после фич», а **гейт деплоя**. Хвосты → [`BACKLOG.md`](../operations/BACKLOG.md) § Безопасность.
+> Не очередь «после фич», а **гейт деплоя**. Хвосты → [`BACKLOG.md`](../operations/session/BACKLOG.md) § Безопасность.
 
 - [ ] HTTPS + reverse proxy (Nginx / Caddy)
 - [ ] `SMARTCRM_REQUIRE_AUTH=1`, ключи не в git, vault на сервере
@@ -409,7 +409,7 @@
 ### 4. Поиск → RAG авто
 
 > Пайплайн Search-to-Q&A: [`RAG.md`](../stack/RAG.md#search-to-qa-фаза-2)  
-> **Enrich Ф1 закрыт** — `/search` + PATCH в карточку: [`SEARCH_ENRICH_LEAD_ACCEPTANCE.md`](../operations/SEARCH_ENRICH_LEAD_ACCEPTANCE.md)
+> **Enrich Ф1 закрыт** — `/search` + PATCH в карточку: [`SEARCH_ENRICH_LEAD_ACCEPTANCE.md`](../operations/phase1/search/SEARCH_ENRICH_LEAD_ACCEPTANCE.md)
 
 - [ ] Авто-чанки при релевантности > порога
 - [ ] Факты из диалога агента → RAG
@@ -438,7 +438,7 @@
 
 ### 8. Лидоген + голос
 
-- [x] WS audio → `generate_lead` + navigate `/leadgen` — smoke `test_leadgen_voice_ws.py` (2026-06-11) · acceptance: [`LEADGEN_VOICE_ACCEPTANCE.md`](../operations/LEADGEN_VOICE_ACCEPTANCE.md) (smoke ⚠️)
+- [x] WS audio → `generate_lead` + navigate `/leadgen` — smoke `test_leadgen_voice_ws.py` (2026-06-11) · acceptance: [`LEADGEN_VOICE_ACCEPTANCE.md`](../operations/phase1/leadgen/LEADGEN_VOICE_ACCEPTANCE.md) (smoke ⚠️)
 - [ ] Live UI + полный pipeline leadgen по голосу
 - [ ] Lookalike из won-сделок + апрув менеджера ([`leadgen.md`](../modules/leadgen.md#lookalike-из-won-сделок-фаза-2))
 

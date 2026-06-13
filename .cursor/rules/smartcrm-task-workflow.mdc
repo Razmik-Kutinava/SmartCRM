@@ -11,7 +11,7 @@ alwaysApply: true
 
 ## Старт сессии (обязательно в каждом новом чате)
 
-Прочитать: `HANDOFF.md`, `SESSION_STATE.md`, `ISSUES.md` (🔴), `BACKLOG.md`, `RULES_MATRIX.md`.
+Прочитать: `docs/operations/session/HANDOFF.md`, `SESSION_STATE.md`, `ISSUES.md` (🔴), `BACKLOG.md`, `docs/operations/baselines/RULES_MATRIX.md`.
 
 Первый ответ пользователю — **таблица** (все три поля заполнены):
 
@@ -28,7 +28,7 @@ alwaysApply: true
 ## Старт задачи
 
 - Ждать **явный пункт** (PRD_MAP / задача) + **что сделать**.
-- Пробежать **`docs/operations/BACKLOG.md`** на хвост по этому пункту MAP.
+- Пробежать **`docs/operations/session/BACKLOG.md`** на хвост по этому пункту MAP.
 - Показать **план на 1 шаг** (файлы, тесты, риски) → **`go`** → работа.
 - Без `go` на **новую** задачу — код не трогать.
 
@@ -131,7 +131,7 @@ Scope **сознательно отложен** во время прогона �
 
 ## Бэклог и техдолг (обязательно)
 
-**Куда:** `docs/operations/BACKLOG.md` (не ISSUES — там только баги).
+**Куда:** `docs/operations/session/BACKLOG.md` (не ISSUES — там только баги).
 
 **Когда:** отложили scope — **сразу** строка в BACKLOG, **в том же коммите** что и шаг.
 

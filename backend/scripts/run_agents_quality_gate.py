@@ -75,7 +75,7 @@ async def _main(args: argparse.Namespace) -> int:
     path = save_gate_artifact(report)
     if args.write_acceptance:
         patch_acceptance_md(report, path.name)
-        _emit("Acceptance updated: docs/operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md")
+        _emit("Acceptance updated: docs/operations/phase2/agents/AGENTS_QUALITY_GATE_ACCEPTANCE.md")
     _emit(json.dumps(report, ensure_ascii=True, indent=2))
     _emit(f"\nArtifact: {path}")
     _emit(f"Overall gate: {report['overall_gate']}")

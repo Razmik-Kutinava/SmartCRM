@@ -19,7 +19,10 @@ alwaysApply: true
 | Стек (LLM, RAG) | `docs/stack/` | `LLM.md`, `RAG.md` |
 | Запуск, runbook | `docs/start/` | `SETUP.md`, `RUNBOOK.md` |
 | API-контракт | `docs/api/` | `API.md` |
-| Операционка сессий | `docs/operations/` | `HANDOFF.md`, `ISSUES.md` |
+| Операционка сессий | `docs/operations/session/` | `HANDOFF.md`, `ISSUES.md`, `SESSION_STATE.md` |
+| Acceptance Ф1 | `docs/operations/phase1/{домен}/` | `LEADS_BLOCK_ACCEPTANCE.md` |
+| Acceptance Ф2 | `docs/operations/phase2/{домен}/` | `AGENTS_QUALITY_GATE_ACCEPTANCE.md` |
+| Baselines ops | `docs/operations/baselines/` | `COVERAGE_BASELINE.md`, `CI_BASELINE.md` |
 | Для разработчиков | `docs/dev/` | `CONTRIBUTING.md`, `REPO_LAYOUT.md` |
 | Устаревшее | `docs/archive/` | только по явному решению |
 | Референс (чужой проект) | `docs/reference/` | не трогать без `go` |
@@ -89,7 +92,7 @@ alwaysApply: true
 
 1. Показать таблицу: `файл | сейчас | куда | риск` (обновить `docs/dev/LAYOUT_AUDIT.md`).
 2. Ждать **`go`** на конкретный пакет (например «пакет 1: тесты»).
-3. Один пакет → коммит → `docs/operations/SESSION_STATE.md`.
+3. Один пакет → коммит → `docs/operations/session/SESSION_STATE.md`.
 
 Новый файл в **правильной** папке по таблице выше — можно без `go`. Новая **папка верхнего уровня** — только после `go`.
 

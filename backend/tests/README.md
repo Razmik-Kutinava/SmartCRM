@@ -10,7 +10,7 @@ python -m pytest -m live_eval tests/core/test_hermes_eval.py   # live LLM eval
 python scripts/ci_smoke.py             # smoke ops/leads/voice
 ```
 
-Конфиг: `pytest.ini`, `.coveragerc`, фикстуры: `conftest.py`. Baseline %: `docs/operations/COVERAGE_BASELINE.md`. CI: `.github/workflows/ci.yml`, `docs/operations/CI_BASELINE.md`.
+Конфиг: `pytest.ini`, `.coveragerc`, фикстуры: `conftest.py`. Baseline %: `docs/operations/baselines/COVERAGE_BASELINE.md`. CI: `.github/workflows/ci.yml`, `docs/operations/baselines/CI_BASELINE.md`.
 
 ## Правило: тест на фичу
 

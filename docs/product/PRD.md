@@ -11,7 +11,7 @@
 | DoD фаз, таблицы перепрохода | [PRD_MAP.md](PRD_MAP.md) |
 | Сценарии «менеджер может…» | [PRD_MAP — Ф1](PRD_MAP.md#фаза-1--сценарии-зачем-техтаблицы) · [Ф2](PRD_MAP.md#фаза-2--сценарии) |
 | Очередь реализации Ф2 | [PRD_MAP — порядок Фазы 2](PRD_MAP.md#порядок-фазы-2) |
-| Хвосты, spot-check | [BACKLOG.md](../operations/BACKLOG.md) |
+| Хвосты, spot-check | [BACKLOG.md](../operations/session/BACKLOG.md) |
 
 **Фаза 1:** ✅ закрыта (DoD 6/6 в MAP, 2026-06-11). **Фаза 2:** очередь 5 §8 в работе (smoke slice).
 
@@ -449,7 +449,7 @@ RAG:       Brave/Tavily/Serper → Chroma → агенты
 
 ## Приложение F — Данные и PII
 
-Формула и RAG не расширяют PII без ревью; спорные случаи — `docs/operations/ISSUES.md`.
+Формула и RAG не расширяют PII без ревью; спорные случаи — `docs/operations/session/ISSUES.md`.
 
 ---
 

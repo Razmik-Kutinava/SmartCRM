@@ -45,7 +45,7 @@
 | **MAP `[x]` gate** | только после green `overall_gate` + «ок» владельца |
 | **Команда** | `cd backend && python scripts/run_agents_quality_gate.py --write-acceptance` |
 
-Доки: [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md)
+Доки: [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../phase2/agents/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · [`AGENTS_LEARNING_MAP.md`](../phase2/agents/AGENTS_LEARNING_MAP.md)
 
 ---
 

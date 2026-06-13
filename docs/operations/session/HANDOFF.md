@@ -20,7 +20,7 @@
 
 **Live gate:** smoke ✅ `agents_gate_20260613_143114.json`; full — см. `gate_full_20260613.log`.
 
-**Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md).
+**Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../phase2/agents/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · [`AGENTS_LEARNING_MAP.md`](../phase2/agents/AGENTS_LEARNING_MAP.md).
 
 **Процесс:** `git commit` + ops — [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 
@@ -50,7 +50,7 @@
 
 **enrich-lead ✅** — `SEARCH_ENRICH_LEAD_ACCEPTANCE.md`. **Ф2 ближайшее (enrich):** кэш enrich §4, кнопка на карточке §9 — `PRD_MAP.md`. **Хвост:** авто-чанки → `BACKLOG.md`.
 
-**Активный хвост (топ):** см. `BACKLOG.md` § [Активный хвост](../operations/BACKLOG.md) — не дублировать здесь.
+**Активный хвост (топ):** см. `BACKLOG.md` § [Активный хвост](../operations/session/BACKLOG.md) — не дублировать здесь.
 
 **Код/автотесты закрыты** — коммит `352eed2`, acceptance `VOICE_LEADS_TAIL_ACCEPTANCE.md`.
 
@@ -78,7 +78,7 @@
 | `python scripts/run_zone_regression.py crm_leads` | PASS |
 | DevTools UI | list, funnel, calendar, **tasks (после фикса)**, focus, analytics, card, /crm redirects |
 
-Детали: `docs/operations/LEADS_BLOCK_ACCEPTANCE.md`
+Детали: `docs/operations/phase1/leads/LEADS_BLOCK_ACCEPTANCE.md`
 
 ## Фикс в этом шаге
 

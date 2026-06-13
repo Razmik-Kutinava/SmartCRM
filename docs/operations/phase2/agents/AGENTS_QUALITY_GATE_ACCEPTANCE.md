@@ -86,7 +86,7 @@ python scripts/run_agents_quality_gate.py
 ## Что сделано
 
 - [x] Пороги X% и N на агента (таблица выше)
-- [x] Цикл обучения: `AGENTS_LEARNING_MAP.md`
+- [x] Цикл обучения: `phase2/agents/AGENTS_LEARNING_MAP.md`
 - [x] Решение: eval через **Ollama**, не Groq
 - [x] Eval-кейсы ≥N на агента (шаг 2)
 - [x] Скрипт `run_agents_quality_gate.py` + `POST /api/ops/eval/agents-gate` (шаг 3)

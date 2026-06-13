@@ -1796,7 +1796,7 @@ Ops → CRM → scoring_advisory → JSON:
 > - Стек, API, БД, Redis, конфиг → [`ARCHITECTURE.md`](ARCHITECTURE.md#справочник-стека)
 > - Карта docs, «когда что открывать» → [`docs/README.md`](../README.md)
 > - RAG коллекции → [`stack/RAG.md`](../stack/RAG.md#коллекции-chroma)
-> - Gaps в доках → [`operations/BACKLOG.md`](../operations/BACKLOG.md#документация-фаза-2)
+> - Gaps в доках → [`operations/session/BACKLOG.md`](../operations/session/BACKLOG.md#документация-фаза-2)
 
 Черновики новых идей — пиши **выше** этого блока; после разбора — в журнал и в канон.
 
@@ -1809,12 +1809,12 @@ Ops → CRM → scoring_advisory → JSON:
 | 2026-06-08 | Стек + карта docs + gaps + гайд ARCHITECTURE (после ~1834) | `ARCHITECTURE.md#справочник-стека` · `docs/README.md` · `BACKLOG.md#документация-фаза-2` · `stack/RAG.md#коллекции-chroma` |
 | 2026-06-07 | PRD_NOTES → чеклисты Фаза 1–3 | `docs/product/PRD_MAP.md` |
 | 2026-06-07 | Техдельта v3 (voice_action, email режимы, Search-to-Q&A, gate тендеров, lookalike, fanout) | `PRD.md` · `ARCHITECTURE.md#контракт-voice_action` · `langgraph.md#пакет-voice_action` · `RAG.md#search-to-qa` · `tenders.md#экономика-и-gate` · `leadgen.md#lookalike` · ссылки в `PRD_MAP.md` |
-| 2026-06-08 | CHANGELOG — роль, формат, хронология, статус | `docs/operations/CHANGELOG.md` (шапка) |
+| 2026-06-08 | CHANGELOG — роль, формат, хронология, статус | `docs/operations/session/CHANGELOG.md` (шапка) |
 
 ---
 
 ## CHANGELOG — журнал всего что происходило
 
-> **Канон:** [`docs/operations/CHANGELOG.md`](../operations/CHANGELOG.md) — полная хронология, шапка с правилами записи и снимок статуса.  
+> **Канон:** [`docs/operations/session/CHANGELOG.md`](../operations/session/CHANGELOG.md) — полная хронология, шапка с правилами записи и снимок статуса.  
 > Не дублировать здесь. Новые события — только в операционный CHANGELOG после `go`.
 

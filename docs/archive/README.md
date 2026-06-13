@@ -5,4 +5,4 @@
 - [deprecated-process-2025-05.md](deprecated-process-2025-05.md) — устаревший процесс агента (май 2025)
 
 Актуальная документация: [../README.md](../README.md).  
-Процесс разработки: [../operations/RULES_MATRIX.md](../operations/RULES_MATRIX.md).
+Процесс разработки: [../operations/baselines/RULES_MATRIX.md](../operations/baselines/RULES_MATRIX.md).

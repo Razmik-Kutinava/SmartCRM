@@ -97,7 +97,7 @@
 | 🟡 | Ф2 §9 | Кнопка «Обогатить» на `/leads/{id}` | **2** | агент по `go` |
 | 🟢 | Ф2 §4 | Авто-чанки «поиск → RAG» | **2** | агент |
 
-**Ф1 enrich** — `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` ✅. **п.1–5 RAG** — acceptance-доки в `docs/operations/`.
+**Ф1 enrich** — `phase1/search/SEARCH_ENRICH_LEAD_ACCEPTANCE.md` ✅. **п.1–5 RAG** — `docs/operations/phase1/search/`.
 
 ---
 
@@ -125,6 +125,7 @@
 | 🟡 | Лиды п.2 Битрикс синк | Туннель :8000 + вебхук | **2** / DevOps | 👤 ты |
 | 🟡 | Ф2 очередь 1 §1 Voice Layer | Голос вне лидов | **2** | агент по `go` (см. MAP § Порядок Ф2) |
 | 🟡 | Ф2 очередь 5 §8 leadgen голос | Голос `/leadgen` | **2** | агент по `go` |
+| 🟢 | Layout кода (не ops) | Сплит монолитов, backend/data gitignore | **2+** | см. [`debt/REPO_LAYOUT_DEBT.md`](../debt/REPO_LAYOUT_DEBT.md) |
 | 🟢 | Leadgen portrait | LLM review без Groq — graceful fallback | **2** | агент по `go` |
 
 ---

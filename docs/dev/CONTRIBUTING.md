@@ -96,7 +96,7 @@ python -m pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing   # 
 python scripts/ci_smoke.py
 ```
 
-CI печатает **TOTAL %** в логе pytest (без fail-under). Baseline: `docs/operations/COVERAGE_BASELINE.md`.
+CI печатает **TOTAL %** в логе pytest (без fail-under). Baseline: `docs/operations/baselines/COVERAGE_BASELINE.md`.
 
 ```bash
 # Frontend
