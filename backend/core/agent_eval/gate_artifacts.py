@@ -12,7 +12,7 @@ from core.agent_eval.gate_delta import compute_delta_vs_previous
 def list_gate_artifacts() -> list[Path]:
     if not ARTIFACTS_DIR.is_dir():
         return []
-    return sorted(ARTIFACTS_DIR.glob("agents_gate_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    return sorted(ARTIFACTS_DIR.glob("agents_gate_*.json"), key=lambda p: p.name, reverse=True)
 
 
 def latest_gate_path() -> Path | None:

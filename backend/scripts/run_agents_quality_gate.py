@@ -38,18 +38,32 @@ from core.agent_eval.acceptance_sync import patch_acceptance_md  # noqa: E402
 from core.agent_eval.gate import run_agents_quality_gate, save_gate_artifact  # noqa: E402
 from core.agent_eval.ollama_check import check_ollama_ready  # noqa: E402
 
+_LOG_FH = None
+
+
+def _emit(msg: str, *, err: bool = False) -> None:
+    stream = sys.stderr if err else sys.stdout
+    print(msg, file=stream, flush=True)
+    if _LOG_FH:
+        _LOG_FH.write(msg + "\n")
+        _LOG_FH.flush()
+
 
 async def _main(args: argparse.Namespace) -> int:
     if args.check_only:
         info = await check_ollama_ready()
-        print(json.dumps({"ok": True, **info}, ensure_ascii=False, indent=2))
+        _emit(json.dumps({"ok": True, **info}, ensure_ascii=False, indent=2))
         return 0
 
-    print(f"Quality gate: Ollama {os.getenv('OLLAMA_HOST', 'http://localhost:11434')} / {os.environ['OLLAMA_MODEL']}")
+    _emit(f"Quality gate: Ollama {os.getenv('OLLAMA_HOST', 'http://localhost:11434')} / {os.environ['OLLAMA_MODEL']}")
     if os.getenv("SMARTCRM_API_KEY"):
-        print("Backend auth: SMARTCRM_API_KEY loaded (agents -> /api/leads)")
+        _emit("Backend auth: SMARTCRM_API_KEY loaded (agents -> /api/leads)")
     else:
-        print("WARN: SMARTCRM_API_KEY missing — agents may get 401 if API requires key", file=sys.stderr)
+        _emit("WARN: SMARTCRM_API_KEY missing — agents may get 401 if API requires key", err=True)
+    if _LOG_FH:
+        from core.agent_eval import gate as gate_module
+
+        gate_module.set_gate_logger(lambda m: _emit(m))
     report = await run_agents_quality_gate(
         hermes_limit=args.hermes_limit,
         agent_limit=args.agent_limit,
@@ -59,14 +73,14 @@ async def _main(args: argparse.Namespace) -> int:
     path = save_gate_artifact(report)
     if args.write_acceptance:
         patch_acceptance_md(report, path.name)
-        print(f"Acceptance обновлён: docs/operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md")
-    print(json.dumps(report, ensure_ascii=False, indent=2))
-    print(f"\nАртефакт: {path}")
-    print(f"Overall gate: {report['overall_gate']}")
+        _emit("Acceptance updated: docs/operations/AGENTS_QUALITY_GATE_ACCEPTANCE.md")
+    _emit(json.dumps(report, ensure_ascii=False, indent=2))
+    _emit(f"\nArtifact: {path}")
+    _emit(f"Overall gate: {report['overall_gate']}")
     if report.get("gaps"):
-        print("\n--- Дыры ---")
+        _emit("\n--- Gaps ---")
         for g in report["gaps"]:
-            print(f"  - {g}")
+            _emit(f"  - {g}")
     return 0 if report["overall_gate"] != "fail" else 1
 
 
@@ -78,13 +92,26 @@ def main() -> None:
     ap.add_argument("--hermes-only", action="store_true", help="Только Hermes, без 5 агентов")
     ap.add_argument("--agents-only", action="store_true", help="Только 5 агентов, без Hermes")
     ap.add_argument("--write-acceptance", action="store_true", help="Обновить acceptance-таблицу в docs")
+    ap.add_argument(
+        "--log-file",
+        default="",
+        help="Путь к лог-файлу (line-buffered), напр. data/artifacts/eval/gate_run.log",
+    )
     args = ap.parse_args()
+    global _LOG_FH
+    if args.log_file:
+        os.makedirs(os.path.dirname(args.log_file) or ".", exist_ok=True)
+        _LOG_FH = open(args.log_file, "w", encoding="utf-8", buffering=1)
     try:
         raise SystemExit(asyncio.run(_main(args)))
     except RuntimeError as e:
-        print(f"BLOCKED: {e}", file=sys.stderr)
-        print("Запуск: ollama serve  &&  ollama pull hermes3:latest", file=sys.stderr)
+        _emit(f"BLOCKED: {e}", err=True)
+        _emit("Run: ollama serve && ollama pull hermes3:latest", err=True)
         raise SystemExit(2) from e
+    finally:
+        if _LOG_FH:
+            _LOG_FH.close()
+            _LOG_FH = None
 
 
 if __name__ == "__main__":

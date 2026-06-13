@@ -34,6 +34,18 @@ from core.eval_runner import eval_one_case
 _REPO = Path(__file__).resolve().parents[3]
 ARTIFACTS_DIR = _REPO / "backend" / "data" / "artifacts" / "eval"
 
+
+def _gate_log(msg: str) -> None:
+    print(msg, flush=True)
+
+
+_gate_logger = _gate_log
+
+
+def set_gate_logger(fn) -> None:
+    global _gate_logger
+    _gate_logger = fn
+
 _RUNNERS = {
     "analyst": run_analyst,
     "economist": run_economist,
@@ -134,7 +146,9 @@ async def run_agents_quality_gate(
 ) -> dict[str, Any]:
     force_ollama_env()
     ollama = await check_ollama_ready()
+    _gate_logger("[gate] warmup Ollama (first call may take minutes on CPU)...")
     await warmup_ollama()
+    _gate_logger("[gate] warmup OK")
     report: dict[str, Any] = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "ollama": ollama,
@@ -144,7 +158,7 @@ async def run_agents_quality_gate(
         report["agents"]["hermes"] = await run_hermes_gate(limit=hermes_limit)
     if not skip_agents:
         for aid in AGENT_IDS:
-            print(f"[gate] {aid} …", flush=True)
+            _gate_logger(f"[gate] {aid} ...")
             report["agents"][aid] = await run_single_agent_gate(aid, limit=agent_limit)
     gates = [v["summary"]["gate"] for v in report["agents"].values()]
     report["overall_gate"] = "fail" if "fail" in gates else ("warn" if "warn" in gates else "pass")

@@ -1,11 +1,13 @@
 # HANDOFF
 
-`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус: UI eval+insights ✅ · live gate 🔴 · MAP 🔲`
+`Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус: UI+learning loop ✅ · live gate 🔄 · MAP 🔲`
 
-**UI (2026-06-13):** fix Vite 500 `{@const}` (`273aca8`); шаг 6 ✅ (`7be7bdb`); шаг 5 UI (`596d2e1`).
+**UI (2026-06-13):** fix Vite 500 `{@const}` (`273aca8`); шаг 6 ✅ (`7be7bdb`); tools 401 fix (`71b2206`); `--log-file` для gate CLI (локально, ждёт commit).
+
+**Live gate (2026-06-13):** smoke `agents-only --agent-limit 2` 🔄 — Ollama warmup на CPU (до 20 мин). Лог: `backend/data/artifacts/eval/gate_agents_smoke.log`. После smoke → full gate `EVAL_OLLAMA_TIMEOUT=1200` **без** `--write-acceptance` на лимитах.
 
 **Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · обучение [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md).  
-**Следующий `go`:** live `run_agents_quality_gate.py --write-acceptance` (коммит UI `7be7bdb` + `596d2e1`) → `[x]` MAP если зелёно.
+**Следующий `go`:** commit gate-log + ops → дождаться green gate → `--write-acceptance` → `[x]` MAP если зелёно + «ок» пользователя.
 
 **Процесс:** `git commit` + ops **до** ответа агента — канон [`smartcrm-commit-ops.mdc`](../../.cursor/rules/smartcrm-commit-ops.mdc). **`git push`** — только по явному go.
 

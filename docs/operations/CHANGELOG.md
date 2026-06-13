@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Gate CLI: --log-file + ASCII progress
+
+**Сделано:** `run_agents_quality_gate.py --log-file` (line-buffered); `set_gate_logger` в `gate.py`; warmup/agent лог в файл; ASCII вместо `→`/`…` (Windows cp1251); sort артефактов по имени; pytest `tests/scripts/test_run_agents_quality_gate.py`.
+
 ## 2026-06-13 — Fix: Vite 500 gate delta {@const}
 
 **Сделано:** `{@const}` перенесён под `{#if}`/`{#each}` в `AgentGatePanel.svelte` и `insights/+page.svelte`. Коммит: `273aca8`.
