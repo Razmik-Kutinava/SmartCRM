@@ -12,7 +12,9 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-13 | Действие: smoke gate artifact + full gate 🔄 + cp1251; MAP 🟡; шаг 7 pytest 34. | Коммит: `450e981` | Хвост A: full gate green | Хвост B: MAP [x] после ok | Хвост C: marketer/tech fail | Следующий шаг: дождаться full gate. | Статус: in_progress
+2026-06-13 | Действие: переход Ф1→Ф2 — PHASE2_ENTRY, HANDOFF, MAP, BACKLOG, README; код в коммитах; push ждём go. | Коммит: `db8960e` | Хвост A: full gate / MAP gate [x] | Хвост B: Ф2 код ждёт go | Хвост C: runtime data не в git | Следующий шаг: задача владельца → push go → go Ф2. | Статус: done
+
+2026-06-13 | Действие: smoke gate artifact + full gate 🔄 + cp1251; MAP 🟡; шаг 7 pytest 34. | Коммит: `450e981` | Хвост A: full gate green | Хвост B: MAP [x] после ok | Хвост C: marketer/tech fail | Следующий шаг: дождаться full gate. | Статус: superseded
 
 2026-06-13 | Действие: шаг 7 done — pytest gate 34 passed, acceptance CI note; ops CHANGELOG+HANDOFF. | Коммит: `c47a007` | Хвост A: live gate smoke+full | Хвост B: MAP 🔲 | Хвост C: hermes3 re-pull | Следующий шаг: smoke после pull. | Статус: done
 
