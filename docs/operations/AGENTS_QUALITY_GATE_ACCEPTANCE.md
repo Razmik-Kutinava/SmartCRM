@@ -93,6 +93,7 @@ python scripts/run_agents_quality_gate.py
 - [x] Acceptance sync: таблица + дыры (`acceptance_sync.py`, `--write-acceptance`)
 - [x] UI `/ops/tuning` — импорт failed из gate → `eval-failed-gate` (шаг 6, 2026-06-13)
 - [x] Дельта в отчёте gate: **было % → стало %** (`gate_delta.py`, карточки eval + insights)
+- [x] pytest gate block без live LLM — шаг 7 (config, delta, artifacts, cases, API, CLI; **34 passed**)
 - [ ] Полный live-прогон ≥ порогов (smoke 🔴; Hermes timeout CPU)
 - [x] UI `/ops/intents/eval` — вкладки **Hermes eval** | **Quality gate**; download JSON; режимы all/hermes-only/agents-only + лимиты; bulk failed→`eval-failed-gate`; «В датасет» (2026-06-13)
 - [x] `/ops/insights` — pass rate grid 6 агентов + hint без артефакта

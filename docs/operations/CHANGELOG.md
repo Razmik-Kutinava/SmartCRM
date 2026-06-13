@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Agents quality gates: шаг 7 (pytest, без live LLM)
+
+**Сделано:** pytest gate block 34 passed — config/пороги, delta was→became, артефакты JSON, cases 36+15×5, API gate, acceptance_sync, CLI `--check-only`/`--log-file`. Live LLM gate **не** в CI (только ручной `run_agents_quality_gate.py`).
+
 ## 2026-06-13 — Gate CLI: --log-file + ASCII progress
 
 **Сделано:** `run_agents_quality_gate.py --log-file` (line-buffered); `set_gate_logger` в `gate.py`; warmup/agent лог в файл; ASCII вместо `→`/`…` (Windows cp1251); sort артефактов по имени; pytest `tests/scripts/test_run_agents_quality_gate.py`.

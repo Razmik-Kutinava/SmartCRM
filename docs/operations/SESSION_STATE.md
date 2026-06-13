@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-13 | Действие: gate CLI --log-file, set_gate_logger, ASCII лог, sort артефактов; pytest scripts+artifacts. | Коммит: `60d9a51` | Хвост A: live smoke agents-only | Хвост B: MAP 🔲 | Хвост C: cp1251 fixed | Следующий шаг: smoke limit 2 в фоне. | Статус: in_progress
+2026-06-13 | Действие: gate CLI --log-file, set_gate_logger, ASCII лог, sort артефактов; pytest scripts+artifacts. | Коммит: `60d9a51` | Хвост A: live smoke agents-only | Хвост B: MAP 🔲 | Хвост C: cp1251 fixed | Следующий шаг: smoke limit 2 в фоне. | Статус: done
 
 2026-06-13 | Действие: live gate smoke прерван на warmup (CPU). | Коммит: `71b2206` tools | Хвост A: MAP 🔲 | Хвост B: шаг 7 pytest частично | Хвост C: Unicode | Следующий шаг: перезапуск smoke. | Статус: superseded
 
