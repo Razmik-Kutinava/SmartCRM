@@ -78,11 +78,11 @@
 				{/if}
 				<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
 					{#each agentRateCards(insight.gate) as c}
+						{@const d = agentDelta(insight.gate.delta_vs_previous, c.id)}
 						<div class="bg-gray-950 border border-gray-800 rounded-lg p-2">
 							<div class="text-xs text-gray-500">{c.label}</div>
 							<div class="text-lg font-bold {rateColor(c.pass_rate, c.threshold)}">{c.pass_rate}%</div>
 							<div class="text-xs text-gray-600">{gateEmoji(c.gate)} {c.passed}/{c.total}</div>
-							{@const d = agentDelta(insight.gate.delta_vs_previous, c.id)}
 							{#if d}
 								<div class="text-[10px] mt-0.5 {deltaColor(d.delta_pct)}">{formatDeltaLine(d)}</div>
 							{/if}

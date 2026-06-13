@@ -195,6 +195,7 @@
 	<div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4 max-w-4xl">
 		{#each cards as c}
 			{#if !c.missing}
+				{@const d = agentDelta(gateData.delta_vs_previous, c.id)}
 				<button
 					type="button"
 					class="text-left bg-gray-900 border border-gray-800 rounded-lg p-3 hover:border-indigo-700"
@@ -203,7 +204,6 @@
 					<div class="text-xs text-gray-500">{c.label}</div>
 					<div class="text-xl font-bold {rateColor(c.pass_rate, c.threshold)}">{c.pass_rate}%</div>
 					<div class="text-xs text-gray-600">{gateEmoji(c.gate)} {c.passed}/{c.total}</div>
-					{@const d = agentDelta(gateData.delta_vs_previous, c.id)}
 					{#if d}
 						<div class="text-[10px] mt-1 {deltaColor(d.delta_pct)}">{formatDeltaLine(d)}</div>
 					{/if}
