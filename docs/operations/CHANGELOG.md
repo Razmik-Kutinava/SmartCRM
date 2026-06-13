@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Fix: Vite 500 gate delta {@const}
+
+**Сделано:** `{@const}` перенесён под `{#if}`/`{#each}` в `AgentGatePanel.svelte` и `insights/+page.svelte`. Коммит: `273aca8`.
+
 ## 2026-06-13 — Agents quality gates: петля обучения шаг 6
 
 **Сделано:** `gate_delta.py` (было % → стало % в JSON и API); `/ops/tuning` — «Импорт failed из gate»; дельта на карточках eval + insights; ссылки eval↔tuning. Коммит: `7be7bdb`. pytest gate 13.

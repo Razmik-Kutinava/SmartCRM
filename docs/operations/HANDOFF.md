@@ -2,7 +2,7 @@
 
 `Спринт:[Ф1→Ф2] | Задача:[agents quality gates] | Статус: UI eval+insights ✅ · live gate 🔴 · MAP 🔲`
 
-**UI (2026-06-13):** шаг 6 ✅ — `/ops/tuning` импорт failed из gate; дельта pass rate «было → стало» на eval/insights; шаг 5 UI eval+insights (`596d2e1`).
+**UI (2026-06-13):** fix Vite 500 `{@const}` (`273aca8`); шаг 6 ✅ (`7be7bdb`); шаг 5 UI (`596d2e1`).
 
 **Quality gates:** [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md) · обучение [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md).  
 **Следующий `go`:** live `run_agents_quality_gate.py --write-acceptance` (коммит UI `7be7bdb` + `596d2e1`) → `[x]` MAP если зелёно.
