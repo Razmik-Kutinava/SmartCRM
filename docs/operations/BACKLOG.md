@@ -43,9 +43,8 @@
 
 ## Записи
 
-`[2026-06-12] | PRD_MAP: Агенты quality gates | Шаг 0–5: пороги, кейсы, gate API, acceptance sync, UI eval+insights | **Не вышло:** полный live ≥ порогов (Hermes timeout CPU, agents-only прогон не завершён); [x] MAP 🔲 | Eval: Ollama hermes3`
+`[2026-06-13] | PRD_MAP: Агенты quality gates UI финал | UI eval: вкладки Hermes/gate, download JSON, режимы прогона, bulk failed→eval-failed-gate; insights: pass rate grid + hint без артефакта; API download/ensure/bulk; pytest 15 green; Puppeteer smoke eval OK; Chrome DevTools MCP — browser locked; live backend reload loop при smoke | **Не вышло:** DevTools MCP; live download link без артефакта | Действие: commit + утренний full gate`
 
-`[2026-06-12] | Не завершено (шаг 3–4) | Hermes eval: ReadTimeout @600–900s на CPU | agents-only фоновый прогон: analyst+ ошибки | Артефакт: только smoke agents_gate_20260612_154027.json | Действие: ночной прогон EVAL_OLLAMA_TIMEOUT=1200`
 
 `[2026-06-11] | PRD_MAP: инфра email me@agneko.am | Отложено: отдельный пароль на mail.agneko.am | Сейчас: ib@agneko.com подключён (Яндекс IMAP) | Действие: EMAIL_ACCOUNT_1_APP_PASSWORD в .env`
 

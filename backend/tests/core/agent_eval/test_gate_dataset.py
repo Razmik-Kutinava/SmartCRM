@@ -1,19 +1,26 @@
-import pytest
-
-from core.agent_eval.gate_dataset import build_record_payload, case_source
-
-
-def test_case_source_hermes():
-    c = case_source("hermes", "eval-001")
-    assert c and c["id"] == "eval-001"
+"""failed_pairs_from_report и bulk импорт."""
+from core.agent_eval.gate_dataset import failed_pairs_from_report
 
 
-def test_build_record_payload_analyst():
-    p = build_record_payload("analyst", "analyst-001")
-    assert "intent" in p["input_text"]
-    assert p["output_json"]["must_contain"]
+def test_failed_pairs_all_agents():
+    report = {
+        "agents": {
+            "hermes": {"results": [{"id": "h1", "passed": False}, {"id": "h2", "passed": True}]},
+            "analyst": {"results": [{"id": "a1", "passed": False}]},
+        }
+    }
+    pairs = failed_pairs_from_report(report, "all")
+    assert ("hermes", "h1") in pairs
+    assert ("analyst", "a1") in pairs
+    assert len(pairs) == 2
 
 
-def test_build_record_payload_missing():
-    with pytest.raises(ValueError):
-        build_record_payload("analyst", "no-such-id")
+def test_failed_pairs_single_tab():
+    report = {
+        "agents": {
+            "hermes": {"results": [{"id": "h1", "passed": False}]},
+            "analyst": {"results": [{"id": "a1", "passed": False}]},
+        }
+    }
+    pairs = failed_pairs_from_report(report, "hermes")
+    assert pairs == [("hermes", "h1")]

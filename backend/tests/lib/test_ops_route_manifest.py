@@ -39,6 +39,7 @@ OPS_API_READ_SMOKE = [
     "/api/ops/improvement",
     "/api/ops/history",
     "/api/ops/scenarios?limit=10",
+    "/api/ops/eval/agents-gate/latest",
     "/api/search/config",
     "/api/search/providers",
     "/api/usage/stats",

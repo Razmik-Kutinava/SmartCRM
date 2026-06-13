@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Agents quality gates: UI eval+insights финал
+
+**Сделано:** вкладки Hermes/gate на `/ops/intents/eval`; скачивание JSON; режимы прогона + лимиты; default dataset `eval-failed-gate`; bulk failed; блок обучения; insights pass rate grid + empty hint; API download/ensure-dataset/bulk; pytest 15; Puppeteer smoke eval.
+
 ## 2026-06-12 — Agents quality gates: UI eval + insights (шаг 5)
 
 **Сделано:** AgentGatePanel на `/ops/intents/eval` (вкладки, pass rate, в датасет); insights gate; API latest/run/failed-to-dataset; BACKLOG что не вышло на 3–4.

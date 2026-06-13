@@ -7,10 +7,21 @@ from core.agent_eval.acceptance_sync import _AGENT_LABELS, build_gaps
 from core.agent_eval.gate_artifacts import load_latest_gate
 
 
+_NO_ARTIFACT_HINT = {
+    "title": "Quality gate: артефакт не найден",
+    "body": (
+        "Сначала запустите gate на странице /ops/intents/eval → вкладка «Quality gate». "
+        "После прогона здесь появятся pass rate и gaps."
+    ),
+    "confidence": 0.9,
+    "agent": None,
+}
+
+
 def gate_insights_block() -> dict[str, Any]:
     path, report = load_latest_gate()
     if not report:
-        return {"found": False, "hints": [], "agents": {}, "gaps": []}
+        return {"found": False, "hints": [_NO_ARTIFACT_HINT], "agents": {}, "gaps": []}
     agents_summary = {
         k: v.get("summary") or {}
         for k, v in (report.get("agents") or {}).items()

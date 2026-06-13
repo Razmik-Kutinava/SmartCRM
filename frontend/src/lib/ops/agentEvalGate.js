@@ -1,5 +1,7 @@
 /** Quality gate 6 агентов — хелперы UI */
 
+export const DEFAULT_GATE_DATASET = 'eval-failed-gate';
+
 export const GATE_AGENTS = [
 	{ id: 'hermes', label: 'Hermes' },
 	{ id: 'analyst', label: 'Analyst' },
@@ -7,6 +9,12 @@ export const GATE_AGENTS = [
 	{ id: 'marketer', label: 'Marketer' },
 	{ id: 'strategist', label: 'Strategist' },
 	{ id: 'tech_specialist', label: 'Tech' }
+];
+
+export const GATE_RUN_MODES = [
+	{ id: 'all', label: 'Hermes + 5 агентов' },
+	{ id: 'hermes_only', label: 'Только Hermes' },
+	{ id: 'agents_only', label: 'Только 5 агентов' }
 ];
 
 export function gateEmoji(gate) {
@@ -20,6 +28,10 @@ export function rateColor(pct, threshold) {
 	if (pct >= threshold) return 'text-emerald-400';
 	if (pct >= threshold - 5) return 'text-amber-400';
 	return 'text-red-400';
+}
+
+export function gateDownloadUrl(apiBase) {
+	return `${apiBase}/api/ops/eval/agents-gate/latest/download`;
 }
 
 /** Строки таблицы для вкладки агента */
@@ -39,6 +51,10 @@ export function gateRowsForAgent(gateData, agentTab) {
 	return (block.results || []).map((r) => ({ ...r, agent: agentTab }));
 }
 
+export function failedRowsForTab(gateData, agentTab) {
+	return gateRowsForAgent(gateData, agentTab).filter((r) => !r.passed);
+}
+
 export function agentSummaryCards(gateData) {
 	if (!gateData?.found) return [];
 	return GATE_AGENTS.map(({ id, label }) => {
@@ -55,4 +71,18 @@ export function agentSummaryCards(gateData) {
 			total: s.total
 		};
 	}).filter(Boolean);
+}
+
+export function runModeToBody(mode, hermesLimit, agentLimit) {
+	const body = {
+		save_artifact: true,
+		write_acceptance: false,
+		hermes_limit: hermesLimit || 0,
+		agent_limit: agentLimit || 0,
+		hermes_only: false,
+		agents_only: false
+	};
+	if (mode === 'hermes_only') body.hermes_only = true;
+	if (mode === 'agents_only') body.agents_only = true;
+	return body;
 }

@@ -63,8 +63,8 @@ python scripts/run_agents_quality_gate.py
 # → backend/data/artifacts/eval/agents_gate_YYYYMMDD.json
 ```
 
-**UI:** `/ops/intents/eval` (фильтр по агенту — шаг 5).  
-**API (шаг 3):** `POST /api/ops/eval/agents-gate`.
+**UI:** `/ops/intents/eval` → вкладка **Quality gate** (Hermes eval — отдельная вкладка).  
+**API:** `GET .../latest/download`, `POST .../ensure-dataset`, `POST .../failed-to-dataset/bulk`, `POST .../run` (режимы/лимиты).
 
 ---
 
@@ -92,8 +92,8 @@ python scripts/run_agents_quality_gate.py
 - [x] Скрипт `run_agents_quality_gate.py` + `POST /api/ops/eval/agents-gate` (шаг 3)
 - [x] Acceptance sync: таблица + дыры (`acceptance_sync.py`, `--write-acceptance`)
 - [ ] Полный live-прогон ≥ порогов (smoke 🔴; Hermes timeout CPU)
-- [x] UI `/ops/intents/eval` — вкладки агента, pass rate, JSON, «В датасет» (шаг 5)
-- [x] `/ops/insights` — подсказки по gate-провалам
+- [x] UI `/ops/intents/eval` — вкладки **Hermes eval** | **Quality gate**; download JSON; режимы all/hermes-only/agents-only + лимиты; bulk failed→`eval-failed-gate`; «В датасет» (2026-06-13)
+- [x] `/ops/insights` — pass rate grid 6 агентов + hint без артефакта
 - [ ] `[x]` в PRD_MAP (только при `overall_gate: pass`)
 
 ---

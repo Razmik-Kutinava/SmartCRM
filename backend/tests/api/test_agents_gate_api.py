@@ -54,3 +54,32 @@ async def test_agents_gate_latest_empty(client, monkeypatch):
     r = await client.get("/api/ops/eval/agents-gate/latest")
     assert r.status_code == 200
     assert r.json()["found"] is False
+
+
+@pytest.mark.asyncio
+async def test_agents_gate_download_404(client, monkeypatch):
+    monkeypatch.setattr(
+        "api.routes.ops.eval_gate_routes.load_latest_gate",
+        lambda: (None, None),
+    )
+    r = await client.get("/api/ops/eval/agents-gate/latest/download")
+    assert r.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_agents_gate_ensure_dataset(client):
+    r = await client.post("/api/ops/eval/agents-gate/ensure-dataset")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["name"] == "eval-failed-gate"
+    assert "id" in body
+
+
+@pytest.mark.asyncio
+async def test_agents_gate_bulk_no_artifact(client, monkeypatch):
+    monkeypatch.setattr(
+        "api.routes.ops.eval_gate_routes.load_latest_gate",
+        lambda: (None, None),
+    )
+    r = await client.post("/api/ops/eval/agents-gate/failed-to-dataset/bulk", json={})
+    assert r.status_code == 404

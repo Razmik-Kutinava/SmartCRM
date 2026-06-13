@@ -1,7 +1,7 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import { getApiUrl } from '$lib/websocket.js';
-	import { gateEmoji } from '$lib/ops/agentEvalGate.js';
+	import { GATE_AGENTS, gateEmoji, rateColor } from '$lib/ops/agentEvalGate.js';
 
 	const API = getApiUrl();
 
@@ -20,6 +20,23 @@
 		}
 	}
 
+	function agentRateCards(gate) {
+		if (!gate?.agents) return [];
+		return GATE_AGENTS.map(({ id, label }) => {
+			const s = gate.agents[id];
+			if (!s) return null;
+			return {
+				id,
+				label,
+				pass_rate: s.pass_rate_pct ?? 0,
+				threshold: s.threshold_pct ?? 75,
+				gate: s.gate ?? 'fail',
+				passed: s.passed ?? 0,
+				total: s.total ?? 0
+			};
+		}).filter(Boolean);
+	}
+
 	onMount(() => {
 		load();
 		pollInterval = setInterval(load, 20000);
@@ -29,8 +46,7 @@
 
 <div class="px-6 py-6 max-w-3xl">
 	<p class="text-sm text-gray-400 mb-6">
-		Автоматические наблюдения по трейсам (без вызова LLM): что смотреть, когда обновлять промпт и когда гонять eval. Проценты
-		уверенности — относительная оценка полезности, не вероятность модели.
+		Автоматические наблюдения по трейсам (без вызова LLM): что смотреть, когда обновлять промпт и когда гонять eval.
 	</p>
 
 	{#if loading}
@@ -43,17 +59,26 @@
 				<li>
 					Фидбек: положительных {insight.signals?.feedback_good ?? 0}, отрицательных {insight.signals?.feedback_bad ?? 0}
 				</li>
-				<li>Доля негативного фидбека (где есть оценки): {insight.signals?.bad_feedback_ratio ?? 0}</li>
+				<li>Доля негативного фидбека: {insight.signals?.bad_feedback_ratio ?? 0}</li>
 			</ul>
 		</div>
 
-		{#if insight.gate?.found}
-			<div class="bg-gray-900 border border-violet-900/50 rounded-xl p-4 mb-8">
-				<h3 class="text-xs font-medium text-violet-400 uppercase tracking-wide mb-2">Quality gate</h3>
-				<p class="text-sm text-gray-300 mb-2">
+		<div class="bg-gray-900 border border-violet-900/50 rounded-xl p-4 mb-8">
+			<h3 class="text-xs font-medium text-violet-400 uppercase tracking-wide mb-2">Quality gate</h3>
+			{#if insight.gate?.found}
+				<p class="text-sm text-gray-300 mb-3">
 					{gateEmoji(insight.gate.overall_gate)} {insight.gate.overall_gate}
 					· <span class="text-gray-500">{insight.gate.artifact_name}</span>
 				</p>
+				<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+					{#each agentRateCards(insight.gate) as c}
+						<div class="bg-gray-950 border border-gray-800 rounded-lg p-2">
+							<div class="text-xs text-gray-500">{c.label}</div>
+							<div class="text-lg font-bold {rateColor(c.pass_rate, c.threshold)}">{c.pass_rate}%</div>
+							<div class="text-xs text-gray-600">{gateEmoji(c.gate)} {c.passed}/{c.total}</div>
+						</div>
+					{/each}
+				</div>
 				{#if insight.gate.gaps?.length}
 					<ul class="text-xs text-gray-400 space-y-1 mb-2">
 						{#each insight.gate.gaps as g}
@@ -61,9 +86,15 @@
 						{/each}
 					</ul>
 				{/if}
-				<a href="/ops/intents/eval" class="text-xs text-indigo-400 hover:underline">→ Eval / gate</a>
-			</div>
-		{/if}
+			{:else}
+				<p class="text-sm text-amber-400/90 mb-2">
+					Артефакт gate не найден. Сначала запустите gate на
+					<a href="/ops/intents/eval" class="text-indigo-400 hover:underline">/ops/intents/eval</a>
+					→ вкладка «Quality gate».
+				</p>
+			{/if}
+			<a href="/ops/intents/eval" class="text-xs text-indigo-400 hover:underline">→ Eval / gate</a>
+		</div>
 
 		<h2 class="text-sm font-medium text-gray-300 mb-3">Предложения</h2>
 		<div class="space-y-3">

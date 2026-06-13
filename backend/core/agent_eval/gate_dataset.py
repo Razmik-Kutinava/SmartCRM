@@ -7,6 +7,25 @@ from typing import Any
 from core.agent_eval.cases import load_agent_cases, load_hermes_cases
 from core.agent_eval.gate_artifacts import load_latest_gate
 
+DEFAULT_GATE_DATASET = "eval-failed-gate"
+DEFAULT_GATE_DATASET_DESC = "Failed-кейсы quality gate (Hermes + 5 агентов)"
+
+
+def failed_pairs_from_report(report: dict[str, Any], agent_tab: str = "all") -> list[tuple[str, str]]:
+    """Пары (agent, case_id) для провалившихся кейсов."""
+    out: list[tuple[str, str]] = []
+    agents = report.get("agents") or {}
+    keys = list(agents.keys()) if agent_tab == "all" else [agent_tab]
+    for agent in keys:
+        block = agents.get(agent) or {}
+        for row in block.get("results") or []:
+            if row.get("passed"):
+                continue
+            cid = row.get("id")
+            if cid:
+                out.append((agent, str(cid)))
+    return out
+
 
 def case_source(agent: str, case_id: str) -> dict[str, Any] | None:
     if agent == "hermes":
