@@ -4,7 +4,7 @@
 
 ## 2026-06-13 — Agents quality gates: UI eval+insights финал
 
-**Сделано:** вкладки Hermes/gate на `/ops/intents/eval`; скачивание JSON; режимы прогона + лимиты; default dataset `eval-failed-gate`; bulk failed; блок обучения; insights pass rate grid + empty hint; API download/ensure-dataset/bulk; pytest 15; Puppeteer smoke eval.
+**Сделано:** вкладки Hermes/gate на `/ops/intents/eval`; скачивание JSON; режимы прогона + лимиты; default dataset `eval-failed-gate`; bulk failed; блок обучения; insights pass rate grid + empty hint; API download/ensure-dataset/bulk; pytest 15; Puppeteer smoke eval. Коммит: `596d2e1`.
 
 ## 2026-06-12 — Agents quality gates: UI eval + insights (шаг 5)
 
