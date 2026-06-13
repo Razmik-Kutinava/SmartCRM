@@ -16,16 +16,21 @@ logger = logging.getLogger(__name__)
 _BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
 
 
+def _api_headers() -> dict[str, str]:
+    key = os.getenv("SMARTCRM_API_KEY", "").strip()
+    return {"X-API-Key": key} if key else {}
+
+
 async def _api_get(path: str) -> Any:
     async with httpx.AsyncClient(timeout=10.0) as client:
-        r = await client.get(f"{_BACKEND_URL}{path}")
+        r = await client.get(f"{_BACKEND_URL}{path}", headers=_api_headers())
         r.raise_for_status()
         return r.json()
 
 
 async def _api_patch(path: str, data: dict) -> Any:
     async with httpx.AsyncClient(timeout=10.0) as client:
-        r = await client.patch(f"{_BACKEND_URL}{path}", json=data)
+        r = await client.patch(f"{_BACKEND_URL}{path}", json=data, headers=_api_headers())
         r.raise_for_status()
         return r.json()
 

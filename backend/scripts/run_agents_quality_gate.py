@@ -25,6 +25,15 @@ os.environ["OLLAMA_MODEL"] = os.environ["HERMES_MODEL"]
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+try:
+    from dotenv import load_dotenv
+
+    _backend = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    load_dotenv(os.path.join(os.path.dirname(_backend), ".env"))
+    load_dotenv(os.path.join(_backend, ".env"))
+except ImportError:
+    pass
+
 from core.agent_eval.acceptance_sync import patch_acceptance_md  # noqa: E402
 from core.agent_eval.gate import run_agents_quality_gate, save_gate_artifact  # noqa: E402
 from core.agent_eval.ollama_check import check_ollama_ready  # noqa: E402
@@ -37,6 +46,10 @@ async def _main(args: argparse.Namespace) -> int:
         return 0
 
     print(f"Quality gate: Ollama {os.getenv('OLLAMA_HOST', 'http://localhost:11434')} / {os.environ['OLLAMA_MODEL']}")
+    if os.getenv("SMARTCRM_API_KEY"):
+        print("Backend auth: SMARTCRM_API_KEY loaded (agents -> /api/leads)")
+    else:
+        print("WARN: SMARTCRM_API_KEY missing — agents may get 401 if API requires key", file=sys.stderr)
     report = await run_agents_quality_gate(
         hermes_limit=args.hermes_limit,
         agent_limit=args.agent_limit,

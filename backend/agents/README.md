@@ -23,7 +23,7 @@ LangGraph-агенты для анализа лидов, стратегии, п�
 |------|--------|
 | `orchestrator.py` | Маршрутизация интентов → агенты / leadgen |
 | `base.py` | Базовый класс агента |
-| `tools.py` | Общие tools для агентов |
+| `tools.py` | Общие tools; CLI gate — заголовок `X-API-Key` из `SMARTCRM_API_KEY` |
 | `marketer.py` | Агент-маркетолог |
 | `strategist.py` | Агент-стратег |
 | `tech_specialist.py` | Агент по IT/технологиям |
