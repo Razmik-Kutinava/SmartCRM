@@ -12,6 +12,10 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-13 | Действие: gate CLI --log-file, set_gate_logger, ASCII лог, sort артефактов; pytest scripts+artifacts. | Коммит: `60d9a51` | Хвост A: live smoke agents-only | Хвост B: MAP 🔲 | Хвост C: cp1251 fixed | Следующий шаг: smoke limit 2 в фоне. | Статус: in_progress
+
+2026-06-13 | Действие: live gate smoke прерван на warmup (CPU). | Коммит: `71b2206` tools | Хвост A: MAP 🔲 | Хвост B: шаг 7 pytest частично | Хвост C: Unicode | Следующий шаг: перезапуск smoke. | Статус: superseded
+
 2026-06-13 | Действие: fix Vite 500 — {@const} под {#if}/{#each} в AgentGatePanel+insights. | Коммит: `273aca8` | Хвост A: live gate MAP 🔲 | Хвост B: шаг 7 pytest | Хвост C: нет | Следующий шаг: gate с лимитами или full. | Статус: done
 
 2026-06-13 | Действие: шаг 6 петля обучения — gate_delta was→became %; /ops/tuning импорт failed; insights+eval дельта; pytest 13 gate. | Коммит: `7be7bdb` | Хвост A: live gate MAP 🔲 | Хвост B: must_contain tuning | Хвост C: нет | Следующий шаг: full gate --write-acceptance. | Статус: done
