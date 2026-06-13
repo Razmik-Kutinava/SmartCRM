@@ -4,7 +4,7 @@
 
 ## 2026-06-13 — Ops: упаковка `docs/operations/` по фазам
 
-**Сделано:** `session/`, `baselines/`, `phase1/{домен}/`, `phase2/agents/`, `debt/REPO_LAYOUT_DEBT.md`, `operations/README.md`; обновлены ссылки, pre-commit, `acceptance_sync`, REPO_LAYOUT.
+**Сделано:** `session/`, `baselines/`, `phase1/{домен}/`, `phase2/agents/`, `debt/`; `operations/README.md`. Коммиты: `036fd61`, `f4cf977`.
 
 ## 2026-06-13 — Переход Ф1 → Ф2 (handoff)
 

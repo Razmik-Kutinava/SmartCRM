@@ -12,7 +12,9 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-13 | Действие: переход Ф1→Ф2 — PHASE2_ENTRY, HANDOFF, MAP, BACKLOG, README; код в коммитах; push ждём go. | Коммит: `db8960e` | Хвост A: full gate / MAP gate [x] | Хвост B: Ф2 код ждёт go | Хвост C: runtime data не в git | Следующий шаг: задача владельца → push go → go Ф2. | Статус: done
+2026-06-13 | Действие: ops упаковка session/phase1/phase2/baselines/debt + README; ссылки, pre-commit. | Коммит: `036fd61` | Хвост A: layout кода → debt | Хвост B: Ф2 ждёт go | Хвост C: push ждём go | Следующий шаг: задача → push. | Статус: done
+
+2026-06-13 | Действие: переход Ф1→Ф2 — PHASE2_ENTRY, HANDOFF, MAP. | Коммит: `db8960e` | Хвост A: full gate | Хвост B: Ф2 go | Хвост C: runtime | Следующий шаг: push. | Статус: superseded
 
 2026-06-13 | Действие: smoke gate artifact + full gate 🔄 + cp1251; MAP 🟡; шаг 7 pytest 34. | Коммит: `450e981` | Хвост A: full gate green | Хвост B: MAP [x] после ok | Хвост C: marketer/tech fail | Следующий шаг: дождаться full gate. | Статус: superseded
 
