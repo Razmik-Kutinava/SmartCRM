@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** [`operations/README.md`](../README.md) → [`phase2/voice/HERMES_MODULES_ACCEPTANCE.md`](../phase2/voice/HERMES_MODULES_ACCEPTANCE.md)
 
-**2026-06-13 (Ф2 §1):** Hermes `module` + `intent` + `ui_action` для email, search, analytics, agents, RAG — **backend+rescue+pytest ✅**. Smoke: `python scripts/smoke_hermes_modules.py` (47 passed). Acceptance: `HERMES_MODULES_ACCEPTANCE.md`. MAP п.379 — 🟡 (галочка после «ок»).
+**2026-06-13 (Ф2 §1):** Hermes `module` + `intent` + `ui_action` для email, search, analytics, agents, RAG — **backend+rescue+pytest ✅**. Smoke: `python scripts/smoke_hermes_modules.py` (47 passed). Acceptance: `HERMES_MODULES_ACCEPTANCE.md`. MAP п.379 — 🟡 (галочка после «ок»). **Коммит:** `42b14d1`.
 
 **Следующий `go`:** Voice Layer §1 п.2–5 (WS voice_action UI) **или** §2 fanout **или** full live gate.
 
