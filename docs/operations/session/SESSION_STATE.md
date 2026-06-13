@@ -12,6 +12,10 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-13 | Действие: Ф2 §1 Hermes module+ui_action (email/search/analytics/agents/rag); smoke 47+10 pytest. | Коммит: `42b14d1` | Хвост A: Voice Layer UI п.2–5; LLM eval analytics/RAG | Хвост B: UI period/minScore, send_email live → BACKLOG | Хвост C: нет | Следующий шаг: go Voice Layer UI или §2 fanout. | Статус: done
+
+2026-06-13 | Действие: push 29 коммитов main → origin/main (1b6293d..81dbc32). | Коммит: — (push only) | Хвост A: full live gate | Хвост B: Ф2 go+номер | Хвост C: runtime не в git | Следующий шаг: Ф2 или gate. | Статус: done
+
 2026-06-13 | Действие: ops упаковка session/phase1/phase2/baselines/debt + README; ссылки, pre-commit. | Коммит: `036fd61` | Хвост A: layout кода → debt | Хвост B: Ф2 ждёт go | Хвост C: push ждём go | Следующий шаг: задача → push. | Статус: done
 
 2026-06-13 | Действие: переход Ф1→Ф2 — PHASE2_ENTRY, HANDOFF, MAP. | Коммит: `db8960e` | Хвост A: full gate | Хвост B: Ф2 go | Хвост C: runtime | Следующий шаг: push. | Статус: superseded
