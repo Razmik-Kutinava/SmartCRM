@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §1 Voice Layer или Ф3 gate tuning — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-14 (§8):** live UI autorun `/leadgen`, voiceLeadgenContext, won-portrait API (DB), lookalike modal+import; pytest 23 passed; DevTools `/leadgen?autorun=1`; MAP §8 закрыт. **Коммит:** `0c3ae08` (ops `c3859c0`).
+**2026-06-14 (§8):** live UI autorun `/leadgen`, voiceLeadgenContext, won-portrait API (DB), lookalike modal+import; pytest 23 passed; DevTools `/leadgen?autorun=1`; MAP §8 закрыт. **Коммит:** `0c3ae08` (ops `89cdf0e`).
 
 **Следующий `go`:** §1 Voice Layer (единый контракт) или Ф3 gate.
 
