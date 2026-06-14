@@ -4,7 +4,7 @@
 
 ## 2026-06-14 — Ф2 §6: Аналитика + голос
 
-**Сделано:** фильтры `period`/`source` в `analytics_metrics` + API summary/export; `conversionBySource`; voice navigate с query (`view=funnel|cycle|conversion`); UI `/leads/analytics` с контекстом и подсветкой; pytest 47 passed; `ANALYTICS_VOICE_ACCEPTANCE.md`; MAP §6 `[x]`. **Коммит:** `TBD`.
+**Сделано:** фильтры `period`/`source` в `analytics_metrics` + API summary/export; `conversionBySource`; voice navigate с query (`view=funnel|cycle|conversion`); UI `/leads/analytics` с контекстом и подсветкой; pytest 47 passed; `ANALYTICS_VOICE_ACCEPTANCE.md`; MAP §6 `[x]`. **Коммит:** `3911386`.
 
 ## 2026-06-14 — Ф2 §5 доп: Hermes prompt versioning
 
