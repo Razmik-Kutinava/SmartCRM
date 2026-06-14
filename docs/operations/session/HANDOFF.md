@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** [`FANOUT_PARALLEL_ACCEPTANCE.md`](../phase2/agents/FANOUT_PARALLEL_ACCEPTANCE.md)
 
-**2026-06-14 (Ф2 §2 п.2):** Параллельный fanout 2+ — `fanout_parallel.py`, Hermes `parallel`, метрики в result; leadgen: fanout до pipeline; pytest 20 passed. MAP п.391 `[x]`. **Коммит:** `1460d62`.
+**2026-06-14 (Ф2 §2 п.2):** Параллельный fanout 2+ — `fanout_parallel.py`, Hermes `parallel`, метрики в result; leadgen: fanout до pipeline; pytest 20 passed. MAP п.391 `[x]`. **Коммит:** `1460d62` (+ ops `36a9cfe`).
 
 **Следующий `go`:** §2 п.392 «Синтез в модалку voice_action» **или** именованный сценарий (п.393+).
 
