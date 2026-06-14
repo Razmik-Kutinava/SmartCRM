@@ -4,7 +4,7 @@
 
 > **→ После прогона:** итог JSON + `AGENTS_QUALITY_GATE_ACCEPTANCE.md` → сказать агенту «ок» для MAP.
 
-**2026-06-14 (live):** Full quality gate **111 кейсов** в фоне. Лог: `backend/data/artifacts/eval/gate_full_20260614_1628.log`. Ollama `hermes3:latest` + backend :8000. ETA **2–4 ч**. Runbook: [`GATE_FULL_RUNBOOK.md`](../phase2/agents/GATE_FULL_RUNBOOK.md).
+**2026-06-14 (live):** Full quality gate **111 кейсов** в фоне. Лог: `backend/data/artifacts/eval/gate_full_20260614_1628.log`. Ollama `hermes3:latest` + backend :8000. ETA **2–4 ч**. **Коммит ops:** `6e28c5f`.
 
 **Фон backend (авто при uvicorn):** Email IMAP `EMAIL_AUTO_SYNC_MINUTES=5` · Bitrix `BITRIX_AUTO_SYNC_MINUTES=5` — **не нужен отдельный запуск**.
 

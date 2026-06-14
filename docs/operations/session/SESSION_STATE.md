@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-14 | Действие: live full quality gate 111 кейсов — фон; ollama serve + gate_full_20260614_1628.log; backend email+bitrix auto-sync OK. | Коммит: `PENDING` | Хвост A: дождаться артефакта agents_gate_*.json | Хвост B: §3 п.405 черновик после анализа | Хвост C: нет | Следующий шаг: итог gate + go п.405. | Статус: in_progress
+2026-06-14 | Действие: live full quality gate 111 кейсов — фон; ollama serve + gate_full_20260614_1628.log; backend email+bitrix auto-sync OK. | Коммит: `6e28c5f` | Хвост A: дождаться артефакта agents_gate_*.json | Хвост B: §3 п.405 черновик после анализа | Хвост C: нет | Следующий шаг: итог gate + go п.405. | Статус: in_progress
 
 2026-06-14 | Действие: cleanup — удалён email/[mailbox].svelte; BACKLOG me@ закрыт; PRD инфра п.5 ✅; pytest 9 passed. | Коммит: `1bd3c95` | Хвост A: п.405–407 email | Хвост B: нет | Хвост C: нет | Следующий шаг: go §3 п.405 черновик. | Статус: done
 
