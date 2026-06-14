@@ -150,7 +150,7 @@
 | 3 | Chroma RAG (~1592 чанка), по агентам | 2026-06-08 | ✅ | `smoke_rag_chroma.py` 11 pytest; `SEARCH_CHROMA_ACCEPTANCE.md` |
 | 4 | Загрузка PDF/текста в `/rag` | 2026-06-08 | ✅ | `smoke_rag_upload.py` 8 pytest; DevTools `/rag`; `SEARCH_RAG_UPLOAD_ACCEPTANCE.md` |
 | 5 | «Сохранить в базу» из поиска | 2026-06-08 | ✅ | `smoke_rag_save_from_search.py` 6 pytest; `SEARCH_RAG_SAVE_ACCEPTANCE.md` |
-| 6 | Авто-чанки из поиска / диалога | — | 🔲 | → **Фаза 2** [`RAG.md`](../stack/RAG.md#search-to-qa-фаза-2) |
+| 6 | Авто-чанки из поиска / диалога | — | ✅ | §4 Ф2 — [`SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md`](../operations/phase2/rag/SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md) + dialogue + save + enrich cache |
 | 7 | Смоук enrich-lead | 2026-06-09 | ✅ | `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` |
 | 8 | Обогащение → карточка лида (Checko, Brave, CRM) | 2026-06-09 | ✅ | `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` §2 |
 
@@ -348,7 +348,7 @@
 | 1 | §1 | Voice Layer — голос вне `/leads` | **фундамент** | 🟡 §1 ✅ · §2 🔲 |
 | 2 | §2 | Оркестрация — fanout Стратега | **фундамент** | 🔲 |
 | 3 | §3 | Email-агент | важно | ✅ |
-| 4 | §4 | Поиск → RAG авто (кэш enrich, авто-чанки) | важно | 🔲 |
+| 4 | §4 | Поиск → RAG авто (кэш enrich, авто-чанки) | важно | ✅ |
 | 5 | §8 | Лидоген + голос `/leadgen` | важно · **в работе** | ⚠️ smoke slice |
 | 6 | §9 | Лиды enrich — кнопка на карточке | важно | 🔲 |
 | 7 | §5 | Self-improvement — версии промптов | можно позже | 🔲 |
@@ -415,7 +415,7 @@
 - [x] Авто-чанки при релевантности > порога — ✅ [`SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md`](../operations/phase2/rag/SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md)
 - [x] Факты из диалога агента → RAG — ✅ [`AGENT_DIALOGUE_RAG_ACCEPTANCE.md`](../operations/phase2/rag/AGENT_DIALOGUE_RAG_ACCEPTANCE.md)
 - [x] «Сохранить в базу» везде в поиске — ✅ [`SEARCH_SAVE_EVERYWHERE_ACCEPTANCE.md`](../operations/phase2/rag/SEARCH_SAVE_EVERYWHERE_ACCEPTANCE.md)
-- [ ] **Кэш результата enrich** (ключ: company + ИНН + industry, TTL ~24 ч) — повторный запрос без 60–90 с и без лишних Serper/Brave/Groq *(сейчас кэшируется только Brave по одному поисковому запросу)*
+- [x] **Кэш результата enrich** (ключ: company + ИНН + industry, TTL ~24 ч) — ✅ [`SEARCH_ENRICH_CACHE_ACCEPTANCE.md`](../operations/phase2/rag/SEARCH_ENRICH_CACHE_ACCEPTANCE.md)
 
 ### 5. Self-improvement
 

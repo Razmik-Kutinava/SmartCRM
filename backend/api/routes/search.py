@@ -51,6 +51,7 @@ class ProspectBody(BaseModel):
 
 class EnrichLeadBody(BaseModel):
     lead: dict[str, Any]
+    force: bool = False  # игнорировать кэш enrich (company+ИНН+industry)
 
 
 class FindForRagBody(BaseModel):
@@ -111,17 +112,24 @@ async def run_search(body: SearchRunBody):
 
 @router.get("/cache")
 async def get_cache():
-    """Список кэшированных записей."""
+    """Список кэшированных записей (company search + enrich)."""
     from rag.search import cache_list
-    return {"entries": cache_list()}
+    from rag.search.enrich_cache import enrich_cache_stats
+
+    return {"company_entries": cache_list(), "enrich_entries": enrich_cache_stats()}
 
 
 @router.delete("/cache")
 async def delete_cache():
-    """Очистить весь кэш поиска."""
+    """Очистить кэш поиска (company + enrich)."""
     from rag.search import cache_clear
-    n = cache_clear()
-    return {"ok": True, "cleared": n}
+    from rag.search.enrich_cache import clear_enrich_cache
+
+    return {
+        "ok": True,
+        "cleared_company": cache_clear(),
+        "cleared_enrich": clear_enrich_cache(),
+    }
 
 
 @router.get("/providers")
@@ -184,7 +192,7 @@ async def enrich_lead_search(body: EnrichLeadBody):
         raise HTTPException(400, detail="lead.company обязателен")
     try:
         from rag.search import enrich_lead
-        result = await enrich_lead(lead=body.lead)
+        result = await enrich_lead(lead=body.lead, force=body.force)
         return {"ok": True, **result}
     except Exception as e:
         logger.error("Search /enrich-lead ошибка: %s", e)

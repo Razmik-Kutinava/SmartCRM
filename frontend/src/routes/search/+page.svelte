@@ -157,6 +157,7 @@
 	let en_result     = $state(null);
 	let en_err        = $state('');
 	let en_save_msg   = $state('');
+	let en_force      = $state(false);
 
 	async function loadEnrichLeads() {
 		try {
@@ -185,7 +186,7 @@
 				: { company: en_company.trim(), industry: en_industry.trim() };
 			if (payload) payload.company = en_company.trim();
 			if (en_industry.trim()) payload.industry = en_industry.trim();
-			en_result = await post('/api/search/enrich-lead', { lead: payload });
+			en_result = await post('/api/search/enrich-lead', { lead: payload, force: en_force });
 		} catch (e) { en_err = e.message; }
 		finally { en_running = false; }
 	}
@@ -753,6 +754,10 @@
 			>
 				{en_running ? '⟳ Ищу данные...' : '✨ Обогатить данные о компании'}
 			</button>
+			<label class="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+				<input type="checkbox" bind:checked={en_force} class="accent-indigo-500" data-testid="search-enrich-force" />
+				Без кэша (повторный live-поиск)
+			</label>
 		</div>
 
 		{#if en_err}<div class="rounded-lg border border-red-900/50 bg-red-950/40 px-4 py-3 text-sm text-red-200">{en_err}</div>{/if}
@@ -760,9 +765,16 @@
 		{#if en_result}
 			{@const enriched = en_result.enriched || {}}
 			{@const keys = Object.keys(enriched)}
-			{#if en_result.providers_used?.length}
-				<div class="text-xs text-gray-600" data-testid="search-enrich-providers">
-					Провайдеры: {en_result.providers_used.join(', ')}
+			{#if en_result.providers_used?.length || en_result.cached}
+				<div class="flex flex-wrap items-center gap-2 text-xs text-gray-600" data-testid="search-enrich-providers">
+					{#if en_result.cached}
+						<span class="px-2 py-0.5 bg-yellow-900/30 text-yellow-400 rounded-full" data-testid="search-enrich-cached">из кэша enrich (24 ч)</span>
+					{:else}
+						<span class="px-2 py-0.5 bg-green-900/30 text-green-400 rounded-full">свежий</span>
+					{/if}
+					{#if en_result.providers_used?.length}
+						<span>Провайдеры: {en_result.providers_used.join(', ')}</span>
+					{/if}
 				</div>
 			{/if}
 			{#if keys.length}

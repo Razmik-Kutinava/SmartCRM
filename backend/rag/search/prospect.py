@@ -1,8 +1,6 @@
 """RAG search — prospect_companies и enrich_lead."""
 from __future__ import annotations
 
-from __future__ import annotations
-
 import asyncio
 import hashlib
 import json
@@ -165,14 +163,22 @@ _ENRICHABLE_FIELDS = {
 }
 
 
-async def enrich_lead(lead: dict) -> dict[str, Any]:
+async def enrich_lead(lead: dict, *, force: bool = False) -> dict[str, Any]:
     """
     Определяет пустые поля лида, ищет данные в вебе и возвращает заполненные значения.
     lead: словарь с полями компании (company, phone, email, website, ...)
+    force: игнорировать кэш enrich (company + ИНН + industry, TTL 24 ч)
     """
     company = (lead.get("company") or lead.get("name") or "").strip()
     if not company:
         return {"enriched": {}, "raw_results": [], "missing_fields": []}
+
+    from .enrich_cache import enrich_cache_key, get_enrich_cached, set_enrich_cached
+
+    if not force:
+        cached = get_enrich_cached(lead)
+        if cached is not None:
+            return {**cached, "cached": True, "cache_key": enrich_cache_key(lead)}
 
     industry = lead.get("industry", "")
 
@@ -197,7 +203,9 @@ async def enrich_lead(lead: dict) -> dict[str, Any]:
             missing.append(field)
 
     if not missing:
-        return {"enriched": {}, "raw_results": [], "missing_fields": []}
+        empty = {"enriched": {}, "raw_results": [], "missing_fields": []}
+        cache_key = set_enrich_cached(lead, empty)
+        return {**empty, "cached": False, "cache_key": cache_key}
 
     # Генерируем целевые запросы под каждое поле
     queries: list[tuple[str, str]] = []  # (query, field)
@@ -306,12 +314,14 @@ async def enrich_lead(lead: dict) -> dict[str, Any]:
     if site_raw:
         sources.append("website_scrape")
 
-    return {
+    result = {
         "enriched":       enriched,
         "missing_fields": missing,
         "raw_results":    deduped,
         "providers_used": sources,
     }
+    cache_key = set_enrich_cached(lead, result)
+    return {**result, "cached": False, "cache_key": cache_key}
 
 
 # ── Поиск для RAG ─────────────────────────────────────────────────────────────

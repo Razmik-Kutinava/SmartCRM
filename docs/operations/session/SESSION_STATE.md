@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-14 | Действие: Ф2 §4 п.4 — кэш enrich (company+ИНН+industry, TTL 24ч): enrich_cache, force API/UI, pytest 14 passed; §4 закрыт. | Коммит: `<hash>` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §5 Self-improvement. | Статус: done
+
 2026-06-14 | Действие: Ф2 §4 п.3 — save везде в /search: SearchSaveRagBar на 5 вкладках; pytest 7+smoke OK. | Коммит: `41c8f55` | Хвост A: §4 п.4 enrich cache | Хвост B: нет | Хвост C: нет | Следующий шаг: go §4 п.4. | Статус: done
 
 2026-06-14 | Действие: Ф2 §4 п.2 — факты диалога→RAG: dialogue_facts, ingest-dialogue, auto ops/voice, UI /agents; pytest 7 passed. | Коммит: `a27bf1c` | Хвост A: §4 п.3–4 (save everywhere, enrich cache) | Хвост B: LLM facts structure — BACKLOG (как Q&A) | Хвост C: нет | Следующий шаг: go §4 п.3. | Статус: done

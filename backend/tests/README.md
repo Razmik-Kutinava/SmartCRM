@@ -27,7 +27,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `api/` | `test_leads_api.py`, `test_lookalike_import.py`, `test_search_providers_api.py`, `test_eval_scenarios_api.py` |
 | `core/` | `test_hermes_eval.py`, `test_qa_agent.py` |
 | `agents/` | `test_analyst.py` |
-| `rag/` | `test_search_providers.py`, `test_search_pkg.py`, `test_rag_chunks.py`, `test_search_modes.py` |
+| `rag/` | `test_search_providers.py`, `test_search_pkg.py`, `test_rag_chunks.py`, `test_search_modes.py`, `test_enrich_cache.py` |
 | `api/` | `test_rag_api.py`, `test_rag_upload_api.py`, `test_rag_ingest_batch_api.py`, `test_search_enrich_lead_api.py` |
 | `rag/` | + `test_rag_upload.py`, `test_rag_ingest_batch.py` — ingest_bytes, metadata batch |
 | `integration/` | `test_email_integration.py` — смоук почты |

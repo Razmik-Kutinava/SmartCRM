@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§4 RAG п.4 кэш enrich] | Статус: ✅ done`
+
+> **→ Следующий агент:** §5 Self-improvement (версионирование промптов) — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14 (Ф2 §4 п.4):** `enrich_cache.py` (company+ИНН+industry, TTL 24ч); API `force`; UI бейдж+чекбокс; pytest 14 passed; **§4 закрыт** (п.1–4); `SEARCH_ENRICH_CACHE_ACCEPTANCE.md`; MAP `[x]`. **Коммит:** `<hash>`.
+
+**Следующий `go`:** §5 Self-improvement или §9 enrich на карточке лида.
+
+---
+
 `Спринт:[Ф2] | Задача:[§4 RAG п.3 save везде в поиске] | Статус: ✅ done`
 
 > **→ Следующий агент:** §4 п.4 «Кэш enrich» — [`PRD_MAP.md`](../product/PRD_MAP.md)

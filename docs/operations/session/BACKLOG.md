@@ -99,9 +99,9 @@
 |-----------|---------|-----|----------|-----|
 | ✅ | enrich-lead | Смоук `enrich-lead` live E2E | **1** | `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` |
 | 🟢 | prospect/agent | Spot-check live Groq в UI (prospect, enrich, agent) | **1** | 👤 опционально |
-| 🟡 | Ф2 §4 | Кэш результата enrich (company+ИНН, TTL ~24 ч) | **2** | агент по `go` |
+| ✅ | Ф2 §4 | Кэш результата enrich (company+ИНН+industry, TTL ~24 ч) | **2** | `SEARCH_ENRICH_CACHE_ACCEPTANCE.md` |
 | 🟡 | Ф2 §9 | Кнопка «Обогатить» на `/leads/{id}` | **2** | агент по `go` |
-| 🟢 | Ф2 §4 | Авто-чанки «поиск → RAG» | **2** | агент |
+| ✅ | Ф2 §4 | Авто-чанки «поиск → RAG» | **2** | `SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md` |
 
 **Ф1 enrich** — `phase1/search/SEARCH_ENRICH_LEAD_ACCEPTANCE.md` ✅. **п.1–5 RAG** — `docs/operations/phase1/search/`.
 
@@ -130,7 +130,7 @@
 | 🟡 | Агенты · quality gates | `[x]` в MAP — только после зелёного `overall_gate` | **2** | после live |
 | 🟢 | Агенты · quality gates | Тюнинг `must_contain` под hermes3 JSON | **2** | агент |
 | 🟡 | Голос → лиды п.3, п.5 | Spot-check approve / fanout | **1** | 👤 ты |
-| 🟡 | Ф2 §4 / §9 | Кэш enrich + кнопка на карточке лида | **2** | агент по `go` |
+| 🟡 | Ф2 §9 | Кнопка «Обогатить» на карточке лида `/leads/{id}` | **2** | агент по `go` |
 | 🟡 | Лиды п.2 Битрикс синк | Туннель :8000 + вебхук | **2** / DevOps | 👤 ты |
 | 🟡 | Ф2 очередь 5 §8 leadgen голос | Голос `/leadgen` | **2** | агент по `go` |
 | 🟢 | Layout кода (не ops) | Сплит монолитов, backend/data gitignore | **2+** | см. [`debt/REPO_LAYOUT_DEBT.md`](../debt/REPO_LAYOUT_DEBT.md) |

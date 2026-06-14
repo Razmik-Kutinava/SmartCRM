@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §4 п.4: кэш enrich + закрытие §4
+
+**Сделано:** `enrich_cache.py`; `enrich_lead(force)`; API/UI force + бейдж кэша; GET/DELETE cache расширен; pytest 14 passed; `SEARCH_ENRICH_CACHE_ACCEPTANCE.md`; MAP п.418 `[x]`; **§4 «Поиск → RAG авто» закрыт (п.1–4).** **Коммит:** `<hash>`.
+
 ## 2026-06-14 — Ф2 §4 п.3: «Сохранить в базу» везде в поиске
 
 **Сделано:** `SearchSaveRagBar` + `saveToRagFromHits.js` на вкладках company/free/prospect/enrich/agent; `search_hits.py`; smoke обновлён; pytest 7 passed; `SEARCH_SAVE_EVERYWHERE_ACCEPTANCE.md`; MAP п.417 `[x]`. **Коммит:** `41c8f55`.

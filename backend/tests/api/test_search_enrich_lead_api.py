@@ -51,3 +51,22 @@ async def test_enrich_lead_api_accepts_name_alias(client):
             json={"lead": {"name": "Яндекс"}},
         )
     assert r.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_enrich_lead_api_force_passed_to_service(client):
+    with patch("rag.search.enrich_lead", new_callable=AsyncMock) as mock:
+        mock.return_value = {
+            "enriched": {},
+            "missing_fields": [],
+            "raw_results": [],
+            "providers_used": [],
+            "cached": True,
+        }
+        r = await client.post(
+            "/api/search/enrich-lead",
+            json={"lead": {"company": "Сбербанк"}, "force": True},
+        )
+    assert r.status_code == 200
+    mock.assert_awaited_once()
+    assert mock.await_args.kwargs.get("force") is True

@@ -16,7 +16,8 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `brave_limit.py` | Кэш и semaphore Brave (429) |
 | `rag_queries.py` | Запросы к Chroma |
 | `relevance.py` | Score релевантности для авто-чанков |
-| `cache.py` | Кэш поиска |
+| `cache.py` | Кэш поиска по компании |
+| `enrich_cache.py` | Кэш полного результата enrich (company+ИНН+industry, TTL 24 ч) |
 | `config.py` | Ключи и лимиты |
 
 Старый монолит `search.py` в корне `rag/` — shim/re-export для совместимости.

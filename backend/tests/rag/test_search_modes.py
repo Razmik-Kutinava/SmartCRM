@@ -6,6 +6,16 @@ from unittest.mock import AsyncMock
 import pytest
 
 
+@pytest.fixture
+def enrich_cache_file(monkeypatch, tmp_path):
+    path = tmp_path / "enrich_cache.json"
+    monkeypatch.setattr("rag.search.enrich_cache._CACHE_PATH", path)
+    from rag.search.enrich_cache import clear_enrich_cache
+
+    clear_enrich_cache()
+    return path
+
+
 @pytest.mark.asyncio
 async def test_search_for_rag_fanout(monkeypatch):
     monkeypatch.setenv("SERPER_API_KEY", "k")
@@ -64,7 +74,7 @@ async def test_enrich_lead_empty_company():
 
 
 @pytest.mark.asyncio
-async def test_enrich_lead_mocked_search_and_llm(monkeypatch):
+async def test_enrich_lead_mocked_search_and_llm(monkeypatch, enrich_cache_file):
     monkeypatch.setenv("SERPER_API_KEY", "k")
     monkeypatch.setenv("BRAVE_API_KEY", "k")
 
