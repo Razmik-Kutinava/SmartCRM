@@ -1,9 +1,19 @@
-{"id":"mod_email_list","text":"открой входящие письма","expected_intent":"list_emails","expected_module":"email","expected_ui_action":"navigate"}
-{"id":"mod_analytics_funnel","text":"покажи воронку за месяц","expected_intent":"analytics_funnel","expected_module":"analytics","expected_ui_action":"navigate","expected_slots":{"period":"month"}}
-{"id":"mod_analytics_score","text":"лиды со скором больше 70","expected_intent":"analytics_score","expected_module":"analytics","expected_ui_action":"filter","expected_slots":{"min_score":70}}
-{"id":"mod_rag_ask","text":"что в базе знаний про CRM","expected_intent":"ask_rag","expected_module":"rag","expected_ui_action":"modal"}
-{"id":"mod_rag_save","text":"сохрани в базу знаний этот ответ","expected_intent":"save_to_rag","expected_module":"rag","expected_ui_action":"approve"}
-{"id":"mod_search_web","text":"найди в интернете новости про SaaS","expected_intent":"search_web","expected_module":"search","expected_ui_action":"navigate"}
-{"id":"mod_ask_economist","text":"какая выручка у Яндекса","expected_intent":"ask_economist","expected_module":"agents","expected_ui_action":"modal"}
-{"id":"mod_write_email","text":"напиши письмо клиенту","expected_intent":"write_email","expected_module":"email","expected_ui_action":"modal"}
-{"id":"mod_send_email","text":"отправь это письмо клиенту","expected_intent":"send_email","expected_module":"email","expected_ui_action":"approve"}
+{"id":"mod_email_list","text":"открой входящие письма","expected_intent":"list_emails","expected_module":"email","expected_ui_action":"navigate","tags":["email"]}
+{"id":"mod_email_unread","text":"покажи непрочитанные письма","expected_intent":"list_emails","expected_module":"email","expected_ui_action":"navigate","expected_slots":{"filter":"unread"},"tags":["email"]}
+{"id":"mod_analytics_funnel","text":"покажи воронку за месяц","expected_intent":"analytics_funnel","expected_module":"analytics","expected_ui_action":"navigate","expected_slots":{"period":"month"},"tags":["analytics"]}
+{"id":"mod_analytics_funnel_week","text":"воронка продаж за неделю","expected_intent":"analytics_funnel","expected_module":"analytics","expected_ui_action":"navigate","expected_slots":{"period":"week"},"tags":["analytics"]}
+{"id":"mod_analytics_conversion","text":"конверсия лидов из email за квартал","expected_intent":"analytics_conversion","expected_module":"analytics","expected_ui_action":"navigate","expected_slots":{"period":"quarter","source":"email"},"tags":["analytics"]}
+{"id":"mod_analytics_cycle","text":"средний цикл сделки за год","expected_intent":"analytics_cycle","expected_module":"analytics","expected_ui_action":"navigate","expected_slots":{"period":"year"},"tags":["analytics"]}
+{"id":"mod_analytics_score","text":"лиды со скором больше 70","expected_intent":"analytics_score","expected_module":"analytics","expected_ui_action":"filter","expected_slots":{"min_score":70},"tags":["analytics"]}
+{"id":"mod_analytics_report","text":"открой аналитику CRM","expected_intent":"analytics_report","expected_module":"analytics","expected_ui_action":"navigate","tags":["analytics"]}
+{"id":"mod_rag_ask","text":"что в базе знаний про CRM","expected_intent":"ask_rag","expected_module":"rag","expected_ui_action":"modal","tags":["rag"]}
+{"id":"mod_rag_save","text":"сохрани в базу знаний этот ответ","expected_intent":"save_to_rag","expected_module":"rag","expected_ui_action":"approve","tags":["rag"]}
+{"id":"mod_search_web","text":"найди в интернете новости про SaaS","expected_intent":"search_web","expected_module":"search","expected_ui_action":"navigate","tags":["search"]}
+{"id":"mod_search_company","text":"поищи в сети информацию о компании Acme","expected_intent":"search_web","expected_module":"search","expected_ui_action":"navigate","tags":["search"]}
+{"id":"mod_ask_economist","text":"какая выручка у Яндекса","expected_intent":"ask_economist","expected_module":"agents","expected_ui_action":"modal","tags":["agents"]}
+{"id":"mod_ask_analyst","text":"проанализируй воронку по отрасли IT","expected_intent":"run_analysis","expected_module":"agents","expected_ui_action":"modal","tags":["agents"]}
+{"id":"mod_ask_marketer","text":"предложи тему для email рассылки","expected_intent":"ask_marketer","expected_module":"agents","expected_ui_action":"modal","tags":["agents"]}
+{"id":"mod_ask_strategist","text":"какую стратегию выбрать для выхода на рынок","expected_intent":"ask_strategist","expected_module":"agents","expected_ui_action":"modal","tags":["agents"]}
+{"id":"mod_ask_tech","text":"чем Salesforce отличается от AMO CRM","expected_intent":"ask_tech","expected_module":"agents","expected_ui_action":"modal","tags":["agents"]}
+{"id":"mod_write_email","text":"напиши письмо клиенту","expected_intent":"write_email","expected_module":"email","expected_ui_action":"modal","tags":["email"]}
+{"id":"mod_send_email","text":"отправь это письмо клиенту","expected_intent":"send_email","expected_module":"email","expected_ui_action":"approve","tags":["email"]}

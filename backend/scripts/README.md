@@ -11,6 +11,7 @@
 | `run_hermes_ab_check.py` | A/B проверка промптов |
 | `hermes_kpi_gate.py` | KPI-гейт качества интентов |
 | `hermeslab.py` | Лаборатория Hermes |
+| `run_eval_modules_live.py` | Live LLM eval модулей (cases_modules.jsonl, Groq+Ollama) |
 | `run_eval_hermes3_db.py` | Eval Hermes с БД |
 | `run_eval_hermes3_inline.py` | Eval Hermes inline |
 | `eval_compare_modes.py` | Сравнение режимов eval |

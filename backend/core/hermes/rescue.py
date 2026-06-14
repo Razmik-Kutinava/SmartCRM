@@ -117,7 +117,7 @@ def rescue_route(text: str) -> dict | None:
             slots["city"] = m_city.group(1).strip()
         return out("list_leads", ["analyst"], "Показываю лиды.", slots)
 
-    if ("лид" in t or "сделк" in t) and ("из " in t or "город" in t) and "задач" not in t:
+    if ("лид" in t or "сделк" in t) and "город" in t and "задач" not in t and "конверси" not in t:
         slots_lc: dict = {"filter": "all"}
         m_city2 = re.search(r"(?:из|город)\s+([a-zа-яё][a-zа-яё\s\-]{2,30})", t, re.I)
         if m_city2:
@@ -138,9 +138,10 @@ def rescue_route(text: str) -> dict | None:
         return out("delete_lead", ["analyst"], "Удаляю лид.", slots)
 
     if ("почт" in t or "email" in t or "письм" in t) and (
-        "открой" in t or "покажи" in t or "список" in t or "входящ" in t
+        "открой" in t or "покажи" in t or "список" in t or "входящ" in t or "непрочит" in t
     ) and "напиш" not in t and "состав" not in t:
-        return out("list_emails", ["marketer"], "Открываю почту.", {})
+        filt = "unread" if "непрочит" in t else "inbox"
+        return out("list_emails", ["marketer"], "Открываю почту.", {"filter": filt})
 
     if ("отправ" in t or "send" in t) and ("письм" in t or "email" in t or "почт" in t):
         return out("send_email", ["marketer"], "Подтверди отправку письма.", {})
@@ -157,8 +158,15 @@ def rescue_route(text: str) -> dict | None:
         slots_an: dict = {"period": period} if period else {}
         return out("analytics_funnel", ["analyst"], "Открываю воронку.", slots_an)
 
-    if "конверси" in t and ("источник" in t or "канал" in t):
-        return out("analytics_conversion", ["analyst"], "Смотрю конверсию по источникам.", {})
+    if "конверси" in t:
+        slots_cv: dict = {}
+        if "квартал" in t:
+            slots_cv["period"] = "quarter"
+        elif "месяц" in t:
+            slots_cv["period"] = "month"
+        if "email" in t or "почт" in t:
+            slots_cv["source"] = "email"
+        return out("analytics_conversion", ["analyst"], "Смотрю конверсию по источникам.", slots_cv)
 
     if ("цикл сделк" in t or "средн" in t and "чек" in t):
         return out("analytics_cycle", ["analyst"], "Считаю цикл сделки и средний чек.", {})
@@ -184,6 +192,15 @@ def rescue_route(text: str) -> dict | None:
         "спроси" in t or "найди" in t or "что" in t or "расскаж" in t
     ):
         return out("ask_rag", ["analyst"], "Ищу в базе знаний.", {"question": text[:500]})
+
+    if ("проанализ" in t or "анализ" in t) and "воронк" in t and "лид" not in t and "компан" not in t:
+        return out("run_analysis", ["analyst"], "Запускаю анализ.", {"question": text[:500]})
+
+    if ("тем" in t or "рассыл" in t) and ("email" in t or "маркет" in t or "письм" in t):
+        return out("ask_marketer", ["marketer"], "Спрашиваю маркетолога.", {"question": text[:500]})
+
+    if ("salesforce" in t or " amo" in t or "amo crm" in t) and ("отлич" in t or "сравн" in t or "чем" in t):
+        return out("ask_tech", ["tech_specialist"], "Спрашиваю тех. специалиста.", {"question": text[:500]})
 
     if ("экономист" in t or "выручк" in t or "прибыл" in t or "бюджет" in t) and "?" not in t:
         return out("ask_economist", ["economist"], "Спрашиваю экономиста.", {"question": text[:500]})
