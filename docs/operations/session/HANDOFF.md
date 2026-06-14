@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §7 Тендеры — [`PRD_MAP.md`](../product/PRD_MAP.md) · **Ф3:** gate tuning по `go`
 
-**2026-06-14 (§6):** period/source filters в API+UI; conversionBySource; voice navigate с query; pytest 47 passed; MAP §6 закрыт. **Коммит:** `3911386`.
+**2026-06-14 (§6):** period/source filters в API+UI; conversionBySource; voice navigate с query; pytest 47 passed; MAP §6 закрыт. **Коммит:** `3911386` (+ ops `3f1ac34`).
 
 **Следующий `go`:** §7 тендеры или Ф3 gate.
 
