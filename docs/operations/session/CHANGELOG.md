@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §9: enrich голос
+
+**Сделано:** `enrich_lead` voice — rescue, `fetch_enrich_preview`, modal `apply/reject`, `voiceEnrichApply.js`; pytest 21 passed; `LEADS_ENRICH_VOICE_ACCEPTANCE.md`; MAP §9 п.2 `[x]`. **Коммит:** `cb0de76`.
+
 ## 2026-06-14 — Ф2 §8: Лидоген + голос
 
 **Сделано:** navigate-only leadgen voice (`generate_lead`, `find_leads_portrait`, `cluster_company`); `voiceLeadgenContext` + autorun на `/leadgen`; `GET /won-portrait` из БД; lookalike won + `lookalike-import`; pytest 23 passed; DevTools autorun; `LEADGEN_VOICE_F2_ACCEPTANCE.md`; MAP §8 `[x]`. **Коммит:** `0c3ae08`.
