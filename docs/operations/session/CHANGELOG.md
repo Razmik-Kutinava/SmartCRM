@@ -4,7 +4,7 @@
 
 ## 2026-06-14 — Ф2 §5: версионирование промптов в Ops
 
-**Сделано:** `agent_prompt_versions.py`; API versions/restore/compare; UI история+откат+diff на `/ops/agents`; pytest 26 passed; `OPS_PROMPT_VERSIONING_ACCEPTANCE.md`; MAP §5 п.422–424 `[x]`. **Коммит:** `<hash>`.
+**Сделано:** `agent_prompt_versions.py`; API versions/restore/compare; UI история+откат+diff на `/ops/agents`; pytest 26 passed; `OPS_PROMPT_VERSIONING_ACCEPTANCE.md`; MAP §5 п.422–424 `[x]`. **Коммит:** `a883410`.
 
 ## 2026-06-14 — RAG хвост BACKLOG + §9 enrich на карточке
 

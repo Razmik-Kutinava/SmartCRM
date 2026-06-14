@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §6 Аналитика + голос — [`PRD_MAP.md`](../product/PRD_MAP.md) · **Ф3:** gate tuning по `go`
 
-**2026-06-14 (§5):** `agent_prompt_versions.py`; API list/restore/compare; UI `PromptVersionPanel` на `/ops/agents`; pytest 26 passed; MAP §5 п.1–3 `[x]`. **Коммит:** `<hash>`.
+**2026-06-14 (§5):** `agent_prompt_versions.py`; API list/restore/compare; UI `PromptVersionPanel` на `/ops/agents`; pytest 26 passed; MAP §5 п.1–3 `[x]`. **Коммит:** `a883410`.
 
 **Следующий `go`:** §6 аналитика+голос или Ф3 gate.
 
