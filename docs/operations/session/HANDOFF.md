@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** [`SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md`](../phase2/agents/SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md)
 
-**2026-06-14 (Ф2 §2 п.396):** Сценарий `find_similar_clients` — analyst∥marketer→strategist→modal; lookalike из won/эталона; pytest 6 passed. MAP п.396 `[x]`. **§2 Оркестрация закрыта.** **Коммит:** `d9d5f4b` · ops `9c0fa76` · `d686a32`.
+**2026-06-14 (Ф2 §2 п.396):** Сценарий `find_similar_clients` — analyst∥marketer→strategist→modal; lookalike из won/эталона; pytest 6 passed. MAP п.396 `[x]`. **§2 Оркестрация закрыта.** **Коммит:** `d9d5f4b` · ops `9c0fa76` · `d686a32` · `2a93780`.
 
 **Следующий `go`:** §3 Email-агент **или** §8 лидоген lookalike POST /api/leads.
 

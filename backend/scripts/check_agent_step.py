@@ -32,7 +32,7 @@ def run_git(*args: str) -> str:
 
 
 def has_uncommitted_changes() -> bool:
-    out = run_git("status", "--porcelain")
+    out = run_git("status", "--porcelain", "--untracked-files=no")
     lines = [ln for ln in out.strip().splitlines() if ln.strip()]
     return len(lines) > 0
 
