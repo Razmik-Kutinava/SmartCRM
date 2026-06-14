@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** [`SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md`](../phase2/agents/SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md)
 
-**2026-06-14 (Ф2 §2 п.395):** Сценарий `weekly_report` — analyst∥economist∥marketer→strategist→modal; CRM KPI в `payload.report`; rescue CPU; route `/leads/analytics`; pytest 7 passed. MAP п.395 `[x]`. **Коммит:** `c799a4d` · ops `52ee7d5`.
+**2026-06-14 (Ф2 §2 п.395):** Сценарий `weekly_report` — analyst∥economist∥marketer→strategist→modal; CRM KPI в `payload.report`; rescue CPU; route `/leads/analytics`; pytest 7 passed. MAP п.395 `[x]`. **Коммит:** `c799a4d` · ops `bc5b462`.
 
 **Следующий `go`:** §2 п.396 «Похожие клиенты».
 
