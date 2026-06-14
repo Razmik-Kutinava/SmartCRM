@@ -21,6 +21,7 @@ from email_sync.sync_all import sync_all_email_accounts
 from email_sync.background import email_sync_status_payload
 from services.email_bootstrap import bootstrap_accounts_from_env, upsert_account_from_payload
 from services.email_thread_list import list_email_threads_enriched
+from services.email_thread_analyze import analyze_email_thread
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/email", tags=["email"])
@@ -482,6 +483,30 @@ async def list_thread_messages(thread_id: int, db: AsyncSession = Depends(get_db
         .order_by(EmailMessage.sent_at.asc().nulls_last())
     )
     return [msg.to_dict() for msg in result.scalars().all()]
+
+
+class ThreadAnalyzeBody(BaseModel):
+    lead_id: Optional[int] = None
+
+
+@router.post("/threads/{thread_id}/analyze")
+async def analyze_thread_draft(
+    thread_id: int,
+    body: ThreadAnalyzeBody | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """Тип входящего письма + черновик ответа (Маркетолог, без отправки)."""
+    lead_id = body.lead_id if body else None
+    try:
+        result = await analyze_email_thread(db, thread_id, lead_id=lead_id)
+    except Exception as e:
+        logger.warning("Email thread analyze failed: %s", e)
+        raise HTTPException(status_code=500, detail="Не удалось проанализировать переписку.")
+    if result.get("error") == "not_found":
+        raise HTTPException(status_code=404, detail="Тема переписки не найдена")
+    if result.get("error") == "no_messages":
+        raise HTTPException(status_code=400, detail="В треде нет сообщений")
+    return result
 
 
 class ArchiveEmailBody(BaseModel):

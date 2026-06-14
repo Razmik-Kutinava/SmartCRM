@@ -94,6 +94,14 @@ export async function fetchThreadMessages(threadId) {
 	return emailJson(`/threads/${threadId}/messages`);
 }
 
+export async function analyzeEmailThread(threadId, body = {}) {
+	return emailJson(`/threads/${threadId}/analyze`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
+}
+
 export async function archiveEmail(emailId) {
 	return emailJson('/archive', {
 		method: 'POST',

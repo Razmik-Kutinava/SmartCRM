@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §3 п.405: анализ типа письма + черновик
+
+**Сделано:** `POST /api/email/threads/{id}/analyze`; `email_thread_analyze.py` + `email_category_labels.py`; UI «Анализ + черновик» на `/email`; pytest 3+12 email zone passed; `EMAIL_DRAFT_ANALYZE_ACCEPTANCE.md`; MAP п.405 `[x]`.
+
 ## 2026-06-14 — email cleanup: legacy route + BACKLOG me@
 
 **Сделано:** удалён `email/[mailbox].svelte`; BACKLOG `me@agneko.am` закрыт; PRD_MAP инфра п.5 ✅; pytest integration 9 passed.

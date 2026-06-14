@@ -5,7 +5,7 @@
     import {
         fetchEmailAccounts, connectEmailAccount, syncAllEmailAccounts, fetchEmailThreads,
         fetchEmailCampaigns, createCampaign, fetchEmailSyncStatus,
-        sendEmail, replyToEmail, fetchThreadMessages
+        sendEmail, replyToEmail, fetchThreadMessages, analyzeEmailThread
     } from '$lib/emailStorage.js';
     import {
         EMAIL_FOLDERS, filterEmailThreads, countEmailFolder, groupThreadsByDate,
@@ -29,6 +29,9 @@
     let loadingMessages = $state(false);
     let replyBody       = $state('');
     let replyLoading    = $state(false);
+    let analyzeLoading  = $state(false);
+    let analyzeResult   = $state(null);
+    let analyzeError    = $state('');
 
     // ─── compose новое письмо ────────────────────────────────────
     let showCompose    = $state(false);
@@ -135,6 +138,8 @@
         selectedThread  = thread;
         threadMessages  = [];
         replyBody       = '';
+        analyzeResult   = null;
+        analyzeError    = '';
         loadingMessages = true;
         try {
             threadMessages = await fetchThreadMessages(thread.id);
@@ -142,7 +147,37 @@
         finally { loadingMessages = false; }
     }
 
-    function closeThread() { selectedThread = null; threadMessages = []; replyBody = ''; }
+    function closeThread() {
+        selectedThread = null;
+        threadMessages = [];
+        replyBody = '';
+        analyzeResult = null;
+        analyzeError = '';
+    }
+
+    async function runThreadAnalyze() {
+        if (!selectedThread) return;
+        analyzeLoading = true;
+        analyzeError = '';
+        try {
+            const body = selectedThread.leadId ? { lead_id: selectedThread.leadId } : {};
+            analyzeResult = await analyzeEmailThread(selectedThread.id, body);
+        } catch (e) {
+            analyzeError = e.message || 'Ошибка анализа';
+            analyzeResult = null;
+        } finally {
+            analyzeLoading = false;
+        }
+    }
+
+    function applyDraftToReply() {
+        if (!analyzeResult?.draft) return;
+        const subj = analyzeResult.draft.subject || '';
+        const text = analyzeResult.draft.body || '';
+        replyBody = subj && !text.startsWith(subj)
+            ? `Тема: ${subj}\n\n${text}`
+            : text;
+    }
 
     async function sendReply() {
         if (!replyBody.trim() || !selectedThread) return;
@@ -582,7 +617,35 @@
             </div>
 
             <!-- ответ -->
-            <div class="px-6 py-4 border-t border-gray-800 flex-shrink-0">
+            <div class="px-6 py-4 border-t border-gray-800 flex-shrink-0 space-y-3">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button
+                        onclick={runThreadAnalyze}
+                        disabled={analyzeLoading || !threadMessages.length}
+                        class="px-3 py-1.5 rounded-lg bg-violet-700 text-xs font-semibold text-white hover:bg-violet-600 disabled:bg-gray-700 disabled:text-gray-500 transition-colors"
+                    >{analyzeLoading ? 'Анализ...' : '✨ Анализ + черновик'}</button>
+                    {#if analyzeResult}
+                        <span class="text-xs px-2 py-1 rounded-full bg-gray-800 text-violet-200">
+                            {analyzeResult.category_label}
+                        </span>
+                        <button
+                            onclick={applyDraftToReply}
+                            class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+                        >В ответ ↓</button>
+                    {/if}
+                </div>
+                {#if analyzeError}
+                    <p class="text-xs text-red-400">{analyzeError}</p>
+                {/if}
+                {#if analyzeResult?.draft?.body}
+                    <div class="rounded-xl border border-violet-900/50 bg-violet-950/20 px-3 py-2 text-xs text-gray-300">
+                        <div class="font-semibold text-violet-200 mb-1">{analyzeResult.draft.subject}</div>
+                        <p class="whitespace-pre-wrap line-clamp-4">{analyzeResult.draft.body}</p>
+                        {#if analyzeResult.summary}
+                            <p class="text-gray-500 mt-2">{analyzeResult.summary}</p>
+                        {/if}
+                    </div>
+                {/if}
                 <div class="relative">
                     <textarea
                         bind:value={replyBody}

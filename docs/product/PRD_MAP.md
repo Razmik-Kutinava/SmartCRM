@@ -402,7 +402,7 @@
 - [x] IMAP/SMTP, credentials в env — ✅ [`EMAIL_IMAP_SMTP_ENV_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_IMAP_SMTP_ENV_ACCEPTANCE.md)
 - [x] Фоновый синк входящих — ✅ [`EMAIL_BACKGROUND_SYNC_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_BACKGROUND_SYNC_ACCEPTANCE.md)
 - [x] Список `/email` — ✅ [`EMAIL_LIST_PAGE_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_LIST_PAGE_ACCEPTANCE.md)
-- [ ] Анализ типа письма + черновик (Маркетолог)
+- [x] Анализ типа письма + черновик (Маркетолог) — ✅ [`EMAIL_DRAFT_ANALYZE_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_DRAFT_ANALYZE_ACCEPTANCE.md)
 - [ ] Апрув и отправка (голос или кнопка)
 - [ ] Голосовые команды email
 
