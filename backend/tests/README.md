@@ -88,6 +88,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `smoke/test_leadgen_voice_ws.py` | WS → generate_lead → /leadgen (Ф2 §8 slice) |
 | `lib/test_ops_route_manifest.py` | Зеркало навигации Ops + список API smoke |
 | `api/test_ops_baseline_api.py` | Ops Ф1: read API + prompt/CRM roundtrip |
+| `core/test_agent_prompt_versions.py` | Версии промптов агентов: save, restore, compare |
 | `smoke/test_ops_baseline_smoke.py` | Смоук Ops manifest + sample API |
 | `smoke/test_tenders_baseline_smoke.py` | Тендеры Ф1: search/plans/usage mocked |
 | `test_tender_sources.py` | Юниты провайдеров и хелперов tenders |

@@ -34,7 +34,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `eval_routes.py` | Прогон eval Hermes; статус Ollama |
 | `eval_gate_routes.py` | Gate: latest+delta, download, run, ensure-dataset, failed→bulk |
 | `eval_cases.py` | CRUD eval-кейсов |
-| `agents_routes.py` | Запуск и логи агентов |
+| `agents_routes.py` | Промпты агентов: CRUD, версии, откат, compare, тест-run |
 | `logs_routes.py` | Буфер логов для UI |
 | `crm_routes.py` | CRM-настройки в ops |
 | `schemas.py` | Общие схемы ops |

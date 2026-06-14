@@ -56,7 +56,7 @@
 
 `[2026-06-11] | PRD_MAP: инфра email me@agneko.am | **ЗАКРЫТО ✅ 2026-06-14** | Пароль в `.env`; ib@ + me@ через `EMAIL_ACCOUNT_*` | Коммит: см. CHANGELOG cleanup`
 
-`[2026-06-11] | PRD_MAP: «Ops /ops» п.10 версионирование промптов | Отложено: git-like версии override промптов | Причина: scope Ф2 | Сейчас: PUT/DELETE override в `backend/data/agent_prompt_*.txt` | Действие: Ф2 ops versioning`
+`[2026-06-11] | PRD_MAP: «Ops /ops» п.10 версионирование промптов | **ЗАКРЫТО ✅ 2026-06-14** | `agent_prompt_versions.py` + API + UI `/ops/agents` | `OPS_PROMPT_VERSIONING_ACCEPTANCE.md`
 
 `[2026-06-11] | PRD_MAP: «Аналитика (базовая)» п.7 голос | Отложено: голосовые запросы к воронке/KPI | Причина: scope Ф2 (`PRD_MAP` п.188) | Сейчас: UI+API baseline на `/leads/analytics` | Действие: Voice Layer + intent «покажи воронку»`
 

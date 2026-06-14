@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §5: версионирование промптов в Ops
+
+**Сделано:** `agent_prompt_versions.py`; API versions/restore/compare; UI история+откат+diff на `/ops/agents`; pytest 26 passed; `OPS_PROMPT_VERSIONING_ACCEPTANCE.md`; MAP §5 п.422–424 `[x]`. **Коммит:** `<hash>`.
+
 ## 2026-06-14 — RAG хвост BACKLOG + §9 enrich на карточке
 
 **Сделано:** `qa_structure.py` (`RAG_AUTO_STRUCTURE_LLM`); async `collect_deal_facts` (`RAG_DIALOGUE_LLM`); `fetch_urls_from_hits`/`page_fetch`; кнопка «Обогатить» `/leads/{id}`; smoke+cache; pytest 31 passed; `RAG_BACKLOG_TAIL_CLOSED.md`, `LEADS_CARD_ENRICH_ACCEPTANCE.md`; MAP §9 `[x]`. **Не закрыто:** quality gate ≥85% — **Ф3**. **Коммит:** `934a84f`.

@@ -97,9 +97,25 @@ async def put_agent_prompt(agent_id: str, body: AgentPromptBody):
     if len(text) < 50:
         raise HTTPException(400, detail="Промпт слишком короткий (минимум 50 символов)")
     path = agent_prompt_path(agent_id)
+    from core.agent_prompt_versions import save_version
+
+    if path.exists():
+        try:
+            old = path.read_text(encoding="utf-8").strip()
+            if old and old != text:
+                save_version(agent_id, old, note="before_save")
+        except OSError:
+            pass
     path.write_text(text, encoding="utf-8")
+    version_id = save_version(agent_id, text, note="save")
     logger.info("Промпт агента %s сохранён (%s симв.)", agent_id, len(text))
-    return {"ok": True, "agent_id": agent_id, "chars": len(text), "source": "override"}
+    return {
+        "ok": True,
+        "agent_id": agent_id,
+        "chars": len(text),
+        "source": "override",
+        "version_id": version_id,
+    }
 
 
 @router.delete("/agents/{agent_id}/prompt")
@@ -108,12 +124,105 @@ async def delete_agent_prompt(agent_id: str):
     if agent_id not in AGENT_IDS:
         raise HTTPException(404, detail=f"Агент '{agent_id}' не найден")
     path = agent_prompt_path(agent_id)
+    from core.agent_prompt_versions import save_version
+
     cleared = False
     if path.exists():
+        try:
+            old = path.read_text(encoding="utf-8").strip()
+            if old:
+                save_version(agent_id, old, note="before_reset")
+        except OSError:
+            pass
         path.unlink()
         cleared = True
     prompt, source = get_effective_prompt(agent_id)
     return {"ok": True, "cleared": cleared, "source": source, "chars": len(prompt)}
+
+
+@router.get("/agents/{agent_id}/prompt/versions")
+async def list_agent_prompt_versions(agent_id: str):
+    """Список сохранённых версий промпта (новые сверху)."""
+    if agent_id not in AGENT_IDS:
+        raise HTTPException(404, detail=f"Агент '{agent_id}' не найден")
+    from core.agent_prompt_versions import list_versions
+
+    return {"agent_id": agent_id, "versions": list_versions(agent_id)}
+
+
+@router.get("/agents/{agent_id}/prompt/versions/compare")
+async def compare_agent_prompt_versions(
+    agent_id: str,
+    left: str,
+    right: str,
+):
+    """Сравнение двух версий: id (v000001), current, builtin."""
+    if agent_id not in AGENT_IDS:
+        raise HTTPException(404, detail=f"Агент '{agent_id}' не найден")
+    from core.agent_prompt_versions import compare_texts, get_version_text
+
+    def resolve(ref: str) -> tuple[str, str]:
+        if ref == "current":
+            text, src = get_effective_prompt(agent_id)
+            return text, f"current ({src})"
+        if ref == "builtin":
+            return get_builtin_prompt(agent_id), "builtin"
+        text = get_version_text(agent_id, ref)
+        if text is None:
+            raise HTTPException(404, detail=f"Версия {ref} не найдена")
+        return text, ref
+
+    left_text, left_label = resolve(left)
+    right_text, right_label = resolve(right)
+    cmp_out = compare_texts(left_text, right_text, left_label=left_label, right_label=right_label)
+    return {
+        "agent_id": agent_id,
+        "left": left,
+        "right": right,
+        **cmp_out,
+    }
+
+
+@router.get("/agents/{agent_id}/prompt/versions/{version_id}")
+async def get_agent_prompt_version(agent_id: str, version_id: str):
+    if agent_id not in AGENT_IDS:
+        raise HTTPException(404, detail=f"Агент '{agent_id}' не найден")
+    from core.agent_prompt_versions import get_version_text
+
+    text = get_version_text(agent_id, version_id)
+    if text is None:
+        raise HTTPException(404, detail=f"Версия {version_id} не найдена")
+    return {"agent_id": agent_id, "version_id": version_id, "prompt": text, "chars": len(text)}
+
+
+@router.post("/agents/{agent_id}/prompt/versions/{version_id}/restore")
+async def restore_agent_prompt_version(agent_id: str, version_id: str):
+    """Откат override к выбранной версии."""
+    if agent_id not in AGENT_IDS:
+        raise HTTPException(404, detail=f"Агент '{agent_id}' не найден")
+    from core.agent_prompt_versions import get_version_text, save_version
+
+    text = get_version_text(agent_id, version_id)
+    if text is None:
+        raise HTTPException(404, detail=f"Версия {version_id} не найдена")
+    path = agent_prompt_path(agent_id)
+    if path.exists():
+        try:
+            cur = path.read_text(encoding="utf-8").strip()
+            if cur and cur != text.strip():
+                save_version(agent_id, cur, note="before_restore")
+        except OSError:
+            pass
+    path.write_text(text.strip(), encoding="utf-8")
+    new_vid = save_version(agent_id, text.strip(), note=f"restore:{version_id}")
+    return {
+        "ok": True,
+        "agent_id": agent_id,
+        "restored_from": version_id,
+        "version_id": new_vid,
+        "chars": len(text.strip()),
+        "source": "override",
+    }
 
 
 @router.post("/agents/{agent_id}/run")

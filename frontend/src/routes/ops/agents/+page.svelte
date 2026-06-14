@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { getApiUrl } from '$lib/websocket.js';
+	import PromptVersionPanel from '../../../components/ops/PromptVersionPanel.svelte';
 
 	const API = getApiUrl();
 
@@ -37,6 +38,22 @@
 	let testLeadId = $state('');
 	let testInstruction = $state('');
 	let testAdvanced = $state(false);
+	let versionPanelKey = $state(0);
+
+	async function reloadPromptAfterRestore() {
+		if (!selectedAgent) return;
+		try {
+			const r = await fetch(`${API}/api/ops/agents/${selectedAgent.id}/prompt`);
+			if (!r.ok) return;
+			const d = await r.json();
+			promptText = d.prompt || '';
+			promptSource = d.source || 'builtin';
+			promptMsg = '✓ Промпт восстановлен из версии';
+			await loadAgents();
+		} catch {
+			/* ignore */
+		}
+	}
 
 	async function loadAgents() {
 		err = '';
@@ -99,6 +116,7 @@
 			promptSource = d.source;
 			promptMsg = `✓ Сохранено (${d.chars} симв.)`;
 			await loadAgents();
+			versionPanelKey += 1;
 		} catch (e) {
 			promptMsg = `Ошибка: ${e instanceof Error ? e.message : e}`;
 		} finally {
@@ -289,6 +307,14 @@
 						<span class="text-sm {promptMsg.startsWith('✓') ? 'text-emerald-400' : 'text-red-400'}">{promptMsg}</span>
 					{/if}
 				</div>
+
+				{#key versionPanelKey}
+					<PromptVersionPanel
+						api={API}
+						agentId={selectedAgent.id}
+						onRestored={reloadPromptAfterRestore}
+					/>
+				{/key}
 
 				<!-- Тест-запуск -->
 				{#if selectedAgent.implemented}
