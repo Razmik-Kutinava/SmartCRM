@@ -114,7 +114,7 @@
 
 ## Активный хвост (топ по приоритету)
 
-`[2026-06-14] | PRD_MAP: «Ф2 §1 Voice Layer» — ЗАКРЫТО ✅ | Scope: Hermes modules + UI voice_action (modal/navigate/filter/approve) + rescue eval | Сделано: frontend voiceAction/VoiceActionHost, minScore, send_email/save_to_rag approve, `smoke_voice_layer.py` 72 passed, `VOICE_LAYER_ACCEPTANCE.md` | Хвост 🟢: live LLM eval всех модулей (не rescue) — опционально | Коммит: pending`
+`[2026-06-14] | PRD_MAP: «Ф2 §1 Voice Layer» — ЗАКРЫТО ✅ | Scope: Hermes modules + UI voice_action (modal/navigate/filter/approve) + rescue eval | Сделано: frontend voiceAction/VoiceActionHost, minScore, send_email/save_to_rag approve, `smoke_voice_layer.py` 72 passed, `VOICE_LAYER_ACCEPTANCE.md` | Хвост 🟢: live LLM eval всех модулей (не rescue) — опционально | Коммит: `f2b618e`
 
 | Приоритет | PRD_MAP | Что | Фаза MAP | Кто |
 |-----------|---------|-----|----------|-----|
