@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §3 Email-агент п.405 «Анализ типа письма + черновик» — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-14 (cleanup):** Удалён `email/[mailbox].svelte`; BACKLOG `me@agneko.am` закрыт (пароль в `.env`); PRD_MAP инфра п.5 ✅; pytest 9 passed. **Коммит:** `1bd3c95`.
+**2026-06-14 (cleanup):** Удалён `email/[mailbox].svelte`; BACKLOG `me@agneko.am` закрыт (пароль в `.env`); PRD_MAP инфра п.5 ✅; pytest 9 passed. **Коммит:** `1bd3c95` · ops `1e26702` · `fb924c8`.
 
 **Следующий `go`:** §3 п.405 анализ + черновик (Маркетолог).
 
