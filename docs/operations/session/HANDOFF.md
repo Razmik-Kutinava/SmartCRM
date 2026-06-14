@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** [`operations/README.md`](../README.md) → [`phase2/voice/VOICE_LAYER_ACCEPTANCE.md`](../phase2/voice/VOICE_LAYER_ACCEPTANCE.md)
 
-**2026-06-14 (Ф2 §1 закрыт):** Voice Layer полностью — Hermes `module`+`ui_action`, фронт (WS, modal, navigate, filter/minScore, approve send_email/save_to_rag), rescue eval `cases_modules.jsonl`, smoke `scripts/smoke_voice_layer.py` **72 passed**. MAP §1 п.379–384 — `[x]`. Хвост 🟢: live LLM eval (не rescue) — опционально.
+**2026-06-14 (Ф2 §1 закрыт):** Voice Layer полностью — Hermes `module`+`ui_action`, фронт (WS, modal, navigate, filter/minScore, approve send_email/save_to_rag), rescue eval `cases_modules.jsonl`, smoke `scripts/smoke_voice_layer.py` **72 passed**. MAP §1 п.379–384 — `[x]`. **Коммит:** `f2b618e`. Хвост 🟢: live LLM eval (не rescue) — опционально.
 
 **Следующий `go`:** §2 fanout Стратега **или** очередь 5 §8 leadgen+голос **или** full live gate.
 
