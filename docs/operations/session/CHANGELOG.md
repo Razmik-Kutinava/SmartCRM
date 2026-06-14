@@ -4,7 +4,7 @@
 
 ## 2026-06-14 — Ф2 §4 п.3: «Сохранить в базу» везде в поиске
 
-**Сделано:** `SearchSaveRagBar` + `saveToRagFromHits.js` на вкладках company/free/prospect/enrich/agent; `search_hits.py`; smoke обновлён; pytest 7 passed; `SEARCH_SAVE_EVERYWHERE_ACCEPTANCE.md`; MAP п.417 `[x]`.
+**Сделано:** `SearchSaveRagBar` + `saveToRagFromHits.js` на вкладках company/free/prospect/enrich/agent; `search_hits.py`; smoke обновлён; pytest 7 passed; `SEARCH_SAVE_EVERYWHERE_ACCEPTANCE.md`; MAP п.417 `[x]`. **Коммит:** `41c8f55`.
 
 ## 2026-06-14 — Ф2 §4 п.2: факты диалога агента → RAG
 

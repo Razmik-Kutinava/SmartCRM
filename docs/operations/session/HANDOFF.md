@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §4 п.4 «Кэш enrich» — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-14 (Ф2 §4 п.3):** SearchSaveRagBar на 5 вкладках `/search`; pytest 7 + smoke OK; MAP `[x]`. **Коммит:** `TBD`.
+**2026-06-14 (Ф2 §4 п.3):** SearchSaveRagBar на 5 вкладках `/search`; pytest 7 + smoke OK; MAP `[x]`. **Коммит:** `41c8f55`.
 
 **Следующий `go`:** §4 п.4 кэш enrich.
 
