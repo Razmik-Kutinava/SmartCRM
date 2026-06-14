@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** [`FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md`](../phase2/agents/FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md)
 
-**2026-06-14 (Ф2 §2 п.3):** Синтез fanout → `voice_action` modal с `payload.synthesis`; UI блок «Решение»; pytest 44 passed. MAP п.392 `[x]`. **Коммит:** `338d4f5`.
+**2026-06-14 (Ф2 §2 п.3):** Синтез fanout → `voice_action` modal с `payload.synthesis`; UI блок «Решение»; pytest 44 passed. MAP п.392 `[x]`. **Коммит:** `338d4f5` (feat) · ops `383562d`.
 
 **Следующий `go`:** §2 п.393 «Сценарий: анализ + письмо» **или** другой именованный сценарий.
 
