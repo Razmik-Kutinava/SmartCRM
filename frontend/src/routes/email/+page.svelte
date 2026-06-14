@@ -11,6 +11,8 @@
         EMAIL_FOLDERS, filterEmailThreads, countEmailFolder, groupThreadsByDate,
         formatThreadTime, syncStatusLabel
     } from '$lib/email/emailListLogic.js';
+    import { buildReplyApprovePreview, buildComposeApprovePreview } from '$lib/email/emailApproveLogic.js';
+    import EmailApproveModal from '../../components/EmailApproveModal.svelte';
     import { fetchLeads } from '$lib/leadsStorage.js';
 
     // ─── данные ──────────────────────────────────────────────────
@@ -29,6 +31,8 @@
     let loadingMessages = $state(false);
     let replyBody       = $state('');
     let replyLoading    = $state(false);
+    let approvePreview  = $state(null);
+    let approveLoading  = $state(false);
     let analyzeLoading  = $state(false);
     let analyzeResult   = $state(null);
     let analyzeError    = $state('');
@@ -119,18 +123,58 @@
         showCompose    = true;
     }
 
-    async function sendNewEmail() {
+    function sendNewEmail() {
         composeError = '';
         if (!composeTo || !composeSubject) { composeError = 'Заполни кому и тему'; return; }
-        sendingNew = true;
+        if (!composeBody.trim()) { composeError = 'Введите текст письма'; return; }
+        approvePreview = buildComposeApprovePreview({
+            to: composeTo,
+            subject: composeSubject,
+            body: composeBody,
+        });
+    }
+
+    async function confirmApproveSend() {
+        if (!approvePreview) return;
+        approveLoading = true;
         try {
-            await sendEmail({ to: [composeTo], subject: composeSubject, body: composeBody });
-            await load();
-            showCompose = false;
-            success = `✅ Письмо отправлено на ${composeTo}`;
-            activeFolder = 'sent';
-        } catch (e) { composeError = '❌ ' + e.message; }
-        finally { sendingNew = false; }
+            if (approvePreview.kind === 'reply' && selectedThread) {
+                const data = await replyToEmail({ thread_id: selectedThread.id, body: approvePreview.body });
+                threadMessages = [...threadMessages, data.message];
+                replyBody = '';
+                analyzeResult = null;
+                success = '✅ Ответ отправлен';
+                await load();
+            } else if (approvePreview.kind === 'compose') {
+                await sendEmail({
+                    to: [approvePreview.to],
+                    subject: approvePreview.subject,
+                    body: approvePreview.body,
+                });
+                await load();
+                showCompose = false;
+                success = `✅ Письмо отправлено на ${approvePreview.to}`;
+                activeFolder = 'sent';
+                composeTo = '';
+                composeSubject = '';
+                composeBody = '';
+            }
+            approvePreview = null;
+        } catch (e) {
+            const msg = e?.message || String(e);
+            if (approvePreview?.kind === 'compose') composeError = '❌ ' + msg;
+            else alert('Ошибка: ' + msg);
+        } finally {
+            approveLoading = false;
+            replyLoading = false;
+            sendingNew = false;
+        }
+    }
+
+    function cancelApproveSend() {
+        approvePreview = null;
+        replyLoading = false;
+        sendingNew = false;
     }
 
     // ─── тред ────────────────────────────────────────────────────
@@ -179,16 +223,13 @@
             : text;
     }
 
-    async function sendReply() {
+    function requestSendReply() {
         if (!replyBody.trim() || !selectedThread) return;
-        replyLoading = true;
-        try {
-            const data = await replyToEmail({ thread_id: selectedThread.id, body: replyBody });
-            threadMessages = [...threadMessages, data.message];
-            replyBody = '';
-            await load();
-        } catch (e) { alert('Ошибка: ' + e.message); }
-        finally { replyLoading = false; }
+        approvePreview = buildReplyApprovePreview({
+            thread: selectedThread,
+            messages: threadMessages,
+            body: replyBody,
+        });
     }
 
     // ─── синхронизация ───────────────────────────────────────────
@@ -555,9 +596,9 @@
             </div>
             <div class="px-6 pb-5 flex items-center justify-between">
                 <button onclick={() => showCompose = false} class="text-sm text-gray-500 hover:text-white transition-colors">Отмена</button>
-                <button onclick={sendNewEmail} disabled={sendingNew || !composeTo || !composeSubject}
+                <button onclick={sendNewEmail} disabled={sendingNew || !composeTo || !composeSubject || !composeBody.trim()}
                     class="px-6 py-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500 disabled:bg-gray-700 disabled:text-gray-500 transition-colors">
-                    {sendingNew ? 'Отправка...' : '↑ Отправить'}
+                    ↑ Отправить
                 </button>
             </div>
         </div>
@@ -654,13 +695,20 @@
                         placeholder="Написать ответ..."
                     ></textarea>
                     <button
-                        onclick={sendReply}
-                        disabled={replyLoading || !replyBody.trim()}
+                        onclick={requestSendReply}
+                        disabled={replyLoading || approveLoading || !replyBody.trim()}
                         class="absolute bottom-3 right-3 px-4 py-1.5 rounded-lg bg-indigo-600 text-xs font-semibold text-white
                                hover:bg-indigo-500 disabled:bg-gray-700 disabled:text-gray-500 transition-colors"
-                    >{replyLoading ? '...' : '↑ Ответить'}</button>
+                    >↑ Ответить</button>
                 </div>
             </div>
         </div>
     </div>
 {/if}
+
+<EmailApproveModal
+    preview={approvePreview}
+    loading={approveLoading}
+    onConfirm={confirmApproveSend}
+    onCancel={cancelApproveSend}
+/>

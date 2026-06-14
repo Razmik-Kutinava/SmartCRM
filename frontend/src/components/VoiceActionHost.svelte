@@ -70,6 +70,13 @@
 			<p class="text-sm text-gray-300 mb-4">
 				{$voiceApprove.payload?.message || $voiceApprove.reply || 'Подтвердите действие'}
 			</p>
+			{#if $voiceApprove.payload?.draft_email}
+				{@const em = $voiceApprove.payload.draft_email}
+				<div class="mb-4 rounded-lg border border-gray-800 bg-gray-900/80 px-3 py-2 text-xs text-gray-300 space-y-1">
+					{#if em.subject}<p><span class="text-gray-500">Тема:</span> {em.subject}</p>{/if}
+					{#if em.body}<p class="whitespace-pre-wrap line-clamp-6">{em.body}</p>{/if}
+				</div>
+			{/if}
 			<div class="flex justify-end gap-2">
 				<button
 					type="button"

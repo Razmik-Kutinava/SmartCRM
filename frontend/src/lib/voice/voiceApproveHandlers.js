@@ -1,18 +1,29 @@
 /** Обработчики approve для voice_action (email, RAG). */
 import { apiPost } from '$lib/api.js';
-import { sendEmail } from '$lib/emailStorage.js';
+import { sendEmail, replyToEmail } from '$lib/emailStorage.js';
 
 /**
  * @param {Record<string, unknown>} action
- * @returns {Promise<{ ok: boolean, message: string }>}
+ * @returns {Promise<{ ok: boolean, message: string, gotoUrl?: string }>}
  */
 export async function handleSendEmailApprove(action) {
 	const payload = /** @type {Record<string, unknown>} */ (action.payload || {});
 	const slots = /** @type {Record<string, unknown>} */ (payload.slots || action.slots || {});
 	const draft = /** @type {{ subject?: string, body?: string } | undefined} */ (payload.draft_email);
+	const body = String(draft?.body || slots.body || slots.content || '').trim();
+	const threadId = slots.thread_id ?? slots.threadId;
+
+	if (threadId && body) {
+		try {
+			await replyToEmail({ thread_id: Number(threadId), body });
+			return { ok: true, message: 'Ответ в переписке отправлен' };
+		} catch (e) {
+			return { ok: false, message: e?.message || String(e) };
+		}
+	}
+
 	const to = String(slots.target || slots.to || slots.email || '').trim();
 	const subject = String(draft?.subject || slots.subject || 'Письмо из SmartCRM');
-	const body = String(draft?.body || slots.body || slots.content || '');
 
 	if (!to) {
 		return {

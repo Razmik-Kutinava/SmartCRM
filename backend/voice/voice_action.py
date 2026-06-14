@@ -113,13 +113,14 @@ def build_voice_action(
             "actions": ["confirm", "reject"],
         }
         draft = agent_result.get("marketer_output") or {}
-        email = draft.get("email") if isinstance(draft.get("email"), dict) else {}
-        if not email and (draft.get("subject") or draft.get("body")):
-            email = {"subject": draft.get("subject", ""), "body": draft.get("body", "")}
+        email = _marketer_draft_email(draft)
         if email and intent in ("send_email", "write_email"):
             base["payload"]["draft_email"] = email
         if intent == "send_email":
             base["route"] = "/email"
+            tid = slots.get("thread_id") or slots.get("threadId")
+            if tid is not None:
+                base["payload"]["slots"]["thread_id"] = tid
         elif intent == "save_to_rag":
             base["route"] = "/search"
     elif ui == "modal":

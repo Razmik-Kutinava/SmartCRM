@@ -403,7 +403,7 @@
 - [x] Фоновый синк входящих — ✅ [`EMAIL_BACKGROUND_SYNC_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_BACKGROUND_SYNC_ACCEPTANCE.md)
 - [x] Список `/email` — ✅ [`EMAIL_LIST_PAGE_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_LIST_PAGE_ACCEPTANCE.md)
 - [x] Анализ типа письма + черновик (Маркетолог) — ✅ [`EMAIL_DRAFT_ANALYZE_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_DRAFT_ANALYZE_ACCEPTANCE.md)
-- [ ] Апрув и отправка (голос или кнопка)
+- [x] Апрув и отправка (голос или кнопка) — ✅ [`EMAIL_APPROVE_SEND_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_APPROVE_SEND_ACCEPTANCE.md)
 - [ ] Голосовые команды email
 
 ### 4. Поиск → RAG авто

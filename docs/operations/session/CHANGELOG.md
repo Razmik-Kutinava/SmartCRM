@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §3 п.406: апрув и отправка email
+
+**Сделано:** EmailApproveModal (reply/compose); voice send_email approve + thread_id reply; pytest 8 passed; `EMAIL_APPROVE_SEND_ACCEPTANCE.md`; MAP п.406 `[x]`.
+
 ## 2026-06-14 — Ф2 §3 п.405: анализ типа письма + черновик
 
 **Сделано:** `POST /api/email/threads/{id}/analyze`; `email_thread_analyze.py` + `email_category_labels.py`; UI «Анализ + черновик» на `/email`; pytest 3+12 email zone passed; `EMAIL_DRAFT_ANALYZE_ACCEPTANCE.md`; MAP п.405 `[x]`.
