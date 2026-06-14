@@ -10,6 +10,7 @@
 | `datanewton.py` | DataNewton (контракты, компании) |
 | `zakupki_parser.py` | Парсер zakupki.gov.ru |
 | `lookalike_import.py` | Batch-импорт lookalike-кандидатов в CRM (`source: lookalike`) |
+| `email_bootstrap.py` | Подключение почты из `.env` в БД (`bootstrap-from-env`) |
 
 Кэш ответов: `data/moy_zakupki_cache/`.  
 Тесты: `tests/test_tender_sources.py`.

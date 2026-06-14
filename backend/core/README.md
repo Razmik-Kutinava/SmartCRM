@@ -53,6 +53,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `llm.py` | Общий чат с LLM (Groq/Ollama), json_mode |
 | `auth.py` | API-ключ, `require_api_key` |
 | `crypto.py` | Шифрование секретов (почта и т.п.) |
+| `email_config.py` | IMAP/SMTP аккаунты из env (`EMAIL_APP_PASSWORD`, `EMAIL_ACCOUNT_*`) |
 | `traces.py` | Логирование трейсов Hermes |
 | `stats.py` | Счётчики вызовов внешних API |
 | `eval_runner.py` | Прогон eval-сценариев |

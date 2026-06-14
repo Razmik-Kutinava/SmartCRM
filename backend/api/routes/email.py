@@ -13,9 +13,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import get_db
-from core.crypto import encrypt, decrypt
+from core.crypto import decrypt
+from core.email_config import email_env_status
 from db.models import EmailAccount, EmailCampaign, EmailMessage, EmailThread, Lead, Task
 from email_sync.sync import sync_account_messages
+from services.email_bootstrap import bootstrap_accounts_from_env, upsert_account_from_payload
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/email", tags=["email"])
@@ -126,34 +128,51 @@ async def list_email_accounts(db: AsyncSession = Depends(get_db)):
     return [account.to_dict() for account in result.scalars().all()]
 
 
+@router.get("/config/status")
+async def email_config_status(db: AsyncSession = Depends(get_db)):
+    """IMAP/SMTP из .env: настроен ли пароль, какие ящики в env и в БД (без секретов)."""
+    result = await db.execute(select(EmailAccount.username))
+    usernames = [row[0] for row in result.all()]
+    return email_env_status(usernames)
+
+
+class EmailBootstrapBody(BaseModel):
+    sync: bool = True
+
+
+@router.post("/bootstrap-from-env", status_code=201)
+async def bootstrap_email_from_env(
+    body: EmailBootstrapBody | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """Подключить все аккаунты из EMAIL_APP_PASSWORD + EMAIL_ACCOUNT_* в БД."""
+    run_sync = True if body is None else body.sync
+    try:
+        result = await bootstrap_accounts_from_env(db, run_sync=run_sync)
+    except Exception as e:
+        await db.rollback()
+        logger.warning("Email bootstrap from env failed: %s", e)
+        raise HTTPException(
+            status_code=400,
+            detail="Ошибка bootstrap из .env. Проверьте учётные данные и IMAP/SMTP.",
+        )
+    if result.get("bootstrapped", 0) == 0:
+        raise HTTPException(
+            status_code=400,
+            detail=result.get("skipped_reason", "Нет аккаунтов в .env"),
+        )
+    return result
+
+
 @router.post("/accounts/connect", status_code=201)
 async def connect_email_account(body: EmailAccountCreate, db: AsyncSession = Depends(get_db)):
-    existing = await db.execute(select(EmailAccount).where(EmailAccount.username == body.username))
-    account = existing.scalars().first()
-    if account:
-        account.name = body.name
-        account.provider = body.provider
-        account.password = encrypt(body.password)
-        account.imap_server = body.imap_server
-        account.imap_port = body.imap_port
-        account.smtp_server = body.smtp_server
-        account.smtp_port = body.smtp_port
-        account.use_ssl = body.use_ssl
-        await db.flush()
-    else:
-        data = body.model_dump()
-        data["password"] = encrypt(data["password"])
-        account = EmailAccount(**data)
-        db.add(account)
-        await db.flush()
-
     try:
-        sync_result = await sync_account_messages(account, db)
+        row = await upsert_account_from_payload(db, body.model_dump(), run_sync=True)
     except Exception as e:
         await db.rollback()
         logger.warning("Email sync failed: %s", e)
         raise HTTPException(status_code=400, detail="Ошибка синхронизации почты. Проверьте учётные данные и настройки сервера.")
-    return {"account": account.to_dict(), "sync": sync_result}
+    return {"account": row["account"], "sync": row["sync"]}
 
 
 @router.post("/accounts/{account_id}/sync")

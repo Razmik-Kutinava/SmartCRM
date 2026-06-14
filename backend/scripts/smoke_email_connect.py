@@ -33,33 +33,10 @@ def _api_key() -> str:
 
 
 def _accounts_from_env() -> list[dict]:
-	pwd = (os.getenv("EMAIL_APP_PASSWORD") or os.getenv("EMAIL_PASSWORD") or "").strip()
-	if not pwd:
-		return []
-	imap = os.getenv("EMAIL_IMAP_HOST", "imap.yandex.com").strip()
-	smtp = os.getenv("EMAIL_SMTP_HOST", "smtp.yandex.com").strip()
-	use_ssl = os.getenv("EMAIL_USE_SSL", "1").strip().lower() not in ("0", "false", "no")
-	out = []
-	only = (os.getenv("EMAIL_CONNECT_ONLY") or "").strip()
-	indices = [int(only)] if only.isdigit() else [1, 2]
-	for i in indices:
-		user = (os.getenv(f"EMAIL_ACCOUNT_{i}_USER") or "").strip()
-		if not user:
-			continue
-		out.append(
-			{
-				"name": (os.getenv(f"EMAIL_ACCOUNT_{i}_NAME") or user).strip(),
-				"provider": "yandex",
-				"username": user,
-				"password": pwd,
-				"imap_server": (os.getenv(f"EMAIL_ACCOUNT_{i}_IMAP_HOST") or imap).strip(),
-				"imap_port": int(os.getenv(f"EMAIL_ACCOUNT_{i}_IMAP_PORT") or os.getenv("EMAIL_IMAP_PORT", "993")),
-				"smtp_server": (os.getenv(f"EMAIL_ACCOUNT_{i}_SMTP_HOST") or smtp).strip(),
-				"smtp_port": int(os.getenv(f"EMAIL_ACCOUNT_{i}_SMTP_PORT") or os.getenv("EMAIL_SMTP_PORT", "465")),
-				"use_ssl": use_ssl,
-			}
-		)
-	return out
+	sys.path.insert(0, str(BACKEND))
+	from core.email_config import load_accounts_from_env
+
+	return load_accounts_from_env()
 
 
 def _post_connect(api_base: str, key: str, body: dict) -> dict:
