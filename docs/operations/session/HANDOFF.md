@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §5 Self-improvement (версионирование промптов) — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-14 (Ф2 §4 п.4):** `enrich_cache.py` (company+ИНН+industry, TTL 24ч); API `force`; UI бейдж+чекбокс; pytest 14 passed; **§4 закрыт** (п.1–4); `SEARCH_ENRICH_CACHE_ACCEPTANCE.md`; MAP `[x]`. **Коммит:** `<hash>`.
+**2026-06-14 (Ф2 §4 п.4):** `enrich_cache.py` (company+ИНН+industry, TTL 24ч); API `force`; UI бейдж+чекбокс; pytest 14 passed; **§4 закрыт** (п.1–4); `SEARCH_ENRICH_CACHE_ACCEPTANCE.md`; MAP `[x]`. **Коммит:** `9dcf749`.
 
 **Следующий `go`:** §5 Self-improvement или §9 enrich на карточке лида.
 
