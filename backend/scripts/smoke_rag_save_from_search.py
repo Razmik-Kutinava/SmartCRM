@@ -16,6 +16,7 @@ OUT = BACKEND / "data" / "artifacts" / "rag" / "save_from_search_smoke.json"
 
 PYTEST = [
     "tests/rag/test_rag_ingest_batch.py",
+    "tests/rag/test_search_hits.py",
     "tests/api/test_rag_ingest_batch_api.py",
 ]
 
@@ -43,7 +44,7 @@ def main() -> int:
     print("SmartCRM smoke — RAG save from search (ingest-batch)\n")
 
     proc = subprocess.run(
-        [sys.executable, "-m", "pytest", *PYTEST, "-q", "--tb=short"],
+        [sys.executable, "-m", "pytest", *PYTEST, "-q", "--tb=short", '--override-ini=filterwarnings='],
         cwd=BACKEND,
     )
     if proc.returncode != 0:

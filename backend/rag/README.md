@@ -32,6 +32,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `ingest.py` | Загрузка в индекс; `ingest_manual_text` + `_metadata_from_search_doc` (URL → `source_url` в чанках) |
 | `auto_ingest.py` | Авто-чанки Search→RAG при relevance > порога |
 | `dialogue_facts.py` | Факты из диалога агента → RAG (тот же for_agent) |
+| `search_hits.py` | Нормализация web-hits → документы ingest-batch |
 | `retrieve.py` | Получение чанков по запросу |
 | `chunking.py` | Разбиение текста на чанки |
 | `parsers.py` | Парсинг PDF/HTML для ingest |

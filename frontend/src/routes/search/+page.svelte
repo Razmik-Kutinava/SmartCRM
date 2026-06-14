@@ -4,6 +4,15 @@
 	import { get } from 'svelte/store';
 	import { apiFetch, apiPatch, apiPost } from '$lib/api.js';
 	import { enrichedToLeadPatch, leadToEnrichPayload } from '$lib/search/enrichLeadApply.js';
+	import SearchSaveRagBar from '$lib/search/SearchSaveRagBar.svelte';
+	import {
+		agentTaskToDocs,
+		enrichResultToDocs,
+		freeSearchToDocs,
+		normalizeAgentForRag,
+		prospectCompaniesToDocs,
+		webHitsToDocs,
+	} from '$lib/search/saveToRagFromHits.js';
 	import { voiceSearchQuery } from '$lib/voice/voiceAction.js';
 
 	// ── Провайдеры ───────────────────────────────────────────────────────────────
@@ -534,6 +543,15 @@
 				{/each}
 			</div>
 
+			{#if cs_result.raw_results?.length}
+				<SearchSaveRagBar
+					documents={webHitsToDocs(cs_result.raw_results)}
+					defaultForAgent={normalizeAgentForRag(cs_agent)}
+					tags="search-company"
+					testIdPrefix="search-company-save-rag"
+				/>
+			{/if}
+
 			<!-- Блок для промпта -->
 			<details class="text-xs text-gray-600">
 				<summary class="cursor-pointer hover:text-gray-400 list-none flex items-center gap-1">
@@ -596,6 +614,13 @@
 					</div>
 				{/each}
 			</div>
+			{#if fq_result.raw_results?.length || fq_result.answer}
+				<SearchSaveRagBar
+					documents={freeSearchToDocs(fq_result, fq_query)}
+					tags="search-free"
+					testIdPrefix="search-free-save-rag"
+				/>
+			{/if}
 		{/if}
 
 	<!-- ═══ Проспектинг ═══ -->
@@ -679,6 +704,11 @@
 						</div>
 					{/each}
 				</div>
+				<SearchSaveRagBar
+					documents={prospectCompaniesToDocs(pr_result.companies)}
+					tags="search-prospect"
+					testIdPrefix="search-prospect-save-rag"
+				/>
 			{:else}
 				<div class="text-sm text-gray-500 text-center py-8">Компании не найдены. Уточни ICP или отрасль.</div>
 			{/if}
@@ -761,6 +791,12 @@
 						<div class="mt-2 text-xs text-emerald-400/90">{en_save_msg}</div>
 					{/if}
 				</div>
+				<SearchSaveRagBar
+					documents={enrichResultToDocs(en_result, en_company)}
+					defaultForAgent="analyst"
+					tags="search-enrich"
+					testIdPrefix="search-enrich-save-rag"
+				/>
 			{:else}
 				<div class="text-sm text-gray-500 text-center py-4">Данных не найдено. Попробуй уточнить название.</div>
 			{/if}
@@ -1080,6 +1116,15 @@
 						{/each}
 					</div>
 				</details>
+			{/if}
+
+			{#if at_result.answer || at_result.raw_results?.length}
+				<SearchSaveRagBar
+					documents={agentTaskToDocs(at_result.answer || '', at_task, at_agent, at_result.raw_results)}
+					defaultForAgent={normalizeAgentForRag(at_agent)}
+					tags="search-agent"
+					testIdPrefix="search-agent-save-rag"
+				/>
 			{/if}
 		{/if}
 

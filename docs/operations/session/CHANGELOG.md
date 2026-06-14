@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §4 п.3: «Сохранить в базу» везде в поиске
+
+**Сделано:** `SearchSaveRagBar` + `saveToRagFromHits.js` на вкладках company/free/prospect/enrich/agent; `search_hits.py`; smoke обновлён; pytest 7 passed; `SEARCH_SAVE_EVERYWHERE_ACCEPTANCE.md`; MAP п.417 `[x]`.
+
 ## 2026-06-14 — Ф2 §4 п.2: факты диалога агента → RAG
 
 **Сделано:** `dialogue_facts.py`; `POST /ingest-dialogue`; авто `RAG_DIALOGUE_AUTO_INGEST` на ops run + voice fanout; UI «💾 В RAG»; voice save_to_rag → agent collection; pytest 7 passed; `AGENT_DIALOGUE_RAG_ACCEPTANCE.md`; MAP п.416 `[x]`.
