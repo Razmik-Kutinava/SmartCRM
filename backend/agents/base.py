@@ -33,6 +33,11 @@ class AgentState(TypedDict, total=False):
     started_at: float
     agent_timings: dict[str, float]
 
+    # Supervisor / LangGraph (Ф2)
+    hermes_agents: list[str]
+    fanout_plan: dict[str, Any]
+    agents_selected: list[str]
+
 
 def make_initial_state(
     intent: str,

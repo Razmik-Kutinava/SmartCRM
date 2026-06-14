@@ -387,7 +387,7 @@
 
 > См. [`langgraph.md`](../agents/langgraph.md#пакет-voice_action-стратег--ui)
 
-- [ ] LangGraph supervisor: выбор агентов (выборочный fanout)
+- [x] LangGraph supervisor: выбор агентов (выборочный fanout) — ✅ [`FANOUT_SUPERVISOR_ACCEPTANCE.md`](../operations/phase2/agents/FANOUT_SUPERVISOR_ACCEPTANCE.md)
 - [ ] Параллельный fanout 2+ агентов
 - [ ] Синтез в один ответ → модалка
 - [ ] Сценарий: анализ + письмо

@@ -21,7 +21,9 @@ LangGraph-агенты для анализа лидов, стратегии, п�
 
 | Файл | За что |
 |------|--------|
-| `orchestrator.py` | Маршрутизация интентов → агенты / leadgen |
+| `orchestrator.py` | Маршрутизация интентов → supervisor → LangGraph fanout |
+| `supervisor.py` | Выбор подмножества агентов (Hermes agents[] или дефолт) |
+| `graph.py` | LangGraph: supervisor → fanout → strategist |
 | `base.py` | Базовый класс агента |
 | `tools.py` | Общие tools; CLI gate — заголовок `X-API-Key` из `SMARTCRM_API_KEY` |
 | `marketer.py` | Агент-маркетолог |

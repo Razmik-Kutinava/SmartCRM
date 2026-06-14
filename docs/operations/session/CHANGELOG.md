@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §2 п.1: LangGraph supervisor (выборочный fanout)
+
+**Сделано:** `agents/supervisor.py`, `agents/graph.py`; orchestrator + pipeline `hermes_agents`; pytest 15 passed; `FANOUT_SUPERVISOR_ACCEPTANCE.md`.
+
 ## 2026-06-14 — Ф2 Voice Layer §1: UI + rescue eval (закрыт)
 
 **Сделано:** фронт voice_action (modal/navigate/filter/minScore/approve); `voiceApproveHandlers.js`; eval `cases_modules.jsonl`; `smoke_voice_layer.py` 72 passed; `VOICE_LAYER_ACCEPTANCE.md`; MAP §1 `[x]`. Live LLM eval модулей — опционально в BACKLOG 🟢.

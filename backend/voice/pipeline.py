@@ -106,6 +106,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
                 slots={**slots, "reply": base_reply},
                 transcript=text,
                 trace_id=trace["id"],
+                hermes_agents=agents,
             )
             if agent_result.get("agents_ran") and agent_result.get("final_reply"):
                 final_reply = agent_result["final_reply"]

@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§2 п.1 LangGraph supervisor] | Статус: ✅ fanout выборочный`
+
+> **→ Следующий агент:** [`FANOUT_SUPERVISOR_ACCEPTANCE.md`](../phase2/agents/FANOUT_SUPERVISOR_ACCEPTANCE.md)
+
+**2026-06-14 (Ф2 §2 п.1):** LangGraph supervisor — `supervisor.py` + `graph.py` (supervisor→fanout→strategist); Hermes `agents[]` задаёт подмножество; pytest 15 passed. MAP п.390 `[x]`. **Коммит:** pending.
+
+**Следующий `go`:** §2 п.2 «Параллельный fanout 2+ агентов» **или** именованный сценарий.
+
+---
+
 `Спринт:[Ф2] | Задача:[Voice Layer §1 — закрыт] | Статус: ✅ Hermes + UI voice_action`
 
 > **→ Следующий агент:** [`operations/README.md`](../README.md) → [`phase2/voice/VOICE_LAYER_ACCEPTANCE.md`](../phase2/voice/VOICE_LAYER_ACCEPTANCE.md)

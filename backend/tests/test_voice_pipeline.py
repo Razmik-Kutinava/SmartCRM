@@ -44,12 +44,10 @@ if "sentence_transformers" not in sys.modules:
     st = _stub_module("sentence_transformers")
     st.SentenceTransformer = MagicMock
 
-# langchain_community — если используется
+# langchain_community — если используется (langchain_core не стабим — нужен LangGraph)
 for mod_name in [
     "langchain_community",
     "langchain_community.vectorstores",
-    "langchain_core",
-    "langchain_core.documents",
 ]:
     if mod_name not in sys.modules:
         _stub_module(mod_name)
