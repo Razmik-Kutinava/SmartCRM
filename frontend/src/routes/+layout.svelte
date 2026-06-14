@@ -4,7 +4,8 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 	import { getApiUrl, connect, sendText, sendAudio, sendFixtureAudio, onMessage } from '$lib/websocket.js';
-	import { handleVoiceAction } from '$lib/voice/voiceAction.js';
+	import { handleVoiceAction, registerVoiceApproveHandler, voiceToast, voiceHighlight } from '$lib/voice/voiceAction.js';
+	import { handleSendEmailApprove, handleSaveToRagApprove } from '$lib/voice/voiceApproveHandlers.js';
 	import VoiceActionHost from '../components/VoiceActionHost.svelte';
 	import { goto } from '$app/navigation';
 
@@ -82,6 +83,22 @@
 	}
 
 	onMount(async () => {
+		registerVoiceApproveHandler('send_email', async (action) => {
+			const r = await handleSendEmailApprove(action);
+			voiceToast.set(r.message);
+			if (r.gotoUrl) goto(r.gotoUrl);
+		});
+		registerVoiceApproveHandler('save_to_rag', async (action) => {
+			const r = await handleSaveToRagApprove(action);
+			voiceToast.set(r.message);
+		});
+
+		let toastTimer;
+		const unsubToast = voiceToast.subscribe((v) => {
+			clearTimeout(toastTimer);
+			if (v) toastTimer = setTimeout(() => voiceToast.set(null), 5000);
+		});
+
 		// Загружаем статус агентов
 		try {
 			const r = await fetch(`${API}/api/ops/agents`);
@@ -131,7 +148,10 @@
 				setTimeout(() => { voice_status = 'idle'; voice_reply = ''; }, 4000);
 			}
 		});
-		return unsub;
+		return () => {
+			unsub();
+			unsubToast();
+		};
 	});
 
 	function _handleIntentNav(data) {
@@ -391,6 +411,18 @@
 
 		{@render children()}
 	</div>
+
+	{#if $voiceHighlight}
+		<div class="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-lg bg-indigo-900/95 border border-indigo-600 text-sm text-indigo-100 shadow-lg" data-testid="voice-highlight">
+			🎙 {$voiceHighlight.text}
+		</div>
+	{/if}
+
+	{#if $voiceToast}
+		<div class="fixed bottom-32 left-1/2 -translate-x-1/2 z-40 max-w-md px-4 py-2 rounded-lg bg-emerald-900/95 border border-emerald-600 text-sm text-emerald-100 shadow-lg" data-testid="voice-toast">
+			{$voiceToast}
+		</div>
+	{/if}
 
 	<VoiceActionHost />
 </div>

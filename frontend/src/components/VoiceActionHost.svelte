@@ -1,12 +1,21 @@
 <script>
-	import { voiceModal, voiceApprove, resolveVoiceApprove, closeVoiceModal } from '$lib/voice/voiceAction.js';
+	import { voiceModal, voiceApprove, resolveVoiceApprove, closeVoiceModal, voiceToast } from '$lib/voice/voiceAction.js';
 	import { goto } from '$app/navigation';
+	import { sendEmail } from '$lib/emailStorage.js';
 
 	function modalAction(kind) {
 		const m = $voiceModal;
 		if (!m) return;
 		if (kind === 'send' && m.payload?.draft_email) {
 			const em = m.payload.draft_email;
+			const target = m.slots?.target || m.slots?.email || '';
+			if (target) {
+				sendEmail({ to: [String(target)], subject: em.subject || '', body: em.body || '' })
+					.then(() => voiceToast.set(`Письмо отправлено: ${target}`))
+					.catch((e) => voiceToast.set(e?.message || String(e)));
+				closeVoiceModal();
+				return;
+			}
 			const q = new URLSearchParams({
 				subject: em.subject || '',
 				body: em.body || '',
@@ -53,7 +62,7 @@
 {/if}
 
 {#if $voiceModal}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true">
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" data-testid="voice-modal">
 		<div class="w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-xl border border-indigo-800/60 bg-gray-900 p-5 shadow-xl">
 			<div class="flex items-start justify-between gap-3 mb-3">
 				<h2 class="text-base font-semibold text-indigo-200">
@@ -62,14 +71,46 @@
 				<button type="button" class="text-gray-500 hover:text-gray-300" onclick={closeVoiceModal}>✕</button>
 			</div>
 
+			{#if $voiceModal.module}
+				<div class="text-xs text-gray-500 mb-2">Модуль: <span class="text-indigo-400">{$voiceModal.module}</span></div>
+			{/if}
+
 			{#if $voiceModal.reply}
 				<p class="text-sm text-gray-200 mb-4 whitespace-pre-wrap">{$voiceModal.reply}</p>
+			{/if}
+
+			{#if $voiceModal.payload?.rag_answer}
+				<section class="mb-4">
+					<h3 class="text-xs uppercase text-gray-500 mb-1">База знаний</h3>
+					<pre class="text-xs text-gray-300 bg-gray-950/80 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap">{$voiceModal.payload.rag_answer}</pre>
+				</section>
 			{/if}
 
 			{#if $voiceModal.payload?.analysis}
 				<section class="mb-4">
 					<h3 class="text-xs uppercase text-gray-500 mb-1">Анализ</h3>
 					<pre class="text-xs text-gray-300 bg-gray-950/80 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap">{summaryText($voiceModal.payload.analysis)}</pre>
+				</section>
+			{/if}
+
+			{#if $voiceModal.payload?.economics}
+				<section class="mb-4">
+					<h3 class="text-xs uppercase text-gray-500 mb-1">Экономист</h3>
+					<pre class="text-xs text-gray-300 bg-gray-950/80 rounded-lg p-3 whitespace-pre-wrap">{summaryText($voiceModal.payload.economics)}</pre>
+				</section>
+			{/if}
+
+			{#if $voiceModal.payload?.tech}
+				<section class="mb-4">
+					<h3 class="text-xs uppercase text-gray-500 mb-1">Тех. специалист</h3>
+					<pre class="text-xs text-gray-300 bg-gray-950/80 rounded-lg p-3 whitespace-pre-wrap">{summaryText($voiceModal.payload.tech)}</pre>
+				</section>
+			{/if}
+
+			{#if $voiceModal.payload?.strategy}
+				<section class="mb-4">
+					<h3 class="text-xs uppercase text-gray-500 mb-1">Стратег</h3>
+					<pre class="text-xs text-gray-300 bg-gray-950/80 rounded-lg p-3 whitespace-pre-wrap">{summaryText($voiceModal.payload.strategy)}</pre>
 				</section>
 			{/if}
 

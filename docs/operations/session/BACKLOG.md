@@ -114,11 +114,11 @@
 
 ## Активный хвост (топ по приоритету)
 
+`[2026-06-14] | PRD_MAP: «Ф2 §1 Voice Layer» — ЗАКРЫТО ✅ | Scope: Hermes modules + UI voice_action (modal/navigate/filter/approve) + rescue eval | Сделано: frontend voiceAction/VoiceActionHost, minScore, send_email/save_to_rag approve, `smoke_voice_layer.py` 72 passed, `VOICE_LAYER_ACCEPTANCE.md` | Хвост 🟢: live LLM eval всех модулей (не rescue) — опционально | Коммит: pending`
+
 | Приоритет | PRD_MAP | Что | Фаза MAP | Кто |
 |-----------|---------|-----|----------|-----|
-| 🟡 | Ф2 §1 Voice Layer | UI: `payload.period` / `minScore` на `/leads/analytics` и списке | **2** | агент |
-| 🟡 | Ф2 §1 Voice Layer | LLM eval-кейсы analytics/RAG (не только rescue) | **2** | агент |
-| 🟢 | Ф2 §1 Voice Layer | Live `send_email` после approve | **2** | агент |
+| 🟢 | Ф2 §1 Voice Layer | Live LLM eval analytics/RAG (не только rescue) — опционально при Groq/Ollama | **2** | агент |
 | 🔴 | Агенты · quality gates | **Полный live Ollama** ≥ порогов — **не закрыто** (Hermes ReadTimeout CPU; прогон 5 агентов оборвался/долгий) | **2** | `run_agents_quality_gate.py --write-acceptance` |
 | 🟡 | Агенты · quality gates | Hermes: GPU / `EVAL_OLLAMA_TIMEOUT=1200` / ночной прогон 36 кейсов | **2** | 👤/агент |
 | 🟡 | Агенты · quality gates | `[x]` в MAP — только после зелёного `overall_gate` | **2** | после live |
@@ -126,7 +126,6 @@
 | 🟡 | Голос → лиды п.3, п.5 | Spot-check approve / fanout | **1** | 👤 ты |
 | 🟡 | Ф2 §4 / §9 | Кэш enrich + кнопка на карточке лида | **2** | агент по `go` |
 | 🟡 | Лиды п.2 Битрикс синк | Туннель :8000 + вебхук | **2** / DevOps | 👤 ты |
-| 🟡 | Ф2 очередь 1 §1 Voice Layer | Голос вне лидов | **2** | агент по `go` (см. MAP § Порядок Ф2) |
 | 🟡 | Ф2 очередь 5 §8 leadgen голос | Голос `/leadgen` | **2** | агент по `go` |
 | 🟢 | Layout кода (не ops) | Сплит монолитов, backend/data gitignore | **2+** | см. [`debt/REPO_LAYOUT_DEBT.md`](../debt/REPO_LAYOUT_DEBT.md) |
 | 🟢 | Leadgen portrait | LLM review без Groq — graceful fallback | **2** | агент по `go` |

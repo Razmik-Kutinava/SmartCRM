@@ -59,6 +59,7 @@ export function applyVoiceListFilter(view = {}) {
 		search: view.search ?? '',
 		filterIndustry: view.industry ?? view.filterIndustry ?? '',
 		filterCity: view.city ?? view.filterCity ?? '',
+		minScore: view.minScore != null && view.minScore !== '' ? Number(view.minScore) : null,
 	};
 }
 
@@ -102,7 +103,7 @@ function fieldContains(leadVal, filterVal) {
 
 export function filterLeads(
 	leads,
-	{ search = '', filterStage = 'all', filterPriority = 'all', filterIndustry = '', filterCity = '' },
+	{ search = '', filterStage = 'all', filterPriority = 'all', filterIndustry = '', filterCity = '', minScore = null },
 	config = null,
 ) {
 	return leads.filter((l) => {
@@ -110,6 +111,10 @@ export function filterLeads(
 		if (filterPriority !== 'all') {
 			const tier = leadPriorityTier(l.score, config);
 			if (tier.key !== filterPriority) return false;
+		}
+		if (minScore != null && Number.isFinite(minScore)) {
+			const sc = Number(l.score);
+			if (!Number.isFinite(sc) || sc < minScore) return false;
 		}
 		if (!fieldContains(l.industry, filterIndustry)) return false;
 		if (!fieldContains(l.city, filterCity)) return false;

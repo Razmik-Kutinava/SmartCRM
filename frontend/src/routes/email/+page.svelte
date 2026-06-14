@@ -1,5 +1,7 @@
 <script>
     import { onMount } from 'svelte';
+    import { page } from '$app/stores';
+    import { get } from 'svelte/store';
     import {
         fetchEmailAccounts, connectEmailAccount, syncAllEmailAccounts, fetchEmailThreads,
         fetchEmailCampaigns, createCampaign, bindEmailToLead
@@ -77,7 +79,19 @@
             leads     = await fetchLeads();
         } catch (e) { error = e.message; }
     }
-    onMount(load);
+    onMount(() => {
+        const params = get(page).url.searchParams;
+        const subject = params.get('subject');
+        const body = params.get('body');
+        const to = params.get('to');
+        if (subject || body || to) {
+            showCompose = true;
+            if (subject) composeSubject = subject;
+            if (body) composeBody = body;
+            if (to) composeTo = to;
+        }
+        load();
+    });
 
     const HIDDEN_IN_INBOX = new Set(['outbound', 'campaign', 'archive']);
 

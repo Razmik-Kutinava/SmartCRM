@@ -65,7 +65,7 @@
 
 | # | Критерий | Статус |
 |---|----------|--------|
-| 1 | Фундамент: §1 Voice Layer (все модули) + §2 fanout Стратега | 🔲 |
+| 1 | Фундамент: §1 Voice Layer (все модули) + §2 fanout Стратега | 🟡 §1 ✅ · §2 🔲 |
 | 2 | §3 Email: IMAP/SMTP, черновик, апрув и отправка | 🔲 |
 | 3 | §4 RAG: кэш enrich + авто-чанки | 🔲 |
 | 4 | Сценарий **«голосом письмо → апрув → отправка»** E2E | 🔲 |
@@ -344,7 +344,7 @@
 
 | Очередь | MAP § | Блок | Приоритет | Статус |
 |---------|-------|------|-----------|--------|
-| 1 | §1 | Voice Layer — голос вне `/leads` | **фундамент** | 🔲 |
+| 1 | §1 | Voice Layer — голос вне `/leads` | **фундамент** | 🟡 §1 ✅ · §2 🔲 |
 | 2 | §2 | Оркестрация — fanout Стратега | **фундамент** | 🔲 |
 | 3 | §3 | Email-агент | важно | 🔲 |
 | 4 | §4 | Поиск → RAG авто (кэш enrich, авто-чанки) | важно | 🔲 |
@@ -376,12 +376,12 @@
 > **Не Ф1:** голосовой CRUD лидов + mic E2E уже в [«Голос → лиды»](#голос--лиды-базово) (✅ `VOICE_MIC_E2E_ACCEPTANCE.md`). **Здесь — остальные модули:** email, поиск, аналитика, RAG, агенты.  
 > Контракт: [`PRD.md`](PRD.md) Voice Layer · [`ARCHITECTURE.md`](ARCHITECTURE.md#контракт-voice_action)
 
-- [ ] Hermes: `module` + `intent` + `ui_action` для email, поиска, аналитики, агентов, RAG — 🟡 backend+rescue+pytest ✅ [`HERMES_MODULES_ACCEPTANCE.md`](../operations/phase2/voice/HERMES_MODULES_ACCEPTANCE.md)
-- [ ] Событие `voice_action` на фронте (WS `/ws/voice`)
-- [ ] UI: модалка с ответом агента
-- [ ] UI: навигация SvelteKit по голосу
-- [ ] UI: фильтр/подсветка в списках
-- [ ] Апрув перед отправкой/деструктивом (кнопка)
+- [x] Hermes: `module` + `intent` + `ui_action` для email, поиска, аналитики, агентов, RAG — ✅ [`HERMES_MODULES_ACCEPTANCE.md`](../operations/phase2/voice/HERMES_MODULES_ACCEPTANCE.md) · [`VOICE_LAYER_ACCEPTANCE.md`](../operations/phase2/voice/VOICE_LAYER_ACCEPTANCE.md)
+- [x] Событие `voice_action` на фронте (WS `/ws/voice`) — `+layout.svelte` → `handleVoiceAction`
+- [x] UI: модалка с ответом агента — `VoiceActionHost.svelte` (агенты, RAG, email)
+- [x] UI: навигация SvelteKit по голосу — route + `/search?q=` + analytics context
+- [x] UI: фильтр/подсветка в списках — `voiceLeadFilter` + minScore + highlight banner
+- [x] Апрув перед отправкой/деструктивом (кнопка) — delete_lead, send_email, save_to_rag
 
 ### 2. Оркестрация (Стратег fanout)
 

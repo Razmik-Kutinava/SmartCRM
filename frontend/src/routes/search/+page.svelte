@@ -1,7 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { get } from 'svelte/store';
 	import { apiFetch, apiPatch, apiPost } from '$lib/api.js';
 	import { enrichedToLeadPatch, leadToEnrichPayload } from '$lib/search/enrichLeadApply.js';
+	import { voiceSearchQuery } from '$lib/voice/voiceAction.js';
 
 	// ── Провайдеры ───────────────────────────────────────────────────────────────
 	let providers = $state({});
@@ -10,6 +13,22 @@
 			const r = await apiFetch('/api/search/providers');
 			if (r.ok) providers = await r.json();
 		} catch {}
+
+		const params = get(page).url.searchParams;
+		const q = params.get('q');
+		if (q) {
+			activeTab = 'free';
+			fq_query = q;
+		}
+
+		const unsubSearch = voiceSearchQuery.subscribe((val) => {
+			if (!val) return;
+			activeTab = 'free';
+			fq_query = val;
+			voiceSearchQuery.set(null);
+		});
+
+		return () => unsubSearch();
 	});
 
 	// ── Табы ─────────────────────────────────────────────────────────────────────

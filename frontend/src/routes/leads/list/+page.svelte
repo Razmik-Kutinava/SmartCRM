@@ -41,6 +41,7 @@
 	let filterPriority = $state('all');
 	let filterIndustry = $state('');
 	let filterCity = $state('');
+	let filterMinScore = $state(null);
 	let sortBy = $state('score_desc');
 	let showVoice = $state(false); // голос теперь глобальный — в layout
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
@@ -93,7 +94,11 @@
 			search = v.search;
 			filterIndustry = v.filterIndustry;
 			filterCity = v.filterCity;
-			notify('Фильтр применён голосом', 'info');
+			filterMinScore = v.minScore;
+			notify(
+				v.minScore != null ? `Фильтр: скор ≥ ${v.minScore}` : 'Фильтр применён голосом',
+				'info',
+			);
 			voiceLeadFilter.set(null);
 		});
 
@@ -107,7 +112,7 @@
 	let filtered = $derived(
 		applyLeadListView(
 			leads,
-			{ search, filterStage, filterPriority, filterIndustry, filterCity, sortBy },
+			{ search, filterStage, filterPriority, filterIndustry, filterCity, sortBy, minScore: filterMinScore },
 			getCachedCrmConfig(),
 		),
 	);

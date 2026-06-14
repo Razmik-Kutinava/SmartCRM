@@ -4,13 +4,18 @@
 	import { fetchLeads } from '$lib/leadsStorage.js';
 	import { CRM_STAGES, loadCrmConfig } from '$lib/crmStages.js';
 	import { computeAnalytics, formatRub } from '$lib/leads/analyticsMetrics.js';
+	import { voiceAnalyticsContext } from '$lib/voice/voiceAction.js';
 
 	let metrics = $state(null);
 	let loading = $state(true);
 	let err = $state('');
 	let exporting = $state(false);
+	let voiceCtx = $state(null);
 
 	onMount(async () => {
+		const unsubVoice = voiceAnalyticsContext.subscribe((v) => {
+			voiceCtx = v;
+		});
 		await loadCrmConfig();
 		try {
 			const r = await apiFetch('/api/leads/analytics/summary');
@@ -30,6 +35,7 @@
 		} finally {
 			loading = false;
 		}
+		return () => unsubVoice();
 	});
 
 	async function exportReport() {
@@ -57,6 +63,13 @@
 		<div>
 			<h1 class="text-lg font-semibold text-white">Аналитика CRM</h1>
 			<p class="text-xs text-gray-500">Воронка и KPI по лидам в БД</p>
+			{#if voiceCtx?.periodLabel || voiceCtx?.title}
+				<p class="text-xs text-indigo-400 mt-1" data-testid="voice-analytics-context">
+					🎙 {voiceCtx.title || 'Аналитика'}
+					{#if voiceCtx.periodLabel} · период: {voiceCtx.periodLabel}{/if}
+					{#if voiceCtx.source} · источник: {voiceCtx.source}{/if}
+				</p>
+			{/if}
 		</div>
 		<button
 			type="button"

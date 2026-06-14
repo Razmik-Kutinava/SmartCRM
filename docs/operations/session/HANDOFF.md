@@ -1,12 +1,12 @@
 # HANDOFF
 
-`Спринт:[Ф2] | Задача:[Voice Layer §1 Hermes modules] | Статус: backend ✅ · UI voice_action — следующий шаг`
+`Спринт:[Ф2] | Задача:[Voice Layer §1 — закрыт] | Статус: ✅ Hermes + UI voice_action`
 
-> **→ Следующий агент:** [`operations/README.md`](../README.md) → [`phase2/voice/HERMES_MODULES_ACCEPTANCE.md`](../phase2/voice/HERMES_MODULES_ACCEPTANCE.md)
+> **→ Следующий агент:** [`operations/README.md`](../README.md) → [`phase2/voice/VOICE_LAYER_ACCEPTANCE.md`](../phase2/voice/VOICE_LAYER_ACCEPTANCE.md)
 
-**2026-06-13 (Ф2 §1):** Hermes `module` + `intent` + `ui_action` для email, search, analytics, agents, RAG — **backend+rescue+pytest ✅**. Smoke: `python scripts/smoke_hermes_modules.py` (47 passed). Acceptance: `HERMES_MODULES_ACCEPTANCE.md`. MAP п.379 — 🟡 (галочка после «ок»). **Коммит:** `42b14d1`.
+**2026-06-14 (Ф2 §1 закрыт):** Voice Layer полностью — Hermes `module`+`ui_action`, фронт (WS, modal, navigate, filter/minScore, approve send_email/save_to_rag), rescue eval `cases_modules.jsonl`, smoke `scripts/smoke_voice_layer.py` **72 passed**. MAP §1 п.379–384 — `[x]`. Хвост 🟢: live LLM eval (не rescue) — опционально.
 
-**Следующий `go`:** Voice Layer §1 п.2–5 (WS voice_action UI) **или** §2 fanout **или** full live gate.
+**Следующий `go`:** §2 fanout Стратега **или** очередь 5 §8 leadgen+голос **или** full live gate.
 
 **Quality gates (фон):** full live gate 🔲 — `GATE_FULL_RUNBOOK.md`.
 
