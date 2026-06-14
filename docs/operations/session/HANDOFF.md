@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[email cleanup — legacy route + BACKLOG me@] | Статус: ✅ done`
+
+> **→ Следующий агент:** §3 Email-агент п.405 «Анализ типа письма + черновик» — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14 (cleanup):** Удалён `email/[mailbox].svelte`; BACKLOG `me@agneko.am` закрыт (пароль в `.env`); PRD_MAP инфра п.5 ✅; pytest 9 passed. **Коммит:** `1bd3c95`.
+
+**Следующий `go`:** §3 п.405 анализ + черновик (Маркетолог).
+
+---
+
 `Спринт:[Ф2] | Задача:[§3 email п.404 список /email] | Статус: ✅ done`
 
 > **→ Следующий агент:** §3 Email-агент п.405 «Анализ типа письма + черновик» — [`PRD_MAP.md`](../product/PRD_MAP.md)
