@@ -32,7 +32,7 @@ from .providers import (
     _search_serper,
     _search_tavily,
 )
-from .company_search import free_search, search_company
+from .relevance import enrich_results_with_relevance
 
 async def search_for_rag(
     query: str,
@@ -94,10 +94,13 @@ async def search_for_rag(
         url = r.get("url", "").lower()
         r["is_pdf"] = url.endswith(".pdf") or "filetype:pdf" in url or "/pdf/" in url
 
+    scored, threshold = enrich_results_with_relevance(search_query, deduped)
+
     return {
-        "results":        deduped,
+        "results":        scored,
         "providers_used": providers_used,
         "query_used":     search_query,
+        "relevance_threshold": threshold,
     }
 
 

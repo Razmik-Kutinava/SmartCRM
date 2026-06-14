@@ -411,7 +411,7 @@
 > Пайплайн Search-to-Q&A: [`RAG.md`](../stack/RAG.md#search-to-qa-фаза-2)  
 > **Enrich Ф1 закрыт** — `/search` + PATCH в карточку: [`SEARCH_ENRICH_LEAD_ACCEPTANCE.md`](../operations/phase1/search/SEARCH_ENRICH_LEAD_ACCEPTANCE.md)
 
-- [ ] Авто-чанки при релевантности > порога
+- [x] Авто-чанки при релевантности > порога — ✅ [`SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md`](../operations/phase2/rag/SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md)
 - [ ] Факты из диалога агента → RAG
 - [ ] «Сохранить в базу» везде в поиске
 - [ ] **Кэш результата enrich** (ключ: company + ИНН + industry, TTL ~24 ч) — повторный запрос без 60–90 с и без лишних Serper/Brave/Groq *(сейчас кэшируется только Brave по одному поисковому запросу)*

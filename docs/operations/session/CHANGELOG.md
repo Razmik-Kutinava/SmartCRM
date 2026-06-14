@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §4 п.1: авто-чанки Search→RAG
+
+**Сделано:** relevance score + `RAG_AUTO_RELEVANCE_THRESHOLD`; `POST /auto-ingest-rag`; UI автовыбор на `/search`; pytest 10 passed; `SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md`; MAP п.414→п.1 `[x]`.
+
 ## 2026-06-14 — Ф2 §3 п.407: голосовые команды email
 
 **Сделано:** list_emails/write_email/send_email E2E; marketer в оркестраторе; voiceEmailContext на `/email`; modal send→approve; pytest 12+ passed; `EMAIL_VOICE_COMMANDS_ACCEPTANCE.md`; MAP п.407 `[x]`; **§3 Email-агент закрыт.**

@@ -45,6 +45,8 @@
 
 `[2026-06-13] | PRD_MAP: переход Ф1→Ф2 | DoD Ф1 6/6; хвосты L306–318 не блокируют; PHASE2_ENTRY.md | **Push:** ждём go | **Ф2 код:** ждём go + номер очереди | gate live — параллельно`
 
+`[2026-06-14] | PRD_MAP: «§4 Авто-чанки» | Отложено: LLM-структурирование пар {question, answer} перед ingest (сейчас heuristic Q&A) | Причина: scope п.1 — порог + авто-путь без live LLM в CI | Нужна фаза MAP: 2 | Из шага: п.1 auto-chunks | Действие: опц. `RAG_AUTO_STRUCTURE_LLM=1` + eval`
+
 `[2026-06-13] | PRD_MAP: quality gates шаг 6 | Коммит 7be7bdb: tuning import failed, delta was→became % | **Не вышло:** live gate MAP 🔲 | Действие: EVAL_OLLAMA_TIMEOUT=1200`
 
 `[2026-06-13] | PRD_MAP: Агенты quality gates UI финал | Коммит 596d2e1: вкладки Hermes/gate, download, режимы, bulk→eval-failed-gate, insights pass rate | **Не вышло:** live gate MAP 🔲; agents-only оборван analyst | Действие: EVAL_OLLAMA_TIMEOUT=1200 --write-acceptance`

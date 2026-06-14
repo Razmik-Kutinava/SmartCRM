@@ -974,10 +974,18 @@ async def search_for_rag(
         url = r.get("url", "").lower()
         r["is_pdf"] = url.endswith(".pdf") or "filetype:pdf" in url or "/pdf/" in url
 
+    try:
+        from rag.search.relevance import enrich_results_with_relevance
+
+        scored, threshold = enrich_results_with_relevance(search_query, deduped)
+    except Exception:
+        scored, threshold = deduped, 65
+
     return {
-        "results":        deduped,
+        "results":        scored,
         "providers_used": providers_used,
         "query_used":     search_query,
+        "relevance_threshold": threshold,
     }
 
 

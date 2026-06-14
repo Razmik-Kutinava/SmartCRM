@@ -9,6 +9,7 @@ POST   /api/search/ask             — свободный запрос с LLM-о
 POST   /api/search/prospect        — проспектинг по ICP
 POST   /api/search/enrich-lead     — обогащение лида
 POST   /api/search/find-for-rag    — поиск контента для RAG
+POST   /api/search/auto-ingest-rag — авто-чанки при relevance > порога
 POST   /api/search/agent-task      — задача агенту через поиск (ReAct)
 """
 from __future__ import annotations
@@ -55,6 +56,13 @@ class EnrichLeadBody(BaseModel):
 class FindForRagBody(BaseModel):
     query: str
     content_type: str = "any"  # 'any' | 'pdf' | 'article' | 'docs'
+
+
+class AutoIngestRagBody(BaseModel):
+    query: str
+    content_type: str = "any"
+    for_agent: str = "all"
+    dry_run: bool = False
 
 
 class AgentTaskBody(BaseModel):
@@ -197,6 +205,26 @@ async def find_for_rag_search(body: FindForRagBody):
         return {"ok": True, **result}
     except Exception as e:
         logger.error("Search /find-for-rag ошибка: %s", e)
+        raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
+
+
+@router.post("/auto-ingest-rag")
+async def auto_ingest_rag_search(body: AutoIngestRagBody):
+    """Авто-чанки: поиск → relevance > порога → ingest в Chroma."""
+    if not body.query.strip():
+        raise HTTPException(400, detail="query обязателен")
+    try:
+        from rag.auto_ingest import auto_ingest_from_query
+
+        result = await auto_ingest_from_query(
+            query=body.query.strip(),
+            content_type=body.content_type,
+            for_agent=body.for_agent,
+            dry_run=body.dry_run,
+        )
+        return result
+    except Exception as e:
+        logger.error("Search /auto-ingest-rag ошибка: %s", e)
         raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
 
 

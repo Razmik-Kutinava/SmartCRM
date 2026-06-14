@@ -4,6 +4,7 @@ from .company_search import free_search, search_company
 from .config import load_config, save_config
 from .prospect import enrich_lead, prospect_companies
 from .rag_queries import agent_task_search, search_for_rag
+from .relevance import enrich_results_with_relevance, get_relevance_threshold
 
 __all__ = [
     "load_config",
@@ -16,4 +17,6 @@ __all__ = [
     "agent_task_search",
     "cache_clear",
     "cache_list",
+    "enrich_results_with_relevance",
+    "get_relevance_threshold",
 ]

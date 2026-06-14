@@ -72,7 +72,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `tasks.py` | `/api/tasks` | Задачи по лидам, SLA, фильтр `lead_id` |
 | `email.py` | `/api/email` | IMAP/SMTP, connect, bootstrap, `GET /sync/status`, sync, `POST /threads/{id}/analyze` |
 | `agent_email.py` | `/api/agent-email` | AI-черновики писем по лиду |
-| `search.py` | `/api/search` | Поиск компаний (RAG + веб) |
+| `search.py` | `/api/search` | Поиск компаний; `auto-ingest-rag` при relevance > порога |
 | `rag.py` | `/api/rag` | Загрузка документов, поиск в Chroma |
 | `news.py` | `/api/news` | Новости по компании |
 | `usage.py` | `/api/usage` | Лимиты внешних API (Checko и др.) |

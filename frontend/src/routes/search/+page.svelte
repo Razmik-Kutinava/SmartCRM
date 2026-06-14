@@ -220,6 +220,7 @@
 	let rg_ingesting   = $state(false);
 	let rg_ingest_msg  = $state('');
 	let rg_ingest_ok   = $state(false);
+	let rg_auto_loading = $state(false);
 
 	const RAG_AGENTS = [
 		{ id: 'all',             label: 'Все агенты' },
@@ -239,6 +240,10 @@
 			rg_result = await post('/api/search/find-for-rag', {
 				query: rg_query.trim(), content_type: rg_type,
 			});
+			const eligible = (rg_result?.results || [])
+				.map((r, i) => (r.auto_eligible ? i : null))
+				.filter((i) => i !== null);
+			rg_approved = new Set(eligible);
 		} catch (e) { rg_err = e.message; }
 		finally { rg_running = false; }
 	}
@@ -259,6 +264,34 @@
 			text: [r.title, r.snippet, r.url ? `Источник: ${r.url}` : ''].filter(Boolean).join('\n\n'),
 			metadata: { source: r.url || r.source || '', title: r.title || '' },
 		}));
+	}
+
+	function ragEligibleCount() {
+		return (rg_result?.results || []).filter((r) => r.auto_eligible).length;
+	}
+
+	async function runAutoIngestRag() {
+		if (!rg_query.trim() || rg_auto_loading) return;
+		rg_auto_loading = true;
+		rg_err = '';
+		rg_ingest_msg = '';
+		try {
+			const data = await post('/api/search/auto-ingest-rag', {
+				query: rg_query.trim(),
+				content_type: rg_type,
+				for_agent: rg_agent,
+				dry_run: false,
+			});
+			if (data.ok) {
+				rg_ingest_ok = true;
+				rg_step = 'done';
+				rg_ingest_msg = `Авто: ${data.ingested} док. · ${data.total_chunks} чанков (порог ${data.threshold}, eligible ${data.eligible})`;
+				if (data.errors?.length) rg_ingest_msg += `. Ошибки: ${data.errors.join('; ')}`;
+			} else {
+				rg_err = data.detail || 'Авто-ингест не удался';
+			}
+		} catch (e) { rg_err = e.message; }
+		finally { rg_auto_loading = false; }
 	}
 
 	// Шаг 1 → показать превью чанков (dry_run)
@@ -810,13 +843,26 @@
 			</div>
 
 			<div class="flex flex-wrap items-center justify-between gap-2">
-				<div class="flex items-center gap-3 text-xs text-gray-500">
-					<span>Найдено: {rg_result.results.length} · Выбрано: <span class="text-white font-medium">{rg_approved.size}</span></span>
+				<div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+					<span>Найдено: {rg_result.results.length} · Выбрано: <span class="text-white font-medium">{rg_approved.size}</span>
+						· Порог: <span class="text-amber-400">{rg_result.relevance_threshold ?? 65}</span>
+						· Авто: <span class="text-emerald-400">{ragEligibleCount()}</span>
+					</span>
 					<button onclick={selectAllRag} class="text-indigo-400 hover:text-indigo-300">Выбрать все</button>
 					{#if rg_approved.size > 0}
 						<button onclick={() => rg_approved = new Set()} class="text-gray-500 hover:text-gray-300">Сбросить</button>
 					{/if}
 				</div>
+				<div class="flex items-center gap-2">
+					{#if ragEligibleCount() > 0}
+						<button
+							type="button"
+							data-testid="search-rag-auto-ingest"
+							onclick={runAutoIngestRag}
+							disabled={rg_auto_loading}
+							class="px-3 py-1.5 text-xs rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white disabled:opacity-40"
+						>{rg_auto_loading ? '⟳ Авто...' : `⚡ Авто-чанки (>${rg_result.relevance_threshold ?? 65})`}</button>
+					{/if}
 				<button
 					type="button"
 					data-testid="search-rag-preview"
@@ -826,6 +872,7 @@
 				>
 					{rg_previewing ? '⟳ Анализирую...' : `Посмотреть чанки (${rg_approved.size} доков) →`}
 				</button>
+				</div>
 			</div>
 
 			<div class="space-y-2">
@@ -848,6 +895,10 @@
 							<div class="flex-1 min-w-0">
 								<div class="flex items-center gap-2 mb-1">
 									<span class="text-sm font-medium text-white">{r.title}</span>
+									{#if r.relevance != null}
+										<span class="text-xs font-mono px-1.5 py-0.5 rounded {scoreColor(r.relevance)} bg-gray-950/80">{r.relevance}%</span>
+									{/if}
+									{#if r.auto_eligible}<span class="text-xs px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 rounded">авто</span>{/if}
 									{#if r.is_pdf}<span class="text-xs px-1.5 py-0.5 bg-red-900/40 text-red-400 rounded">PDF</span>{/if}
 									<span class="text-xs text-gray-600">{r.source}</span>
 								</div>

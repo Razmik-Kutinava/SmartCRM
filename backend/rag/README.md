@@ -15,6 +15,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `enrich_sources.py` | Checko/ИНН, таргет-запросы, парсинг сайта для enrich |
 | `brave_limit.py` | Кэш и semaphore Brave (429) |
 | `rag_queries.py` | Запросы к Chroma |
+| `relevance.py` | Score релевантности для авто-чанков |
 | `cache.py` | Кэш поиска |
 | `config.py` | Ключи и лимиты |
 
@@ -29,6 +30,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `chroma_store.py` | Работа с ChromaDB |
 | `chroma.py` | Низкоуровневый клиент |
 | `ingest.py` | Загрузка в индекс; `ingest_manual_text` + `_metadata_from_search_doc` (URL → `source_url` в чанках) |
+| `auto_ingest.py` | Авто-чанки Search→RAG при relevance > порога |
 | `retrieve.py` | Получение чанков по запросу |
 | `chunking.py` | Разбиение текста на чанки |
 | `parsers.py` | Парсинг PDF/HTML для ingest |
