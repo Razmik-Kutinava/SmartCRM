@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§3 email п.406 апрув и отправка] | Статус: ✅ done`
+
+> **→ Следующий агент:** §3 Email-агент п.407 «Голосовые команды email» — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14 (Ф2 §3 п.406):** EmailApproveModal на `/email` (reply + compose); voice send_email approve с превью + thread_id reply; pytest 8 passed; MAP п.406 `[x]`. **Коммит:** `1b3cfb3`.
+
+**Следующий `go`:** §3 п.407 голосовые команды email.
+
+---
+
 `Спринт:[Ф2] | Задача:[§3 email п.405 анализ + черновик] | Статус: ✅ done`
 
 > **→ Следующий агент:** §3 Email-агент п.406 «Апрув и отправка» — [`PRD_MAP.md`](../product/PRD_MAP.md)
