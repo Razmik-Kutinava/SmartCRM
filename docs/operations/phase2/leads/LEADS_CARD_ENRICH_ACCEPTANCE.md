@@ -34,4 +34,4 @@ python scripts/smoke_search_enrich_lead.py
 
 ## Не в scope
 
-- Голос «обогати лид …» (опц. MAP §9 п.2)
+- ~~Голос «обогати лид …»~~ — закрыто в `LEADS_ENRICH_VOICE_ACCEPTANCE.md`

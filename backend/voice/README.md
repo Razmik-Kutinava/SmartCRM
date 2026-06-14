@@ -8,6 +8,7 @@
 | `voice_action.py` | Сборка пакета `voice_action` (modal / navigate / filter / approve) для WS |
 | `synthesis.py` | Синтез fanout → блок `payload.synthesis` для modal |
 | `lead_context.py` | История лида (audit/comments/comms) для `lead_history` |
+| `enrich_context.py` | Preview enrich-lead для `enrich_lead` (апрув перед PATCH) |
 | `rag_context.py` | Ответ из RAG (Chroma) для `ask_rag` |
 | `whisper.py` | Распознавание речи (Groq Whisper / локально) |
 | `audio_preprocess.py` | Нормализация аудио перед Whisper |

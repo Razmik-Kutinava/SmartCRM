@@ -72,6 +72,19 @@ def test_voice_action_analytics_query_builder():
     assert "voiceTenderContext" in text
 
 
+def test_voice_enrich_modal_marker():
+    text = _HOST.read_text(encoding="utf-8")
+    assert "voice-enrich-preview" in text
+    assert "applyVoiceEnrich" in text
+
+
+def test_lead_card_enrich_marker():
+    path = _REPO / "frontend" / "src" / "routes" / "leads" / "[id]" / "+page.svelte"
+    text = path.read_text(encoding="utf-8")
+    assert "lead-card-enrich" in text
+    assert "enrichLeadOnCard" in text
+
+
 def test_leadgen_voice_context_marker():
     path = _REPO / "frontend" / "src" / "routes" / "leadgen" / "+page.svelte"
     text = path.read_text(encoding="utf-8")

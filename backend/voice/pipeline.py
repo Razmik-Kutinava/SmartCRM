@@ -101,6 +101,15 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
             agent_result = await fetch_rag_answer(slots, text)
             if agent_result.get("final_reply"):
                 final_reply = agent_result["final_reply"]
+        elif intent == "enrich_lead":
+            from voice.enrich_context import fetch_enrich_preview
+
+            agent_result = await fetch_enrich_preview(slots)
+            if agent_result.get("final_reply"):
+                final_reply = agent_result["final_reply"]
+            lid = agent_result.get("lead_id")
+            if lid is not None:
+                slots = {**slots, "lead_id": lid}
         elif intent not in _NAV_ONLY:
             from agents.orchestrator import run_agents
 

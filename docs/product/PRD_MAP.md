@@ -448,7 +448,7 @@
 > **Ближайшее в Ф2** после закрытия Voice Layer / авто-RAG. Ф1: таб «Обогащение» на `/search`, выбор лида, «Сохранить в карточку» — ✅.
 
 - [x] Кнопка **«Обогатить»** на карточке `/leads/{id}` (one-click → `enrich-lead` → PATCH полей без перехода в `/search`) — ✅ [`LEADS_CARD_ENRICH_ACCEPTANCE.md`](../operations/phase2/leads/LEADS_CARD_ENRICH_ACCEPTANCE.md)
-- [ ] (опц.) Голос Hermes: «обогати лид …» — тот же пайплайн, апрув перед записью
+- [x] (опц.) Голос Hermes: «обогати лид …» — modal preview + апрув перед PATCH · [`LEADS_ENRICH_VOICE_ACCEPTANCE.md`](../operations/phase2/leads/LEADS_ENRICH_VOICE_ACCEPTANCE.md)
 
 ---
 
@@ -512,7 +512,7 @@
 | Баллы | 1 (+P3) | ✅ | P3: SLA-протоколы |
 | Голос лиды | 1 | ✅ (хвосты 🟡) 2026-06-11 | `VOICE_MIC_E2E_ACCEPTANCE.md`; п.3/5 spot-check → `BACKLOG` |
 | Поиск/RAG | 1→2 | ✅ база | Ф2 §4: кэш enrich, авто-чанки |
-| Лиды enrich | 2 | ✅ | Ф2 §9: кнопка на карточке — `LEADS_CARD_ENRICH_ACCEPTANCE.md` |
+| Лиды enrich | 2 | ✅ | Ф2 §9: кнопка + голос enrich — `LEADS_CARD_ENRICH_ACCEPTANCE.md`, `LEADS_ENRICH_VOICE_ACCEPTANCE.md` |
 | Лидоген | 1→2 | ✅ Ф1 | **Ф2 §8:** голос ✅ · `LEADGEN_VOICE_F2_ACCEPTANCE.md` |
 | Тендеры | 1→2→3 | ✅ baseline 2026-06-11 | `TENDERS_BASELINE_ACCEPTANCE.md` · Ф2 §7 голос/платный API |
 | Email | 2→3 | 🔲 | Ф2 §3: IMAP |

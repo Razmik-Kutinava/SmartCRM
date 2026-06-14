@@ -45,7 +45,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `api/test_leadgen_cluster_api.py` | POST `/api/leadgen/cluster` (ИНН якоря, 400) |
 | `leadgen/test_cluster.py` | `run_cluster` mock: дочка + материнская |
 | `test_voice_pipeline.py` | Hermes интенты, orchestrator, голос |
-| `voice/test_voice_action.py` | Сборка пакета voice_action |
+| `voice/test_enrich_voice.py` | Голос enrich_lead: rescue, modal, WS без orchestrator (Ф2 §9) |
 | `voice/test_synthesis.py` | Синтез fanout → modal payload |
 | `agents/scenarios/test_tender_evaluation.py` | Сценарий evaluate_tender |
 | `agents/scenarios/test_weekly_report.py` | Сценарий weekly_report |

@@ -31,7 +31,7 @@ _ROUTE_BY_INTENT: dict[str, str] = {
     "list_emails": "/email",
     "send_email": "/email",
     "search_web": "/search",
-    "enrich_lead": "/search",
+    "enrich_lead": "/leads/list",
     "generate_lead": "/leadgen",
     "find_leads_portrait": "/leadgen",
     "cluster_company": "/leadgen",
@@ -61,6 +61,7 @@ _ANALYTICS_TITLES = {
     "generate_lead": "Лидоген по ИНН",
     "find_leads_portrait": "Поиск по портрету",
     "cluster_company": "Кластер компаний",
+    "enrich_lead": "Обогатить лид",
 }
 
 
@@ -150,6 +151,10 @@ def build_voice_action(
             base["route"] = MODULE_ROUTES.get("analytics", "/leads/analytics")
         elif intent == "find_similar_clients":
             base["route"] = MODULE_ROUTES.get("leadgen", "/leadgen")
+        elif intent == "enrich_lead":
+            lid = agent_result.get("lead_id") or slots.get("lead_id")
+            if lid is not None:
+                base["route"] = f"/leads/{lid}"
         lid = agent_result.get("lead_id")
         if intent == "lead_history" and lid is not None:
             base["route"] = f"/leads/{lid}"
@@ -163,6 +168,8 @@ def build_voice_action(
 
 def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
     if intent in ("analyze_and_email", "evaluate_tender", "weekly_report", "find_similar_clients"):
+        return "modal"
+    if intent == "enrich_lead" and agent_result.get("agents_ran"):
         return "modal"
     if intent in SYNTHESIS_MODAL_INTENTS and has_multi_agent_synthesis(agent_result):
         return "modal"
@@ -395,6 +402,23 @@ def _modal_payload(
         if analyst.get("ideal_profile"):
             payload["ideal_profile"] = analyst.get("ideal_profile")
 
+    if intent == "enrich_lead":
+        payload["scenario"] = "enrich_lead"
+        if agent_result.get("lead_id") is not None:
+            payload["lead_id"] = agent_result["lead_id"]
+        if agent_result.get("company"):
+            payload["company"] = agent_result["company"]
+        enriched = agent_result.get("enriched")
+        if isinstance(enriched, dict) and enriched:
+            payload["enriched"] = enriched
+        preview = agent_result.get("patch_preview")
+        if isinstance(preview, dict) and preview:
+            payload["patch_preview"] = preview
+        if agent_result.get("cached"):
+            payload["cached"] = True
+        if agent_result.get("enrich_output"):
+            payload["enrich_output"] = agent_result["enrich_output"]
+
     if analyst:
         payload["analysis"] = analyst
     if economist:
@@ -421,6 +445,8 @@ def _modal_payload(
     actions = ["save", "reject"]
     if intent == "find_similar_clients":
         actions = ["add", "reject"]
+    if intent == "enrich_lead":
+        actions = ["apply", "reject"] if agent_result.get("patch_preview") else ["reject"]
     if email.get("subject") or email.get("body"):
         actions = ["send", "save", "reject"]
     payload["actions"] = actions
@@ -479,6 +505,9 @@ def _title(intent: str, ui: str, slots: dict) -> str:
     if ui == "modal" and intent == "find_similar_clients":
         anchor = slots.get("company") or slots.get("inn") or ""
         return synthesis_title("find_similar_clients", anchor) or "Похожие клиенты"
+    if ui == "modal" and intent == "enrich_lead":
+        company = slots.get("company") or ""
+        return synthesis_title("enrich_lead", company) or "Обогатить лид"
     if ui == "modal" and intent == "analyze_and_email":
         company = slots.get("company") or slots.get("query") or ""
         return synthesis_title("analyze_and_email", company) or "Анализ + письмо"
@@ -524,5 +553,6 @@ def synthesis_title(intent: str, company: str = "") -> str:
         "evaluate_tender": f"Оценка тендера{suffix}",
         "weekly_report": f"Еженедельный отчёт{suffix}",
         "find_similar_clients": f"Похожие клиенты{suffix}",
+        "enrich_lead": f"Обогатить лид{suffix}",
     }
     return titles.get(intent, "Синтез агентов")

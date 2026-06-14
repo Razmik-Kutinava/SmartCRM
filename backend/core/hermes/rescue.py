@@ -183,6 +183,26 @@ def rescue_route(text: str) -> dict | None:
             "_model": "rescue",
         })
 
+    from agents.scenarios.enrich_voice import (
+        AGENTS as ENRICH_AGENTS,
+        INTENT as ENRICH_INTENT,
+        enrich_slots_from_text,
+        matches_rescue as enrich_matches_rescue,
+    )
+
+    if enrich_matches_rescue(text):
+        slots_en = enrich_slots_from_text(text)
+        anchor = slots_en.get("company") or slots_en.get("lead_id") or ""
+        suffix = f" {anchor}" if anchor else ""
+        return enrich_module_ui({
+            "intent": ENRICH_INTENT,
+            "agents": list(ENRICH_AGENTS),
+            "slots": slots_en,
+            "parallel": False,
+            "reply": f"Обогащаю карточку{suffix} — подтверди запись.",
+            "_model": "rescue",
+        })
+
     from agents.scenarios.similar_clients import (
         AGENTS as SIMILAR_AGENTS,
         INTENT as SIMILAR_INTENT,

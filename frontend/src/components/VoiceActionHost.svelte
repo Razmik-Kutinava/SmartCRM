@@ -2,6 +2,7 @@
 	import { voiceModal, voiceApprove, resolveVoiceApprove, closeVoiceModal, voiceToast } from '$lib/voice/voiceAction.js';
 	import { goto } from '$app/navigation';
 	import { importLookalikeLeads } from '$lib/voice/lookalikeImport.js';
+	import { applyVoiceEnrich } from '$lib/voice/voiceEnrichApply.js';
 
 	function queueSendEmailApprove(modal) {
 		const em = modal.payload?.draft_email;
@@ -40,6 +41,22 @@
 					voiceToast.set(msg);
 					closeVoiceModal();
 					goto('/leads/list');
+				})
+				.catch((e) => voiceToast.set(e?.message || String(e)));
+			return;
+		}
+		if (kind === 'apply' && m.intent === 'enrich_lead') {
+			applyVoiceEnrich(m)
+				.then(({ applied, patch }) => {
+					const lid = m.payload?.lead_id;
+					if (applied) {
+						voiceToast.set(`Обновлено: ${Object.keys(patch).join(', ')}`);
+						closeVoiceModal();
+						if (lid) goto(`/leads/${lid}`);
+					} else {
+						voiceToast.set('Новых полей для записи нет');
+						closeVoiceModal();
+					}
 				})
 				.catch((e) => voiceToast.set(e?.message || String(e)));
 			return;
@@ -158,6 +175,24 @@
 							<div class="text-indigo-200 font-medium">{$voiceModal.payload.report.open_tasks ?? '—'}</div>
 						</div>
 					</div>
+				</section>
+			{/if}
+
+			{#if $voiceModal.payload?.scenario === 'enrich_lead'}
+				<section class="mb-4 rounded-lg border border-amber-900/40 bg-amber-950/20 p-4" data-testid="voice-enrich-preview">
+					<h3 class="text-xs uppercase text-amber-500/90 mb-2">Поля для записи</h3>
+					{#if $voiceModal.payload.cached}
+						<p class="text-xs text-yellow-400 mb-2">из кэша enrich (24 ч)</p>
+					{/if}
+					{#if $voiceModal.payload.patch_preview && Object.keys($voiceModal.payload.patch_preview).length}
+						<ul class="text-sm text-gray-200 space-y-1">
+							{#each Object.entries($voiceModal.payload.patch_preview) as [key, val]}
+								<li><span class="text-gray-500">{key}:</span> {val}</li>
+							{/each}
+						</ul>
+					{:else}
+						<p class="text-sm text-gray-400">Новых полей не найдено</p>
+					{/if}
 				</section>
 			{/if}
 
@@ -304,7 +339,7 @@
 							 'bg-gray-700 text-gray-200 hover:bg-gray-600'}"
 						onclick={() => modalAction(act)}
 					>
-						{act === 'send' ? 'Отправить' : act === 'add' ? 'В лидоген' : act === 'save' ? 'Закрыть' : 'Отмена'}
+						{act === 'send' ? 'Отправить' : act === 'add' ? 'Добавить' : act === 'apply' ? 'Применить в карточку' : act === 'save' ? 'Закрыть' : 'Отмена'}
 					</button>
 				{/each}
 			</div>
