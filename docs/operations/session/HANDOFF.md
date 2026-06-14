@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§8 Лидоген + голос] | Статус: ✅ done`
+
+> **→ Следующий агент:** §1 Voice Layer или Ф3 gate tuning — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14 (§8):** live UI autorun `/leadgen`, voiceLeadgenContext, won-portrait API (DB), lookalike modal+import; pytest 23 passed; DevTools `/leadgen?autorun=1`; MAP §8 закрыт. **Коммит:** `0c3ae08`.
+
+**Следующий `go`:** §1 Voice Layer (единый контракт) или Ф3 gate.
+
+---
+
 `Спринт:[Ф2] | Задача:[§7 Тендеры] | Статус: ✅ done`
 
 > **→ Следующий агент:** §8 Лидоген + голос — [`PRD_MAP.md`](../product/PRD_MAP.md) · **Ф3:** gate tuning по `go`

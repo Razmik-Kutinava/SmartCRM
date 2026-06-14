@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-14 | Действие: §8 Лидоген+голос: voice navigate autorun /leadgen, won-portrait DB, lookalike modal; pytest 23 passed; DevTools autorun; MAP §8 закрыт. | Коммит: `0c3ae08` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §1 Voice Layer или Ф3 gate. | Статус: done
+
 2026-06-14 | Действие: §7 Тендеры: evaluate+document_text, voice search/list, linked_lead_id, link/create-lead UI; pytest 20 passed; MAP §7 закрыт. | Коммит: `829d340` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §8. | Статус: done
 
 2026-06-14 | Действие: §6 Аналитика+голос: period/source API+UI, conversionBySource, voice query navigate; pytest 47 passed; MAP §6 закрыт. | Коммит: `3911386` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §7. | Статус: done

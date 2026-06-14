@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §8: Лидоген + голос
+
+**Сделано:** navigate-only leadgen voice (`generate_lead`, `find_leads_portrait`, `cluster_company`); `voiceLeadgenContext` + autorun на `/leadgen`; `GET /won-portrait` из БД; lookalike won + `lookalike-import`; pytest 23 passed; DevTools autorun; `LEADGEN_VOICE_F2_ACCEPTANCE.md`; MAP §8 `[x]`. **Коммит:** `0c3ae08`.
+
 ## 2026-06-14 — Ф2 §7: Тендеры + голос
 
 **Сделано:** `POST /evaluate` с document_text; `search_tenders`/`list_tenders` voice; `linked_lead_id` + link/create-lead API; UI `/tenders` + `tenderLink` на карточке лида; pytest 20 passed; `TENDERS_VOICE_ACCEPTANCE.md`; MAP §7 `[x]`. **Коммит:** `829d340`.
