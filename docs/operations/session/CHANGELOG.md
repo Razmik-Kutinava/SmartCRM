@@ -4,7 +4,7 @@
 
 ## 2026-06-14 — Ф2 §5 доп: Hermes prompt versioning
 
-**Сделано:** версии Hermes в `hermes_prompt_store` + API `/hermes/prompt/versions/*`; UI `/ops/intents/improve`; `PromptVersionPanel` через `promptBasePath`; compare-роут до `{version_id}`; pytest 27 passed. **Коммит:** `<hash>`.
+**Сделано:** версии Hermes в `hermes_prompt_store` + API `/hermes/prompt/versions/*`; UI `/ops/intents/improve`; `PromptVersionPanel` через `promptBasePath`; compare-роут до `{version_id}`; pytest 27 passed. **Коммит:** `60a045b`.
 
 ## 2026-06-14 — Ф2 §5: версионирование промптов в Ops
 

@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §6 Аналитика + голос — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-14 (§5 хвост):** Hermes versioning на `/ops/intents/improve`; `hermes_prompt_store` + API; общий `PromptVersionPanel`; pytest 27 passed; хвост A закрыт. **Коммит:** `<hash>`.
+**2026-06-14 (§5 хвост):** Hermes versioning на `/ops/intents/improve`; `hermes_prompt_store` + API; общий `PromptVersionPanel`; pytest 27 passed; хвост A закрыт. **Коммит:** `60a045b`.
 
 **Следующий `go`:** §6 аналитика+голос.
 

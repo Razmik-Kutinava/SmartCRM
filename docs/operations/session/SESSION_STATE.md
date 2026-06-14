@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-14 | Действие: §5 доп — Hermes prompt versions: store+API+UI improve; PromptVersionPanel общий; pytest 27 passed; хвост A закрыт. | Коммит: `<hash>` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §6. | Статус: done
+2026-06-14 | Действие: §5 доп — Hermes prompt versions: store+API+UI improve; PromptVersionPanel общий; pytest 27 passed; хвост A закрыт. | Коммит: `60a045b` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §6. | Статус: done
 
 2026-06-14 | Действие: Ф2 §5 — версии промптов Ops: store, restore, compare, UI /ops/agents; pytest 26 passed; §5 закрыт. | Коммит: `a883410` | Хвост A: Hermes prompt versioning — не делали | Хвост B: нет | Хвост C: нет | Следующий шаг: go §6 аналитика. | Статус: done
 
