@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §2 п.395: сценарий еженедельный отчёт
+
+**Сделано:** `weekly_report`; report_context; analyst/economist/marketer/strategist; voice modal KPI; VoiceActionHost; pytest 7 passed; `SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md`; MAP п.395 `[x]`.
+
 ## 2026-06-14 — Ф2 §2 п.394: сценарий оценка тендера (тех + эконом)
 
 **Сделано:** `evaluate_tender`; tender_context; economist/tech/strategist; voice modal; pytest; `SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md`; MAP п.394 `[x]`.

@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§2 п.395 еженедельный отчёт] | Статус: ✅ weekly_report`
+
+> **→ Следующий агент:** [`SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md`](../phase2/agents/SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md)
+
+**2026-06-14 (Ф2 §2 п.395):** Сценарий `weekly_report` — analyst∥economist∥marketer→strategist→modal; CRM KPI в `payload.report`; rescue CPU; route `/leads/analytics`; pytest 7 passed. MAP п.395 `[x]`. **Коммит:** `c799a4d`.
+
+**Следующий `go`:** §2 п.396 «Похожие клиенты».
+
+---
+
 `Спринт:[Ф2] | Задача:[§2 п.394 оценка тендера] | Статус: ✅ evaluate_tender`
 
 > **→ Следующий агент:** [`SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md`](../phase2/agents/SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md)
