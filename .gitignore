@@ -1,5 +1,8 @@
 ﻿.venv/
 backend/.venv/
+backend/.venv-linux/
+backend/.venv312/
+backend/.coverage
 node_modules/
 .env
 __pycache__/

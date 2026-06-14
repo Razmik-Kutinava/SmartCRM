@@ -57,7 +57,7 @@ def session_state_has_recent_entry(max_days: int = 2) -> bool:
         return False
     text = SESSION_STATE.read_text(encoding="utf-8")
     today = datetime.now(timezone.utc).date()
-    for line in reversed(text.splitlines()):
+    for line in text.splitlines():
         m = re.match(r"^(\d{4}-\d{2}-\d{2})", line.strip())
         if not m:
             continue
