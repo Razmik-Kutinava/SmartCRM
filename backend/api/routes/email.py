@@ -20,6 +20,7 @@ from email_sync.sync import sync_account_messages
 from email_sync.sync_all import sync_all_email_accounts
 from email_sync.background import email_sync_status_payload
 from services.email_bootstrap import bootstrap_accounts_from_env, upsert_account_from_payload
+from services.email_thread_list import list_email_threads_enriched
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/email", tags=["email"])
@@ -214,13 +215,7 @@ async def email_background_sync_status(db: AsyncSession = Depends(get_db)):
 
 @router.get("/threads")
 async def list_email_threads(account_id: Optional[int] = None, lead_id: Optional[int] = None, db: AsyncSession = Depends(get_db)):
-    q = select(EmailThread).order_by(EmailThread.last_message_at.desc().nulls_last())
-    if account_id is not None:
-        q = q.where(EmailThread.account_id == account_id)
-    if lead_id is not None:
-        q = q.where(EmailThread.lead_id == lead_id)
-    result = await db.execute(q)
-    return [thread.to_dict() for thread in result.scalars().all()]
+    return await list_email_threads_enriched(db, account_id=account_id, lead_id=lead_id)
 
 
 @router.post("/send", status_code=201)

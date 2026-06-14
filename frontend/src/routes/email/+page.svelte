@@ -4,8 +4,13 @@
     import { get } from 'svelte/store';
     import {
         fetchEmailAccounts, connectEmailAccount, syncAllEmailAccounts, fetchEmailThreads,
-        fetchEmailCampaigns, createCampaign, bindEmailToLead
+        fetchEmailCampaigns, createCampaign, fetchEmailSyncStatus,
+        sendEmail, replyToEmail, fetchThreadMessages
     } from '$lib/emailStorage.js';
+    import {
+        EMAIL_FOLDERS, filterEmailThreads, countEmailFolder, groupThreadsByDate,
+        formatThreadTime, syncStatusLabel
+    } from '$lib/email/emailListLogic.js';
     import { fetchLeads } from '$lib/leadsStorage.js';
 
     // ─── данные ──────────────────────────────────────────────────
@@ -56,27 +61,36 @@
     let campaignLoading   = $state(false);
     let bindAccountId     = $state(null);
     let bindLeadId        = $state(null);
+    let filterAccountId   = $state('');
+    let syncStatus        = $state(null);
 
     let error   = $state('');
     let success = $state('');
 
-    // ─── папки ───────────────────────────────────────────────────
-    const folders = [
-        { key: 'inbox',    label: 'Входящие',     icon: '📥' },
-        { key: 'sent',     label: 'Отправленные', icon: '📤' },
-        { key: 'zoho',     label: 'Zoho',         icon: '🔷' },
-        { key: 'campaign', label: 'Рассылки',     icon: '📣' },
-        { key: 'archive',  label: 'Архив',        icon: '🗂' },
-    ];
+    const folders = EMAIL_FOLDERS;
 
-    // ─── загрузка ────────────────────────────────────────────────
+    let filteredThreads = $derived(filterEmailThreads(threads, {
+        folder: activeFolder,
+        search: searchQuery,
+        accountId: filterAccountId || null,
+    }));
+    let grouped = $derived(groupThreadsByDate(filteredThreads));
+
+    function folderCount(key) {
+        return countEmailFolder(threads, key);
+    }
     async function load() {
         try {
             const raw = await fetchEmailAccounts();
             accounts  = raw.filter((v, i, s) => s.findIndex(a => a.username === v.username) === i);
-            threads   = await fetchEmailThreads();
+            if (filterAccountId && !accounts.some(a => String(a.id) === String(filterAccountId))) {
+                filterAccountId = '';
+            }
+            const threadParams = filterAccountId ? { account_id: String(filterAccountId) } : {};
+            threads   = await fetchEmailThreads(threadParams);
             campaigns = await fetchEmailCampaigns();
             leads     = await fetchLeads();
+            syncStatus = await fetchEmailSyncStatus().catch(() => null);
         } catch (e) { error = e.message; }
     }
     onMount(() => {
@@ -93,64 +107,6 @@
         load();
     });
 
-    const HIDDEN_IN_INBOX = new Set(['outbound', 'campaign', 'archive']);
-
-    // ─── фильтрация ──────────────────────────────────────────────
-    function getFiltered() {
-        let list = threads;
-        if (activeFolder === 'inbox')    list = list.filter(t => !HIDDEN_IN_INBOX.has(t.category) && !t.isArchived);
-        if (activeFolder === 'sent')     list = list.filter(t => t.category === 'outbound');
-        if (activeFolder === 'zoho')     list = list.filter(t => /zoho/i.test(t.subject + ' ' + t.snippet));
-        if (activeFolder === 'campaign') list = list.filter(t => t.category === 'campaign');
-        if (activeFolder === 'archive')  list = list.filter(t => t.isArchived);
-        if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase();
-            list = list.filter(t =>
-                (t.subject || '').toLowerCase().includes(q) ||
-                (t.snippet  || '').toLowerCase().includes(q)
-            );
-        }
-        return list;
-    }
-
-    // ─── группировка по дате ─────────────────────────────────────
-    function groupByDate(list) {
-        const now       = new Date();
-        const today     = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
-        const weekAgo   = new Date(today); weekAgo.setDate(today.getDate() - 7);
-        const groups    = new Map();
-        for (const t of list) {
-            const d = t.lastMessageAt ? new Date(t.lastMessageAt) : null;
-            let label;
-            if (!d) { label = 'Дата неизвестна'; }
-            else {
-                const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-                if      (day >= today)     label = 'Сегодня';
-                else if (day >= yesterday) label = 'Вчера';
-                else if (day >= weekAgo)   label = 'На этой неделе';
-                else {
-                    label = d.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
-                    label = label.charAt(0).toUpperCase() + label.slice(1);
-                }
-            }
-            if (!groups.has(label)) groups.set(label, []);
-            groups.get(label).push(t);
-        }
-        return groups;
-    }
-
-    let grouped = $derived(groupByDate(getFiltered()));
-
-    function folderCount(key) {
-        if (key === 'inbox')    return threads.filter(t => !HIDDEN_IN_INBOX.has(t.category) && !t.isArchived).length;
-        if (key === 'sent')     return threads.filter(t => t.category === 'outbound').length;
-        if (key === 'zoho')     return threads.filter(t => /zoho/i.test(t.subject + ' ' + t.snippet)).length;
-        if (key === 'campaign') return threads.filter(t => t.category === 'campaign').length;
-        if (key === 'archive')  return threads.filter(t => t.isArchived).length;
-        return 0;
-    }
-
     // ─── compose ─────────────────────────────────────────────────
     function openCompose(to = '', subject = '') {
         composeTo      = to;
@@ -165,13 +121,8 @@
         if (!composeTo || !composeSubject) { composeError = 'Заполни кому и тему'; return; }
         sendingNew = true;
         try {
-            const r = await fetch('/api/email/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ to: [composeTo], subject: composeSubject, body: composeBody }),
-            });
-            if (!r.ok) throw new Error(await r.text());
-            threads = await fetchEmailThreads();
+            await sendEmail({ to: [composeTo], subject: composeSubject, body: composeBody });
+            await load();
             showCompose = false;
             success = `✅ Письмо отправлено на ${composeTo}`;
             activeFolder = 'sent';
@@ -186,8 +137,7 @@
         replyBody       = '';
         loadingMessages = true;
         try {
-            const r = await fetch(`/api/email/threads/${thread.id}/messages`);
-            if (r.ok) threadMessages = await r.json();
+            threadMessages = await fetchThreadMessages(thread.id);
         } catch (e) { console.error(e); }
         finally { loadingMessages = false; }
     }
@@ -198,16 +148,10 @@
         if (!replyBody.trim() || !selectedThread) return;
         replyLoading = true;
         try {
-            const r = await fetch('/api/email/reply', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ thread_id: selectedThread.id, body: replyBody }),
-            });
-            if (!r.ok) throw new Error(await r.text());
-            const data = await r.json();
+            const data = await replyToEmail({ thread_id: selectedThread.id, body: replyBody });
             threadMessages = [...threadMessages, data.message];
             replyBody = '';
-            threads   = await fetchEmailThreads();
+            await load();
         } catch (e) { alert('Ошибка: ' + e.message); }
         finally { replyLoading = false; }
     }
@@ -219,8 +163,7 @@
         syncLoading = true;
         try {
             const result = await syncAllEmailAccounts();
-            accounts = await fetchEmailAccounts();
-            threads  = await fetchEmailThreads();
+            await load();
             const n = result.imported ?? 0;
             const u = (result.updated ?? 0) + (result.fake_fixed ?? 0);
             success = n > 0
@@ -240,8 +183,7 @@
         try {
             const result = await connectEmailAccount({ name, provider, username, password, imap_server, imap_port, smtp_server, smtp_port, use_ssl });
             if (result.sync?.error) throw new Error(result.sync.error);
-            accounts = await fetchEmailAccounts();
-            threads  = await fetchEmailThreads();
+            await load();
             success  = `✅ Подключено. Импортировано ${result.sync?.imported ?? 0} писем.`;
             name = ''; username = ''; password = '';
             showSettings = false;
@@ -269,17 +211,13 @@
         campaignLeadIds = campaignLeadIds.includes(id) ? campaignLeadIds.filter(x => x !== id) : [...campaignLeadIds, id];
     }
 
-    // ─── форматирование ──────────────────────────────────────────
-    function fmtTime(iso) {
-        if (!iso) return '—';
-        const d = new Date(iso);
-        if (d.toDateString() === new Date().toDateString())
-            return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-        return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' });
-    }
     function fmtFull(iso) {
         if (!iso) return '—';
         return new Date(iso).toLocaleString('ru-RU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
+
+    async function onAccountFilterChange() {
+        await load();
     }
 </script>
 
@@ -341,6 +279,21 @@
         </nav>
 
         <!-- аккаунт внизу -->
+        {#if accounts.length > 1}
+            <div class="px-3 pb-2">
+                <label class="text-xs text-gray-500 block mb-1">Ящик</label>
+                <select
+                    class="w-full rounded-lg bg-gray-900 border border-gray-800 px-2 py-1.5 text-xs text-white"
+                    bind:value={filterAccountId}
+                    onchange={onAccountFilterChange}
+                >
+                    <option value="">Все ящики</option>
+                    {#each accounts as a (a.id)}
+                        <option value={String(a.id)}>{a.username}</option>
+                    {/each}
+                </select>
+            </div>
+        {/if}
         {#if accounts.length}
             <div class="px-4 py-3 border-t border-gray-800">
                 <div class="text-xs text-gray-400 font-medium truncate">{accounts[0].username}</div>
@@ -363,6 +316,11 @@
         <!-- уведомления -->
         {#if error}   <div class="mx-5 mt-3 px-4 py-2.5 rounded-xl bg-red-950  border border-red-800  text-red-200  text-sm flex-shrink-0">{error}</div>   {/if}
         {#if success} <div class="mx-5 mt-3 px-4 py-2.5 rounded-xl bg-green-950 border border-green-800 text-green-200 text-sm flex-shrink-0">{success}</div> {/if}
+        {#if syncStatus}
+            <div class="mx-5 mt-2 px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-400 text-xs flex-shrink-0">
+                {syncStatusLabel(syncStatus)}
+            </div>
+        {/if}
 
         <!-- ════ СПИСОК ПИСЕМ ════ -->
         {#if activeFolder !== 'campaign' && activeFolder !== 'campaigns_manage'}
@@ -416,8 +374,11 @@
                                             <span class="text-sm font-semibold text-white truncate group-hover:text-indigo-300 transition-colors">
                                                 {thread.subject || 'Без темы'}
                                             </span>
-                                            <span class="text-xs text-gray-500 flex-shrink-0">{fmtTime(thread.lastMessageAt)}</span>
+                                            <span class="text-xs text-gray-500 flex-shrink-0">{formatThreadTime(thread.lastMessageAt)}</span>
                                         </div>
+                                        {#if thread.previewFrom}
+                                            <p class="text-xs text-gray-500 truncate">{thread.previewFrom}</p>
+                                        {/if}
                                         <p class="text-xs text-gray-400 truncate mt-0.5">{thread.snippet || ''}</p>
                                     </div>
                                 </button>

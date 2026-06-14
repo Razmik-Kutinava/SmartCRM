@@ -82,6 +82,14 @@ export async function fetchEmailThreads(params = {}) {
 	return emailJson(`/threads?${query}`);
 }
 
+export async function fetchEmailSyncStatus() {
+	return emailJson('/sync/status');
+}
+
+export async function fetchEmailConfigStatus() {
+	return emailJson('/config/status');
+}
+
 export async function fetchThreadMessages(threadId) {
 	return emailJson(`/threads/${threadId}/messages`);
 }
