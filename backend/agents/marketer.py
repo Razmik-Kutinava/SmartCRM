@@ -89,7 +89,7 @@ async def run(state: AgentState) -> AgentState:
 
 
 async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
-    if intent not in ("create_lead", "write_email", "analyze_lead"):
+    if intent not in ("create_lead", "write_email", "analyze_lead", "analyze_and_email"):
         return {
             "summary": f"Интент «{intent}» — маркетинговый анализ не требуется.",
             "first_email": None,
@@ -103,7 +103,7 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
     note = slots.get("note", "") or (slots.get("description") or "")
 
     # Если write_email — пробуем получить полный профиль лида из БД
-    if intent == "write_email" and company:
+    if intent in ("write_email", "analyze_and_email") and company:
         db_lead = await read_lead_by_company(company)
         if db_lead:
             contact = contact or db_lead.get("contact", "")
@@ -139,7 +139,11 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
     context = "\n".join(context_lines)
     inst = (slots.get("instruction") or "").strip()
     inst_tail = f"\n\nОсобые указания оператора:\n{inst}" if inst else ""
-    lead_label = "лида из CRM (полный профиль)" if intent == "analyze_lead" else "нового лида"
+    lead_label = (
+        "лида из CRM (полный профиль)"
+        if intent in ("analyze_lead", "analyze_and_email")
+        else "нового лида"
+    )
     messages = [
         {"role": "system", "content": MARKETER_SYSTEM_PROMPT},
         {"role": "user", "content": (

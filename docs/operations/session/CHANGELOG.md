@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §2 п.393: сценарий анализ + письмо
+
+**Сделано:** `analyze_and_email`; scenarios/analysis_email.py; rescue/supervisor/modal; pytest 48 passed; `SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md`; MAP п.393 `[x]`.
+
 ## 2026-06-14 — Ф2 §2 п.3: синтез в один ответ → модалка
 
 **Сделано:** `voice/synthesis.py`; fanout+strategist → modal; `payload.synthesis`; VoiceActionHost «Решение»; pytest 44 passed; `FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md`; MAP п.392 `[x]`.

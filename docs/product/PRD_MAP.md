@@ -390,7 +390,7 @@
 - [x] LangGraph supervisor: выбор агентов (выборочный fanout) — ✅ [`FANOUT_SUPERVISOR_ACCEPTANCE.md`](../operations/phase2/agents/FANOUT_SUPERVISOR_ACCEPTANCE.md)
 - [x] Параллельный fanout 2+ агентов — ✅ [`FANOUT_PARALLEL_ACCEPTANCE.md`](../operations/phase2/agents/FANOUT_PARALLEL_ACCEPTANCE.md)
 - [x] Синтез в один ответ → модалка — ✅ [`FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md`](../operations/phase2/agents/FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md)
-- [ ] Сценарий: анализ + письмо
+- [x] Сценарий: анализ + письмо — ✅ [`SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md`](../operations/phase2/agents/SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md)
 - [ ] Сценарий: оценка тендера (тех + эконом)
 - [ ] Сценарий: еженедельный отчёт
 - [ ] Сценарий: похожие клиенты

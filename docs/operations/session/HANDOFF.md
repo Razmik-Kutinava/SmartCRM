@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§2 п.393 анализ+письмо] | Статус: ✅ scenario analysis_email`
+
+> **→ Следующий агент:** [`SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md`](../phase2/agents/SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md)
+
+**2026-06-14 (Ф2 §2 п.393):** Сценарий `analyze_and_email` — analyst∥marketer→strategist→modal; rescue CPU; first_email в draft; pytest 48 passed. MAP п.393 `[x]`. **Коммит:** `PENDING`.
+
+**Следующий `go`:** §2 п.394 «Оценка тендера (тех + эконом)».
+
+---
+
 `Спринт:[Ф2] | Задача:[§2 п.3 синтез → модалка] | Статус: ✅ synthesis modal`
 
 > **→ Следующий агент:** [`FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md`](../phase2/agents/FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md)

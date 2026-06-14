@@ -112,7 +112,7 @@ async def analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
             result["_score_applied_to_db"] = True
         return result
 
-    if intent in ("update_lead", "delete_lead"):
+    if intent in ("update_lead", "delete_lead", "analyze_and_email"):
         lead = await read_lead_by_company(company) if company else None
         if not lead:
             return {"summary": f"Лид «{company}» не найден для анализа.", "score": None}
@@ -131,7 +131,7 @@ async def analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
         messages = [
             {"role": "system", "content": ANALYST_SYSTEM_PROMPT},
             {"role": "user", "content": (
-                f"Лид был обновлён (интент: {intent}).\n\n"
+                f"{'Сценарий: анализ + письмо.' if intent == 'analyze_and_email' else f'Лид был обновлён (интент: {intent}).'}\n\n"
                 f"Текущие данные:\n{lead_ctx}{score_trend}\n"
                 f"{tasks_block}\n"
                 f"Рассуждай пошагово: оцени каждый BANT-критерий, учти историю задач и тренд скора, "

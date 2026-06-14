@@ -5,6 +5,9 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
+from agents.scenarios.analysis_email import AGENTS as ANALYSIS_EMAIL_AGENTS
+from agents.scenarios.analysis_email import INTENT as ANALYSIS_EMAIL_INTENT
+
 logger = logging.getLogger(__name__)
 
 MIN_PARALLEL_AGENTS = 2
@@ -19,6 +22,7 @@ AGENT_INTENTS = frozenset({
     "create_lead", "update_lead", "delete_lead", "list_leads", "analyze_lead",
     "run_analysis", "ask_economist", "ask_marketer", "ask_tech", "ask_strategist",
     "search_web", "write_email",
+    ANALYSIS_EMAIL_INTENT,
     "generate_lead", "find_leads_portrait", "cluster_company",
 })
 
@@ -36,6 +40,7 @@ INTENT_DEFAULTS: dict[str, list[str]] = {
     "create_lead": ["analyst", "economist", "marketer", "tech_specialist"],
     "update_lead": ["analyst", "economist", "marketer", "tech_specialist"],
     "analyze_lead": ["analyst", "economist", "marketer", "tech_specialist"],
+    ANALYSIS_EMAIL_INTENT: list(ANALYSIS_EMAIL_AGENTS),
     "delete_lead": ["analyst"],
     "list_leads": ["analyst"],
 }
@@ -46,6 +51,7 @@ VOICE_SINGLE = frozenset({
 LEADGEN = frozenset({"generate_lead", "find_leads_portrait", "cluster_company"})
 CRM_PARALLEL = frozenset({
     "create_lead", "update_lead", "analyze_lead", "delete_lead", "run_analysis",
+    ANALYSIS_EMAIL_INTENT,
 })
 
 

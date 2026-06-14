@@ -14,7 +14,8 @@ from voice.synthesis import (
 
 _UI_MODAL_INTENTS = frozenset({
     "write_email", "run_analysis", "ask_economist", "ask_marketer",
-    "ask_tech", "ask_strategist", "analyze_lead", "search_web", "ask_rag",
+    "ask_tech", "ask_strategist", "analyze_lead", "analyze_and_email",
+    "search_web", "ask_rag",
 })
 
 _ROUTE_BY_INTENT: dict[str, str] = {
@@ -136,6 +137,8 @@ def build_voice_action(
 
 
 def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
+    if intent == "analyze_and_email":
+        return "modal"
     if intent in SYNTHESIS_MODAL_INTENTS and has_multi_agent_synthesis(agent_result):
         return "modal"
     if intent == "navigate" or slots.get("target"):
@@ -213,6 +216,23 @@ def _filter_payload(intent: str, slots: dict) -> dict[str, str]:
     return view
 
 
+def _marketer_draft_email(marketer: dict) -> dict[str, str]:
+    email = marketer.get("email") if isinstance(marketer.get("email"), dict) else {}
+    if not email and (marketer.get("subject") or marketer.get("body")):
+        email = {
+            "subject": marketer.get("subject", ""),
+            "body": marketer.get("body", ""),
+        }
+    if not email:
+        first = marketer.get("first_email")
+        if isinstance(first, dict) and (first.get("subject") or first.get("body")):
+            email = {
+                "subject": first.get("subject", ""),
+                "body": first.get("body", ""),
+            }
+    return email
+
+
 def _modal_payload(intent: str, agent_result: dict, reply: str) -> dict[str, Any]:
     payload: dict[str, Any] = {"reply": reply, "intent": intent}
     synthesis = build_synthesis_payload(agent_result)
@@ -220,6 +240,8 @@ def _modal_payload(intent: str, agent_result: dict, reply: str) -> dict[str, Any
         payload["synthesis"] = synthesis
         if synthesis.get("final_reply") and not reply:
             payload["reply"] = synthesis["final_reply"]
+    if intent == "analyze_and_email":
+        payload["scenario"] = "analysis_email"
 
     analyst = agent_result.get("analyst_output") or {}
     economist = agent_result.get("economist_output") or {}
@@ -241,12 +263,7 @@ def _modal_payload(intent: str, agent_result: dict, reply: str) -> dict[str, Any
         payload["history"] = hist
         payload["lead_id"] = agent_result.get("lead_id")
 
-    email = marketer.get("email") if isinstance(marketer.get("email"), dict) else {}
-    if not email and (marketer.get("subject") or marketer.get("body")):
-        email = {
-            "subject": marketer.get("subject", ""),
-            "body": marketer.get("body", ""),
-        }
+    email = _marketer_draft_email(marketer)
     if email:
         payload["draft_email"] = email
 
@@ -303,6 +320,9 @@ def _title(intent: str, ui: str, slots: dict) -> str:
         return "Отправить письмо?"
     if ui == "approve" and intent == "save_to_rag":
         return "Сохранить в базу знаний?"
+    if ui == "modal" and intent == "analyze_and_email":
+        company = slots.get("company") or slots.get("query") or ""
+        return synthesis_title("analyze_and_email", company) or "Анализ + письмо"
     if ui == "modal" and intent == "write_email":
         return "Черновик письма"
     if ui == "modal" and intent == "ask_rag":
@@ -341,5 +361,6 @@ def synthesis_title(intent: str, company: str = "") -> str:
         "update_lead": f"Синтез: обновление лида{suffix}",
         "run_analysis": f"Синтез анализа{suffix}",
         "analyze_lead": f"Синтез анализа{suffix}",
+        "analyze_and_email": f"Анализ + письмо{suffix}",
     }
     return titles.get(intent, "Синтез агентов")

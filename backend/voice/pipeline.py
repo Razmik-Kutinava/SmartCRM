@@ -71,6 +71,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
     slots = intent_data.get("slots", {})
     module = intent_data.get("module")
     base_reply = intent_data.get("reply", "")
+    agents = intent_data.get("agents", [])
 
     _NAV_ONLY = frozenset({
         "list_emails", "analytics_funnel", "analytics_conversion",
@@ -115,7 +116,6 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         logger.warning("Оркестратор ошибка (пайплайн продолжается): %s", e)
         agent_result = {"agents_ran": False, "error": str(e)}
 
-    agents = intent_data.get("agents", [])
     voice_action = build_voice_action(
         intent=intent,
         slots=slots,

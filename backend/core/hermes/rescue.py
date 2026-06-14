@@ -50,6 +50,24 @@ def rescue_route(text: str) -> dict | None:
 
     if ("анализ" in t or "проанализ" in t or "оцени" in t) and (
         "лид" in t or "компан" in t or "клиент" in t
+    ) and ("письм" in t or "email" in t or ("напиш" in t and "письм" in t)):
+        from .slot_normalize import _extract_company
+        from agents.scenarios.analysis_email import AGENTS, INTENT
+
+        comp = _extract_company(text)
+        slots_ae: dict = {"company": comp} if comp else {}
+        suffix = f" {comp}" if comp else ""
+        return enrich_module_ui({
+            "intent": INTENT,
+            "agents": list(AGENTS),
+            "slots": slots_ae,
+            "parallel": True,
+            "reply": f"Анализирую и пишу письмо{suffix}.",
+            "_model": "rescue",
+        })
+
+    if ("анализ" in t or "проанализ" in t or "оцени" in t) and (
+        "лид" in t or "компан" in t or "клиент" in t
     ):
         from .slot_normalize import _extract_company
 

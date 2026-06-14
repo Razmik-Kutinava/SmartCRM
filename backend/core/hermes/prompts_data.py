@@ -25,6 +25,7 @@ tech_specialist — IT-стек, технологии, интеграции, в�
 - delete_lead: company или lead_id
 - list_leads: filter (hot/cold/new/won/all), query, stage, industry, city
 - analyze_lead: company или lead_id (глубокий анализ существующего лида)
+- analyze_and_email: company (анализ ∥ черновик письма → modal)
 - lead_history: company или lead_id (история изменений, комментарии, касания)
 - add_communication: company, content, kind (comment|communication), communication_type (call|meeting|email)
 - create_task: title, due, assignee, related_lead, note
