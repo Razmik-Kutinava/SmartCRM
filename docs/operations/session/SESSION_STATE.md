@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-14 | Действие: RAG хвост BACKLOG + §9 enrich карточка: LLM flags, page_fetch, кнопка /leads/{id}; pytest 31 passed. | Коммит: `<hash>` | Хвост A: quality gate ≥85% — Ф3, не делали | Хвост B: нет | Хвост C: нет | Следующий шаг: go §5 или Ф3 gate. | Статус: done
+2026-06-14 | Действие: RAG хвост BACKLOG + §9 enrich карточка: LLM flags, page_fetch, кнопка /leads/{id}; pytest 31 passed. | Коммит: `934a84f` | Хвост A: quality gate ≥85% — Ф3, не делали | Хвост B: нет | Хвост C: нет | Следующий шаг: go §5 или Ф3 gate. | Статус: done
 
 2026-06-14 | Действие: Ф2 §4 п.4 — кэш enrich (company+ИНН+industry, TTL 24ч): enrich_cache, force API/UI, pytest 14 passed; §4 закрыт. | Коммит: `9dcf749` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §5 Self-improvement. | Статус: done
 
