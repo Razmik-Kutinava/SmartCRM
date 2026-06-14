@@ -43,6 +43,8 @@
 
 ## Записи
 
+`[2026-06-14] | PRD_MAP: «§8 lookalike POST /api/leads» | Отложено: автосоздание лидов после approve в modal | Причина: scope §8, в §2 только modal+route | Нужна фаза MAP: 2/8 | Из шага: find_similar_clients п.396`
+
 `[2026-06-13] | PRD_MAP: переход Ф1→Ф2 | DoD Ф1 6/6; хвосты L306–318 не блокируют; PHASE2_ENTRY.md | **Push:** ждём go | **Ф2 код:** ждём go + номер очереди | gate live — параллельно`
 
 `[2026-06-13] | PRD_MAP: quality gates шаг 6 | Коммит 7be7bdb: tuning import failed, delta was→became % | **Не вышло:** live gate MAP 🔲 | Действие: EVAL_OLLAMA_TIMEOUT=1200`

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §2 п.396: сценарий похожие клиенты · §2 закрыт
+
+**Сделано:** `find_similar_clients`; similar_context + search_by_portrait; voice modal similar_leads; pytest 6 passed; `SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md`; MAP п.396 `[x]`; **§2 Оркестрация — все пункты `[x]`.**
+
 ## 2026-06-14 — Ф2 §2 п.395: сценарий еженедельный отчёт
 
 **Сделано:** `weekly_report`; report_context; analyst/economist/marketer/strategist; voice modal KPI; VoiceActionHost; pytest 7 passed; `SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md`; MAP п.395 `[x]`.

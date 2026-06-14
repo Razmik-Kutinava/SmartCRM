@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§2 оркестрация — закрыта] | Статус: ✅ все 6 сценариев`
+
+> **→ Следующий агент:** [`SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md`](../phase2/agents/SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md)
+
+**2026-06-14 (Ф2 §2 п.396):** Сценарий `find_similar_clients` — analyst∥marketer→strategist→modal; lookalike из won/эталона; pytest 6 passed. MAP п.396 `[x]`. **§2 Оркестрация закрыта.** **Коммит:** `d9d5f4b`.
+
+**Следующий `go`:** §3 Email-агент **или** §8 лидоген lookalike POST /api/leads.
+
+---
+
 `Спринт:[Ф2] | Задача:[§2 п.395 еженедельный отчёт] | Статус: ✅ weekly_report`
 
 > **→ Следующий агент:** [`SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md`](../phase2/agents/SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md)
