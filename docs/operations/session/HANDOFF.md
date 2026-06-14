@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** [`SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md`](../phase2/agents/SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md)
 
-**2026-06-14 (Ф2 §2 п.393):** Сценарий `analyze_and_email` — analyst∥marketer→strategist→modal; rescue CPU; first_email в draft; pytest 48 passed. MAP п.393 `[x]`. **Коммит:** `PENDING`.
+**2026-06-14 (Ф2 §2 п.393):** Сценарий `analyze_and_email` — analyst∥marketer→strategist→modal; rescue CPU; first_email в draft; pytest 48 passed. MAP п.393 `[x]`. **Коммит:** `8af96ec`.
 
 **Следующий `go`:** §2 п.394 «Оценка тендера (тех + эконом)».
 
