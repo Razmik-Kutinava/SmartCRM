@@ -157,6 +157,10 @@ async def _synthesize(state: AgentState) -> dict[str, Any]:
         task_hint = "Сформируй вердикт: участвовать в тендере или нет, с обоснованием."
     elif intent == "weekly_report":
         task_hint = "Сформируй executive summary недели: ключевые KPI и 3 приоритета на следующую неделю."
+    elif intent == "find_similar_clients":
+        task_hint = (
+            "Сформируй рекомендацию: какие похожие клиенты добавить в CRM и с каким приоритетом захода."
+        )
     else:
         task_hint = "Синтезируй решение для оператора."
 

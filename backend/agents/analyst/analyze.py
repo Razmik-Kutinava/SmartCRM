@@ -153,6 +153,9 @@ async def analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
     if intent == "weekly_report":
         return await _analyze_weekly_report(slots)
 
+    if intent == "find_similar_clients":
+        return await _analyze_similar_clients(slots)
+
     if intent == "list_leads":
         leads = await read_leads(limit=50)
         if not leads:
@@ -210,6 +213,41 @@ async def _analyze_weekly_report(slots: dict[str, Any]) -> dict[str, Any]:
     raw = await chat(messages, temperature=0.3, max_tokens=900, json_mode=True)
     result = parse_json_safe(raw)
     result["report_metrics"] = report_snapshot(data)
+    return result
+
+
+async def _analyze_similar_clients(slots: dict[str, Any]) -> dict[str, Any]:
+    from agents.scenarios.similar_context import (
+        build_search_plan,
+        run_similar_search,
+        similar_snapshot,
+    )
+
+    plan = await build_search_plan(slots)
+    search_result = await run_similar_search(plan, limit=5)
+    snap = similar_snapshot(plan, search_result)
+    leads = snap.get("similar_leads") or []
+    lead_lines = "\n".join(
+        f"- {row.get('company')} ({row.get('city') or '—'}), score={row.get('score') or '—'}"
+        for row in leads[:8]
+    ) or "Кандидаты не найдены."
+    messages = [
+        {"role": "system", "content": ANALYST_SYSTEM_PROMPT},
+        {"role": "user", "content": (
+            f"Сценарий: поиск похожих клиентов (lookalike).\n\n"
+            f"Портрет: {snap.get('portrait')}\n"
+            f"Источник: {snap.get('source')}\n"
+            f"Найдено: {snap.get('total_found')}\n"
+            f"Кандидаты:\n{lead_lines}\n\n"
+            f"JSON: summary, ideal_profile, highlights (массив)."
+        ) + rag_block(slots, "analyst")},
+    ]
+    raw = await chat(messages, temperature=0.3, max_tokens=900, json_mode=True)
+    result = parse_json_safe(raw)
+    result["ideal_profile"] = snap.get("portrait")
+    result["similar_leads"] = leads
+    result["total_found"] = snap.get("total_found", 0)
+    result["similar_snapshot"] = snap
     return result
 
 

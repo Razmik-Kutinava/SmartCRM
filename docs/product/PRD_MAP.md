@@ -393,7 +393,7 @@
 - [x] Сценарий: анализ + письмо — ✅ [`SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md`](../operations/phase2/agents/SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md)
 - [x] Сценарий: оценка тендера (тех + эконом) — ✅ [`SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md`](../operations/phase2/agents/SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md)
 - [x] Сценарий: еженедельный отчёт — ✅ [`SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md`](../operations/phase2/agents/SCENARIO_WEEKLY_REPORT_ACCEPTANCE.md)
-- [ ] Сценарий: похожие клиенты
+- [x] Сценарий: похожие клиенты — ✅ [`SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md`](../operations/phase2/agents/SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md)
 
 ### 3. Email-агент
 

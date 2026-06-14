@@ -6,6 +6,11 @@
 	function modalAction(kind) {
 		const m = $voiceModal;
 		if (!m) return;
+		if (kind === 'add') {
+			closeVoiceModal();
+			goto('/leadgen');
+			return;
+		}
 		if (kind === 'send' && m.payload?.draft_email) {
 			const em = m.payload.draft_email;
 			const target = m.slots?.target || m.slots?.email || '';
@@ -122,6 +127,23 @@
 							<div class="text-indigo-200 font-medium">{$voiceModal.payload.report.open_tasks ?? '—'}</div>
 						</div>
 					</div>
+				</section>
+			{/if}
+
+			{#if $voiceModal.payload?.similar_leads?.length}
+				<section class="mb-4 rounded-lg border border-violet-900/40 bg-violet-950/20 p-4" data-testid="voice-similar-leads">
+					<h3 class="text-xs uppercase text-violet-400/90 mb-2">Похожие компании</h3>
+					{#if $voiceModal.payload.ideal_profile}
+						<p class="text-xs text-gray-400 mb-2">Портрет: {$voiceModal.payload.ideal_profile}</p>
+					{/if}
+					<ul class="space-y-2 text-xs">
+						{#each $voiceModal.payload.similar_leads.slice(0, 8) as row}
+							<li class="rounded bg-gray-950/60 p-2 flex justify-between gap-2">
+								<span class="text-violet-100">{row.company || '—'}</span>
+								<span class="text-gray-500 shrink-0">{row.city || ''}{row.score != null ? ` · ${row.score}` : ''}</span>
+							</li>
+						{/each}
+					</ul>
 				</section>
 			{/if}
 
@@ -246,7 +268,7 @@
 							 'bg-gray-700 text-gray-200 hover:bg-gray-600'}"
 						onclick={() => modalAction(act)}
 					>
-						{act === 'send' ? 'Отправить' : act === 'save' ? 'Закрыть' : 'Отмена'}
+						{act === 'send' ? 'Отправить' : act === 'add' ? 'В лидоген' : act === 'save' ? 'Закрыть' : 'Отмена'}
 					</button>
 				{/each}
 			</div>

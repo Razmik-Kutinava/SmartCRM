@@ -11,6 +11,8 @@ from agents.scenarios.tender_evaluation import AGENTS as TENDER_EVAL_AGENTS
 from agents.scenarios.tender_evaluation import INTENT as TENDER_EVAL_INTENT
 from agents.scenarios.weekly_report import AGENTS as WEEKLY_REPORT_AGENTS
 from agents.scenarios.weekly_report import INTENT as WEEKLY_REPORT_INTENT
+from agents.scenarios.similar_clients import AGENTS as SIMILAR_CLIENTS_AGENTS
+from agents.scenarios.similar_clients import INTENT as SIMILAR_CLIENTS_INTENT
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +31,7 @@ AGENT_INTENTS = frozenset({
     ANALYSIS_EMAIL_INTENT,
     TENDER_EVAL_INTENT,
     WEEKLY_REPORT_INTENT,
+    SIMILAR_CLIENTS_INTENT,
     "generate_lead", "find_leads_portrait", "cluster_company",
 })
 
@@ -49,6 +52,7 @@ INTENT_DEFAULTS: dict[str, list[str]] = {
     ANALYSIS_EMAIL_INTENT: list(ANALYSIS_EMAIL_AGENTS),
     TENDER_EVAL_INTENT: list(TENDER_EVAL_AGENTS),
     WEEKLY_REPORT_INTENT: list(WEEKLY_REPORT_AGENTS),
+    SIMILAR_CLIENTS_INTENT: list(SIMILAR_CLIENTS_AGENTS),
     "delete_lead": ["analyst"],
     "list_leads": ["analyst"],
 }
@@ -62,6 +66,7 @@ CRM_PARALLEL = frozenset({
     ANALYSIS_EMAIL_INTENT,
     TENDER_EVAL_INTENT,
     WEEKLY_REPORT_INTENT,
+    SIMILAR_CLIENTS_INTENT,
 })
 
 

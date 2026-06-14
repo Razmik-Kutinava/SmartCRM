@@ -91,6 +91,8 @@ async def run(state: AgentState) -> AgentState:
 async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
     if intent == "weekly_report":
         return await _analyze_weekly_outreach(slots)
+    if intent == "find_similar_clients":
+        return await _analyze_similar_outreach(slots)
     if intent not in ("create_lead", "write_email", "analyze_lead", "analyze_and_email"):
         return {
             "summary": f"Интент «{intent}» — маркетинговый анализ не требуется.",
@@ -180,6 +182,31 @@ async def _analyze_weekly_outreach(slots: dict[str, Any]) -> dict[str, Any]:
     result = _parse_json_safe(raw)
     result["report_metrics"] = report_snapshot(data)
     return result
+
+
+async def _analyze_similar_outreach(slots: dict[str, Any]) -> dict[str, Any]:
+    from agents.scenarios.similar_context import build_search_plan, similar_snapshot
+    from agents.scenarios.similar_context import run_similar_search
+
+    plan = await build_search_plan(slots)
+    search_result = await run_similar_search(plan, limit=5)
+    snap = similar_snapshot(plan, search_result)
+    leads = snap.get("similar_leads") or []
+    lead_lines = "\n".join(
+        f"- {row.get('company')}: {', '.join(row.get('matched_by') or []) or 'профиль'}"
+        for row in leads[:8]
+    ) or "Список пуст."
+    messages = [
+        {"role": "system", "content": MARKETER_SYSTEM_PROMPT},
+        {"role": "user", "content": (
+            f"Сценарий: стратегия захода к похожим клиентам.\n\n"
+            f"Портрет: {snap.get('portrait')}\n"
+            f"Кандидаты:\n{lead_lines}\n\n"
+            f"JSON: summary, priorities (массив), touch_sequence (массив шагов)."
+        ) + rag_block(slots, "marketer")},
+    ]
+    raw = await chat(messages, temperature=0.4, max_tokens=900, json_mode=True)
+    return _parse_json_safe(raw)
 
 
 def _parse_json_safe(raw: str) -> dict:

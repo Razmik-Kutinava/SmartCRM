@@ -16,7 +16,7 @@ from agents.scenarios.tender_context import tender_snapshot
 _UI_MODAL_INTENTS = frozenset({
     "write_email", "run_analysis", "ask_economist", "ask_marketer",
     "ask_tech", "ask_strategist", "analyze_lead", "analyze_and_email",
-    "evaluate_tender", "weekly_report", "search_web", "ask_rag",
+    "evaluate_tender", "weekly_report", "find_similar_clients", "search_web", "ask_rag",
 })
 
 _ROUTE_BY_INTENT: dict[str, str] = {
@@ -131,6 +131,8 @@ def build_voice_action(
             base["route"] = MODULE_ROUTES.get("tenders", "/tenders")
         elif intent == "weekly_report":
             base["route"] = MODULE_ROUTES.get("analytics", "/leads/analytics")
+        elif intent == "find_similar_clients":
+            base["route"] = MODULE_ROUTES.get("leadgen", "/leadgen")
         lid = agent_result.get("lead_id")
         if intent == "lead_history" and lid is not None:
             base["route"] = f"/leads/{lid}"
@@ -143,7 +145,7 @@ def build_voice_action(
 
 
 def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
-    if intent in ("analyze_and_email", "evaluate_tender", "weekly_report"):
+    if intent in ("analyze_and_email", "evaluate_tender", "weekly_report", "find_similar_clients"):
         return "modal"
     if intent in SYNTHESIS_MODAL_INTENTS and has_multi_agent_synthesis(agent_result):
         return "modal"
@@ -274,6 +276,17 @@ def _modal_payload(
                 payload["report"] = metrics
                 break
 
+    if intent == "find_similar_clients":
+        payload["scenario"] = "similar_clients"
+        snap = analyst.get("similar_snapshot") if isinstance(analyst, dict) else None
+        if isinstance(snap, dict):
+            payload["similar"] = snap
+        leads = analyst.get("similar_leads") if isinstance(analyst, dict) else None
+        if leads:
+            payload["similar_leads"] = leads
+        if analyst.get("ideal_profile"):
+            payload["ideal_profile"] = analyst.get("ideal_profile")
+
     if analyst:
         payload["analysis"] = analyst
     if economist:
@@ -298,6 +311,8 @@ def _modal_payload(
         payload["rag_hits"] = agent_result.get("rag_hits", 0)
 
     actions = ["save", "reject"]
+    if intent == "find_similar_clients":
+        actions = ["add", "reject"]
     if email.get("subject") or email.get("body"):
         actions = ["send", "save", "reject"]
     payload["actions"] = actions
@@ -353,6 +368,9 @@ def _title(intent: str, ui: str, slots: dict) -> str:
 
         pl = period_label(period_from_slots(slots))
         return synthesis_title("weekly_report", pl) or "Еженедельный отчёт"
+    if ui == "modal" and intent == "find_similar_clients":
+        anchor = slots.get("company") or slots.get("inn") or ""
+        return synthesis_title("find_similar_clients", anchor) or "Похожие клиенты"
     if ui == "modal" and intent == "analyze_and_email":
         company = slots.get("company") or slots.get("query") or ""
         return synthesis_title("analyze_and_email", company) or "Анализ + письмо"
@@ -397,5 +415,6 @@ def synthesis_title(intent: str, company: str = "") -> str:
         "analyze_and_email": f"Анализ + письмо{suffix}",
         "evaluate_tender": f"Оценка тендера{suffix}",
         "weekly_report": f"Еженедельный отчёт{suffix}",
+        "find_similar_clients": f"Похожие клиенты{suffix}",
     }
     return titles.get(intent, "Синтез агентов")

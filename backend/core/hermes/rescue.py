@@ -104,6 +104,26 @@ def rescue_route(text: str) -> dict | None:
             "_model": "rescue",
         })
 
+    from agents.scenarios.similar_clients import (
+        AGENTS as SIMILAR_AGENTS,
+        INTENT as SIMILAR_INTENT,
+        matches_rescue as similar_matches_rescue,
+        similar_slots_from_text,
+    )
+
+    if similar_matches_rescue(text):
+        slots_sc = similar_slots_from_text(text)
+        anchor = slots_sc.get("company") or slots_sc.get("inn") or ""
+        suffix = f" ({anchor})" if anchor else ""
+        return enrich_module_ui({
+            "intent": SIMILAR_INTENT,
+            "agents": list(SIMILAR_AGENTS),
+            "slots": slots_sc,
+            "parallel": True,
+            "reply": f"Ищу похожих клиентов{suffix}: аналитик и маркетолог.",
+            "_model": "rescue",
+        })
+
     if ("анализ" in t or "проанализ" in t or "оцени" in t) and (
         "лид" in t or "компан" in t or "клиент" in t
     ):
