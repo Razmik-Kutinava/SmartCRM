@@ -60,6 +60,15 @@ def test_yandex_settings():
     assert yandex["smtp"][1] == 465
 
 
+def test_email_ui_canonical_route():
+    """Канон UI — только `/email` (+page.svelte), без legacy [mailbox].svelte."""
+    repo = Path(__file__).resolve().parents[3]
+    email_dir = repo / "frontend" / "src" / "routes" / "email"
+    assert (email_dir / "+page.svelte").is_file()
+    legacy = email_dir / "[mailbox].svelte"
+    assert not legacy.is_file(), f"удалите legacy {legacy}"
+
+
 def main() -> None:
     """CLI: те же проверки без pytest."""
     print("=" * 50)
@@ -71,6 +80,7 @@ def main() -> None:
         ("Модели БД", test_database_models),
         ("API endpoints", test_api_endpoints),
         ("Яндекс настройки", test_yandex_settings),
+        ("UI route /email", test_email_ui_canonical_route),
     ]
     all_passed = True
     for name, fn in checks:

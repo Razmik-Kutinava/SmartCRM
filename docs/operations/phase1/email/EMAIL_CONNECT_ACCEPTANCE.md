@@ -53,6 +53,6 @@ IMAP: окно `EMAIL_IMAP_SINCE_DAYS` (30), лимит `EMAIL_IMAP_FETCH_LIMIT`
 
 | Пункт | Действие |
 |-------|----------|
-| `me@agneko.am` | `mail.agneko.am` — нужен **свой** пароль приложения в `.env` |
+| `me@agneko.am` | ✅ credentials в `.env` (`mail.agneko.am`) — BACKLOG снят 2026-06-14 |
 | Рассылки / UX | Ф2 — «криво работает», чинить отдельно |
 | `test_email_sync.py` live | только `EMAIL_SYNC_LIVE=1` |

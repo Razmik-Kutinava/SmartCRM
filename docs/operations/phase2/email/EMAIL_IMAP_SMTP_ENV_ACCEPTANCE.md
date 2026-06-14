@@ -52,4 +52,3 @@ python scripts/smoke_email_connect.py   # live, если .env заполнен
 - Фоновый синк (п.403)
 - UI `/email` (п.404)
 - Черновик/апрув (п.405–407)
-- `me@agneko.am` — отдельный пароль (BACKLOG)

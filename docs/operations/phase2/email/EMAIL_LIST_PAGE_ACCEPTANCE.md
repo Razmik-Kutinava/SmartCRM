@@ -45,6 +45,9 @@ pytest tests/api/test_email_threads_api.py tests/lib/test_email_list_logic.py te
 
 ## Не в scope
 
-- Анализ типа + черновик (п.405)
-- Апрув/голос (п.406–407)
-- Удаление legacy `email/[mailbox].svelte`
+- Черновик/апрув (п.405–407)
+
+## Cleanup 2026-06-14
+
+- [x] Удалён legacy `email/[mailbox].svelte` — канон `/email` → `+page.svelte`
+- [x] BACKLOG `me@agneko.am` снят (пароль уже в `.env`)

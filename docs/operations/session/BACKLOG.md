@@ -50,7 +50,7 @@
 `[2026-06-13] | PRD_MAP: Агенты quality gates UI финал | Коммит 596d2e1: вкладки Hermes/gate, download, режимы, bulk→eval-failed-gate, insights pass rate | **Не вышло:** live gate MAP 🔲; agents-only оборван analyst | Действие: EVAL_OLLAMA_TIMEOUT=1200 --write-acceptance`
 
 
-`[2026-06-11] | PRD_MAP: инфра email me@agneko.am | Отложено: отдельный пароль на mail.agneko.am | Сейчас: ib@agneko.com подключён (Яндекс IMAP) | Действие: EMAIL_ACCOUNT_1_APP_PASSWORD в .env`
+`[2026-06-11] | PRD_MAP: инфра email me@agneko.am | **ЗАКРЫТО ✅ 2026-06-14** | Пароль в `.env`; ib@ + me@ через `EMAIL_ACCOUNT_*` | Коммит: см. CHANGELOG cleanup`
 
 `[2026-06-11] | PRD_MAP: «Ops /ops» п.10 версионирование промптов | Отложено: git-like версии override промптов | Причина: scope Ф2 | Сейчас: PUT/DELETE override в `backend/data/agent_prompt_*.txt` | Действие: Ф2 ops versioning`
 

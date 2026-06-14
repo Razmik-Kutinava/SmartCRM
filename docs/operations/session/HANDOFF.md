@@ -148,9 +148,9 @@
 
 **Ops Ф1 ✅** — `OPS_BASELINE_ACCEPTANCE.md`, `smoke_ops_baseline.py` (33 pytest).
 
-**Email 🟡** — `EMAIL_CONNECT_ACCEPTANCE.md`: ib@ Yandex ✅; **Sync** на `/email` или `smoke_email_sync.py`; me@ → mail.agneko.am ждёт пароль.
+**Email ✅** — `EMAIL_CONNECT_ACCEPTANCE.md`: ib@ + me@ в `.env`; UI `/email`; фоновый sync Ф2.
 
-**Следующий `go`:** пароль `me@agneko.am` **или** Агенты (MAP) перепроход **или** Ф2 §8 live leadgen.
+**Следующий `go` (история):** Ф2 §3 email-агент п.405+ или §8 leadgen.
 
 **RAG п.5 save ✅** — `smoke_rag_save_from_search.py`, DevTools полный flow, `SEARCH_RAG_SAVE_ACCEPTANCE.md`.
 
