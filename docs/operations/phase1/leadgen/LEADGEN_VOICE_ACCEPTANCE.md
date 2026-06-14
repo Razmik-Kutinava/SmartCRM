@@ -1,13 +1,16 @@
 # Лидоген + голос — acceptance (2026-06-11)
 
-PRD_MAP: **Ф2 §8** · очередь **5** · статус **⚠️ smoke slice** (не полный live UI).
+PRD_MAP: **Ф2 §8** · статус **✅ закрыт** (live UI + lookalike).
 
 ## Что закрыто (smoke)
 
 | Слой | Как |
 |------|-----|
-| Backend WS | `tests/smoke/test_leadgen_voice_ws.py` — audio/text → `generate_lead` → `voice_action` navigate `/leadgen` |
-| Связь mic E2E | общий WS-контракт с `VOICE_MIC_E2E_ACCEPTANCE.md` |
+| Backend WS | `tests/smoke/test_leadgen_voice_ws.py` — navigate `/leadgen?inn=&autorun=1` |
+| Live UI pipeline | `voiceLeadgenContext` + autorun → analyze/portrait на `/leadgen` |
+| Lookalike won | `find_similar_clients` + `lookalike-import` + `GET /won-portrait` |
+
+Полный acceptance Ф2: [`LEADGEN_VOICE_F2_ACCEPTANCE.md`](../../phase2/leadgen/LEADGEN_VOICE_F2_ACCEPTANCE.md)
 
 ## Команда
 
@@ -15,10 +18,10 @@ PRD_MAP: **Ф2 §8** · очередь **5** · статус **⚠️ smoke slic
 cd backend && python -m pytest tests/smoke/test_leadgen_voice_ws.py -q
 ```
 
-## Хвост (не в scope smoke)
+## Хвост (закрыт в Ф2)
 
-- [ ] Live UI: голос на `/leadgen` → полный pipeline (портрет/ИНН, результаты, автосейв)
-- [ ] Lookalike из won-сделок + апрув менеджера
+- [x] Live UI: голос на `/leadgen` → полный pipeline — см. `LEADGEN_VOICE_F2_ACCEPTANCE.md`
+- [x] Lookalike из won-сделок + апрув менеджера — `find_similar_clients` + `lookalike-import`
 
 ## Связь MAP
 

@@ -1,6 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { apiFetch } from '$lib/api.js';
+	import { voiceLeadgenContext } from '$lib/voice/voiceAction.js';
 	import { portraitFieldsFromLead } from '$lib/leadgen/portraitFromLead.js';
 	import {
 		portraitProgressPercent,
@@ -191,6 +193,51 @@ let portrait_deep      = $state(false);
 	let saved_crm_id     = $state(null);
 	let saved_crm_created = $state(true);
 	let crm_saved_batch  = $state([]);
+	let voiceCtx = $state(null);
+	let voicePendingRun = $state(false);
+	let won_portrait_hint = $state('');
+
+	function applyVoiceLeadgenContext() {
+		const params = $page.url.searchParams;
+		const ctx = voiceCtx || {};
+		const routeMode = params.get('mode') || ctx.mode || '';
+		if (routeMode === 'portrait' || ctx.portrait || params.get('portrait')) {
+			mode = 'portrait';
+			const pt = params.get('portrait') || ctx.portrait || '';
+			if (pt) portrait_notes = pt;
+			const inn = params.get('inn') || ctx.reference_inn || ctx.inn || '';
+			if (inn) portrait_inn = inn;
+		} else if (routeMode === 'cluster' || ctx.inn && routeMode === 'cluster') {
+			mode = 'cluster';
+			cluster_inn = params.get('inn') || ctx.inn || '';
+		} else if (params.get('inn') || params.get('name') || ctx.inn || ctx.company_name) {
+			mode = 'direct';
+			direct_inn = params.get('inn') || ctx.inn || '';
+			direct_name = params.get('name') || ctx.company_name || ctx.company || '';
+			direct_website = params.get('website') || ctx.website || '';
+		}
+		if (params.get('autosave') === '1' || ctx.save) autosave_crm = true;
+		voicePendingRun = params.get('autorun') === '1' || ctx.autorun === true;
+	}
+
+	async function maybeVoiceAutorun() {
+		if (!voicePendingRun || loading) return;
+		voicePendingRun = false;
+		await run();
+	}
+
+	async function loadWonPortrait() {
+		try {
+			const r = await apiFetch('/api/leadgen/won-portrait');
+			if (!r.ok) return;
+			const data = await r.json();
+			mode = 'portrait';
+			portrait_notes = data.portrait || '';
+			won_portrait_hint = data.won_count
+				? `Профиль из ${data.won_count} выигранных сделок`
+				: 'Профиль по умолчанию (нет won-лидов)';
+		} catch {}
+	}
 
 	function clearAll() {
 		result = null; portrait_results = null; cluster_result = null;
@@ -204,10 +251,25 @@ let portrait_deep      = $state(false);
 	let config_saving = $state(false);
 
 	onMount(async () => {
+		const unsubVoice = voiceLeadgenContext.subscribe((v) => {
+			voiceCtx = v;
+			applyVoiceLeadgenContext();
+			maybeVoiceAutorun();
+		});
+		const unsubPage = page.subscribe(() => {
+			applyVoiceLeadgenContext();
+			maybeVoiceAutorun();
+		});
 		try {
 			const r = await fetch(`${API}/api/leadgen/config`);
 			if (r.ok) config = await r.json();
 		} catch {}
+		applyVoiceLeadgenContext();
+		await maybeVoiceAutorun();
+		return () => {
+			unsubVoice();
+			unsubPage();
+		};
 	});
 
 	// ── API helpers ───────────────────────────────────────────────────────────
@@ -406,6 +468,14 @@ let portrait_deep      = $state(false);
 			class="text-xs px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
 		>⚙ Настройки</button>
 	</div>
+
+	{#if voiceCtx?.title || voiceCtx?.inn || voiceCtx?.portrait}
+		<p class="text-xs text-indigo-400 mb-3" data-testid="voice-leadgen-context">
+			🎙 {voiceCtx.title || 'Лидоген'}
+			{#if voiceCtx.inn} · ИНН {voiceCtx.inn}{/if}
+			{#if voiceCtx.portrait} · портрет: {voiceCtx.portrait}{/if}
+		</p>
+	{/if}
 
 	<!-- Режимы -->
 	<div class="flex gap-2 mb-5">
@@ -701,6 +771,19 @@ let portrait_deep      = $state(false);
 				</div>
 			</div>
 		{:else if mode === 'portrait'}
+			<div class="mb-3 flex flex-wrap items-center gap-2">
+				<button
+					type="button"
+					onclick={loadWonPortrait}
+					data-testid="leadgen-won-portrait-btn"
+					class="text-xs px-3 py-1.5 rounded-lg bg-violet-900/50 text-violet-200 hover:bg-violet-800 border border-violet-800/60"
+				>
+					◇ Профиль из выигранных сделок
+				</button>
+				{#if won_portrait_hint}
+					<span class="text-xs text-gray-500">{won_portrait_hint}</span>
+				{/if}
+			</div>
 			<div class="mb-3">
 				<div class="text-xs text-gray-500 mb-1 block">Лид из CRM (критерии из карточки)</div>
 				<select

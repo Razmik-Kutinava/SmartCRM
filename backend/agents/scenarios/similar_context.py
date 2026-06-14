@@ -16,11 +16,26 @@ async def load_won_leads(limit: int = 100) -> list[dict[str, Any]]:
     from agents.tools import read_leads
 
     leads = await read_leads(limit=500)
+    return filter_won_leads(leads, limit=limit)
+
+
+def filter_won_leads(leads: list[dict[str, Any]], limit: int = 100) -> list[dict[str, Any]]:
     won = [
         lead for lead in leads
         if normalize_stage(lead.get("stage"), [WON_STAGE]) == WON_STAGE
     ]
     return won[:limit]
+
+
+async def load_won_leads_db(db, limit: int = 100) -> list[dict[str, Any]]:
+    """Выигранные сделки из ORM (API/тесты без HTTP self-call)."""
+    from sqlalchemy import select
+
+    from db.models import Lead
+
+    result = await db.execute(select(Lead).order_by(Lead.created_at.desc()).limit(500))
+    leads = [row.to_dict() for row in result.scalars().all()]
+    return filter_won_leads(leads, limit=limit)
 
 
 def build_portrait_from_won(won_leads: list[dict[str, Any]]) -> str:

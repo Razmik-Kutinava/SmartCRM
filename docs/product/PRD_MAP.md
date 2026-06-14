@@ -69,7 +69,7 @@
 | 2 | §3 Email: IMAP/SMTP, черновик, апрув и отправка | ✅ |
 | 3 | §4 RAG: кэш enrich + авто-чанки | ✅ |
 | 4 | Сценарий **«голосом письмо → апрув → отправка»** E2E | 🔲 |
-| 5 | §8 leadgen+голос: live UI + полный pipeline (не только smoke) | 🔲 |
+| 5 | §8 leadgen+голос: live UI + полный pipeline | ✅ |
 | 6 | Решение: **«ок, идём в Фазу 3»** | 🔲 |
 
 ### Фаза 1 — сценарии (зачем техтаблицы)
@@ -334,9 +334,9 @@
 |---|-----------------|--------|--------------|
 | 1 | Голосом написать письмо, получить черновик, отправить после апрува | 🔲 | [§1 Voice](#1-voice-layer-все-модули) · [§3 Email](#3-email-агент) |
 | 2 | Попросить Стратега: «проанализируй лид и подготовь КП» (fanout) | 🔲 | [§2 Оркестрация](#2-оркестрация-стратег-fanout) |
-| 3 | Сказать «найди похожих клиентов» → список с апрувом | 🔲 | [§8 Лидоген](#8-лидоген--голос) · lookalike |
+| 3 | Сказать «найди похожих клиентов» → список с апрувом | ✅ | [§8 Лидоген](#8-лидоген--голос) · lookalike |
 | 4 | Поиск/enrich без ручного «Сохранить в базу» — авто в RAG | ✅ | [§4 RAG авто](#4-поиск--rag-авто) |
-| 5 | Голосом на `/leadgen` запустить поиск (ИНН/портрет) end-to-end в UI | 🔲 | [§8 Лидоген](#8-лидоген--голос) · `LEADGEN_VOICE_ACCEPTANCE.md` |
+| 5 | Голосом на `/leadgen` запустить поиск (ИНН/портрет) end-to-end в UI | ✅ | [§8 Лидоген](#8-лидоген--голос) · `LEADGEN_VOICE_F2_ACCEPTANCE.md` |
 
 ### Порядок Фазы 2
 
@@ -349,7 +349,7 @@
 | 2 | §2 | Оркестрация — fanout Стратега | **фундамент** | 🔲 |
 | 3 | §3 | Email-агент | важно | ✅ |
 | 4 | §4 | Поиск → RAG авто (кэш enrich, авто-чанки) | важно | ✅ |
-| 5 | §8 | Лидоген + голос `/leadgen` | важно · **в работе** | ⚠️ smoke slice |
+| 5 | §8 | Лидоген + голос `/leadgen` | ✅ Ф2 | ✅ |
 | 6 | §9 | Лиды enrich — кнопка на карточке | важно | ✅ |
 | 7 | §5 | Self-improvement — версии промптов | можно позже | ✅ |
 | 8 | §6 | Аналитика + голос | ✅ Ф2 | ✅ |
@@ -439,9 +439,9 @@
 
 ### 8. Лидоген + голос
 
-- [x] WS audio → `generate_lead` + navigate `/leadgen` — smoke `test_leadgen_voice_ws.py` (2026-06-11) · acceptance: [`LEADGEN_VOICE_ACCEPTANCE.md`](../operations/phase1/leadgen/LEADGEN_VOICE_ACCEPTANCE.md) (smoke ⚠️)
-- [ ] Live UI + полный pipeline leadgen по голосу
-- [ ] Lookalike из won-сделок + апрув менеджера ([`leadgen.md`](../modules/leadgen.md#lookalike-из-won-сделок-фаза-2))
+- [x] WS audio → `generate_lead` + navigate `/leadgen` — smoke `test_leadgen_voice_ws.py` · acceptance: [`LEADGEN_VOICE_ACCEPTANCE.md`](../operations/phase1/leadgen/LEADGEN_VOICE_ACCEPTANCE.md)
+- [x] Live UI + полный pipeline leadgen по голосу — ✅ autorun `/leadgen` + `voiceLeadgenContext` · [`LEADGEN_VOICE_F2_ACCEPTANCE.md`](../operations/phase2/leadgen/LEADGEN_VOICE_F2_ACCEPTANCE.md)
+- [x] Lookalike из won-сделок + апрув менеджера — ✅ `find_similar_clients` + `lookalike-import` + `/won-portrait`
 
 ### 9. Лиды + обогащение (enrich)
 
@@ -513,7 +513,7 @@
 | Голос лиды | 1 | ✅ (хвосты 🟡) 2026-06-11 | `VOICE_MIC_E2E_ACCEPTANCE.md`; п.3/5 spot-check → `BACKLOG` |
 | Поиск/RAG | 1→2 | ✅ база | Ф2 §4: кэш enrich, авто-чанки |
 | Лиды enrich | 2 | ✅ | Ф2 §9: кнопка на карточке — `LEADS_CARD_ENRICH_ACCEPTANCE.md` |
-| Лидоген | 1→2 | ✅ Ф1 | **Ф2 §8:** голос ⚠️ smoke · `LEADGEN_VOICE_ACCEPTANCE.md` |
+| Лидоген | 1→2 | ✅ Ф1 | **Ф2 §8:** голос ✅ · `LEADGEN_VOICE_F2_ACCEPTANCE.md` |
 | Тендеры | 1→2→3 | ✅ baseline 2026-06-11 | `TENDERS_BASELINE_ACCEPTANCE.md` · Ф2 §7 голос/платный API |
 | Email | 2→3 | 🔲 | Ф2 §3: IMAP |
 | Оркестрация | 2 | 🔲 | Ф2 §2: fanout |

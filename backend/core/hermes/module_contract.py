@@ -99,6 +99,8 @@ MODULE_ROUTES: dict[str, str] = {
     "tenders": "/tenders",
 }
 
+LEADGEN_INTENTS = frozenset({"generate_lead", "find_leads_portrait", "cluster_company"})
+
 ANALYTICS_INTENTS = frozenset({
     "analytics_funnel", "analytics_conversion", "analytics_cycle",
     "analytics_score", "analytics_report",

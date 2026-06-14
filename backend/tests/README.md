@@ -24,7 +24,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 
 | Папка | Что тестирует |
 |-------|----------------|
-| `api/` | `test_leads_api.py`, `test_lookalike_import.py`, `test_search_providers_api.py`, `test_eval_scenarios_api.py` |
+| `api/` | `test_leads_api.py`, `test_lookalike_import.py`, `test_leadgen_section8.py`, `test_search_providers_api.py`, `test_eval_scenarios_api.py` |
 | `core/` | `test_hermes_eval.py`, `test_qa_agent.py` |
 | `agents/` | `test_analyst.py` |
 | `rag/` | `test_search_providers.py`, `test_search_pkg.py`, `test_rag_chunks.py`, `test_search_modes.py`, `test_enrich_cache.py`, `test_qa_structure.py` |
@@ -54,7 +54,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `core/test_hermes_lead_extended.py` | analyze_lead, lead_history, stage-фильтры |
 | `core/test_lead_list_view.py` | Маппинг list_leads → UI |
 | `voice/test_lead_context.py` | Загрузка истории лида |
-| `smoke/test_voice_lead_scenarios.py` | Матрица S01–S09 голосовых сценариев лидов |
+| `smoke/test_leadgen_voice_ws.py` | WS generate_lead → navigate `/leadgen?autorun=1` (Ф2 §8) |
 | `test_tender_sources.py` | Источники тендеров |
 | `smoke/test_tenders_baseline_smoke.py` | Смоук `/api/tenders/search`, save, web |
 | `api/test_tenders_saved_api.py` | Мои/Архив, analyze, POST /save |
@@ -85,7 +85,6 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `voice/test_whisper_stt.py` | Groq Whisper STT, preprocess, pipeline audio |
 | `smoke/test_whisper_stt_smoke.py` | HTTP transcribe + ops whisper settings + WS |
 | `smoke/test_voice_mic_ws_e2e.py` | WS audio bytes → STT → Hermes (mic E2E) |
-| `smoke/test_leadgen_voice_ws.py` | WS → generate_lead → /leadgen (Ф2 §8 slice) |
 | `lib/test_ops_route_manifest.py` | Зеркало навигации Ops + список API smoke |
 | `api/test_ops_baseline_api.py` | Ops Ф1: read API + prompt/CRM roundtrip |
 | `core/test_agent_prompt_versions.py` | Версии промптов агентов: save, restore, compare |

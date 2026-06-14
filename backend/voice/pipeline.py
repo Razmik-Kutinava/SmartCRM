@@ -78,6 +78,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         "list_emails", "analytics_funnel", "analytics_conversion",
         "analytics_cycle", "analytics_score", "analytics_report",
         "save_to_rag", "list_emails",
+        "generate_lead", "find_leads_portrait", "cluster_company",
     })
 
     # Шаг 3: Агенты / контекстные хэндлеры

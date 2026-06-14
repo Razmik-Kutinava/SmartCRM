@@ -14,6 +14,7 @@ def test_voice_action_js_exports():
     for sym in (
         "voiceAnalyticsContext",
         "voiceTenderContext",
+        "voiceLeadgenContext",
         "voiceSearchQuery",
         "registerVoiceApproveHandler",
         "voiceHighlight",
@@ -69,3 +70,11 @@ def test_voice_action_analytics_query_builder():
     assert "params.set('period'" in text
     assert "params.set('view'" in text
     assert "voiceTenderContext" in text
+
+
+def test_leadgen_voice_context_marker():
+    path = _REPO / "frontend" / "src" / "routes" / "leadgen" / "+page.svelte"
+    text = path.read_text(encoding="utf-8")
+    assert "voice-leadgen-context" in text
+    assert "leadgen-won-portrait-btn" in text
+    assert "voiceLeadgenContext" in text

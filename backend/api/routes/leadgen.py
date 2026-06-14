@@ -14,8 +14,11 @@ import logging
 import os
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from db.session import get_db
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/leadgen", tags=["leadgen"])
@@ -159,6 +162,19 @@ async def update_config(body: ConfigPatch):
     cfg.update(data)
     _save_config(cfg)
     return {"status": "ok", "config": cfg}
+
+
+@router.get("/won-portrait")
+async def won_portrait(db: AsyncSession = Depends(get_db)):
+    """Портрет lookalike из выигранных сделок CRM (Ф2 §8)."""
+    from agents.scenarios.similar_context import build_portrait_from_won, load_won_leads_db
+
+    won = await load_won_leads_db(db)
+    return {
+        "portrait": build_portrait_from_won(won),
+        "won_count": len(won),
+        "source": "won_deals" if won else "default",
+    }
 
 
 # ── Утилиты ────────────────────────────────────────────────────────────────

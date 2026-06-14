@@ -134,6 +134,55 @@ def rescue_route(text: str) -> dict | None:
             "_model": "rescue",
         })
 
+    from agents.scenarios.leadgen_voice import (
+        CLUSTER_INTENT,
+        GENERATE_AGENTS,
+        GENERATE_INTENT,
+        PORTRAIT_AGENTS,
+        PORTRAIT_INTENT,
+        cluster_slots_from_text,
+        generate_slots_from_text,
+        matches_cluster,
+        matches_generate,
+        matches_portrait,
+        portrait_slots_from_text,
+    )
+
+    if matches_generate(text):
+        slots_lg = generate_slots_from_text(text)
+        inn = slots_lg.get("inn", "")
+        suffix = f" ИНН {inn}" if inn else ""
+        return enrich_module_ui({
+            "intent": GENERATE_INTENT,
+            "agents": list(GENERATE_AGENTS),
+            "slots": slots_lg,
+            "parallel": True,
+            "reply": f"Запускаю лидоген{suffix}.",
+            "_model": "rescue",
+        })
+
+    if matches_portrait(text):
+        slots_lp = portrait_slots_from_text(text)
+        return enrich_module_ui({
+            "intent": PORTRAIT_INTENT,
+            "agents": list(PORTRAIT_AGENTS),
+            "slots": slots_lp,
+            "parallel": False,
+            "reply": "Ищу компании по портрету на /leadgen.",
+            "_model": "rescue",
+        })
+
+    if matches_cluster(text):
+        slots_cl = cluster_slots_from_text(text)
+        return enrich_module_ui({
+            "intent": CLUSTER_INTENT,
+            "agents": list(PORTRAIT_AGENTS),
+            "slots": slots_cl,
+            "parallel": False,
+            "reply": "Открываю кластер-поиск на /leadgen.",
+            "_model": "rescue",
+        })
+
     from agents.scenarios.similar_clients import (
         AGENTS as SIMILAR_AGENTS,
         INTENT as SIMILAR_INTENT,

@@ -1,4 +1,4 @@
-"""Ф2 §8 slice: голос → leadgen intent через WS (мок Hermes + orchestrator)."""
+"""Смоук Ф2 §8: обновлённый WS leadgen navigate + query."""
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch
@@ -19,24 +19,17 @@ def test_ws_leadgen_generate_lead_intent():
     routed = {
         "intent": "generate_lead",
         "agents": ["analyst", "strategist"],
-        "slots": {"inn": _INN},
+        "slots": {"inn": _INN, "autorun": True},
         "reply": "Запускаю анализ.",
         "parallel": True,
+        "module": "leadgen",
+        "ui_action": "navigate",
     }
     with patch("voice.pipeline.transcribe", AsyncMock(return_value=text)), patch(
         "voice.pipeline.parse_intent",
         AsyncMock(return_value={**routed, "_model": "mock"}),
     ), patch("voice.pipeline.traces.new_trace", return_value={"id": "lg-v1"}), patch(
         "voice.pipeline.traces.finish_trace"
-    ), patch(
-        "agents.orchestrator.run_agents",
-        AsyncMock(
-            return_value={
-                "agents_ran": True,
-                "final_reply": "Скор 84.",
-                "analyst_output": {"summary": "ok"},
-            }
-        ),
     ):
         with TestClient(app) as tc:
             with tc.websocket_connect("/ws/voice", headers={"X-API-Key": _TEST_KEY}) as ws:
@@ -47,4 +40,5 @@ def test_ws_leadgen_generate_lead_intent():
     va = next((m for m in msgs if m.get("type") == "voice_action"), None)
     assert va is not None
     assert va.get("ui") == "navigate"
-    assert va.get("route") == "/leadgen"
+    assert va.get("route", "").startswith("/leadgen?")
+    assert _INN in va.get("route", "")

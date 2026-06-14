@@ -167,6 +167,11 @@
 					{#if $voiceModal.payload.ideal_profile}
 						<p class="text-xs text-gray-400 mb-2">Портрет: {$voiceModal.payload.ideal_profile}</p>
 					{/if}
+					{#if $voiceModal.payload.similar?.won_count}
+						<p class="text-xs text-violet-300 mb-2" data-testid="voice-lookalike-won">
+							Источник: { $voiceModal.payload.similar.won_count } выигранных сделок CRM
+						</p>
+					{/if}
 					<ul class="space-y-2 text-xs">
 						{#each $voiceModal.payload.similar_leads.slice(0, 8) as row}
 							<li class="rounded bg-gray-950/60 p-2 flex justify-between gap-2">

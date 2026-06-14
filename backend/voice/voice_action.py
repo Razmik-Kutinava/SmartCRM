@@ -5,7 +5,7 @@ import re
 from typing import Any
 
 from core.hermes.lead_list_view import list_leads_view_from_slots
-from core.hermes.module_contract import ANALYTICS_INTENTS, MODULE_ROUTES, RAG_INTENTS
+from core.hermes.module_contract import ANALYTICS_INTENTS, LEADGEN_INTENTS, MODULE_ROUTES, RAG_INTENTS
 from voice.synthesis import (
     SYNTHESIS_MODAL_INTENTS,
     build_synthesis_payload,
@@ -58,6 +58,9 @@ _ANALYTICS_TITLES = {
     "analytics_report": "Аналитика CRM",
     "search_tenders": "Поиск тендеров",
     "list_tenders": "Мои тендеры",
+    "generate_lead": "Лидоген по ИНН",
+    "find_leads_portrait": "Поиск по портрету",
+    "cluster_company": "Кластер компаний",
 }
 
 
@@ -109,6 +112,8 @@ def build_voice_action(
             base["payload"] = _analytics_payload(slots)
         elif intent in ("search_tenders", "list_tenders"):
             base["payload"] = _tenders_payload(slots)
+        elif intent in LEADGEN_INTENTS:
+            base["payload"] = _leadgen_payload(intent, slots)
         elif intent == "list_emails":
             base["payload"] = email_navigate_payload(slots)
     elif ui == "filter":
@@ -177,6 +182,8 @@ def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
         return "modal"
     if intent in ("search_tenders", "list_tenders"):
         return "navigate"
+    if intent in LEADGEN_INTENTS:
+        return "navigate"
     if intent in _ROUTE_BY_INTENT:
         return "navigate"
     return None
@@ -229,6 +236,8 @@ def _route(intent: str, slots: dict, agent_result: dict) -> str:
         return _analytics_route(intent, slots)
     if intent in ("evaluate_tender", "search_tenders", "list_tenders"):
         return _tenders_route(intent, slots)
+    if intent in LEADGEN_INTENTS:
+        return _leadgen_route(intent, slots)
     if intent in RAG_INTENTS:
         return MODULE_ROUTES["rag"]
     if intent in ("list_emails", "write_email", "send_email"):
@@ -240,6 +249,46 @@ def _url_q(text: str) -> str:
     from urllib.parse import quote
 
     return quote(str(text)[:200])
+
+
+def _leadgen_route(intent: str, slots: dict) -> str:
+    from urllib.parse import urlencode
+
+    params: dict[str, str] = {"autorun": "1"}
+    if intent == "find_leads_portrait":
+        params["mode"] = "portrait"
+        if slots.get("portrait"):
+            params["portrait"] = str(slots["portrait"])
+        if slots.get("reference_inn"):
+            params["inn"] = str(slots["reference_inn"])
+    elif intent == "cluster_company":
+        params["mode"] = "cluster"
+        if slots.get("inn"):
+            params["inn"] = str(slots["inn"])
+    else:
+        params["mode"] = "direct"
+        if slots.get("inn"):
+            params["inn"] = str(slots["inn"])
+        name = slots.get("company_name") or slots.get("company")
+        if name:
+            params["name"] = str(name)
+        if slots.get("website"):
+            params["website"] = str(slots["website"])
+    if slots.get("save"):
+        params["autosave"] = "1"
+    return f"{MODULE_ROUTES['leadgen']}?{urlencode(params)}"
+
+
+def _leadgen_payload(intent: str, slots: dict) -> dict[str, Any]:
+    payload: dict[str, Any] = {"autorun": True, "intent": intent}
+    for key in (
+        "inn", "company_name", "company", "website", "portrait",
+        "reference_inn", "save", "autorun",
+    ):
+        val = slots.get(key)
+        if val not in (None, "", "—"):
+            payload[key] = val
+    return payload
 
 
 def _tenders_payload(slots: dict) -> dict[str, Any]:

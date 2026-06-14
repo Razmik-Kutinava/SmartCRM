@@ -16,6 +16,9 @@ export const voiceAnalyticsContext = writable(null);
 /** Контекст /tenders с голоса: query, tab, title */
 export const voiceTenderContext = writable(null);
 
+/** Контекст /leadgen с голоса: inn, portrait, autorun */
+export const voiceLeadgenContext = writable(null);
+
 /** Поисковый запрос для /search */
 export const voiceSearchQuery = writable(null);
 
@@ -70,6 +73,32 @@ function flashHighlight(text) {
 	}, 5200);
 }
 
+function applyLeadgenPayload(action) {
+	const payload = action.payload || {};
+	const slots = action.slots || {};
+	const intent = String(action.intent || '');
+	if (!intent.startsWith('generate_') && intent !== 'find_leads_portrait' && intent !== 'cluster_company') {
+		return;
+	}
+	voiceLeadgenContext.set({
+		intent,
+		title: String(action.title || ''),
+		inn: String(payload.inn || slots.inn || slots.reference_inn || ''),
+		company_name: String(payload.company_name || slots.company_name || slots.company || ''),
+		website: String(payload.website || slots.website || ''),
+		portrait: String(payload.portrait || slots.portrait || ''),
+		reference_inn: String(payload.reference_inn || slots.reference_inn || ''),
+		save: Boolean(payload.save || slots.save),
+		autorun: payload.autorun !== false,
+		mode:
+			intent === 'find_leads_portrait'
+				? 'portrait'
+				: intent === 'cluster_company'
+					? 'cluster'
+					: 'direct',
+	});
+}
+
 function applyTenderPayload(action) {
 	const payload = action.payload || {};
 	const query = payload.query || action.slots?.query;
@@ -112,6 +141,7 @@ export function handleVoiceAction(action, { goto }) {
 	if (ui === 'navigate' && action.route) {
 		applyAnalyticsPayload(action);
 		applyTenderPayload(action);
+		applyLeadgenPayload(action);
 		let route = String(action.route);
 		if (intent.startsWith('analytics_') && !route.includes('?')) {
 			const params = new URLSearchParams();
@@ -134,6 +164,33 @@ export function handleVoiceAction(action, { goto }) {
 			if (tab) params.set('tab', String(tab));
 			const qs = params.toString();
 			if (qs) route = `${route}?${qs}`;
+		}
+		if (
+			(intent === 'generate_lead' || intent === 'find_leads_portrait' || intent === 'cluster_company') &&
+			!route.includes('?')
+		) {
+			const params = new URLSearchParams({ autorun: '1' });
+			const payload = action.payload || {};
+			const slots = action.slots || {};
+			if (intent === 'find_leads_portrait') {
+				params.set('mode', 'portrait');
+				const pt = payload.portrait || slots.portrait;
+				if (pt) params.set('portrait', String(pt));
+				const inn = payload.reference_inn || slots.reference_inn || slots.inn;
+				if (inn) params.set('inn', String(inn));
+			} else if (intent === 'cluster_company') {
+				params.set('mode', 'cluster');
+				const inn = payload.inn || slots.inn;
+				if (inn) params.set('inn', String(inn));
+			} else {
+				params.set('mode', 'direct');
+				const inn = payload.inn || slots.inn;
+				if (inn) params.set('inn', String(inn));
+				const name = payload.company_name || slots.company_name || slots.company;
+				if (name) params.set('name', String(name));
+			}
+			if (payload.save || slots.save) params.set('autosave', '1');
+			route = `${route}?${params.toString()}`;
 		}
 		if (intent === 'search_web' && action.slots?.query && !route.includes('?')) {
 			goto(`${route}?q=${encodeURIComponent(String(action.slots.query))}`);
