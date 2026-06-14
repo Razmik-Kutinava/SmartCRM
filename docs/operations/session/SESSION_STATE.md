@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-14 | Действие: Ф2 §3 п.402 — IMAP/SMTP env: email_config, bootstrap API, acceptance; pytest 20 passed. | Коммит: `2b84cfd` | Хвост A: п.403–407 email (фон, UI, черновик, апрув, голос) | Хвост B: нет | Хвост C: me@agneko.am отдельный пароль — BACKLOG | Следующий шаг: go §3 п.403 фоновый синк. | Статус: done
+
 2026-06-14 | Действие: хвост B/C — lookalike-import API + VoiceActionHost approve; pytest 8 passed. | Коммит: `bf3e4d8` | Хвост A: нет | Хвост B: нет | Хвост C: check_agent_step paths (уже в d686a32) | Следующий шаг: go §3 email IMAP/SMTP. | Статус: done
 
 2026-06-14 | Действие: Ф2 §2 п.396 find_similar_clients — analyst∥marketer→modal lookalike; pytest 6 passed; §2 оркестрация закрыта. | Коммит: `d9d5f4b` | Хвост A: нет (§2 done) | Хвост B: lookalike POST /api/leads → §8 MAP | Хвост C: fix VoiceActionHost modalAction | Следующий шаг: go §3 email или §8 lookalike. | Статус: done

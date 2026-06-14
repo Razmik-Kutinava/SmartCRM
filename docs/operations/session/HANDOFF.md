@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§3 email п.402 IMAP/SMTP env] | Статус: ✅ done`
+
+> **→ Следующий агент:** §3 Email-агент п.403 «Фоновый синк входящих» — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14 (Ф2 §3 п.402):** IMAP/SMTP из `.env` — `core/email_config`, bootstrap API, status без секретов; pytest 20 passed; MAP п.402 `[x]`. **Коммит:** `2b84cfd` · ops см. ниже.
+
+**Следующий `go`:** §3 п.403 фоновый синк входящих.
+
+---
+
 `Спринт:[Ф2] | Задача:[хвосты B/C + lookalike import] | Статус: ✅ done`
 
 > **→ Следующий агент:** §3 Email-агент — [`PRD_MAP.md`](../product/PRD_MAP.md) п.402
