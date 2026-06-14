@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-14 | Действие: фон live LLM eval модулей (--full 56 кейсов Groq+Ollama); скрипт run_eval_modules_live.py. | Коммит: `fb72e24` | Хвост A: дождаться артефакта modules_live_*.json | Хвост B: нет | Хвост C: нет | Следующий шаг: итог eval + §2 fanout. | Статус: in_progress
+
 2026-06-14 | Действие: Ф2 §1 Voice Layer закрыт — UI voice_action + rescue eval + smoke 72 passed. | Коммит: `f2b618e` | Хвост A: live LLM eval модулей (опц.) | Хвост B: нет | Хвост C: нет | Следующий шаг: go §2 fanout или §8 leadgen+голос. | Статус: done
 
 2026-06-13 | Действие: Ф2 §1 Hermes module+ui_action (email/search/analytics/agents/rag); smoke 47+10 pytest. | Коммит: `42b14d1` | Хвост A: Voice Layer UI п.2–5; LLM eval analytics/RAG | Хвост B: UI period/minScore, send_email live → BACKLOG | Хвост C: нет | Следующий шаг: go Voice Layer UI или §2 fanout. | Статус: done
