@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §3 п.407: голосовые команды email
+
+**Сделано:** list_emails/write_email/send_email E2E; marketer в оркестраторе; voiceEmailContext на `/email`; modal send→approve; pytest 12+ passed; `EMAIL_VOICE_COMMANDS_ACCEPTANCE.md`; MAP п.407 `[x]`; **§3 Email-агент закрыт.**
+
 ## 2026-06-14 — Ф2 §3 п.406: апрув и отправка email
 
 **Сделано:** EmailApproveModal (reply/compose); voice send_email approve + thread_id reply; pytest 8 passed; `EMAIL_APPROVE_SEND_ACCEPTANCE.md`; MAP п.406 `[x]`.

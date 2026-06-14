@@ -11,6 +11,7 @@ from voice.synthesis import (
     build_synthesis_payload,
     has_multi_agent_synthesis,
 )
+from voice.email_context import email_navigate_payload
 from agents.scenarios.tender_context import tender_snapshot
 
 _UI_MODAL_INTENTS = frozenset({
@@ -102,6 +103,8 @@ def build_voice_action(
         base["route"] = _route(intent, slots, agent_result)
         if intent in ANALYTICS_INTENTS:
             base["payload"] = _analytics_payload(slots)
+        elif intent == "list_emails":
+            base["payload"] = email_navigate_payload(slots)
     elif ui == "filter":
         base["route"] = "/leads/list"
         base["payload"] = {"filter": _filter_payload(intent, slots)}
@@ -125,6 +128,8 @@ def build_voice_action(
             base["route"] = "/search"
     elif ui == "modal":
         base["payload"] = _modal_payload(intent, agent_result, reply, slots)
+        if intent == "write_email":
+            base["route"] = MODULE_ROUTES.get("email", "/email")
         lead_route = _lead_route(slots, agent_result)
         if lead_route and intent in SYNTHESIS_MODAL_INTENTS:
             base["route"] = lead_route

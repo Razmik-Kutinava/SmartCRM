@@ -19,6 +19,9 @@ export const voiceSearchQuery = writable(null);
 /** Краткое уведомление после voice_action */
 export const voiceToast = writable(null);
 
+/** Контекст /email с голоса: folder, search, hint */
+export const voiceEmailContext = writable(null);
+
 /** @type {import('svelte/store').Writable<{ text: string, until: number } | null>} */
 export const voiceHighlight = writable(null);
 
@@ -97,6 +100,14 @@ export function handleVoiceAction(action, { goto }) {
 			goto(route);
 		}
 		if (action.slots?.query) voiceSearchQuery.set(String(action.slots.query));
+		if (intent === 'list_emails' && action.payload) {
+			const ctx = action.payload;
+			voiceEmailContext.set({
+				folder: ctx.folder || 'inbox',
+				search: ctx.search || '',
+				hint: ctx.hint || '',
+			});
+		}
 		flashHighlight(action.title || 'Переход по голосу');
 		return;
 	}

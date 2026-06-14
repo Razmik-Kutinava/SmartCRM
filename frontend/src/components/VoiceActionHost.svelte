@@ -1,8 +1,30 @@
 <script>
 	import { voiceModal, voiceApprove, resolveVoiceApprove, closeVoiceModal, voiceToast } from '$lib/voice/voiceAction.js';
 	import { goto } from '$app/navigation';
-	import { sendEmail } from '$lib/emailStorage.js';
 	import { importLookalikeLeads } from '$lib/voice/lookalikeImport.js';
+
+	function queueSendEmailApprove(modal) {
+		const em = modal.payload?.draft_email;
+		if (!em) return;
+		const slots = { ...(modal.slots || {}), ...(modal.payload?.slots || {}) };
+		const target = slots.target || slots.email || slots.to || '';
+		voiceApprove.set({
+			type: 'voice_action',
+			intent: 'send_email',
+			ui: 'approve',
+			title: 'Отправить письмо?',
+			reply: modal.reply || '',
+			slots,
+			payload: {
+				intent: 'send_email',
+				slots,
+				draft_email: em,
+				message: target ? `Отправить письмо: ${target}?` : 'Подтверди отправку письма.',
+				actions: ['confirm', 'reject'],
+			},
+		});
+		closeVoiceModal();
+	}
 
 	function modalAction(kind) {
 		const m = $voiceModal;
@@ -28,21 +50,7 @@
 			return;
 		}
 		if (kind === 'send' && m.payload?.draft_email) {
-			const em = m.payload.draft_email;
-			const target = m.slots?.target || m.slots?.email || '';
-			if (target) {
-				sendEmail({ to: [String(target)], subject: em.subject || '', body: em.body || '' })
-					.then(() => voiceToast.set(`Письмо отправлено: ${target}`))
-					.catch((e) => voiceToast.set(e?.message || String(e)));
-				closeVoiceModal();
-				return;
-			}
-			const q = new URLSearchParams({
-				subject: em.subject || '',
-				body: em.body || '',
-			});
-			closeVoiceModal();
-			goto(`/email?${q.toString()}`);
+			queueSendEmailApprove(m);
 			return;
 		}
 		closeVoiceModal();

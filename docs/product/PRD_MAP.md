@@ -66,7 +66,7 @@
 | # | Критерий | Статус |
 |---|----------|--------|
 | 1 | Фундамент: §1 Voice Layer (все модули) + §2 fanout Стратега | 🟡 §1 ✅ · §2 🔲 |
-| 2 | §3 Email: IMAP/SMTP, черновик, апрув и отправка | 🔲 |
+| 2 | §3 Email: IMAP/SMTP, черновик, апрув и отправка | ✅ |
 | 3 | §4 RAG: кэш enrich + авто-чанки | 🔲 |
 | 4 | Сценарий **«голосом письмо → апрув → отправка»** E2E | 🔲 |
 | 5 | §8 leadgen+голос: live UI + полный pipeline (не только smoke) | 🔲 |
@@ -346,7 +346,7 @@
 |---------|-------|------|-----------|--------|
 | 1 | §1 | Voice Layer — голос вне `/leads` | **фундамент** | 🟡 §1 ✅ · §2 🔲 |
 | 2 | §2 | Оркестрация — fanout Стратега | **фундамент** | 🔲 |
-| 3 | §3 | Email-агент | важно | 🔲 |
+| 3 | §3 | Email-агент | важно | ✅ |
 | 4 | §4 | Поиск → RAG авто (кэш enrich, авто-чанки) | важно | 🔲 |
 | 5 | §8 | Лидоген + голос `/leadgen` | важно · **в работе** | ⚠️ smoke slice |
 | 6 | §9 | Лиды enrich — кнопка на карточке | важно | 🔲 |
@@ -404,7 +404,7 @@
 - [x] Список `/email` — ✅ [`EMAIL_LIST_PAGE_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_LIST_PAGE_ACCEPTANCE.md)
 - [x] Анализ типа письма + черновик (Маркетолог) — ✅ [`EMAIL_DRAFT_ANALYZE_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_DRAFT_ANALYZE_ACCEPTANCE.md)
 - [x] Апрув и отправка (голос или кнопка) — ✅ [`EMAIL_APPROVE_SEND_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_APPROVE_SEND_ACCEPTANCE.md)
-- [ ] Голосовые команды email
+- [x] Голосовые команды email — ✅ [`EMAIL_VOICE_COMMANDS_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_VOICE_COMMANDS_ACCEPTANCE.md)
 
 ### 4. Поиск → RAG авто
 

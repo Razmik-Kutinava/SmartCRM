@@ -243,38 +243,27 @@ async def _run_search_web(state: AgentState, query: str) -> AgentState:
 
 
 async def _run_write_email(state: AgentState) -> AgentState:
-    """Маркетолог пишет письмо по слотам."""
-    slots = state.get("slots", {})
-    target = slots.get("target", "клиенту")
-    topic = slots.get("topic", "сотрудничество")
-    tone = slots.get("tone", "formal")
-    tone_desc = {"formal": "деловое", "friendly": "дружелюбное", "urgent": "срочное"}.get(tone, "деловое")
-
-    # Обогащаем контекстом из поиска
-    search_context = ""
-    try:
-        from rag.search import free_search
-        r = await free_search(f"{target} {topic}", summarize=False, max_results=5)
-        search_context = r.get("formatted_block", "")
-    except Exception:
-        pass
+    """Маркетолог пишет письмо по слотам (голос write_email → modal)."""
+    slots = dict(state.get("slots", {}))
+    target = slots.get("target") or slots.get("company") or ""
+    if target and not slots.get("company"):
+        slots["company"] = target
+    if target and not slots.get("contact"):
+        slots["contact"] = str(target)
+    topic = slots.get("topic") or slots.get("instruction") or "сотрудничество"
+    slots.setdefault("instruction", f"Напиши B2B письмо на тему: {topic}")
 
     try:
-        from core.llm import chat
-        prompt = (
-            f"Напиши {tone_desc} B2B письмо для компании {target} на тему: {topic}.\n"
-            f"Письмо должно быть конкретным, с ценностным предложением, без лишней воды.\n"
-        )
-        if search_context:
-            prompt += f"\nКонтекст о компании:\n{search_context}\n"
-        prompt += "\nСтруктура: тема письма, приветствие, суть, призыв к действию, подпись."
-        answer = await chat(
-            [{"role": "user", "content": prompt}],
-            temperature=0.4,
-            max_tokens=600,
-        )
-        state["final_reply"] = answer
-        state["marketer_output"] = {"summary": answer}
+        from agents.marketer import _analyze
+
+        output = await _analyze("write_email", slots)
+        state["marketer_output"] = output
+        fe = output.get("first_email") if isinstance(output.get("first_email"), dict) else {}
+        summary = output.get("summary") or ""
+        if fe.get("subject") or fe.get("body"):
+            state["final_reply"] = summary or "Черновик письма готов."
+        else:
+            state["final_reply"] = summary or slots.get("_base_reply", "Черновик письма готов.")
     except Exception as e:
         logger.error("write_email ошибка: %s", e)
         state["final_reply"] = f"Ошибка при написании письма: {e}"

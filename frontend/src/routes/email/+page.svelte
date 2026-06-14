@@ -12,6 +12,7 @@
         formatThreadTime, syncStatusLabel
     } from '$lib/email/emailListLogic.js';
     import { buildReplyApprovePreview, buildComposeApprovePreview } from '$lib/email/emailApproveLogic.js';
+    import { voiceEmailContext } from '$lib/voice/voiceAction.js';
     import EmailApproveModal from '../../components/EmailApproveModal.svelte';
     import { fetchLeads } from '$lib/leadsStorage.js';
 
@@ -111,7 +112,15 @@
             if (body) composeBody = body;
             if (to) composeTo = to;
         }
+        const unsubVoice = voiceEmailContext.subscribe((ctx) => {
+            if (!ctx) return;
+            if (ctx.folder) activeFolder = ctx.folder;
+            if (ctx.search) searchQuery = ctx.search;
+            if (ctx.hint) success = ctx.hint;
+            voiceEmailContext.set(null);
+        });
         load();
+        return () => unsubVoice();
     });
 
     // ─── compose ─────────────────────────────────────────────────

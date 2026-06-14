@@ -215,12 +215,29 @@ def rescue_route(text: str) -> dict | None:
 
     if ("почт" in t or "email" in t or "письм" in t) and (
         "открой" in t or "покажи" in t or "список" in t or "входящ" in t or "непрочит" in t
-    ) and "напиш" not in t and "состав" not in t:
-        filt = "unread" if "непрочит" in t else "inbox"
+        or "отправлен" in t or "архив" in t
+    ) and "напиш" not in t and "состав" not in t and "отправь" not in t and "отправить" not in t:
+        if "отправлен" in t:
+            filt = "sent"
+        elif "архив" in t:
+            filt = "archive"
+        else:
+            filt = "unread" if "непрочит" in t else "inbox"
         return out("list_emails", ["marketer"], "Открываю почту.", {"filter": filt})
 
-    if ("отправ" in t or "send" in t) and ("письм" in t or "email" in t or "почт" in t):
-        return out("send_email", ["marketer"], "Подтверди отправку письма.", {})
+    if ("отправь" in t or "отправить" in t or re.search(r"\bsend\b", t)) and (
+        "письм" in t or "email" in t or "почт" in t
+    ):
+        slots_se: dict = {}
+        m_em = re.search(r"([\w.+-]+@[\w.-]+\.\w+)", text, re.I)
+        if m_em:
+            slots_se["target"] = m_em.group(1)
+        from .slot_normalize import _extract_company
+
+        comp = _extract_company(text)
+        if comp and not slots_se.get("target"):
+            slots_se["company"] = comp
+        return out("send_email", ["marketer"], "Подтверди отправку письма.", slots_se)
 
     if ("найди" in t or "поищи" in t or "загугли" in t) and (
         "интернет" in t or "в сети" in t or "новост" in t
@@ -291,7 +308,28 @@ def rescue_route(text: str) -> dict | None:
         return out("ask_strategist", ["strategist"], "Спрашиваю стратега.", {"question": text[:500]})
 
     if ("напиш" in t or "состав" in t) and ("письм" in t or "email" in t or "почт" in t):
-        return out("write_email", ["marketer"], "Маркетолог пишет письмо.", {})
+        from .slot_normalize import _extract_company
+
+        slots_we: dict = {}
+        comp = _extract_company(text)
+        if comp:
+            slots_we["target"] = comp
+            slots_we["company"] = comp
+        m_client = re.search(r"клиент[уа]?\s+([a-zа-яё0-9\-]+)", t, re.I)
+        if m_client and not slots_we.get("company"):
+            name = m_client.group(1).strip()
+            slots_we["target"] = name
+            slots_we["company"] = name
+        m_topic = re.search(r"(?:про|о|об|на тему)\s+(.+)$", t, re.I)
+        if m_topic:
+            slots_we["topic"] = m_topic.group(1).strip()[:200]
+        if "срочн" in t:
+            slots_we["tone"] = "urgent"
+        elif "дружел" in t:
+            slots_we["tone"] = "friendly"
+        else:
+            slots_we["tone"] = "formal"
+        return out("write_email", ["marketer"], "Маркетолог пишет письмо.", slots_we)
 
     is_update_cue = (
         "исправ" in t
