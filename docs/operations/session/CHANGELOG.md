@@ -4,7 +4,7 @@
 
 ## 2026-06-14 — Ф2 §7: Тендеры + голос
 
-**Сделано:** `POST /evaluate` с document_text; `search_tenders`/`list_tenders` voice; `linked_lead_id` + link/create-lead API; UI `/tenders` + `tenderLink` на карточке лида; pytest 20 passed; `TENDERS_VOICE_ACCEPTANCE.md`; MAP §7 `[x]`. **Коммит:** `TBD`.
+**Сделано:** `POST /evaluate` с document_text; `search_tenders`/`list_tenders` voice; `linked_lead_id` + link/create-lead API; UI `/tenders` + `tenderLink` на карточке лида; pytest 20 passed; `TENDERS_VOICE_ACCEPTANCE.md`; MAP §7 `[x]`. **Коммит:** `829d340`.
 
 ## 2026-06-14 — Ф2 §6: Аналитика + голос
 

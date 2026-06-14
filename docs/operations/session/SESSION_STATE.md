@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-14 | Действие: §7 Тендеры: evaluate+document_text, voice search/list, linked_lead_id, link/create-lead UI; pytest 20 passed; MAP §7 закрыт. | Коммит: `829d340` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §8. | Статус: done
+
 2026-06-14 | Действие: §6 Аналитика+голос: period/source API+UI, conversionBySource, voice query navigate; pytest 47 passed; MAP §6 закрыт. | Коммит: `3911386` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §7. | Статус: done
 
 2026-06-14 | Действие: §5 доп — Hermes prompt versions: store+API+UI improve; PromptVersionPanel общий; pytest 27 passed; хвост A закрыт. | Коммит: `60a045b` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go §6. | Статус: done
