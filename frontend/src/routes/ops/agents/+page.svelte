@@ -311,7 +311,7 @@
 				{#key versionPanelKey}
 					<PromptVersionPanel
 						api={API}
-						agentId={selectedAgent.id}
+						promptBasePath={`/api/ops/agents/${selectedAgent.id}/prompt`}
 						onRestored={reloadPromptAfterRestore}
 					/>
 				{/key}

@@ -419,7 +419,7 @@
 
 ### 5. Self-improvement
 
-- [x] Версионирование промптов в Ops — ✅ [`OPS_PROMPT_VERSIONING_ACCEPTANCE.md`](../operations/phase2/ops/OPS_PROMPT_VERSIONING_ACCEPTANCE.md)
+- [x] Версионирование промптов в Ops (агенты `/ops/agents` + Hermes `/ops/intents/improve`) — ✅ [`OPS_PROMPT_VERSIONING_ACCEPTANCE.md`](../operations/phase2/ops/OPS_PROMPT_VERSIONING_ACCEPTANCE.md)
 - [x] Откат на предыдущую версию — ✅ (restore API + UI)
 - [x] Сравнение версий — ✅ (compare API + diff в UI)
 

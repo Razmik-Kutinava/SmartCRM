@@ -38,13 +38,13 @@ async def get_hermes_prompt():
 @router.post("/hermes/prompt")
 async def post_hermes_prompt(body: HermesPromptBody):
     """Сохранить переопределение промпта в backend/data/hermes_system_prompt.txt"""
-    from core.hermes_prompt_store import save_override
-
     text = body.prompt.strip()
     if len(text) < 80:
         raise HTTPException(400, detail="Промпт слишком короткий (минимум 80 символов).")
-    save_override(text)
-    return {"ok": True, "source": "override"}
+    from core.hermes_prompt_store import save_override
+
+    version_id = save_override(text, note="save")
+    return {"ok": True, "source": "override", "version_id": version_id}
 
 
 @router.delete("/hermes/prompt")
@@ -54,6 +54,64 @@ async def delete_hermes_prompt():
 
     cleared = clear_override()
     return {"ok": True, "cleared": cleared}
+
+
+@router.get("/hermes/prompt/versions")
+async def list_hermes_prompt_versions():
+    from core.agent_prompt_versions import HERMES_STORE_ID, list_versions
+
+    return {"store": HERMES_STORE_ID, "versions": list_versions(HERMES_STORE_ID)}
+
+
+@router.get("/hermes/prompt/versions/compare")
+async def compare_hermes_prompt_versions(left: str, right: str):
+    from core.agent_prompt_versions import HERMES_STORE_ID, compare_texts, get_version_text
+    from core.hermes import SYSTEM_PROMPT
+    from core.hermes_prompt_store import get_active_system_prompt, get_prompt_source
+
+    def resolve(ref: str) -> tuple[str, str]:
+        if ref == "current":
+            text = get_active_system_prompt(SYSTEM_PROMPT)
+            return text, f"current ({get_prompt_source()})"
+        if ref == "builtin":
+            return SYSTEM_PROMPT, "builtin"
+        text = get_version_text(HERMES_STORE_ID, ref)
+        if text is None:
+            raise HTTPException(404, detail=f"Версия {ref} не найдена")
+        return text, ref
+
+    left_text, left_label = resolve(left)
+    right_text, right_label = resolve(right)
+    cmp_out = compare_texts(left_text, right_text, left_label=left_label, right_label=right_label)
+    return {"store": HERMES_STORE_ID, "left": left, "right": right, **cmp_out}
+
+
+@router.get("/hermes/prompt/versions/{version_id}")
+async def get_hermes_prompt_version(version_id: str):
+    from core.agent_prompt_versions import HERMES_STORE_ID, get_version_text
+
+    text = get_version_text(HERMES_STORE_ID, version_id)
+    if text is None:
+        raise HTTPException(404, detail=f"Версия {version_id} не найдена")
+    return {"version_id": version_id, "prompt": text, "chars": len(text)}
+
+
+@router.post("/hermes/prompt/versions/{version_id}/restore")
+async def restore_hermes_prompt_version(version_id: str):
+    from core.agent_prompt_versions import HERMES_STORE_ID, get_version_text
+    from core.hermes_prompt_store import save_override
+
+    text = get_version_text(HERMES_STORE_ID, version_id)
+    if text is None:
+        raise HTTPException(404, detail=f"Версия {version_id} не найдена")
+    new_vid = save_override(text.strip(), note=f"restore:{version_id}")
+    return {
+        "ok": True,
+        "restored_from": version_id,
+        "version_id": new_vid,
+        "chars": len(text.strip()),
+        "source": "override",
+    }
 
 
 @router.post("/hermes/add-example")
@@ -72,7 +130,7 @@ async def add_example_to_prompt(body: AddExampleBody):
     }
     example_str = f'\nInput: "{body.phrase}"\nOutput: {_json.dumps(out, ensure_ascii=False)}\n'
     new_prompt = _append_examples_to_prompt(current, example_str)
-    save_override(new_prompt)
+    save_override(new_prompt, note="add_example")
     logger.info("Добавлен few-shot пример в промпт: '%s' → %s", body.phrase[:40], body.intent)
     return {"ok": True, "example": example_str.strip(), "prompt_chars": len(new_prompt)}
 
@@ -176,7 +234,7 @@ async def bulk_add_to_prompt(body: list[AddExampleBody]):
         block += f'\nInput: "{item.phrase}"\nOutput: {_json.dumps(out, ensure_ascii=False)}\n'
 
     new_prompt = _append_examples_to_prompt(current, block)
-    save_override(new_prompt)
+    save_override(new_prompt, note="bulk_add")
     logger.info("Bulk-добавлено %d few-shot примеров в промпт", len(body))
     return {"ok": True, "added": len(body), "prompt_chars": len(new_prompt)}
 

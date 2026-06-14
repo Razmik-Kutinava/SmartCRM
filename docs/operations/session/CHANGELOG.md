@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §5 доп: Hermes prompt versioning
+
+**Сделано:** версии Hermes в `hermes_prompt_store` + API `/hermes/prompt/versions/*`; UI `/ops/intents/improve`; `PromptVersionPanel` через `promptBasePath`; compare-роут до `{version_id}`; pytest 27 passed. **Коммит:** `<hash>`.
+
 ## 2026-06-14 — Ф2 §5: версионирование промптов в Ops
 
 **Сделано:** `agent_prompt_versions.py`; API versions/restore/compare; UI история+откат+diff на `/ops/agents`; pytest 26 passed; `OPS_PROMPT_VERSIONING_ACCEPTANCE.md`; MAP §5 п.422–424 `[x]`. **Коммит:** `a883410`.

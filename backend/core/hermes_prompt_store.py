@@ -36,16 +36,37 @@ def get_prompt_source() -> str:
     return "builtin"
 
 
-def save_override(text: str) -> None:
+def read_override_text() -> str:
+    if not _OVERRIDE.exists():
+        return ""
+    try:
+        return _OVERRIDE.read_text(encoding="utf-8").strip()
+    except OSError:
+        return ""
+
+
+def save_override(text: str, *, note: str = "save") -> str | None:
+    from core.agent_prompt_versions import HERMES_STORE_ID, save_version
+
+    text = text.strip()
+    old = read_override_text()
+    if old and old != text:
+        save_version(HERMES_STORE_ID, old, note="before_save")
     _DATA_DIR.mkdir(parents=True, exist_ok=True)
     _OVERRIDE.write_text(text, encoding="utf-8")
     logger.info("Сохранён override системного промпта Hermes (%s символов)", len(text))
+    return save_version(HERMES_STORE_ID, text, note=note)
 
 
 def clear_override() -> bool:
+    from core.agent_prompt_versions import HERMES_STORE_ID, save_version
+
     if not _OVERRIDE.exists():
         return False
     try:
+        old = read_override_text()
+        if old:
+            save_version(HERMES_STORE_ID, old, note="before_reset")
         _OVERRIDE.unlink()
         logger.info("Удалён override системного промпта, используется встроенный")
         return True

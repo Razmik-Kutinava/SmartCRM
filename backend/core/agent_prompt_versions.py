@@ -1,4 +1,4 @@
-"""Git-like версии override-промптов агентов (backend/data/prompt_versions/)."""
+"""Git-like версии override-промптов (агенты + Hermes) в backend/data/prompt_versions/."""
 
 from __future__ import annotations
 
@@ -17,23 +17,25 @@ _LOCK = threading.Lock()
 _DATA = Path(__file__).resolve().parent.parent / "data" / "prompt_versions"
 _MAX_VERSIONS = 50
 
+HERMES_STORE_ID = "hermes"
 
-def _agent_dir(agent_id: str) -> Path:
-    d = _DATA / agent_id
+
+def _store_dir(store_id: str) -> Path:
+    d = _DATA / store_id
     d.mkdir(parents=True, exist_ok=True)
     return d
 
 
-def _manifest_path(agent_id: str) -> Path:
-    return _agent_dir(agent_id) / "manifest.json"
+def _manifest_path(store_id: str) -> Path:
+    return _store_dir(store_id) / "manifest.json"
 
 
 def _content_hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
-def _load_manifest(agent_id: str) -> list[dict[str, Any]]:
-    path = _manifest_path(agent_id)
+def _load_manifest(store_id: str) -> list[dict[str, Any]]:
+    path = _manifest_path(store_id)
     if not path.is_file():
         return []
     try:
@@ -41,25 +43,25 @@ def _load_manifest(agent_id: str) -> list[dict[str, Any]]:
         if isinstance(data, list):
             return data
     except (OSError, json.JSONDecodeError) as e:
-        logger.warning("prompt_versions manifest %s: %s", agent_id, e)
+        logger.warning("prompt_versions manifest %s: %s", store_id, e)
     return []
 
 
-def _save_manifest(agent_id: str, manifest: list[dict[str, Any]]) -> None:
-    _manifest_path(agent_id).write_text(
+def _save_manifest(store_id: str, manifest: list[dict[str, Any]]) -> None:
+    _manifest_path(store_id).write_text(
         json.dumps(manifest, ensure_ascii=False, indent=0),
         encoding="utf-8",
     )
 
 
-def _prune_old(agent_id: str, manifest: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _prune_old(store_id: str, manifest: list[dict[str, Any]]) -> list[dict[str, Any]]:
     if len(manifest) <= _MAX_VERSIONS:
         return manifest
     drop = manifest[: len(manifest) - _MAX_VERSIONS]
     for entry in drop:
         vid = entry.get("id")
         if vid:
-            p = _agent_dir(agent_id) / f"{vid}.txt"
+            p = _store_dir(store_id) / f"{vid}.txt"
             try:
                 p.unlink(missing_ok=True)
             except OSError:
@@ -67,9 +69,9 @@ def _prune_old(agent_id: str, manifest: list[dict[str, Any]]) -> list[dict[str, 
     return manifest[-_MAX_VERSIONS:]
 
 
-def list_versions(agent_id: str) -> list[dict[str, Any]]:
+def list_versions(store_id: str) -> list[dict[str, Any]]:
     with _LOCK:
-        manifest = _load_manifest(agent_id)
+        manifest = _load_manifest(store_id)
     out: list[dict[str, Any]] = []
     for entry in reversed(manifest):
         ts = float(entry.get("ts") or 0)
@@ -84,17 +86,17 @@ def list_versions(agent_id: str) -> list[dict[str, Any]]:
     return out
 
 
-def save_version(agent_id: str, text: str, *, note: str = "save") -> str | None:
+def save_version(store_id: str, text: str, *, note: str = "save") -> str | None:
     text = (text or "").strip()
     if len(text) < 50:
         return None
     h = _content_hash(text)
     with _LOCK:
-        manifest = _load_manifest(agent_id)
+        manifest = _load_manifest(store_id)
         if manifest and manifest[-1].get("hash") == h:
             return str(manifest[-1]["id"])
         vid = f"v{len(manifest) + 1:06d}"
-        (_agent_dir(agent_id) / f"{vid}.txt").write_text(text, encoding="utf-8")
+        (_store_dir(store_id) / f"{vid}.txt").write_text(text, encoding="utf-8")
         manifest.append({
             "id": vid,
             "ts": time.time(),
@@ -103,14 +105,14 @@ def save_version(agent_id: str, text: str, *, note: str = "save") -> str | None:
             "note": note,
             "preview": text[:120],
         })
-        manifest = _prune_old(agent_id, manifest)
-        _save_manifest(agent_id, manifest)
-    logger.info("prompt version %s/%s (%s симв., %s)", agent_id, vid, len(text), note)
+        manifest = _prune_old(store_id, manifest)
+        _save_manifest(store_id, manifest)
+    logger.info("prompt version %s/%s (%s симв., %s)", store_id, vid, len(text), note)
     return vid
 
 
-def get_version_text(agent_id: str, version_id: str) -> str | None:
-    path = _agent_dir(agent_id) / f"{version_id}.txt"
+def get_version_text(store_id: str, version_id: str) -> str | None:
+    path = _store_dir(store_id) / f"{version_id}.txt"
     if not path.is_file():
         return None
     try:

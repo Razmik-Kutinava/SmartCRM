@@ -64,7 +64,8 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `agent_memory.py` | Память агента (sqlite) |
 | `voice_settings.py` | Настройки Whisper |
 | `hermes_prompt_store.py` | Хранилище промптов Hermes |
-| `agent_prompt_versions.py` | Git-like версии override промптов агентов |
+| `agent_prompt_versions.py` | Git-like версии override промптов (агенты + Hermes) |
+| `hermes_prompt_store.py` | Override Hermes + автоснимки в версии |
 | `hermes_prompt_profiles.py` | Профили промптов |
 | `crm_settings_store.py` | Настройки CRM (стадии, воронка) |
 | `lead_approvals.py` | Согласования смены стадии лида |

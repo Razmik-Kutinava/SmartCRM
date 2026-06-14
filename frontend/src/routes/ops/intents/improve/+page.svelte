@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { getApiUrl } from '$lib/websocket.js';
+	import PromptVersionPanel from '../../../../components/ops/PromptVersionPanel.svelte';
 
 	const API = getApiUrl();
 
@@ -19,6 +20,7 @@
 	let selectedExamples = $state([]);
 	// Применяем ли предложение
 	let applying = $state(false);
+	let versionPanelKey = $state(0);
 
 	async function load() {
 		loading = true;
@@ -52,6 +54,7 @@
 			err = '';
 			suggestion = null;
 			selectedExamples = [];
+			versionPanelKey += 1;
 			await load();
 		} finally {
 			saving = false;
@@ -66,6 +69,7 @@
 			err = '';
 			suggestion = null;
 			selectedExamples = [];
+			versionPanelKey += 1;
 			await load();
 		} finally {
 			resetting = false;
@@ -312,6 +316,14 @@
 			<p class="text-xs text-gray-500 mt-2">
 				После сохранения новый текст сразу используется в голосовом пайплайне. Перезапуск сервера не нужен.
 			</p>
+
+			{#key versionPanelKey}
+				<PromptVersionPanel
+					api={API}
+					promptBasePath="/api/ops/hermes/prompt"
+					onRestored={load}
+				/>
+			{/key}
 		</section>
 
 		<!-- Авто-рекомендации -->

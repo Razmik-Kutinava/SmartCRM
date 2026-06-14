@@ -2,7 +2,7 @@
 	/** Панель версий промпта: список, откат, сравнение. */
 	let {
 		api = '',
-		agentId = null,
+		promptBasePath = '',
 		onRestored = () => {},
 	} = $props();
 
@@ -15,11 +15,11 @@
 	let comparing = $state(false);
 
 	async function loadVersions() {
-		if (!agentId) return;
+		if (!promptBasePath) return;
 		loading = true;
 		msg = '';
 		try {
-			const r = await fetch(`${api}/api/ops/agents/${agentId}/prompt/versions`);
+			const r = await fetch(`${api}${promptBasePath}/versions`);
 			if (!r.ok) throw new Error(await r.text());
 			const d = await r.json();
 			versions = d.versions || [];
@@ -34,13 +34,10 @@
 	}
 
 	async function restoreVersion(versionId) {
-		if (!agentId || !confirm(`Откатить промпт к ${versionId}?`)) return;
+		if (!promptBasePath || !confirm(`Откатить промпт к ${versionId}?`)) return;
 		msg = '';
 		try {
-			const r = await fetch(
-				`${api}/api/ops/agents/${agentId}/prompt/versions/${versionId}/restore`,
-				{ method: 'POST' },
-			);
+			const r = await fetch(`${api}${promptBasePath}/versions/${versionId}/restore`, { method: 'POST' });
 			if (!r.ok) throw new Error(await r.text());
 			msg = `✓ Откат к ${versionId}`;
 			await loadVersions();
@@ -51,12 +48,12 @@
 	}
 
 	async function runCompare() {
-		if (!agentId || !compareLeft || !compareRight) return;
+		if (!promptBasePath || !compareLeft || !compareRight) return;
 		comparing = true;
 		compareResult = null;
 		try {
 			const q = new URLSearchParams({ left: compareLeft, right: compareRight });
-			const r = await fetch(`${api}/api/ops/agents/${agentId}/prompt/versions/compare?${q}`);
+			const r = await fetch(`${api}${promptBasePath}/versions/compare?${q}`);
 			if (!r.ok) throw new Error(await r.text());
 			compareResult = await r.json();
 		} catch (e) {
@@ -77,7 +74,7 @@
 	}
 
 	$effect(() => {
-		if (agentId) loadVersions();
+		if (promptBasePath) loadVersions();
 	});
 </script>
 
