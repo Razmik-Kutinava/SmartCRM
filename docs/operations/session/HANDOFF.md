@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §1 Voice Layer или Ф3 gate tuning — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-14 (§9):** голос `enrich_lead` → enrich preview modal → апрув PATCH; rescue+pipeline без orchestrator; pytest 21 passed; DevTools `lead-card-enrich` на `/leads/3187`; MAP §9 полностью `[x]`. **Коммит:** `cb0de76` (ops `9ab58d9`).
+**2026-06-14 (§9):** голос `enrich_lead` → enrich preview modal → апрув PATCH; rescue+pipeline без orchestrator; pytest 21 passed; DevTools `lead-card-enrich` на `/leads/3187`; MAP §9 полностью `[x]`. **Коммит:** `cb0de76` (ops `b82a2b8`).
 
 **Следующий `go`:** §1 Voice Layer или Ф3 gate.
 
