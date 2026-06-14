@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§3 email п.403 фоновый синк] | Статус: ✅ done`
+
+> **→ Следующий агент:** §3 Email-агент п.404 «Список `/email`» — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14 (Ф2 §3 п.403):** Фоновый IMAP-синк — `EMAIL_AUTO_SYNC_MINUTES` (default 5), poll loop в lifespan, `GET /api/email/sync/status`; pytest 19 passed; MAP п.403 `[x]`. **Коммит:** `20ce084`.
+
+**Следующий `go`:** §3 п.404 UI `/email`.
+
+---
+
 `Спринт:[Ф2] | Задача:[§3 email п.402 IMAP/SMTP env] | Статус: ✅ done`
 
 > **→ Следующий агент:** §3 Email-агент п.403 «Фоновый синк входящих» — [`PRD_MAP.md`](../product/PRD_MAP.md)
