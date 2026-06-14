@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-14 | Действие: хвост B/C — lookalike-import API + VoiceActionHost approve; pytest 8 passed. | Коммит: `bf3e4d8` | Хвост A: нет | Хвост B: нет | Хвост C: check_agent_step paths (уже в d686a32) | Следующий шаг: go §3 email IMAP/SMTP. | Статус: done
+
 2026-06-14 | Действие: Ф2 §2 п.396 find_similar_clients — analyst∥marketer→modal lookalike; pytest 6 passed; §2 оркестрация закрыта. | Коммит: `d9d5f4b` | Хвост A: нет (§2 done) | Хвост B: lookalike POST /api/leads → §8 MAP | Хвост C: fix VoiceActionHost modalAction | Следующий шаг: go §3 email или §8 lookalike. | Статус: done
 
 2026-06-14 | Действие: Ф2 §2 п.395 weekly_report — analyst∥economist∥marketer→modal KPI; pytest 7 passed. | Коммит: `c799a4d` | Хвост A: §2 п.396 похожие клиенты | Хвост B: нет | Хвост C: fix strategist f-string syntax | Следующий шаг: go §2 п.396. | Статус: done

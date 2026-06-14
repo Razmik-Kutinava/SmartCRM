@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[хвосты B/C + lookalike import] | Статус: ✅ done`
+
+> **→ Следующий агент:** §3 Email-агент — [`PRD_MAP.md`](../product/PRD_MAP.md) п.402
+
+**2026-06-14 (хвост B/C):** Lookalike approve → `POST /api/leads/lookalike-import`; VoiceActionHost импорт + toast; check_agent_step paths OK. pytest 8 passed. **Коммит:** `bf3e4d8`.
+
+**Следующий `go`:** §3 Email-агент п.402 «IMAP/SMTP, credentials в env».
+
+---
+
 `Спринт:[Ф2] | Задача:[§2 оркестрация — закрыта] | Статус: ✅ все 6 сценариев`
 
 > **→ Следующий агент:** [`SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md`](../phase2/agents/SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md)

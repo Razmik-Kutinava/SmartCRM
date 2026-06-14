@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — хвост B/C: lookalike POST после voice approve
+
+**Сделано:** `POST /api/leads/lookalike-import`; `services/lookalike_import.py`; frontend `lookalikeImport.js`; VoiceActionHost «Добавить»; BACKLOG строка снята; pytest 8 passed.
+
 ## 2026-06-14 — Ф2 §2 п.396: сценарий похожие клиенты · §2 закрыт
 
 **Сделано:** `find_similar_clients`; similar_context + search_by_portrait; voice modal similar_leads; pytest 6 passed; `SCENARIO_SIMILAR_CLIENTS_ACCEPTANCE.md`; MAP п.396 `[x]`; **§2 Оркестрация — все пункты `[x]`.**
