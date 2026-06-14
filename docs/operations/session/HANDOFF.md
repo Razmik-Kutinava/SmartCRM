@@ -1,5 +1,17 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[full live quality gate — фон] | Статус: 🔄 in_progress`
+
+> **→ После прогона:** итог JSON + `AGENTS_QUALITY_GATE_ACCEPTANCE.md` → сказать агенту «ок» для MAP.
+
+**2026-06-14 (live):** Full quality gate **111 кейсов** в фоне. Лог: `backend/data/artifacts/eval/gate_full_20260614_1628.log`. Ollama `hermes3:latest` + backend :8000. ETA **2–4 ч**. Runbook: [`GATE_FULL_RUNBOOK.md`](../phase2/agents/GATE_FULL_RUNBOOK.md).
+
+**Фон backend (авто при uvicorn):** Email IMAP `EMAIL_AUTO_SYNC_MINUTES=5` · Bitrix `BITRIX_AUTO_SYNC_MINUTES=5` — **не нужен отдельный запуск**.
+
+**Следующий шаг:** дождаться `Overall gate: pass|warn|fail` в логе → анализ → go §3 п.405.
+
+---
+
 `Спринт:[Ф2] | Задача:[email cleanup — legacy route + BACKLOG me@] | Статус: ✅ done`
 
 > **→ Следующий агент:** §3 Email-агент п.405 «Анализ типа письма + черновик» — [`PRD_MAP.md`](../product/PRD_MAP.md)
