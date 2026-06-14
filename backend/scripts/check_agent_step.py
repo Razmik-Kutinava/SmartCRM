@@ -10,10 +10,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-OPS = REPO_ROOT / "docs" / "operations"
+OPS = REPO_ROOT / "docs" / "operations" / "session"
 SESSION_STATE = OPS / "SESSION_STATE.md"
 HANDOFF = OPS / "HANDOFF.md"
-CHANGELOG = OPS / "CHANGELOG.md"
+CHANGELOG = REPO_ROOT / "docs" / "operations" / "session" / "CHANGELOG.md"
 
 # Reuse SESSION_STATE validators (pre-commit + agent step)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
