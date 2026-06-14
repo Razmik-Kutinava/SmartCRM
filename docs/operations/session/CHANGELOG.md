@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §4 п.2: факты диалога агента → RAG
+
+**Сделано:** `dialogue_facts.py`; `POST /ingest-dialogue`; авто `RAG_DIALOGUE_AUTO_INGEST` на ops run + voice fanout; UI «💾 В RAG»; voice save_to_rag → agent collection; pytest 7 passed; `AGENT_DIALOGUE_RAG_ACCEPTANCE.md`; MAP п.416 `[x]`.
+
 ## 2026-06-14 — Quality gate: baseline + Ф3 тюнинг в BACKLOG
 
 **Сделано:** full gate 2026-06-14 зафиксирован (Hermes 72.2%, Tech 60%, overall fail); `AGENTS_GATE_TUNING_BASELINE.md`; BACKLOG «тюнинг ≥85% все» → Ф3; PRD_MAP §Агенты + §Ф3 Self-improvement. Тюнинг **не** в этом шаге. **Коммит:** `f5d4266`.

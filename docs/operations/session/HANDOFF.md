@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§4 RAG п.2 факты диалога] | Статус: ✅ done`
+
+> **→ Следующий агент:** §4 п.3 «Сохранить в базу везде в поиске» — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14 (Ф2 §4 п.2):** `dialogue_facts` + `ingest-dialogue` + авто ops/voice + UI `/agents`; pytest 7 passed; MAP `[x]`. **Коммит:** `a27bf1c`.
+
+**Следующий `go`:** §4 п.3 save everywhere в поиске.
+
+---
+
 `Спринт:[Ф2] | Задача:[gate baseline → Ф3 тюнинг в BACKLOG] | Статус: ✅ done`
 
 > **→ Следующий агент:** §4 п.2 «Факты из диалога агента → RAG» — [`PRD_MAP.md`](../product/PRD_MAP.md)
