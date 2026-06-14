@@ -53,7 +53,7 @@ async def test_sync_account_not_found(client):
 async def test_sync_all_endpoint(client, db_session: AsyncSession):
     await _seed_account(db_session)
     with patch(
-        "api.routes.email.sync_account_messages",
+        "email_sync.sync_all.sync_account_messages",
         new_callable=AsyncMock,
         return_value={"imported": 2, "total": 10, "since": None},
     ):
@@ -68,3 +68,25 @@ async def test_sync_all_endpoint(client, db_session: AsyncSession):
 async def test_sync_all_no_accounts(client):
     r = await client.post("/api/email/sync")
     assert r.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_sync_status_endpoint(client, monkeypatch):
+    monkeypatch.setenv("EMAIL_AUTO_SYNC_MINUTES", "5")
+    r = await client.get("/api/email/sync/status")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["auto_sync_minutes"] == 5
+    assert body["auto_sync_enabled"] is False
+    assert body["account_count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_sync_status_enabled_with_account(client, db_session, monkeypatch):
+    monkeypatch.setenv("EMAIL_AUTO_SYNC_MINUTES", "10")
+    await _seed_account(db_session)
+    r = await client.get("/api/email/sync/status")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["auto_sync_enabled"] is True
+    assert body["account_count"] == 1

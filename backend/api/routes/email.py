@@ -17,6 +17,8 @@ from core.crypto import decrypt
 from core.email_config import email_env_status
 from db.models import EmailAccount, EmailCampaign, EmailMessage, EmailThread, Lead, Task
 from email_sync.sync import sync_account_messages
+from email_sync.sync_all import sync_all_email_accounts
+from email_sync.background import email_sync_status_payload
 from services.email_bootstrap import bootstrap_accounts_from_env, upsert_account_from_payload
 
 logger = logging.getLogger(__name__)
@@ -191,25 +193,23 @@ async def sync_email_account(account_id: int, db: AsyncSession = Depends(get_db)
 
 
 @router.post("/sync")
-async def sync_all_email_accounts(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(EmailAccount).order_by(EmailAccount.id))
-    accounts = result.scalars().all()
-    if not accounts:
+async def sync_all_email_accounts_route(db: AsyncSession = Depends(get_db)):
+    summary = await sync_all_email_accounts(db)
+    if summary.get("empty"):
         raise HTTPException(status_code=404, detail="Нет подключённых аккаунтов")
-    imported = 0
-    total = 0
-    rows: list[dict] = []
-    for account in accounts:
-        try:
-            sync_result = await sync_account_messages(account, db)
-            imported += sync_result.get("imported", 0)
-            total += sync_result.get("total", 0)
-            rows.append({"id": account.id, "username": account.username, **sync_result})
-        except Exception as e:
-            await db.rollback()
-            logger.warning("Email sync failed for %s: %s", account.username, e)
-            rows.append({"id": account.id, "username": account.username, "error": "sync_failed"})
-    return {"imported": imported, "total": total, "accounts": rows}
+    return {
+        "imported": summary["imported"],
+        "total": summary["total"],
+        "accounts": summary["accounts"],
+    }
+
+
+@router.get("/sync/status")
+async def email_background_sync_status(db: AsyncSession = Depends(get_db)):
+    """Фоновый IMAP-синк: интервал, последний прогон (без секретов)."""
+    result = await db.execute(select(EmailAccount.id))
+    count = len(result.all())
+    return await email_sync_status_payload(account_count=count)
 
 
 @router.get("/threads")

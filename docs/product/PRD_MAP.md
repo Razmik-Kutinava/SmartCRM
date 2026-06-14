@@ -400,7 +400,7 @@
 > Режимы: Ассистирующий (Ф2) / Автономный (Ф3) — [`PRD.md`](PRD.md) Email-агент
 
 - [x] IMAP/SMTP, credentials в env — ✅ [`EMAIL_IMAP_SMTP_ENV_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_IMAP_SMTP_ENV_ACCEPTANCE.md)
-- [ ] Фоновый синк входящих
+- [x] Фоновый синк входящих — ✅ [`EMAIL_BACKGROUND_SYNC_ACCEPTANCE.md`](../operations/phase2/email/EMAIL_BACKGROUND_SYNC_ACCEPTANCE.md)
 - [ ] Список `/email`
 - [ ] Анализ типа письма + черновик (Маркетолог)
 - [ ] Апрув и отправка (голос или кнопка)

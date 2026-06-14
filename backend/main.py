@@ -59,8 +59,27 @@ async def lifespan(app: FastAPI):
             "авто-опрос BITRIX_AUTO_SYNC_MINUTES (по умолчанию 5)"
         )
 
+    email_poll_stop = asyncio.Event()
+    email_poll_task = None
+    _email_min = int((os.getenv("EMAIL_AUTO_SYNC_MINUTES") or "5").strip() or "0")
+    if _email_min > 0:
+        from email_sync.background import email_poll_loop
+
+        email_poll_task = asyncio.create_task(email_poll_loop(email_poll_stop))
+        logger.info(
+            "Email: фоновый IMAP-синк каждые %s мин (EMAIL_AUTO_SYNC_MINUTES; 0 = выкл)",
+            _email_min,
+        )
+
     yield
 
+    if email_poll_task is not None:
+        email_poll_stop.set()
+        email_poll_task.cancel()
+        try:
+            await email_poll_task
+        except asyncio.CancelledError:
+            pass
     if bitrix_poll_task is not None:
         bitrix_poll_stop.set()
         bitrix_poll_task.cancel()

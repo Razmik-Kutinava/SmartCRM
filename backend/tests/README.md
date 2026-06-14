@@ -94,7 +94,8 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `test_review_fixes.py` | Регрессии по code review |
 | `test_agents.py` | Агенты |
 | `test_search.py` | Поиск |
-| `api/test_email_sync_api.py` | POST `/api/email/sync`, `/accounts/{id}/sync` |
+| `api/test_email_sync_api.py` | POST `/api/email/sync`, `/accounts/{id}/sync`, `GET /sync/status` |
+| `email_sync/test_background_sync.py` | фоновый poll loop, state file |
 | `api/test_email_env_config.py` | env IMAP/SMTP, `GET /config/status`, `POST /bootstrap-from-env` |
 | `email_sync/test_fetch_imap_mock.py` | IMAP fetch + SINCE с моком (CI) |
 | `test_email_sync.py` | Live IMAP только при `EMAIL_SYNC_LIVE=1` |
