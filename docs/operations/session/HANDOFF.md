@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§3 email п.407 голосовые команды] | Статус: ✅ done`
+
+> **→ Следующий агент:** §3 Email-агент **закрыт** · следующий блок MAP — §4 Поиск→RAG или §1 Voice E2E — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14 (Ф2 §3 п.407):** list_emails/write_email/send_email голосом; voiceEmailContext; orchestrator→marketer; pytest 33 passed (voice email zone); MAP п.407 `[x]`; **§3 все пункты `[x]`.** **Коммит:** `cbc44c0`.
+
+**Следующий `go`:** §4 Поиск→RAG или full gate итог.
+
+---
+
 `Спринт:[Ф2] | Задача:[§3 email п.406 апрув и отправка] | Статус: ✅ done`
 
 > **→ Следующий агент:** §3 Email-агент п.407 «Голосовые команды email» — [`PRD_MAP.md`](../product/PRD_MAP.md)
