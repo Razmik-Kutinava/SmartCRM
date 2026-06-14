@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — email cleanup: legacy route + BACKLOG me@
+
+**Сделано:** удалён `email/[mailbox].svelte`; BACKLOG `me@agneko.am` закрыт; PRD_MAP инфра п.5 ✅; pytest integration 9 passed.
+
 ## 2026-06-14 — Ф2 §3 п.404: список `/email`
 
 **Сделано:** `emailListLogic.js`; enriched `GET /threads`; `/email` UI (фильтры, sync bar, apiFetch); pytest 13 passed; `EMAIL_LIST_PAGE_ACCEPTANCE.md`; MAP п.404 `[x]`.
