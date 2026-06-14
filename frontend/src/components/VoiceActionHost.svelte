@@ -2,10 +2,26 @@
 	import { voiceModal, voiceApprove, resolveVoiceApprove, closeVoiceModal, voiceToast } from '$lib/voice/voiceAction.js';
 	import { goto } from '$app/navigation';
 	import { sendEmail } from '$lib/emailStorage.js';
+	import { importLookalikeLeads } from '$lib/voice/lookalikeImport.js';
 
 	function modalAction(kind) {
 		const m = $voiceModal;
 		if (!m) return;
+		if (kind === 'add' && m.intent === 'find_similar_clients') {
+			const leads = m.payload?.similar_leads;
+			importLookalikeLeads(Array.isArray(leads) ? leads : [])
+				.then((result) => {
+					const skipped = result.skipped?.length || 0;
+					const msg = skipped
+						? `Добавлено лидов: ${result.count}, пропущено: ${skipped}`
+						: `Добавлено лидов: ${result.count}`;
+					voiceToast.set(msg);
+					closeVoiceModal();
+					goto('/leads/list');
+				})
+				.catch((e) => voiceToast.set(e?.message || String(e)));
+			return;
+		}
 		if (kind === 'add') {
 			closeVoiceModal();
 			goto('/leadgen');

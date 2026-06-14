@@ -16,6 +16,7 @@ router.include_router(engagement.router)
 
 router.get("")(crud.list_leads)
 router.post("", status_code=201)(crud.create_lead)
+router.post("/lookalike-import", status_code=201)(crud.import_lookalike_leads)
 router.get("/{lead_id}")(crud.get_lead)
 router.get("/{lead_id}/email")(crud.get_lead_email)
 router.patch("/{lead_id}")(crud.update_lead)

@@ -24,7 +24,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 
 | Папка | Что тестирует |
 |-------|----------------|
-| `api/` | `test_leads_api.py`, `test_search_providers_api.py`, `test_eval_scenarios_api.py` |
+| `api/` | `test_leads_api.py`, `test_lookalike_import.py`, `test_search_providers_api.py`, `test_eval_scenarios_api.py` |
 | `core/` | `test_hermes_eval.py`, `test_qa_agent.py` |
 | `agents/` | `test_analyst.py` |
 | `rag/` | `test_search_providers.py`, `test_search_pkg.py`, `test_rag_chunks.py`, `test_search_modes.py` |

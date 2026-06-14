@@ -78,3 +78,16 @@ class LeadPatch(BaseModel):
     next_call: Optional[str] = None
     description: Optional[str] = None
     approvals: Optional[dict[str, Any]] = None
+
+
+class LookalikeCandidate(BaseModel):
+    company: str = Field(..., min_length=1, max_length=500)
+    inn: str | None = None
+    city: str = "—"
+    industry: str = "—"
+    score: int = Field(default=50, ge=0, le=100)
+    matched_by: list[str] = Field(default_factory=list)
+
+
+class LookalikeImportBody(BaseModel):
+    leads: list[LookalikeCandidate] = Field(..., min_length=1, max_length=20)

@@ -14,7 +14,7 @@ from db.models import EmailMessage, Lead
 from db.session import get_db
 
 from .presenter import actor_from_request, dump_lead_create, lead_api_payload
-from .schemas import LeadCreate, LeadPatch
+from .schemas import LeadCreate, LeadPatch, LookalikeImportBody
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,14 @@ async def create_lead(body: LeadCreate, db: AsyncSession = Depends(get_db)):
     await db.refresh(lead)
     logger.info("Лид создан: %s (id=%s)", lead.company, lead.id)
     return await lead_api_payload(lead, db)
+
+
+async def import_lookalike_leads(body: LookalikeImportBody, db: AsyncSession = Depends(get_db)):
+    from services.lookalike_import import import_lookalike_candidates
+
+    result = await import_lookalike_candidates(body.leads, db)
+    logger.info("Lookalike import: создано %s, пропущено %s", result["count"], len(result["skipped"]))
+    return result
 
 
 async def get_lead(lead_id: int, db: AsyncSession = Depends(get_db)):

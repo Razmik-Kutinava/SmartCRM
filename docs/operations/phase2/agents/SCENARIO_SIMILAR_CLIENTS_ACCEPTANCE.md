@@ -26,10 +26,10 @@
 - [x] Strategist → modal `payload.synthesis`
 - [x] Список `payload.similar_leads` + маркетинговая секция
 - [x] pytest зелёный
+- [x] Approve «В лидоген» → `POST /api/leads/lookalike-import` (`source: lookalike`)
 
 ## Не в scope
 
-- автосоздание лидов без апрува (§8 lookalike POST /api/leads)
 - live Checko/Tavily в CI
 
 ## Коммит
