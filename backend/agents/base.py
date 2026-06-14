@@ -37,6 +37,9 @@ class AgentState(TypedDict, total=False):
     hermes_agents: list[str]
     fanout_plan: dict[str, Any]
     agents_selected: list[str]
+    fanout_parallel: bool
+    fanout_agent_count: int
+    fanout_elapsed_ms: int
 
 
 def make_initial_state(

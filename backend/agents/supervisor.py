@@ -1,8 +1,13 @@
 """Supervisor — выборочный fanout агентов (Ф2 §2)."""
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
+
+logger = logging.getLogger(__name__)
+
+MIN_PARALLEL_AGENTS = 2
 
 VALID_AGENTS = frozenset({
     "analyst", "economist", "marketer", "tech_specialist", "strategist",
@@ -50,6 +55,11 @@ class FanoutPlan:
     parallel_agents: tuple[str, ...]
     run_strategist: bool
     source: str
+    parallel_fanout: bool = False
+
+
+def is_parallel_fanout(agent_ids: list[str] | tuple[str, ...]) -> bool:
+    return len(agent_ids) >= 2
 
 
 def normalize_agent_ids(raw: list[str] | None) -> list[str]:
@@ -67,6 +77,7 @@ def select_fanout_plan(
     intent: str,
     slots: dict[str, Any] | None = None,
     hermes_agents: list[str] | None = None,
+    hermes_parallel: bool = False,
 ) -> FanoutPlan:
     """Выбор подмножества агентов: Hermes agents[] → иначе дефолт по intent."""
     slots = slots or {}
@@ -75,28 +86,39 @@ def select_fanout_plan(
     source = "hermes" if picked else "default"
     agents = picked or defaults
 
+    def _plan(route: str, ids: list[str], strategist: bool) -> FanoutPlan:
+        tup = tuple(ids)
+        pf = is_parallel_fanout(tup)
+        if hermes_parallel and len(tup) < MIN_PARALLEL_AGENTS:
+            logger.warning(
+                "Hermes parallel=true но агентов %s для intent=%s",
+                len(tup), intent,
+            )
+        return FanoutPlan(route, tup, strategist, source, parallel_fanout=pf)
+
     if intent in LEADGEN:
-        return FanoutPlan("leadgen", tuple(agents or ["analyst"]), False, source)
+        ids = agents or ["analyst"]
+        return _plan("leadgen", list(ids), False)
 
     if intent in VOICE_SINGLE:
         one = agents[:1] or ["analyst"]
-        return FanoutPlan("voice_single", tuple(one), False, source)
+        return _plan("voice_single", list(one), False)
 
     if intent == "ask_strategist":
-        return FanoutPlan("voice_single", ("strategist",), False, source)
+        return _plan("voice_single", ["strategist"], False)
 
     if intent == "search_web":
-        return FanoutPlan("search", ("analyst",), False, source)
+        return _plan("search", ["analyst"], False)
 
     if intent == "write_email":
-        return FanoutPlan("email", ("marketer",), False, source)
+        return _plan("email", ["marketer"], False)
 
     if intent == "list_leads":
-        return FanoutPlan("parallel", ("analyst",), False, source)
+        return _plan("parallel", ["analyst"], False)
 
     if intent in CRM_PARALLEL:
         if intent == "delete_lead" and not picked:
             agents = ["analyst"]
-        return FanoutPlan("parallel", tuple(agents), run_strategist=True, source=source)
+        return _plan("parallel", list(agents), True)
 
-    return FanoutPlan("skip", (), False, source)
+    return FanoutPlan("skip", (), False, source, False)

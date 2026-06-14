@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§2 п.2 parallel fanout 2+] | Статус: ✅ fanout_parallel`
+
+> **→ Следующий агент:** [`FANOUT_PARALLEL_ACCEPTANCE.md`](../phase2/agents/FANOUT_PARALLEL_ACCEPTANCE.md)
+
+**2026-06-14 (Ф2 §2 п.2):** Параллельный fanout 2+ — `fanout_parallel.py`, Hermes `parallel`, метрики в result; leadgen: fanout до pipeline; pytest 20 passed. MAP п.391 `[x]`. **Коммит:** `9f1437b`.
+
+**Следующий `go`:** §2 п.392 «Синтез в модалку voice_action» **или** именованный сценарий (п.393+).
+
+---
+
 `Спринт:[Ф2] | Задача:[§2 п.1 LangGraph supervisor] | Статус: ✅ fanout выборочный`
 
 > **→ Следующий агент:** [`FANOUT_SUPERVISOR_ACCEPTANCE.md`](../phase2/agents/FANOUT_SUPERVISOR_ACCEPTANCE.md)

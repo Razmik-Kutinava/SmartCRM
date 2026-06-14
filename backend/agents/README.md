@@ -23,6 +23,7 @@ LangGraph-агенты для анализа лидов, стратегии, п�
 |------|--------|
 | `orchestrator.py` | Маршрутизация интентов → supervisor → LangGraph fanout |
 | `supervisor.py` | Выбор подмножества агентов (Hermes agents[] или дефолт) |
+| `fanout_parallel.py` | Параллельный gather 2+ агентов, merge state, метрики fanout |
 | `graph.py` | LangGraph: supervisor → fanout → strategist |
 | `base.py` | Базовый класс агента |
 | `tools.py` | Общие tools; CLI gate — заголовок `X-API-Key` из `SMARTCRM_API_KEY` |

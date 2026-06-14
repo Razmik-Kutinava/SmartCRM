@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §2 п.2: параллельный fanout 2+ агентов
+
+**Сделано:** `agents/fanout_parallel.py`; `FanoutPlan.parallel_fanout`; Hermes `parallel` → orchestrator; leadgen pre-fanout; pytest 20 passed; `FANOUT_PARALLEL_ACCEPTANCE.md`; MAP п.391 `[x]`.
+
 ## 2026-06-14 — Ф2 §2 п.1: LangGraph supervisor (выборочный fanout)
 
 **Сделано:** `agents/supervisor.py`, `agents/graph.py`; orchestrator + pipeline `hermes_agents`; pytest 15 passed; `FANOUT_SUPERVISOR_ACCEPTANCE.md`.

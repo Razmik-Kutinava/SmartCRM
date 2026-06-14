@@ -28,6 +28,7 @@ async def run_agents(
     transcript: str = "",
     trace_id: str = "",
     hermes_agents: list[str] | None = None,
+    hermes_parallel: bool = False,
 ) -> dict[str, Any]:
     """
     Главная точка входа оркестратора.
@@ -38,10 +39,14 @@ async def run_agents(
 
     from rag.retrieve import attach_rag_to_slots
 
-    plan = select_fanout_plan(intent, slots, hermes_agents)
+    plan = select_fanout_plan(intent, slots, hermes_agents, hermes_parallel=hermes_parallel)
     slots_enriched = await attach_rag_to_slots({**slots}, transcript)
     state = make_initial_state(intent, slots_enriched, transcript, trace_id)
-    state["slots"] = {**slots_enriched, "_base_reply": slots.get("reply", "")}
+    state["slots"] = {
+        **slots_enriched,
+        "_base_reply": slots.get("reply", ""),
+        "_hermes_parallel": hermes_parallel,
+    }
     state["hermes_agents"] = list(hermes_agents or [])
 
     t_total = time.monotonic()
@@ -51,7 +56,15 @@ async def run_agents(
     )
 
     if plan.route == "leadgen":
+        if plan.parallel_fanout:
+            from agents.fanout_parallel import run_parallel_fanout
+
+            state = await run_parallel_fanout(state, list(plan.parallel_agents))
         state = await _run_leadgen(state, intent)
+        if plan.parallel_fanout:
+            state["fanout_parallel"] = True
+            state["fanout_agent_count"] = len(plan.parallel_agents)
+            state["agents_selected"] = list(plan.parallel_agents)
     elif plan.route == "search":
         state = await _run_search_web(state, slots.get("query") or transcript)
     elif plan.route == "email":
@@ -91,6 +104,10 @@ def _result_from_state(state: AgentState, slots: dict[str, Any], total_ms: int) 
         "tech_output": state.get("tech_output"),
         "agents_selected": state.get("agents_selected") or plan.get("parallel_agents") or [],
         "fanout_source": plan.get("source", ""),
+        "fanout_parallel": bool(state.get("fanout_parallel") or plan.get("parallel_fanout")),
+        "fanout_agent_count": state.get("fanout_agent_count")
+        or len(state.get("agents_selected") or plan.get("parallel_agents") or []),
+        "fanout_elapsed_ms": state.get("fanout_elapsed_ms"),
         "timings_ms": {**state.get("agent_timings", {}), "total": total_ms},
         "errors": state.get("errors", []),
         "actions_taken": state.get("actions_taken", []),
