@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§3 email п.404 список /email] | Статус: ✅ done`
+
+> **→ Следующий агент:** §3 Email-агент п.405 «Анализ типа письма + черновик» — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14 (Ф2 §3 п.404):** Список `/email` — enriched threads API, emailListLogic, sync status bar, apiFetch; pytest 13 passed; MAP п.404 `[x]`. **Коммит:** `8f6f3ed`.
+
+**Следующий `go`:** §3 п.405 анализ + черновик (Маркетолог).
+
+---
+
 `Спринт:[Ф2] | Задача:[§3 email п.403 фоновый синк] | Статус: ✅ done`
 
 > **→ Следующий агент:** §3 Email-агент п.404 «Список `/email`» — [`PRD_MAP.md`](../product/PRD_MAP.md)

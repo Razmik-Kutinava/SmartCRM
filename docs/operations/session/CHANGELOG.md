@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §3 п.404: список `/email`
+
+**Сделано:** `emailListLogic.js`; enriched `GET /threads`; `/email` UI (фильтры, sync bar, apiFetch); pytest 13 passed; `EMAIL_LIST_PAGE_ACCEPTANCE.md`; MAP п.404 `[x]`.
+
 ## 2026-06-14 — Ф2 §3 п.403: фоновый синк входящих
 
 **Сделано:** `email_sync/background.py` + `sync_all.py`; poll loop в `main.py`; `GET /api/email/sync/status`; `EMAIL_AUTO_SYNC_MINUTES`; pytest 19 passed; `EMAIL_BACKGROUND_SYNC_ACCEPTANCE.md`; MAP п.403 `[x]`.

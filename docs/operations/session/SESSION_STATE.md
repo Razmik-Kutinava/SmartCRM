@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-14 | Действие: Ф2 §3 п.404 — список /email: enriched threads, emailListLogic, UI sync bar; pytest 13 passed. | Коммит: `8f6f3ed` | Хвост A: п.405–407 (черновик, апрув, голос) | Хвост B: legacy email/[mailbox].svelte | Хвост C: me@agneko.am — BACKLOG | Следующий шаг: go §3 п.405 черновик. | Статус: done
+
 2026-06-14 | Действие: Ф2 §3 п.403 — фоновый IMAP-синк, poll loop, GET /sync/status; pytest 19 passed. | Коммит: `20ce084` | Хвост A: п.404–407 email (UI, черновик, апрув, голос) | Хвост B: нет | Хвост C: me@agneko.am отдельный пароль — BACKLOG | Следующий шаг: go §3 п.404 `/email`. | Статус: done
 
 2026-06-14 | Действие: Ф2 §3 п.402 — IMAP/SMTP env: email_config, bootstrap API, acceptance; pytest 20 passed. | Коммит: `2b84cfd` | Хвост A: п.403–407 email (фон, UI, черновик, апрув, голос) | Хвост B: нет | Хвост C: me@agneko.am отдельный пароль — BACKLOG | Следующий шаг: go §3 п.403 фоновый синк. | Статус: done
