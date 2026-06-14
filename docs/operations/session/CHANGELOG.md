@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §3 п.403: фоновый синк входящих
+
+**Сделано:** `email_sync/background.py` + `sync_all.py`; poll loop в `main.py`; `GET /api/email/sync/status`; `EMAIL_AUTO_SYNC_MINUTES`; pytest 19 passed; `EMAIL_BACKGROUND_SYNC_ACCEPTANCE.md`; MAP п.403 `[x]`.
+
 ## 2026-06-14 — Ф2 §3 п.402: IMAP/SMTP credentials в env
 
 **Сделано:** `core/email_config.py`; `services/email_bootstrap.py`; `GET /api/email/config/status`; `POST /api/email/bootstrap-from-env`; smoke на общем конфиге; pytest 20 passed; `EMAIL_IMAP_SMTP_ENV_ACCEPTANCE.md`; MAP п.402 `[x]`.

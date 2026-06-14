@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §3 Email-агент п.404 «Список `/email`» — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-14 (Ф2 §3 п.403):** Фоновый IMAP-синк — `EMAIL_AUTO_SYNC_MINUTES` (default 5), poll loop в lifespan, `GET /api/email/sync/status`; pytest 19 passed; MAP п.403 `[x]`. **Коммит:** `20ce084`.
+**2026-06-14 (Ф2 §3 п.403):** Фоновый IMAP-синк — `EMAIL_AUTO_SYNC_MINUTES` (default 5), poll loop в lifespan, `GET /api/email/sync/status`; pytest 19 passed; MAP п.403 `[x]`. **Коммит:** `20ce084` · ops `fc06460`.
 
 **Следующий `go`:** §3 п.404 UI `/email`.
 
