@@ -2,6 +2,7 @@
 Voice Pipeline: аудио → Whisper → Hermes → агенты (LangGraph) → ответ.
 Логирует каждый проход в traces.
 """
+import asyncio
 import time
 import logging
 from voice.whisper import transcribe
@@ -112,6 +113,20 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
             )
             if agent_result.get("agents_ran") and agent_result.get("final_reply"):
                 final_reply = agent_result["final_reply"]
+            if agent_result.get("agents_ran"):
+                try:
+                    from rag.dialogue_facts import dialogue_auto_enabled, ingest_orchestrator_dialogues
+
+                    if dialogue_auto_enabled():
+                        agent_result["rag_dialogue_ingest"] = await asyncio.to_thread(
+                            ingest_orchestrator_dialogues,
+                            agent_result,
+                            transcript=text,
+                            slots=slots,
+                            dry_run=False,
+                        )
+                except Exception as e:
+                    logger.warning("RAG dialogue ingest: %s", e)
     except Exception as e:
         logger.warning("Оркестратор ошибка (пайплайн продолжается): %s", e)
         agent_result = {"agents_ran": False, "error": str(e)}

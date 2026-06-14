@@ -48,6 +48,8 @@
 	let taskResult = $state(null);
 	let taskErr = $state('');
 	let showTask = $state(false);
+	let ragSaving = $state(false);
+	let ragMsg = $state('');
 
 	/** Список лидов для выбора в модалке */
 	let leadsForTask = $state([]);
@@ -90,6 +92,7 @@
 			: agent.intents?.[0] || 'create_lead';
 		taskResult = null;
 		taskErr = '';
+		ragMsg = '';
 		taskLeadId = '';
 		taskInstruction = '';
 		taskAdvanced = false;
@@ -155,6 +158,38 @@
 			taskErr = e instanceof Error ? e.message : String(e);
 		} finally {
 			taskRunning = false;
+		}
+	}
+
+	async function saveToRag() {
+		if (!activeAgent || !taskResult?.output || ragSaving) return;
+		ragSaving = true;
+		ragMsg = '';
+		try {
+			const lead = leadsForTask.find((L) => String(L.id) === taskLeadId);
+			const slots = lead ? { ...lead, lead_id: lead.id } : {};
+			const r = await fetch(`${API}/api/rag/ingest-dialogue`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					agent_id: activeAgent.id,
+					transcript: taskInstruction.trim(),
+					output: taskResult.output,
+					slots,
+					dry_run: false,
+				}),
+			});
+			if (!r.ok) throw new Error(await r.text());
+			const d = await r.json();
+			if (!d.eligible) {
+				ragMsg = `Мало фактов (${d.facts_count ?? 0}) — нужно ≥2`;
+				return;
+			}
+			ragMsg = `✓ RAG (${d.for_agent}): ${d.chunks ?? 0} чанков`;
+		} catch (e) {
+			ragMsg = e instanceof Error ? e.message : String(e);
+		} finally {
+			ragSaving = false;
 		}
 	}
 
@@ -392,6 +427,24 @@
 					<div class="space-y-3">
 						<div class="flex items-center gap-3 text-xs text-gray-500">
 							<span class="text-emerald-400">✓ Выполнено за {taskResult.elapsed_ms} мс</span>
+							{#if taskResult.rag_ingest?.eligible && taskResult.rag_ingest?.ingested}
+								<span class="text-cyan-400">⚡ авто-RAG: {taskResult.rag_ingest.chunks} чанков</span>
+							{/if}
+						</div>
+
+						<div class="flex flex-wrap gap-2 items-center">
+							<button
+								type="button"
+								data-testid="agent-save-rag"
+								onclick={saveToRag}
+								disabled={ragSaving}
+								class="px-3 py-1.5 bg-cyan-900/60 hover:bg-cyan-800/80 disabled:opacity-50 text-xs text-cyan-100 rounded-lg border border-cyan-800/50"
+							>
+								{ragSaving ? '…' : '💾 В RAG'}
+							</button>
+							{#if ragMsg}
+								<span class="text-xs {ragMsg.startsWith('✓') ? 'text-cyan-400' : 'text-amber-400'}">{ragMsg}</span>
+							{/if}
 						</div>
 
 						{#if taskResult.output}

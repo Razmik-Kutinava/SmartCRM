@@ -53,6 +53,14 @@ class IngestBatchBody(BaseModel):
     dry_run: bool = False
 
 
+class IngestDialogueBody(BaseModel):
+    agent_id: str = "analyst"
+    transcript: str = ""
+    output: dict[str, Any] = {}
+    slots: dict[str, Any] = {}
+    dry_run: bool = False
+
+
 @router.post("/upload")
 async def rag_upload(
     file: UploadFile = File(...),
@@ -207,6 +215,30 @@ async def rag_ingest_batch(body: IngestBatchBody):
     if body.dry_run:
         resp["previews"] = previews
     return resp
+
+
+@router.post("/ingest-dialogue")
+async def rag_ingest_dialogue(body: IngestDialogueBody):
+    """Факты из диалога агента → RAG (коллекция того же агента)."""
+    from rag.dialogue_facts import ingest_dialogue_facts
+    from rag.ingest import normalize_for_agent
+
+    if body.agent_id not in {
+        "analyst", "strategist", "economist", "marketer", "tech_specialist", "all",
+    }:
+        raise HTTPException(400, detail=f"Неизвестный agent_id: {body.agent_id}")
+    fa = normalize_for_agent(body.agent_id)
+    result = await asyncio.to_thread(
+        ingest_dialogue_facts,
+        fa,
+        body.output or None,
+        transcript=body.transcript,
+        slots=body.slots,
+        dry_run=body.dry_run,
+    )
+    if result.get("error"):
+        raise HTTPException(400, detail=result["error"])
+    return {"ok": True, **result}
 
 
 @router.get("/query")

@@ -45,6 +45,8 @@
 
 `[2026-06-13] | PRD_MAP: переход Ф1→Ф2 | DoD Ф1 6/6; хвосты L306–318 не блокируют; PHASE2_ENTRY.md | **Push:** ждём go | **Ф2 код:** ждём go + номер очереди | gate live — параллельно`
 
+`[2026-06-14] | PRD_MAP: «§4 факты диалога» | Отложено: LLM-извлечение фактов из диалога (сейчас heuristic из JSON output) | Причина: scope п.2 — эвристика + auto без live LLM в CI | Нужна фаза MAP: 2/3 | Из шага: п.2 dialogue RAG | Действие: опц. `RAG_DIALOGUE_LLM=1` + eval`
+
 `[2026-06-14] | PRD_MAP: «Quality gates Ф3 тюнинг» | Отложено: довести всех агентов ≥85% (stretch 90–100%); Hermes 72.2%, Tech 60%, Economist 73.3% — baseline `AGENTS_GATE_TUNING_BASELINE.md` | Причина: тюнинг **после** закрытия функционала Ф2; сейчас не блокер MAP | Нужна фаза MAP: **3** | Из шага: full gate 2026-06-14 | Действие: Hermes parse/rescue → Tech/Economist промпты → re-gate vs baseline`
 
 `[2026-06-14] | PRD_MAP: «§4 Авто-чанки» | Отложено: LLM-структурирование пар {question, answer} перед ingest (сейчас heuristic Q&A) | Причина: scope п.1 — порог + авто-путь без live LLM в CI | Нужна фаза MAP: 2 | Из шага: п.1 auto-chunks | Действие: опц. `RAG_AUTO_STRUCTURE_LLM=1` + eval`

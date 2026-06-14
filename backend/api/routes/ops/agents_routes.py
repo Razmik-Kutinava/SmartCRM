@@ -182,10 +182,23 @@ async def run_agent(agent_id: str, body: AgentRunBody):
         raise HTTPException(500, detail="Внутренняя ошибка агента. Подробности в логах.")
 
     elapsed_ms = round((time.monotonic() - t0) * 1000)
+    rag_ingest = None
+    if output and isinstance(output, dict):
+        from rag.dialogue_facts import dialogue_auto_enabled, ingest_dialogue_facts
+
+        rag_ingest = ingest_dialogue_facts(
+            agent_id,
+            output,
+            transcript=transcript,
+            slots=slots,
+            dry_run=not dialogue_auto_enabled(),
+        )
     return {
         "ok": True,
         "agent_id": agent_id,
         "intent": intent,
         "output": output,
+        "slots": slots,
         "elapsed_ms": elapsed_ms,
+        "rag_ingest": rag_ingest,
     }

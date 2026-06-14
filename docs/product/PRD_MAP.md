@@ -413,7 +413,7 @@
 > **Enrich Ф1 закрыт** — `/search` + PATCH в карточку: [`SEARCH_ENRICH_LEAD_ACCEPTANCE.md`](../operations/phase1/search/SEARCH_ENRICH_LEAD_ACCEPTANCE.md)
 
 - [x] Авто-чанки при релевантности > порога — ✅ [`SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md`](../operations/phase2/rag/SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md)
-- [ ] Факты из диалога агента → RAG
+- [x] Факты из диалога агента → RAG — ✅ [`AGENT_DIALOGUE_RAG_ACCEPTANCE.md`](../operations/phase2/rag/AGENT_DIALOGUE_RAG_ACCEPTANCE.md)
 - [ ] «Сохранить в базу» везде в поиске
 - [ ] **Кэш результата enrich** (ключ: company + ИНН + industry, TTL ~24 ч) — повторный запрос без 60–90 с и без лишних Serper/Brave/Groq *(сейчас кэшируется только Brave по одному поисковому запросу)*
 

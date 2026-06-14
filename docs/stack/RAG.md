@@ -77,6 +77,7 @@ Chroma.add → коллекция агента (analyst | marketer | tec | …)
 
 - Ручной путь «Сохранить в базу» остаётся (Фаза 1).
 - Авто-путь — только при score релевантности > порога.
+- **Диалог агента (Ф2 п.2):** факты из output → `dialogue_facts` → Chroma коллекции того же агента (`RAG_DIALOGUE_AUTO_INGEST`).
 - **tec:** приоритетная коллекция для PDF/спецификаций; краулинг URL вендора — Фаза 3 (`docs/product/PRD.md`).
 
 См. `docs/modules/search.md`, `docs/product/PRD_MAP.md` (Фаза 2 → Поиск → RAG).

@@ -47,22 +47,37 @@ export async function handleSendEmailApprove(action) {
 export async function handleSaveToRagApprove(action) {
 	const payload = /** @type {Record<string, unknown>} */ (action.payload || {});
 	const slots = /** @type {Record<string, unknown>} */ (payload.slots || action.slots || {});
-	const text = String(slots.content || slots.question || action.reply || '').trim();
-	if (!text) throw new Error('Нет текста для сохранения в RAG');
+	const agents = /** @type {string[]} */ (action.agents || payload.agents || []);
+	const agentId = agents[0] || 'analyst';
+	const transcript = String(slots.question || slots.query || '').trim();
+	const reply = String(action.reply || slots.content || '').trim();
+	const output = {};
+	if (reply) {
+		output.summary = reply;
+		output.final_reply = reply;
+	}
+	if (transcript) {
+		output.rationale = `Запрос оператора: ${transcript}`;
+	}
+	if (!reply && !transcript) throw new Error('Нет текста для сохранения в RAG');
 
-	const r = await apiPost('/api/rag/ingest', {
-		title: `voice-${new Date().toISOString().slice(0, 19)}`,
-		text,
-		tags: 'voice',
-		for_agent: 'all',
+	const r = await apiPost('/api/rag/ingest-dialogue', {
+		agent_id: agentId,
+		transcript,
+		output,
+		slots,
+		dry_run: false,
 	});
 	if (!r.ok) {
 		const detail = await r.text().catch(() => '');
 		throw new Error(detail || `HTTP ${r.status}`);
 	}
 	const data = await r.json();
+	if (!data.eligible) {
+		throw new Error('Мало фактов о сделке для RAG (нужно ≥2)');
+	}
 	return {
 		ok: true,
-		message: `Сохранено в RAG: ${data.chunks ?? 0} чанков`,
+		message: `Сохранено в RAG (${data.for_agent}): ${data.chunks ?? 0} чанков`,
 	};
 }
