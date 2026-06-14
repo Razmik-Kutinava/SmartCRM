@@ -13,6 +13,9 @@ export const voiceLeadFilter = writable(null);
 /** Контекст аналитики с голоса: period, source, intent */
 export const voiceAnalyticsContext = writable(null);
 
+/** Контекст /tenders с голоса: query, tab, title */
+export const voiceTenderContext = writable(null);
+
 /** Поисковый запрос для /search */
 export const voiceSearchQuery = writable(null);
 
@@ -67,6 +70,21 @@ function flashHighlight(text) {
 	}, 5200);
 }
 
+function applyTenderPayload(action) {
+	const payload = action.payload || {};
+	const query = payload.query || action.slots?.query;
+	const tab = payload.tab || action.slots?.tab;
+	if (!query && !tab && !action.intent?.startsWith?.('search_tenders') && action.intent !== 'list_tenders') {
+		return;
+	}
+	voiceTenderContext.set({
+		query: query ? String(query) : '',
+		tab: tab ? String(tab) : '',
+		intent: String(action.intent || ''),
+		title: String(action.title || ''),
+	});
+}
+
 function applyAnalyticsPayload(action) {
 	const payload = action.payload || {};
 	const period = payload.period || action.slots?.period;
@@ -93,6 +111,7 @@ export function handleVoiceAction(action, { goto }) {
 
 	if (ui === 'navigate' && action.route) {
 		applyAnalyticsPayload(action);
+		applyTenderPayload(action);
 		let route = String(action.route);
 		if (intent.startsWith('analytics_') && !route.includes('?')) {
 			const params = new URLSearchParams();
@@ -103,6 +122,16 @@ export function handleVoiceAction(action, { goto }) {
 			if (source) params.set('source', String(source));
 			const view = intent.replace(/^analytics_/, '');
 			if (view && view !== 'report') params.set('view', view);
+			const qs = params.toString();
+			if (qs) route = `${route}?${qs}`;
+		}
+		if ((intent === 'search_tenders' || intent === 'list_tenders') && !route.includes('?')) {
+			const params = new URLSearchParams();
+			const payload = action.payload || {};
+			const query = payload.query || action.slots?.query;
+			const tab = payload.tab || action.slots?.tab;
+			if (query) params.set('q', String(query));
+			if (tab) params.set('tab', String(tab));
 			const qs = params.toString();
 			if (qs) route = `${route}?${qs}`;
 		}

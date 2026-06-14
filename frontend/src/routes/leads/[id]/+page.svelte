@@ -602,6 +602,16 @@
 							{/each}
 						</ul>
 					{/if}
+					{#if lead.tenderLink?.title}
+						<p class="text-xs text-indigo-400 mt-2" data-testid="lead-tender-link">
+							◇ Тендер:
+							{#if lead.tenderLink.url && lead.tenderLink.url !== '#'}
+								<a href={lead.tenderLink.url} target="_blank" rel="noopener" class="hover:underline">{lead.tenderLink.title}</a>
+							{:else}
+								{lead.tenderLink.title}
+							{/if}
+						</p>
+					{/if}
 				</div>
 
 				<div class="space-y-2">

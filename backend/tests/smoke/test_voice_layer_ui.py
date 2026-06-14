@@ -13,6 +13,7 @@ def test_voice_action_js_exports():
     text = _VOICE_JS.read_text(encoding="utf-8")
     for sym in (
         "voiceAnalyticsContext",
+        "voiceTenderContext",
         "voiceSearchQuery",
         "registerVoiceApproveHandler",
         "voiceHighlight",
@@ -54,8 +55,17 @@ def test_analytics_voice_context_marker():
     assert "period=month" not in text  # query строится в voiceAction.js
 
 
+def test_tenders_voice_context_marker():
+    path = _REPO / "frontend" / "src" / "routes" / "tenders" / "+page.svelte"
+    text = path.read_text(encoding="utf-8")
+    assert "voice-tender-context" in text
+    assert "tender-full-evaluate" in text
+    assert "tender-lead-link" in text
+
+
 def test_voice_action_analytics_query_builder():
     text = _VOICE_JS.read_text(encoding="utf-8")
     assert "analytics_" in text
     assert "params.set('period'" in text
     assert "params.set('view'" in text
+    assert "voiceTenderContext" in text

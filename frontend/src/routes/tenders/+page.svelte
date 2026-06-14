@@ -1,15 +1,21 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { getApiUrl } from '$lib/websocket.js';
 	import {
 		analyzeTender,
+		createLeadFromTender,
+		evaluateTenderFull,
 		extractTenderDocument,
 		fetchSavedTenders,
+		linkTenderLead,
 		patchTenderSaved,
 		saveTender,
 		sourceLabel,
 		tenderExternalId,
 	} from '$lib/tenders/tenderApi.js';
+	import { voiceTenderContext } from '$lib/voice/voiceAction.js';
 	const API = getApiUrl();
 
 	// ── Вкладки верхнего уровня ──────────────────────────────────────────────
@@ -59,9 +65,33 @@
 	let tender_analysis = $state(null);
 	let tech_analysis   = $state(null);
 	let agent_loading   = $state(false);
+	let full_evaluation = $state(null);
+	let link_lead_id    = $state('');
+	let link_notice     = $state('');
+	let voiceCtx        = $state(null);
+
+	function applyRouteParams() {
+		const params = $page.url.searchParams;
+		const q = params.get('q') || voiceCtx?.query || '';
+		const routeTab = params.get('tab') || voiceCtx?.tab || '';
+		if (q) {
+			f_keywords = q;
+			tab = 'search';
+		}
+		if (routeTab === 'my') tab = 'my';
+	}
 
 	onMount(() => {
+		const unsubVoice = voiceTenderContext.subscribe((v) => {
+			voiceCtx = v;
+			applyRouteParams();
+		});
+		const unsubPage = page.subscribe(() => applyRouteParams());
 		loadSavedLists();
+		return () => {
+			unsubVoice();
+			unsubPage();
+		};
 	});
 
 	async function loadSavedLists() {
@@ -84,6 +114,7 @@
 			...snap,
 			_dbId: row.id,
 			_status: row.status,
+			linkedLeadId: row.linkedLeadId,
 			title: snap.title || row.title || '',
 			tender_analysis: row.tenderAnalysis,
 			tech_analysis: row.techAnalysis,
@@ -301,6 +332,60 @@
 		}
 	}
 
+	async function runFullEvaluation() {
+		if (!selected) return;
+		agent_loading = true;
+		full_evaluation = null;
+		detail_tab = 'tender_agent';
+		error = '';
+		try {
+			const res = await evaluateTenderFull(selected, documentContext());
+			full_evaluation = res.result;
+			const reply = res.result?.final_reply || res.result?.strategist_output?.final_reply;
+			if (reply) tender_analysis = reply;
+			await saveCurrentTender();
+		} catch (e) {
+			error = 'Полная оценка: ' + (e.message || 'ошибка LLM');
+		} finally {
+			agent_loading = false;
+		}
+	}
+
+	async function createLeadFromSelected() {
+		if (!selected?._dbId) {
+			await saveCurrentTender();
+		}
+		const savedId = selected?._dbId;
+		if (!savedId) {
+			link_notice = 'Сначала сохраните тендер в «Мои»';
+			return;
+		}
+		try {
+			const res = await createLeadFromTender(savedId);
+			link_notice = `Лид #${res.leadId} создан`;
+			selected = { ...selected, linkedLeadId: res.leadId };
+			goto(`/leads/${res.leadId}`);
+		} catch (e) {
+			link_notice = e.message || 'Ошибка создания лида';
+		}
+	}
+
+	async function linkSelectedToLead() {
+		const savedId = selected?._dbId;
+		const leadId = Number(link_lead_id);
+		if (!savedId || !leadId) {
+			link_notice = 'Нужен сохранённый тендер и ID лида';
+			return;
+		}
+		try {
+			const res = await linkTenderLead(savedId, leadId);
+			link_notice = `Привязан к лиду #${res.leadId}`;
+			selected = { ...selected, linkedLeadId: res.leadId };
+		} catch (e) {
+			link_notice = e.message || 'Ошибка привязки';
+		}
+	}
+
 	// ── Утилиты ───────────────────────────────────────────────────────────────
 	function fmtMoney(n) {
 		if (!n) return '—';
@@ -351,6 +436,13 @@
 				</button>
 			{/each}
 		</div>
+		{#if voiceCtx?.title || voiceCtx?.query}
+			<p class="text-xs text-indigo-400 mt-2 px-1" data-testid="voice-tender-context">
+				🎙 {voiceCtx.title || 'Тендеры'}
+				{#if voiceCtx.query} · запрос: {voiceCtx.query}{/if}
+				{#if voiceCtx.tab === 'my'} · вкладка: Мои{/if}
+			</p>
+		{/if}
 	</div>
 
 	<!-- ── Контент ── -->
@@ -635,6 +727,25 @@
 							</a>
 						</div>
 					</div>
+					<div class="flex flex-wrap items-center gap-2 mt-3" data-testid="tender-lead-link">
+						{#if selected.linkedLeadId}
+							<a href="/leads/{selected.linkedLeadId}" class="text-xs text-emerald-400 hover:underline">
+								Связан с лидом #{selected.linkedLeadId}
+							</a>
+						{/if}
+						<button type="button" onclick={createLeadFromSelected}
+							class="text-xs px-2.5 py-1.5 rounded-lg bg-emerald-800 text-emerald-100 hover:bg-emerald-700">
+							+ Лид из тендера
+						</button>
+						<input bind:value={link_lead_id} placeholder="ID лида" class="w-20 text-xs bg-gray-800 border border-gray-700 rounded px-2 py-1" />
+						<button type="button" onclick={linkSelectedToLead}
+							class="text-xs px-2.5 py-1.5 rounded-lg bg-gray-800 text-gray-300 hover:text-white">
+							Привязать
+						</button>
+						{#if link_notice}
+							<span class="text-xs text-gray-400">{link_notice}</span>
+						{/if}
+					</div>
 
 					<!-- Ключевые цифры -->
 					<div class="flex gap-4 mt-3">
@@ -765,7 +876,13 @@
 									{/each}
 								</div>
 
-								<div class="flex gap-2">
+								<div class="flex gap-2 flex-wrap">
+									<button onclick={runFullEvaluation}
+										disabled={agent_loading}
+										class="w-full py-2 bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition-all"
+										data-testid="tender-full-evaluate">
+										🤖 Полная оценка (тех + эконом + стратег)
+									</button>
 									<button onclick={runTenderAgent}
 										class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition-all">
 										🎯 Запустить тендерного спеца

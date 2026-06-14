@@ -56,6 +56,31 @@ export async function analyzeTender(tender, agent, documentText = '') {
 	return parseJson(r);
 }
 
+export async function evaluateTenderFull(tender, documentText = '') {
+	const r = await apiFetch('/api/tenders/evaluate', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ tender, document_text: documentText }),
+	});
+	return parseJson(r);
+}
+
+export async function linkTenderLead(savedId, leadId) {
+	const r = await apiFetch(`/api/tenders/saved/${savedId}/link-lead`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ lead_id: leadId }),
+	});
+	return parseJson(r);
+}
+
+export async function createLeadFromTender(savedId) {
+	const r = await apiFetch(`/api/tenders/saved/${savedId}/create-lead`, {
+		method: 'POST',
+	});
+	return parseJson(r);
+}
+
 export function sourceLabel(source) {
 	const map = {
 		gosplan: 'ЕИС / Gosplan',

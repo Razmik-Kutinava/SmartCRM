@@ -30,6 +30,6 @@ PostgreSQL через SQLAlchemy async. Схема создаётся при с�
 | `lead_comment.py` | Комментарии к лиду |
 | `lead_communication_log.py` | Лог звонков/писем |
 | `lead_field_audit.py` | История изменений полей |
-| `tender_saved.py` | Сохранённые тендеры (Мои/Архив, снимок карточки, анализы) |
+| `tender_saved.py` | Сохранённые тендеры (Мои/Архив, анализы, `linked_lead_id`) |
 
 Все модели регистрируются в `models/__init__.py`.

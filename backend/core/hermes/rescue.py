@@ -72,6 +72,36 @@ def rescue_route(text: str) -> dict | None:
         matches_rescue,
         tender_slots_from_text,
     )
+    from agents.scenarios.tender_search import (
+        INTENT as TENDER_SEARCH_INTENT,
+        list_tenders_slots,
+        matches_list,
+        matches_search,
+        tender_search_slots,
+    )
+
+    if matches_list(text):
+        return enrich_module_ui({
+            "intent": "list_tenders",
+            "agents": ["analyst"],
+            "slots": list_tenders_slots(),
+            "parallel": False,
+            "reply": "Открываю мои тендеры.",
+            "_model": "rescue",
+        })
+
+    if matches_search(text):
+        slots_ts = tender_search_slots(text)
+        q = slots_ts.get("query", "")
+        suffix = f" по «{q}»" if q else ""
+        return enrich_module_ui({
+            "intent": TENDER_SEARCH_INTENT,
+            "agents": ["analyst"],
+            "slots": slots_ts,
+            "parallel": False,
+            "reply": f"Ищу тендеры{suffix}.",
+            "_model": "rescue",
+        })
 
     if matches_rescue(text):
         slots_te = tender_slots_from_text(text)

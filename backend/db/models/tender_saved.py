@@ -24,6 +24,7 @@ class TenderSaved(Base):
     snapshot_json: Mapped[dict[str, Any]] = mapped_column(_JSON, default=dict)
     tender_analysis: Mapped[str | None] = mapped_column(Text, nullable=True)
     tech_analysis: Mapped[str | None] = mapped_column(Text, nullable=True)
+    linked_lead_id: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), default=lambda: datetime.now(timezone.utc)
     )
@@ -49,6 +50,7 @@ class TenderSaved(Base):
             "law": snap.get("law"),
             "tenderAnalysis": self.tender_analysis,
             "techAnalysis": self.tech_analysis,
+            "linkedLeadId": self.linked_lead_id,
             "createdAt": self.created_at.isoformat() if self.created_at else None,
             "archivedAt": self.archived_at.isoformat() if self.archived_at else None,
         }

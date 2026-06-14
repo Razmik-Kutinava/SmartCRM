@@ -6,6 +6,8 @@ from . import (
     classifiers_routes,
     detail_routes,
     document_routes,
+    evaluate_routes,
+    lead_link_routes,
     plans_routes,
     saved_routes,
     search_routes,
@@ -24,6 +26,8 @@ router = APIRouter(prefix="/api/tenders", tags=["tenders"])
 router.include_router(search_routes.router)
 router.include_router(saved_routes.router)
 router.include_router(analyze_routes.router)
+router.include_router(evaluate_routes.router)
+router.include_router(lead_link_routes.router)
 router.include_router(document_routes.router)
 router.include_router(plans_routes.router)
 router.include_router(classifiers_routes.router)

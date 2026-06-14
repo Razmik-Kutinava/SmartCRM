@@ -36,6 +36,8 @@ _ROUTE_BY_INTENT: dict[str, str] = {
     "find_leads_portrait": "/leadgen",
     "cluster_company": "/leadgen",
     "evaluate_tender": "/tenders",
+    "search_tenders": "/tenders",
+    "list_tenders": "/tenders",
     "analyze_lead": "/leads/list",
     "lead_history": "/leads/list",
     "add_communication": "/leads/list",
@@ -54,6 +56,8 @@ _ANALYTICS_TITLES = {
     "analytics_cycle": "Цикл сделки и средний чек",
     "analytics_score": "Лиды по скору",
     "analytics_report": "Аналитика CRM",
+    "search_tenders": "Поиск тендеров",
+    "list_tenders": "Мои тендеры",
 }
 
 
@@ -103,6 +107,8 @@ def build_voice_action(
         base["route"] = _route(intent, slots, agent_result)
         if intent in ANALYTICS_INTENTS:
             base["payload"] = _analytics_payload(slots)
+        elif intent in ("search_tenders", "list_tenders"):
+            base["payload"] = _tenders_payload(slots)
         elif intent == "list_emails":
             base["payload"] = email_navigate_payload(slots)
     elif ui == "filter":
@@ -169,11 +175,28 @@ def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
         return "modal"
     if intent in _UI_MODAL_INTENTS and _has_modal_content(agent_result, intent):
         return "modal"
-    if intent in ANALYTICS_INTENTS:
+    if intent in ("search_tenders", "list_tenders"):
         return "navigate"
     if intent in _ROUTE_BY_INTENT:
         return "navigate"
     return None
+
+
+def _tenders_route(intent: str, slots: dict) -> str:
+    from urllib.parse import urlencode
+
+    params: dict[str, str] = {}
+    if intent == "list_tenders" or slots.get("tab") == "my":
+        params["tab"] = "my"
+    query = slots.get("query")
+    if query:
+        params["q"] = str(query)
+    if slots.get("budget_from"):
+        params["budget_from"] = str(slots["budget_from"])
+    base = MODULE_ROUTES["tenders"]
+    if not params:
+        return base
+    return f"{base}?{urlencode(params)}"
 
 
 def _analytics_route(intent: str, slots: dict) -> str:
@@ -204,6 +227,8 @@ def _route(intent: str, slots: dict, agent_result: dict) -> str:
         return lead_route
     if intent in ANALYTICS_INTENTS:
         return _analytics_route(intent, slots)
+    if intent in ("evaluate_tender", "search_tenders", "list_tenders"):
+        return _tenders_route(intent, slots)
     if intent in RAG_INTENTS:
         return MODULE_ROUTES["rag"]
     if intent in ("list_emails", "write_email", "send_email"):
@@ -215,6 +240,15 @@ def _url_q(text: str) -> str:
     from urllib.parse import quote
 
     return quote(str(text)[:200])
+
+
+def _tenders_payload(slots: dict) -> dict[str, Any]:
+    payload: dict[str, Any] = {}
+    for key in ("query", "tab", "budget_from"):
+        val = slots.get(key)
+        if val not in (None, "", "—"):
+            payload[key] = val
+    return payload
 
 
 def _analytics_payload(slots: dict) -> dict[str, Any]:

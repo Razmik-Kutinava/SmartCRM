@@ -104,6 +104,7 @@ async def init_db():
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS approvals JSONB",
             "ALTER TABLE lead_field_audits ADD COLUMN IF NOT EXISTS event_type VARCHAR(64) DEFAULT 'field_change'",
             "ALTER TABLE lead_field_audits ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb",
+            "ALTER TABLE tender_saved ADD COLUMN IF NOT EXISTS linked_lead_id INTEGER",
         ]
         for sql in migrations:
             try:

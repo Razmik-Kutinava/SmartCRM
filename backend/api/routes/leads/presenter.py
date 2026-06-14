@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import crm_settings_store, lead_score_advisory
 from core.lead_approvals import default_approvals_dict, merge_approvals_payload
+from core.tender_lead_link import tender_link_for_lead
 from db.models import Lead, Task
 
 from .schemas import LeadCreate
@@ -43,4 +44,7 @@ async def lead_api_payload(lead: Lead, db: AsyncSession) -> dict:
             "breakdown": {},
             "disabled": True,
         }
+    tender_link = await tender_link_for_lead(db, lead.id)
+    if tender_link:
+        payload["tenderLink"] = tender_link
     return payload

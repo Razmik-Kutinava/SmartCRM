@@ -1,16 +1,16 @@
 # HANDOFF
 
-`Спринт:[Ф2] | Задача:[§6 Аналитика + голос] | Статус: ✅ done`
+`Спринт:[Ф2] | Задача:[§7 Тендеры] | Статус: ✅ done`
 
-> **→ Следующий агент:** §7 Тендеры — [`PRD_MAP.md`](../product/PRD_MAP.md) · **Ф3:** gate tuning по `go`
+> **→ Следующий агент:** §8 Лидоген + голос — [`PRD_MAP.md`](../product/PRD_MAP.md) · **Ф3:** gate tuning по `go`
 
-**2026-06-14 (§6):** period/source filters в API+UI; conversionBySource; voice navigate с query; pytest 47 passed; MAP §6 закрыт. **Коммит:** `3911386`.
+**2026-06-14 (§7):** evaluate API + document_text; search/list_tenders voice; linked_lead_id + link/create-lead; pytest 20 passed; MAP §7 закрыт. **Коммит:** `TBD`.
 
-**Следующий `go`:** §7 тендеры или Ф3 gate.
+**Следующий `go`:** §8 лидоген+голос или Ф3 gate.
 
 ---
 
-`Спринт:[Ф2] | Задача:[§5 Hermes prompt versions — дополнение] | Статус: ✅ done`
+`Спринт:[Ф2] | Задача:[§6 Аналитика + голос] | Статус: ✅ done`
 
 > **→ Следующий агент:** §6 Аналитика + голос — [`PRD_MAP.md`](../product/PRD_MAP.md) · **Ф3:** gate tuning по `go`
 
