@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-14 | Действие: Ф2 §2 п.1 LangGraph supervisor — выборочный fanout; pytest 15 passed. | Коммит: `pending` | Хвост A: §2 п.2–7 (сценарии, синтез модалка) | Хвост B: нет | Хвост C: нет | Следующий шаг: go §2 п.2 parallel fanout или сценарии. | Статус: done
+2026-06-14 | Действие: Ф2 §2 п.1 LangGraph supervisor — выборочный fanout; pytest 15 passed. | Коммит: `d3ca7e0` | Хвост A: §2 п.2–7 (сценарии, синтез модалка) | Хвост B: нет | Хвост C: нет | Следующий шаг: go §2 п.2 parallel fanout или сценарии. | Статус: done
 
 2026-06-14 | Действие: фон live LLM eval модулей (--full 56 кейсов Groq+Ollama); скрипт run_eval_modules_live.py. | Коммит: `fb72e24` | Хвост A: дождаться артефакта modules_live_*.json | Хвост B: нет | Хвост C: нет | Следующий шаг: итог eval + §2 fanout. | Статус: in_progress
 
