@@ -4,7 +4,7 @@
 
 ## 2026-06-14 — Quality gate: baseline + Ф3 тюнинг в BACKLOG
 
-**Сделано:** full gate 2026-06-14 зафиксирован (Hermes 72.2%, Tech 60%, overall fail); `AGENTS_GATE_TUNING_BASELINE.md`; BACKLOG «тюнинг ≥85% все» → Ф3; PRD_MAP §Агенты + §Ф3 Self-improvement. Тюнинг **не** в этом шаге.
+**Сделано:** full gate 2026-06-14 зафиксирован (Hermes 72.2%, Tech 60%, overall fail); `AGENTS_GATE_TUNING_BASELINE.md`; BACKLOG «тюнинг ≥85% все» → Ф3; PRD_MAP §Агенты + §Ф3 Self-improvement. Тюнинг **не** в этом шаге. **Коммит:** `f5d4266`.
 
 ## 2026-06-14 — Ф2 §4 п.1: авто-чанки Search→RAG
 
