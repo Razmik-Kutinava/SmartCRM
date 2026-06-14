@@ -1,10 +1,20 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§2 п.3 синтез → модалка] | Статус: ✅ synthesis modal`
+
+> **→ Следующий агент:** [`FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md`](../phase2/agents/FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md)
+
+**2026-06-14 (Ф2 §2 п.3):** Синтез fanout → `voice_action` modal с `payload.synthesis`; UI блок «Решение»; pytest 44 passed. MAP п.392 `[x]`. **Коммит:** `PENDING`.
+
+**Следующий `go`:** §2 п.393 «Сценарий: анализ + письмо» **или** другой именованный сценарий.
+
+---
+
 `Спринт:[Ф2] | Задача:[§2 п.2 parallel fanout 2+] | Статус: ✅ fanout_parallel`
 
 > **→ Следующий агент:** [`FANOUT_PARALLEL_ACCEPTANCE.md`](../phase2/agents/FANOUT_PARALLEL_ACCEPTANCE.md)
 
-**2026-06-14 (Ф2 §2 п.2):** Параллельный fanout 2+ — `fanout_parallel.py`, Hermes `parallel`, метрики в result; leadgen: fanout до pipeline; pytest 20 passed. MAP п.391 `[x]`. **Коммит:** `1460d62` (+ ops `36a9cfe`).
+**2026-06-14 (Ф2 §2 п.2):** Параллельный fanout 2+ — `fanout_parallel.py`, Hermes `parallel`, метрики в result; leadgen: fanout до pipeline; pytest 20 passed. MAP п.391 `[x]`. **Коммит:** `1460d62` (+ ops `36a9cfe`, `6c6de75`).
 
 **Следующий `go`:** §2 п.392 «Синтез в модалку voice_action» **или** именованный сценарий (п.393+).
 

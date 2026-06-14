@@ -6,6 +6,11 @@ from typing import Any
 
 from core.hermes.lead_list_view import list_leads_view_from_slots
 from core.hermes.module_contract import ANALYTICS_INTENTS, MODULE_ROUTES, RAG_INTENTS
+from voice.synthesis import (
+    SYNTHESIS_MODAL_INTENTS,
+    build_synthesis_payload,
+    has_multi_agent_synthesis,
+)
 
 _UI_MODAL_INTENTS = frozenset({
     "write_email", "run_analysis", "ask_economist", "ask_marketer",
@@ -116,6 +121,9 @@ def build_voice_action(
             base["route"] = "/search"
     elif ui == "modal":
         base["payload"] = _modal_payload(intent, agent_result, reply)
+        lead_route = _lead_route(slots, agent_result)
+        if lead_route and intent in SYNTHESIS_MODAL_INTENTS:
+            base["route"] = lead_route
         lid = agent_result.get("lead_id")
         if intent == "lead_history" and lid is not None:
             base["route"] = f"/leads/{lid}"
@@ -128,6 +136,8 @@ def build_voice_action(
 
 
 def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
+    if intent in SYNTHESIS_MODAL_INTENTS and has_multi_agent_synthesis(agent_result):
+        return "modal"
     if intent == "navigate" or slots.get("target"):
         return "navigate"
     if intent in ("delete_lead", "send_email", "save_to_rag"):
@@ -205,6 +215,12 @@ def _filter_payload(intent: str, slots: dict) -> dict[str, str]:
 
 def _modal_payload(intent: str, agent_result: dict, reply: str) -> dict[str, Any]:
     payload: dict[str, Any] = {"reply": reply, "intent": intent}
+    synthesis = build_synthesis_payload(agent_result)
+    if synthesis:
+        payload["synthesis"] = synthesis
+        if synthesis.get("final_reply") and not reply:
+            payload["reply"] = synthesis["final_reply"]
+
     analyst = agent_result.get("analyst_output") or {}
     economist = agent_result.get("economist_output") or {}
     marketer = agent_result.get("marketer_output") or {}
@@ -247,6 +263,8 @@ def _modal_payload(intent: str, agent_result: dict, reply: str) -> dict[str, Any
 
 
 def _has_modal_content(agent_result: dict, intent: str = "") -> bool:
+    if intent in SYNTHESIS_MODAL_INTENTS and has_multi_agent_synthesis(agent_result):
+        return True
     if intent == "ask_rag" and (agent_result.get("rag_answer") or agent_result.get("final_reply")):
         return True
     for key in (
@@ -293,6 +311,8 @@ def _title(intent: str, ui: str, slots: dict) -> str:
         return f"История лида{': ' + company if company else ''}"
     if ui == "modal" and intent == "analyze_lead":
         return f"Анализ лида{': ' + company if company else ''}"
+    if ui == "modal" and intent in SYNTHESIS_MODAL_INTENTS and synthesis_title(intent):
+        return synthesis_title(intent, company)
     if ui == "modal":
         return "Ответ агентов"
     if ui == "filter":
@@ -312,3 +332,14 @@ def _approve_message(intent: str, slots: dict) -> str:
         q = slots.get("question") or slots.get("query") or "материал"
         return f"Сохранить в RAG: {q[:120]}"
     return "Подтвердите действие"
+
+
+def synthesis_title(intent: str, company: str = "") -> str:
+    suffix = f": {company}" if company else ""
+    titles = {
+        "create_lead": f"Синтез: новый лид{suffix}",
+        "update_lead": f"Синтез: обновление лида{suffix}",
+        "run_analysis": f"Синтез анализа{suffix}",
+        "analyze_lead": f"Синтез анализа{suffix}",
+    }
+    return titles.get(intent, "Синтез агентов")

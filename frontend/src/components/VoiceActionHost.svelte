@@ -32,6 +32,12 @@
 		if (typeof block === 'string') return block;
 		return block.summary || block.text || JSON.stringify(block, null, 2);
 	}
+
+	const priorityLabels = {
+		high: 'Высокий',
+		medium: 'Средний',
+		low: 'Низкий',
+	};
 </script>
 
 {#if $voiceApprove}
@@ -73,6 +79,47 @@
 
 			{#if $voiceModal.module}
 				<div class="text-xs text-gray-500 mb-2">Модуль: <span class="text-indigo-400">{$voiceModal.module}</span></div>
+			{/if}
+
+			{#if $voiceModal.agents_used?.length}
+				<div class="flex flex-wrap gap-1 mb-3">
+					{#each $voiceModal.agents_used as agent}
+						<span class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800/50">{agent}</span>
+					{/each}
+				</div>
+			{/if}
+
+			{#if $voiceModal.payload?.synthesis}
+				<section class="mb-4 rounded-lg border border-emerald-900/50 bg-emerald-950/20 p-4" data-testid="voice-synthesis">
+					<h3 class="text-xs uppercase text-emerald-500/90 mb-2">Решение</h3>
+					{#if $voiceModal.payload.synthesis.decision}
+						<p class="text-sm text-emerald-100 font-medium mb-2">{$voiceModal.payload.synthesis.decision}</p>
+					{/if}
+					{#if $voiceModal.payload.synthesis.next_action}
+						<p class="text-xs text-gray-300 mb-2">
+							<span class="text-gray-500">Следующий шаг:</span>
+							{$voiceModal.payload.synthesis.next_action}
+						</p>
+					{/if}
+					<div class="flex flex-wrap gap-2 text-[10px] uppercase mb-2">
+						{#if $voiceModal.payload.synthesis.priority}
+							<span class="px-2 py-0.5 rounded bg-gray-800 text-gray-300">
+								Приоритет: {priorityLabels[$voiceModal.payload.synthesis.priority] || $voiceModal.payload.synthesis.priority}
+							</span>
+						{/if}
+						{#if $voiceModal.payload.synthesis.urgency}
+							<span class="px-2 py-0.5 rounded bg-gray-800 text-gray-300">
+								Срок: {$voiceModal.payload.synthesis.urgency}
+							</span>
+						{/if}
+					</div>
+					{#if $voiceModal.payload.synthesis.rationale}
+						<p class="text-xs text-gray-400 whitespace-pre-wrap">{$voiceModal.payload.synthesis.rationale}</p>
+					{/if}
+					{#if $voiceModal.payload.synthesis.coach_tip}
+						<p class="text-xs text-amber-400/90 mt-2 italic">💡 {$voiceModal.payload.synthesis.coach_tip}</p>
+					{/if}
+				</section>
 			{/if}
 
 			{#if $voiceModal.reply}

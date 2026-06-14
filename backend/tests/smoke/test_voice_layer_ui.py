@@ -34,6 +34,12 @@ def test_voice_modal_rag_section():
     assert 'data-testid="voice-modal"' in text
 
 
+def test_voice_modal_synthesis_section():
+    text = _HOST.read_text(encoding="utf-8")
+    assert 'data-testid="voice-synthesis"' in text
+    assert "payload.synthesis" in text
+
+
 def test_analytics_voice_context_marker():
     path = _REPO / "frontend" / "src" / "routes" / "leads" / "analytics" / "+page.svelte"
     text = path.read_text(encoding="utf-8")

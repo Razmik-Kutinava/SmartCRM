@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §2 п.3: синтез в один ответ → модалка
+
+**Сделано:** `voice/synthesis.py`; fanout+strategist → modal; `payload.synthesis`; VoiceActionHost «Решение»; pytest 44 passed; `FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md`; MAP п.392 `[x]`.
+
 ## 2026-06-14 — Ф2 §2 п.2: параллельный fanout 2+ агентов
 
 **Сделано:** `agents/fanout_parallel.py`; `FanoutPlan.parallel_fanout`; Hermes `parallel` → orchestrator; leadgen pre-fanout; pytest 20 passed; `FANOUT_PARALLEL_ACCEPTANCE.md`; MAP п.391 `[x]`.

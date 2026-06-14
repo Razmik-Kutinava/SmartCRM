@@ -6,6 +6,7 @@
 |------|--------|
 | `pipeline.py` | `process_text` / `process_audio`: связка Whisper + Hermes + orchestrator |
 | `voice_action.py` | Сборка пакета `voice_action` (modal / navigate / filter / approve) для WS |
+| `synthesis.py` | Синтез fanout → блок `payload.synthesis` для modal |
 | `lead_context.py` | История лида (audit/comments/comms) для `lead_history` |
 | `rag_context.py` | Ответ из RAG (Chroma) для `ask_rag` |
 | `whisper.py` | Распознавание речи (Groq Whisper / локально) |
