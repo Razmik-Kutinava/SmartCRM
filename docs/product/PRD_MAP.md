@@ -236,7 +236,7 @@
 
 | Критерий | Статус | Где мерить / закрывать |
 |----------|--------|-------------------------|
-| **6 агентов: pass rate ≥ порога** | 🟡 full run 🔄 | [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/phase2/agents/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · smoke `agents_gate_20260613_143114.json` · full `gate_full_20260613.log` |
+| **6 агентов: pass rate ≥ порога** | 🟡 full run 2026-06-14 **fail** | [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](../operations/phase2/agents/AGENTS_QUALITY_GATE_ACCEPTANCE.md) · `agents_gate_20260614_140940.json` · baseline Ф3: [`AGENTS_GATE_TUNING_BASELINE.md`](../operations/baselines/AGENTS_GATE_TUNING_BASELINE.md) |
 | Рамка порогов + цикл обучения | ✅ 2026-06-12 | [`AGENTS_LEARNING_MAP.md`](../operations/phase2/agents/AGENTS_LEARNING_MAP.md) |
 | Latency ответа p95 &lt; 3 с | 🔲 | `/ops/stats`, трейсы · [`langgraph.md`](../agents/langgraph.md) |
 | RAG-контекст в ответе корректен | 🔲 | `/ops/eval`, `/ops/traces` · gate JSON |
@@ -244,9 +244,10 @@
 | A/B промптов по трейсам | 🔲 | **Фаза 3** · `qa_agent.py`, Dr. QA |
 
 > **Пороги (черновик):** Hermes ≥85% / 30 кейсов; Analyst, Economist, Marketer, Strategist, Tech ≥75% / 15.  
-> **`[x]` по gate** — только после зелёной таблицы в acceptance (не «инфра есть»).  
+> **`[x]` по gate (Ф2)** — только после зелёной таблицы в acceptance (не «инфра есть»).  
+> **Ф3 (тюнинг):** после закрытия функционала Ф2 — все агенты **≥85%**, stretch **90–100%** → [`AGENTS_GATE_TUNING_BASELINE.md`](../operations/baselines/AGENTS_GATE_TUNING_BASELINE.md) · BACKLOG.  
 > **UI eval ✅ (шаг 5):** `/ops/intents/eval` — gate, вкладки, датасет; `/ops/insights` — дыры.  
-> **Осталось:** дождаться full gate (111 кейсов, CPU ~2–4 ч) → green → `--write-acceptance` → `[x]` после «ок». Smoke 2026-06-13: marketer/tech fail на 2 кейсах.
+> **Full gate 2026-06-14:** Hermes 72.2% 🔴, Tech 60% 🔴, Economist 73.3% 🟡 — MAP `[x]` не ставить; тюнинг → Ф3.
 
 ### Инфра — dev (Фаза 1)
 
@@ -470,6 +471,7 @@
 
 ### Self-improvement
 
+- [ ] **Quality gate tuning:** все агенты ≥85% (baseline 2026-06-14: Hermes 72.2%, Tech 60%) → [`AGENTS_GATE_TUNING_BASELINE.md`](../operations/baselines/AGENTS_GATE_TUNING_BASELINE.md)
 - [ ] Краулинг URL вендоров → RAG тех. спеца
 - [ ] A/B промптов по трейсам
 - [ ] Авто-суфлёр Стратега

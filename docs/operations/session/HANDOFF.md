@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[gate baseline → Ф3 тюнинг в BACKLOG] | Статус: ✅ done`
+
+> **→ Следующий агент:** §4 п.2 «Факты из диалога агента → RAG» — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-14:** full gate fail зафиксирован; baseline [`AGENTS_GATE_TUNING_BASELINE.md`](../baselines/AGENTS_GATE_TUNING_BASELINE.md); тюнинг ≥85% все → **Ф3 BACKLOG**, не блокер Ф2. **Коммит:** `TBD`.
+
+**Следующий `go`:** §4 п.2 или продолжение MAP Ф2.
+
+---
+
 `Спринт:[Ф2] | Задача:[§4 RAG п.1 авто-чанки] | Статус: ✅ done`
 
 > **→ Следующий агент:** §4 п.2 «Факты из диалога агента → RAG» — [`PRD_MAP.md`](../product/PRD_MAP.md)

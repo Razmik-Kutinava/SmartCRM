@@ -26,23 +26,25 @@
 <!-- GATE_STATUS_START -->
 | Агент | Pass | Fail | Pass rate | Порог | Gate | Дата | Артефакт |
 |-------|------|------|-----------|-------|------|------|----------|
-| Hermes | 0 | 2* | 0%* | 85% | 🔴 | 2026-06-12 | smoke `agents_gate_20260612_154027.json` |
-| Analyst | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
-| Economist | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
-| Marketer | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
-| Strategist | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
-| Tech | 0 | 1* | 0%* | 75% | 🔴 | 2026-06-12 | smoke |
+| Hermes | 26 | 10 | 72.2% | 85% | 🔴 | 2026-06-14 | agents_gate_20260614_140940.json |
+| Analyst | 13 | 2 | 86.7% | 75% | ✅ | 2026-06-14 | agents_gate_20260614_140940.json |
+| Economist | 11 | 4 | 73.3% | 75% | 🟡 | 2026-06-14 | agents_gate_20260614_140940.json |
+| Marketer | 13 | 2 | 86.7% | 75% | ✅ | 2026-06-14 | agents_gate_20260614_140940.json |
+| Strategist | 12 | 3 | 80.0% | 75% | ✅ | 2026-06-14 | agents_gate_20260614_140940.json |
+| Tech | 9 | 6 | 60.0% | 75% | 🔴 | 2026-06-14 | agents_gate_20260614_140940.json |
 <!-- GATE_STATUS_END -->
 
 Автообновление: `python scripts/run_agents_quality_gate.py --write-acceptance`
 
+**Ф3 (тюнинг, не блокер Ф2):** цель все агенты **≥85%**, stretch **90–100%** — baseline и снимок: [`AGENTS_GATE_TUNING_BASELINE.md`](../../baselines/AGENTS_GATE_TUNING_BASELINE.md).
+
 ## Дыры (блокеры `[x]` в MAP)
 
 <!-- GATE_GAPS_START -->
-- **Hermes**: ReadTimeout на CPU @600–900s — полный прогон 36 кейсов не завершён
-- **5 агентов**: фоновый `--agents-only` оборвался на analyst (Ollama timeout/ошибка) — артефакт не обновлён
-- **MAP `[x]`** — не ставить, пока `overall_gate` ≠ pass
-- **UI ✅** — смотреть цифры: `/ops/intents/eval`, дыры: `/ops/insights`
+- **Hermes**: pass rate 72.2% (порог 85%) — gate **fail**
+- **Economist**: pass rate 73.3% (порог 75%) — gate **warn**
+- **Tech**: pass rate 60.0% (порог 75%) — gate **fail**
+- **MAP `[x]`** — не ставить, пока `overall_gate` != pass
 <!-- GATE_GAPS_END -->
 
 ---

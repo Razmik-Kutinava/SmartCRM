@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Quality gate: baseline + Ф3 тюнинг в BACKLOG
+
+**Сделано:** full gate 2026-06-14 зафиксирован (Hermes 72.2%, Tech 60%, overall fail); `AGENTS_GATE_TUNING_BASELINE.md`; BACKLOG «тюнинг ≥85% все» → Ф3; PRD_MAP §Агенты + §Ф3 Self-improvement. Тюнинг **не** в этом шаге.
+
 ## 2026-06-14 — Ф2 §4 п.1: авто-чанки Search→RAG
 
 **Сделано:** relevance score + `RAG_AUTO_RELEVANCE_THRESHOLD`; `POST /auto-ingest-rag`; UI автовыбор на `/search`; pytest 10 passed; `SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md`; MAP п.414→п.1 `[x]`. **Коммит:** `c1302fc`.
