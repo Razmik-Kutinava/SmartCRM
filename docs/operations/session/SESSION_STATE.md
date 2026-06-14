@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-14 | Действие: Ф2 §2 п.394 evaluate_tender — tech∥economist→modal; pytest 15 passed. | Коммит: `PENDING` | Хвост A: §2 п.395–396 | Хвост B: нет | Хвост C: нет | Следующий шаг: go §2 п.395 отчёт. | Статус: done
+2026-06-14 | Действие: Ф2 §2 п.394 evaluate_tender — tech∥economist→modal; pytest 15 passed. | Коммит: `96b9843` | Хвост A: §2 п.395–396 | Хвост B: нет | Хвост C: нет | Следующий шаг: go §2 п.395 отчёт. | Статус: done
 
 2026-06-14 | Действие: Ф2 §2 п.393 analyze_and_email — analyst∥marketer→modal; pytest 48 passed. | Коммит: `8af96ec` | Хвост A: §2 п.394–396 | Хвост C: fix pipeline agents до run_agents | Следующий шаг: go §2 п.394 тендер. | Статус: done
 

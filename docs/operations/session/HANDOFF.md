@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** [`SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md`](../phase2/agents/SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md)
 
-**2026-06-14 (Ф2 §2 п.394):** Сценарий `evaluate_tender` — tech∥economist→strategist→modal; rescue CPU; module tenders; pytest 15+ passed. MAP п.394 `[x]`. **Коммит:** `PENDING`.
+**2026-06-14 (Ф2 §2 п.394):** Сценарий `evaluate_tender` — tech∥economist→strategist→modal; rescue CPU; module tenders; pytest 15+ passed. MAP п.394 `[x]`. **Коммит:** `96b9843`.
 
 **Следующий `go`:** §2 п.395 «Еженедельный отчёт».
 
