@@ -4,7 +4,7 @@
 
 ## 2026-06-14 — Ф2 §4 п.1: авто-чанки Search→RAG
 
-**Сделано:** relevance score + `RAG_AUTO_RELEVANCE_THRESHOLD`; `POST /auto-ingest-rag`; UI автовыбор на `/search`; pytest 10 passed; `SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md`; MAP п.414→п.1 `[x]`.
+**Сделано:** relevance score + `RAG_AUTO_RELEVANCE_THRESHOLD`; `POST /auto-ingest-rag`; UI автовыбор на `/search`; pytest 10 passed; `SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md`; MAP п.414→п.1 `[x]`. **Коммит:** `c1302fc`.
 
 ## 2026-06-14 — Ф2 §3 п.407: голосовые команды email
 

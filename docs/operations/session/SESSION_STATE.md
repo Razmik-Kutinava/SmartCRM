@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-14 | Действие: Ф2 §4 п.1 — авто-чанки RAG: relevance, auto-ingest-rag, UI /search; pytest 10 passed. | Коммит: `c1302fc` | Хвост A: §4 п.2–4 (факты, save everywhere, enrich cache) | Хвост B: LLM Q&A structure — BACKLOG | Хвост C: нет | Следующий шаг: go §4 п.2. | Статус: done
+
 2026-06-14 | Действие: Ф2 §3 п.407 — голос email: list/write/send, voiceEmailContext, marketer orchestrator; pytest 33 passed. | Коммит: `cbc44c0` | Хвост A: §4 RAG / voice E2E MAP | Хвост B: нет | Хвост C: нет | Следующий шаг: §3 закрыт → go §4 или gate. | Статус: done
 
 2026-06-14 | Действие: Ф2 §3 п.406 — апрув перед отправкой: EmailApproveModal, voice send_email preview+thread reply; pytest 8 passed. | Коммит: `1b3cfb3` | Хвост A: п.407 голос email | Хвост B: нет | Хвост C: нет | Следующий шаг: go §3 п.407. | Статус: done
