@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** §8 Лидоген + голос — [`PRD_MAP.md`](../product/PRD_MAP.md) · **Ф3:** gate tuning по `go`
 
-**2026-06-14 (§7):** evaluate API + document_text; search/list_tenders voice; linked_lead_id + link/create-lead; pytest 20 passed; MAP §7 закрыт. **Коммит:** `829d340`.
+**2026-06-14 (§7):** evaluate API + document_text; search/list_tenders voice; linked_lead_id + link/create-lead; pytest 20 passed; MAP §7 закрыт. **Коммит:** `829d340` (ops `ef9c8d8`).
 
 **Следующий `go`:** §8 лидоген+голос или Ф3 gate.
 
