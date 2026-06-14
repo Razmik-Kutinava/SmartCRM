@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[§2 п.394 оценка тендера] | Статус: ✅ evaluate_tender`
+
+> **→ Следующий агент:** [`SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md`](../phase2/agents/SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md)
+
+**2026-06-14 (Ф2 §2 п.394):** Сценарий `evaluate_tender` — tech∥economist→strategist→modal; rescue CPU; module tenders; pytest 15+ passed. MAP п.394 `[x]`. **Коммит:** `PENDING`.
+
+**Следующий `go`:** §2 п.395 «Еженедельный отчёт».
+
+---
+
 `Спринт:[Ф2] | Задача:[§2 п.393 анализ+письмо] | Статус: ✅ scenario analysis_email`
 
 > **→ Следующий агент:** [`SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md`](../phase2/agents/SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md)

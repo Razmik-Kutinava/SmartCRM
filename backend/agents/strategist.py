@@ -158,7 +158,8 @@ async def _synthesize(state: AgentState) -> dict[str, Any]:
         {"role": "system", "content": STRATEGIST_SYSTEM_PROMPT},
         {"role": "user", "content": (
             f"Данные из агентов:\n{context}{inst_tail}\n\n"
-            f"Синтезируй решение для оператора. Ответ на русском."
+            f"{'Сформируй вердикт: участвовать в тендере или нет, с обоснованием.' if intent == 'evaluate_tender' else 'Синтезируй решение для оператора.'} "
+            f"Ответ на русском."
         ) + rag_block(slots, "strategist")},
     ]
 

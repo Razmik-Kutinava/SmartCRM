@@ -11,11 +11,12 @@ from voice.synthesis import (
     build_synthesis_payload,
     has_multi_agent_synthesis,
 )
+from agents.scenarios.tender_context import tender_snapshot
 
 _UI_MODAL_INTENTS = frozenset({
     "write_email", "run_analysis", "ask_economist", "ask_marketer",
     "ask_tech", "ask_strategist", "analyze_lead", "analyze_and_email",
-    "search_web", "ask_rag",
+    "evaluate_tender", "search_web", "ask_rag",
 })
 
 _ROUTE_BY_INTENT: dict[str, str] = {
@@ -33,6 +34,7 @@ _ROUTE_BY_INTENT: dict[str, str] = {
     "generate_lead": "/leadgen",
     "find_leads_portrait": "/leadgen",
     "cluster_company": "/leadgen",
+    "evaluate_tender": "/tenders",
     "analyze_lead": "/leads/list",
     "lead_history": "/leads/list",
     "add_communication": "/leads/list",
@@ -121,10 +123,12 @@ def build_voice_action(
         elif intent == "save_to_rag":
             base["route"] = "/search"
     elif ui == "modal":
-        base["payload"] = _modal_payload(intent, agent_result, reply)
+        base["payload"] = _modal_payload(intent, agent_result, reply, slots)
         lead_route = _lead_route(slots, agent_result)
         if lead_route and intent in SYNTHESIS_MODAL_INTENTS:
             base["route"] = lead_route
+        elif intent == "evaluate_tender":
+            base["route"] = MODULE_ROUTES.get("tenders", "/tenders")
         lid = agent_result.get("lead_id")
         if intent == "lead_history" and lid is not None:
             base["route"] = f"/leads/{lid}"
@@ -137,7 +141,7 @@ def build_voice_action(
 
 
 def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
-    if intent == "analyze_and_email":
+    if intent in ("analyze_and_email", "evaluate_tender"):
         return "modal"
     if intent in SYNTHESIS_MODAL_INTENTS and has_multi_agent_synthesis(agent_result):
         return "modal"
@@ -233,7 +237,13 @@ def _marketer_draft_email(marketer: dict) -> dict[str, str]:
     return email
 
 
-def _modal_payload(intent: str, agent_result: dict, reply: str) -> dict[str, Any]:
+def _modal_payload(
+    intent: str,
+    agent_result: dict,
+    reply: str,
+    slots: dict | None = None,
+) -> dict[str, Any]:
+    slots = slots or {}
     payload: dict[str, Any] = {"reply": reply, "intent": intent}
     synthesis = build_synthesis_payload(agent_result)
     if synthesis:
@@ -242,6 +252,11 @@ def _modal_payload(intent: str, agent_result: dict, reply: str) -> dict[str, Any
             payload["reply"] = synthesis["final_reply"]
     if intent == "analyze_and_email":
         payload["scenario"] = "analysis_email"
+    if intent == "evaluate_tender":
+        payload["scenario"] = "tender_evaluation"
+        snap = tender_snapshot(slots)
+        if snap:
+            payload["tender"] = snap
 
     analyst = agent_result.get("analyst_output") or {}
     economist = agent_result.get("economist_output") or {}
@@ -320,6 +335,9 @@ def _title(intent: str, ui: str, slots: dict) -> str:
         return "Отправить письмо?"
     if ui == "approve" and intent == "save_to_rag":
         return "Сохранить в базу знаний?"
+    if ui == "modal" and intent == "evaluate_tender":
+        title = slots.get("title") or slots.get("customer") or ""
+        return synthesis_title("evaluate_tender", title) or "Оценка тендера"
     if ui == "modal" and intent == "analyze_and_email":
         company = slots.get("company") or slots.get("query") or ""
         return synthesis_title("analyze_and_email", company) or "Анализ + письмо"
@@ -362,5 +380,6 @@ def synthesis_title(intent: str, company: str = "") -> str:
         "run_analysis": f"Синтез анализа{suffix}",
         "analyze_lead": f"Синтез анализа{suffix}",
         "analyze_and_email": f"Анализ + письмо{suffix}",
+        "evaluate_tender": f"Оценка тендера{suffix}",
     }
     return titles.get(intent, "Синтез агентов")

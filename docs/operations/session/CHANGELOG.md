@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §2 п.394: сценарий оценка тендера (тех + эконом)
+
+**Сделано:** `evaluate_tender`; tender_context; economist/tech/strategist; voice modal; pytest; `SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md`; MAP п.394 `[x]`.
+
 ## 2026-06-14 — Ф2 §2 п.393: сценарий анализ + письмо
 
 **Сделано:** `analyze_and_email`; scenarios/analysis_email.py; rescue/supervisor/modal; pytest 48 passed; `SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md`; MAP п.393 `[x]`.

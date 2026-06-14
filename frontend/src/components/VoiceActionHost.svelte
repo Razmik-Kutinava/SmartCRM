@@ -81,6 +81,16 @@
 				<div class="text-xs text-gray-500 mb-2">Модуль: <span class="text-indigo-400">{$voiceModal.module}</span></div>
 			{/if}
 
+			{#if $voiceModal.payload?.tender?.title}
+				<section class="mb-3 text-xs text-gray-400">
+					<span class="text-gray-500">Закупка:</span>
+					<span class="text-indigo-300">{$voiceModal.payload.tender.title}</span>
+					{#if $voiceModal.payload.tender.budget}
+						<span class="ml-2 text-gray-500">НМЦК: {$voiceModal.payload.tender.budget}</span>
+					{/if}
+				</section>
+			{/if}
+
 			{#if $voiceModal.agents_used?.length}
 				<div class="flex flex-wrap gap-1 mb-3">
 					{#each $voiceModal.agents_used as agent}

@@ -12,6 +12,7 @@ from typing import Any
 from core.llm import chat
 from agents.base import AgentState
 from agents.tools import read_leads, read_tasks, read_lead_by_company
+from agents.scenarios.tender_context import tender_context_lines
 from rag.retrieve import rag_block
 
 logger = logging.getLogger(__name__)
@@ -81,6 +82,8 @@ async def run(state: AgentState) -> AgentState:
 
 
 async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
+    if intent == "evaluate_tender":
+        return await _analyze_tender(slots)
     if intent not in ("create_lead", "update_lead", "list_leads", "analyze_lead"):
         return {"summary": f"Интент «{intent}» — финансовый анализ не требуется.", "budget_estimate": None}
 
@@ -155,6 +158,27 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
             f"Рассуждай пошагово: сначала оцени сегмент и бюджет, "
             f"потом рассчитай LTV и вероятность, потом дай стратегию ценообразования. "
             f"Ответ в JSON на русском."
+        ) + rag_block(slots, "economist")},
+    ]
+    raw = await chat(messages, temperature=0.2, max_tokens=900, json_mode=True)
+    return _parse_json_safe(raw)
+
+
+async def _analyze_tender(slots: dict[str, Any]) -> dict[str, Any]:
+    lines = tender_context_lines(slots)
+    if not lines:
+        return {
+            "summary": "Нет данных о закупке — укажите название, НМЦК или описание.",
+            "budget_estimate": None,
+        }
+    context = "\n".join(lines)
+    messages = [
+        {"role": "system", "content": ECONOMIST_SYSTEM_PROMPT},
+        {"role": "user", "content": (
+            f"Оцени финансовую целесообразность участия в госзакупке.\n\n"
+            f"{context}\n\n"
+            f"Рассчитай маржу/риски, вероятность выигрыша, рекомендацию участвовать или нет. "
+            f"Не выдумывай НМЦК — только из контекста. Ответ в JSON на русском."
         ) + rag_block(slots, "economist")},
     ]
     raw = await chat(messages, temperature=0.2, max_tokens=900, json_mode=True)

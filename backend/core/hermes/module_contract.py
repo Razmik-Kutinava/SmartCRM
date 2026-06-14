@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 MODULES = frozenset({
-    "leads", "tasks", "email", "search", "analytics", "agents", "rag", "leadgen",
+    "leads", "tasks", "email", "search", "analytics", "agents", "rag", "leadgen", "tenders",
 })
 
 UI_ACTIONS = frozenset({"navigate", "modal", "filter", "approve"})
@@ -16,6 +16,7 @@ INTENT_MODULE: dict[str, str] = {
     "list_leads": "leads",
     "analyze_lead": "leads",
     "analyze_and_email": "agents",
+    "evaluate_tender": "tenders",
     "lead_history": "leads",
     "add_communication": "leads",
     "create_task": "tasks",
@@ -69,6 +70,7 @@ INTENT_UI: dict[str, str] = {
     "ask_rag": "modal",
     "analyze_lead": "modal",
     "analyze_and_email": "modal",
+    "evaluate_tender": "modal",
     "lead_history": "modal",
     "create_lead": "navigate",
     "update_lead": "navigate",
@@ -86,6 +88,7 @@ MODULE_ROUTES: dict[str, str] = {
     "leadgen": "/leadgen",
     "tasks": "/leads/tasks",
     "rag": "/search",
+    "tenders": "/tenders",
 }
 
 ANALYTICS_INTENTS = frozenset({

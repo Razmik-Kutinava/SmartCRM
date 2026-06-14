@@ -12,6 +12,7 @@ from typing import Any
 from core.llm import chat
 from agents.base import AgentState
 from agents.tools import read_lead_by_company
+from agents.scenarios.tender_context import tender_context_lines
 from rag.retrieve import rag_block
 
 logger = logging.getLogger(__name__)
@@ -89,6 +90,8 @@ async def run(state: AgentState) -> AgentState:
 
 
 async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
+    if intent == "evaluate_tender":
+        return await _analyze_tender(slots)
     if intent not in ("create_lead", "update_lead", "analyze_lead"):
         return {
             "summary": f"Интент «{intent}» — технический анализ не требуется.",
@@ -139,6 +142,28 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
             f"Данные лида:\n{context}\n\n"
             f"Рассуждай пошагово: сначала определи вероятный стек по отрасли и размеру, "
             f"потом оцени IT-зрелость, потом выяви риски интеграции и составь вопросы для пресейл-звонка. Ответ в JSON на русском."
+        ) + rag_block(slots, "tech_specialist")},
+    ]
+    raw = await chat(messages, temperature=0.3, max_tokens=900, json_mode=True)
+    return _parse_json_safe(raw)
+
+
+async def _analyze_tender(slots: dict[str, Any]) -> dict[str, Any]:
+    lines = tender_context_lines(slots)
+    if not lines:
+        return {
+            "summary": "Нет данных закупки для технической оценки.",
+            "likely_stack": [],
+            "it_maturity": "unknown",
+        }
+    context = "\n".join(lines)
+    messages = [
+        {"role": "system", "content": TECH_SPECIALIST_SYSTEM_PROMPT},
+        {"role": "user", "content": (
+            f"Техническая оценка участия в тендере (соответствие ТЗ, риски, интеграции).\n\n"
+            f"{context}\n\n"
+            f"Сопоставь требования с типовым B2B IT-стеком, выяви блокеры и вопросы заказчику. "
+            f"Ответ в JSON на русском."
         ) + rag_block(slots, "tech_specialist")},
     ]
     raw = await chat(messages, temperature=0.3, max_tokens=900, json_mode=True)

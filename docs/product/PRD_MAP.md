@@ -391,7 +391,7 @@
 - [x] Параллельный fanout 2+ агентов — ✅ [`FANOUT_PARALLEL_ACCEPTANCE.md`](../operations/phase2/agents/FANOUT_PARALLEL_ACCEPTANCE.md)
 - [x] Синтез в один ответ → модалка — ✅ [`FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md`](../operations/phase2/agents/FANOUT_SYNTHESIS_MODAL_ACCEPTANCE.md)
 - [x] Сценарий: анализ + письмо — ✅ [`SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md`](../operations/phase2/agents/SCENARIO_ANALYSIS_EMAIL_ACCEPTANCE.md)
-- [ ] Сценарий: оценка тендера (тех + эконом)
+- [x] Сценарий: оценка тендера (тех + эконом) — ✅ [`SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md`](../operations/phase2/agents/SCENARIO_TENDER_EVALUATION_ACCEPTANCE.md)
 - [ ] Сценарий: еженедельный отчёт
 - [ ] Сценарий: похожие клиенты
 

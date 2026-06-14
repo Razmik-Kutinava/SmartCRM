@@ -34,6 +34,11 @@ def test_voice_modal_rag_section():
     assert 'data-testid="voice-modal"' in text
 
 
+def test_voice_modal_tender_section():
+    text = _HOST.read_text(encoding="utf-8")
+    assert "payload.tender" in text
+
+
 def test_voice_modal_synthesis_section():
     text = _HOST.read_text(encoding="utf-8")
     assert 'data-testid="voice-synthesis"' in text

@@ -7,6 +7,8 @@ from typing import Any
 
 from agents.scenarios.analysis_email import AGENTS as ANALYSIS_EMAIL_AGENTS
 from agents.scenarios.analysis_email import INTENT as ANALYSIS_EMAIL_INTENT
+from agents.scenarios.tender_evaluation import AGENTS as TENDER_EVAL_AGENTS
+from agents.scenarios.tender_evaluation import INTENT as TENDER_EVAL_INTENT
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +25,7 @@ AGENT_INTENTS = frozenset({
     "run_analysis", "ask_economist", "ask_marketer", "ask_tech", "ask_strategist",
     "search_web", "write_email",
     ANALYSIS_EMAIL_INTENT,
+    TENDER_EVAL_INTENT,
     "generate_lead", "find_leads_portrait", "cluster_company",
 })
 
@@ -41,6 +44,7 @@ INTENT_DEFAULTS: dict[str, list[str]] = {
     "update_lead": ["analyst", "economist", "marketer", "tech_specialist"],
     "analyze_lead": ["analyst", "economist", "marketer", "tech_specialist"],
     ANALYSIS_EMAIL_INTENT: list(ANALYSIS_EMAIL_AGENTS),
+    TENDER_EVAL_INTENT: list(TENDER_EVAL_AGENTS),
     "delete_lead": ["analyst"],
     "list_leads": ["analyst"],
 }
@@ -52,6 +56,7 @@ LEADGEN = frozenset({"generate_lead", "find_leads_portrait", "cluster_company"})
 CRM_PARALLEL = frozenset({
     "create_lead", "update_lead", "analyze_lead", "delete_lead", "run_analysis",
     ANALYSIS_EMAIL_INTENT,
+    TENDER_EVAL_INTENT,
 })
 
 

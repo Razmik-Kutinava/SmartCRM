@@ -12,7 +12,8 @@ _OUTPUT_KEYS = (
 )
 
 SYNTHESIS_MODAL_INTENTS = frozenset({
-    "create_lead", "update_lead", "run_analysis", "analyze_lead", "analyze_and_email",
+    "create_lead", "update_lead", "run_analysis", "analyze_lead",
+    "analyze_and_email", "evaluate_tender",
 })
 
 
