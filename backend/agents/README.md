@@ -27,6 +27,8 @@ LangGraph-агенты для анализа лидов, стратегии, п�
 | `scenarios/analysis_email.py` | Именованный сценарий «анализ + письмо» (analyze_and_email) |
 | `scenarios/tender_evaluation.py` | Сценарий «оценка тендера» (tech∥economist) |
 | `scenarios/tender_context.py` | Слоты тендера → контекст агентов |
+| `scenarios/weekly_report.py` | Сценарий «еженедельный отчёт» (analyst∥economist∥marketer) |
+| `scenarios/report_context.py` | CRM-метрики для еженедельного отчёта |
 | `graph.py` | LangGraph: supervisor → fanout → strategist |
 | `base.py` | Базовый класс агента |
 | `tools.py` | Общие tools; CLI gate — заголовок `X-API-Key` из `SMARTCRM_API_KEY` |

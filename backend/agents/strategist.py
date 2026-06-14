@@ -153,13 +153,18 @@ async def _synthesize(state: AgentState) -> dict[str, Any]:
     context = "\n".join(ctx_parts)
     inst = (slots.get("instruction") or "").strip()
     inst_tail = f"\n\nУказание оператора: {inst}" if inst else ""
+    if intent == "evaluate_tender":
+        task_hint = "Сформируй вердикт: участвовать в тендере или нет, с обоснованием."
+    elif intent == "weekly_report":
+        task_hint = "Сформируй executive summary недели: ключевые KPI и 3 приоритета на следующую неделю."
+    else:
+        task_hint = "Синтезируй решение для оператора."
 
     messages = [
         {"role": "system", "content": STRATEGIST_SYSTEM_PROMPT},
         {"role": "user", "content": (
             f"Данные из агентов:\n{context}{inst_tail}\n\n"
-            f"{'Сформируй вердикт: участвовать в тендере или нет, с обоснованием.' if intent == 'evaluate_tender' else 'Синтезируй решение для оператора.'} "
-            f"Ответ на русском."
+            f"{task_hint} Ответ на русском."
         ) + rag_block(slots, "strategist")},
     ]
 

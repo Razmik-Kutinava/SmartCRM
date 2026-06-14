@@ -16,7 +16,7 @@ from agents.scenarios.tender_context import tender_snapshot
 _UI_MODAL_INTENTS = frozenset({
     "write_email", "run_analysis", "ask_economist", "ask_marketer",
     "ask_tech", "ask_strategist", "analyze_lead", "analyze_and_email",
-    "evaluate_tender", "search_web", "ask_rag",
+    "evaluate_tender", "weekly_report", "search_web", "ask_rag",
 })
 
 _ROUTE_BY_INTENT: dict[str, str] = {
@@ -129,6 +129,8 @@ def build_voice_action(
             base["route"] = lead_route
         elif intent == "evaluate_tender":
             base["route"] = MODULE_ROUTES.get("tenders", "/tenders")
+        elif intent == "weekly_report":
+            base["route"] = MODULE_ROUTES.get("analytics", "/leads/analytics")
         lid = agent_result.get("lead_id")
         if intent == "lead_history" and lid is not None:
             base["route"] = f"/leads/{lid}"
@@ -141,7 +143,7 @@ def build_voice_action(
 
 
 def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
-    if intent in ("analyze_and_email", "evaluate_tender"):
+    if intent in ("analyze_and_email", "evaluate_tender", "weekly_report"):
         return "modal"
     if intent in SYNTHESIS_MODAL_INTENTS and has_multi_agent_synthesis(agent_result):
         return "modal"
@@ -264,6 +266,14 @@ def _modal_payload(
     tech = agent_result.get("tech_output") or {}
     strategist = agent_result.get("strategist_output") or {}
 
+    if intent == "weekly_report":
+        payload["scenario"] = "weekly_report"
+        for block in (analyst, economist, marketer):
+            metrics = block.get("report_metrics") if isinstance(block, dict) else None
+            if metrics:
+                payload["report"] = metrics
+                break
+
     if analyst:
         payload["analysis"] = analyst
     if economist:
@@ -338,6 +348,11 @@ def _title(intent: str, ui: str, slots: dict) -> str:
     if ui == "modal" and intent == "evaluate_tender":
         title = slots.get("title") or slots.get("customer") or ""
         return synthesis_title("evaluate_tender", title) or "Оценка тендера"
+    if ui == "modal" and intent == "weekly_report":
+        from agents.scenarios.report_context import period_label, period_from_slots
+
+        pl = period_label(period_from_slots(slots))
+        return synthesis_title("weekly_report", pl) or "Еженедельный отчёт"
     if ui == "modal" and intent == "analyze_and_email":
         company = slots.get("company") or slots.get("query") or ""
         return synthesis_title("analyze_and_email", company) or "Анализ + письмо"
@@ -381,5 +396,6 @@ def synthesis_title(intent: str, company: str = "") -> str:
         "analyze_lead": f"Синтез анализа{suffix}",
         "analyze_and_email": f"Анализ + письмо{suffix}",
         "evaluate_tender": f"Оценка тендера{suffix}",
+        "weekly_report": f"Еженедельный отчёт{suffix}",
     }
     return titles.get(intent, "Синтез агентов")

@@ -84,6 +84,8 @@ async def run(state: AgentState) -> AgentState:
 async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
     if intent == "evaluate_tender":
         return await _analyze_tender(slots)
+    if intent == "weekly_report":
+        return await _analyze_weekly_finance(slots)
     if intent not in ("create_lead", "update_lead", "list_leads", "analyze_lead"):
         return {"summary": f"Интент «{intent}» — финансовый анализ не требуется.", "budget_estimate": None}
 
@@ -183,6 +185,30 @@ async def _analyze_tender(slots: dict[str, Any]) -> dict[str, Any]:
     ]
     raw = await chat(messages, temperature=0.2, max_tokens=900, json_mode=True)
     return _parse_json_safe(raw)
+
+
+async def _analyze_weekly_finance(slots: dict[str, Any]) -> dict[str, Any]:
+    from agents.scenarios.report_context import (
+        load_weekly_report_data,
+        report_context_lines,
+        report_snapshot,
+    )
+
+    data = await load_weekly_report_data(slots)
+    ctx = "\n".join(report_context_lines(data))
+    messages = [
+        {"role": "system", "content": ECONOMIST_SYSTEM_PROMPT},
+        {"role": "user", "content": (
+            f"Сценарий: финансовая часть еженедельного отчёта CRM.\n\n"
+            f"{ctx}\n\n"
+            f"Оцени выручку, конверсию, средний чек, риски по воронке. "
+            f"JSON: budget_estimate, deal_probability_pct, financial_risks, summary."
+        ) + rag_block(slots, "economist")},
+    ]
+    raw = await chat(messages, temperature=0.2, max_tokens=900, json_mode=True)
+    result = _parse_json_safe(raw)
+    result["report_metrics"] = report_snapshot(data)
+    return result
 
 
 def _parse_budget(budget_raw: str) -> int:

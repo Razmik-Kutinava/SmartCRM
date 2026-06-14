@@ -48,6 +48,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `voice/test_voice_action.py` | Сборка пакета voice_action |
 | `voice/test_synthesis.py` | Синтез fanout → modal payload |
 | `agents/scenarios/test_tender_evaluation.py` | Сценарий evaluate_tender |
+| `agents/scenarios/test_weekly_report.py` | Сценарий weekly_report |
 | `api/test_voice_action_ws.py` | WS события intent + voice_action |
 | `core/test_hermes_lead_extended.py` | analyze_lead, lead_history, stage-фильтры |
 | `core/test_lead_list_view.py` | Маппинг list_leads → UI |

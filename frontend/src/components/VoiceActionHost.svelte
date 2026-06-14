@@ -91,6 +91,40 @@
 				</section>
 			{/if}
 
+			{#if $voiceModal.payload?.report}
+				<section class="mb-4 rounded-lg border border-indigo-900/40 bg-indigo-950/20 p-4" data-testid="voice-report-kpi">
+					<h3 class="text-xs uppercase text-indigo-400/90 mb-2">
+						KPI · {$voiceModal.payload.report.period_label || 'неделя'}
+					</h3>
+					<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+						<div class="rounded bg-gray-950/60 p-2">
+							<div class="text-gray-500">Лидов</div>
+							<div class="text-indigo-200 font-medium">{$voiceModal.payload.report.total_leads ?? '—'}</div>
+						</div>
+						<div class="rounded bg-gray-950/60 p-2">
+							<div class="text-gray-500">Новых</div>
+							<div class="text-indigo-200 font-medium">{$voiceModal.payload.report.new_in_period ?? '—'}</div>
+						</div>
+						<div class="rounded bg-gray-950/60 p-2">
+							<div class="text-gray-500">Горячих</div>
+							<div class="text-indigo-200 font-medium">{$voiceModal.payload.report.hot_count ?? '—'}</div>
+						</div>
+						<div class="rounded bg-gray-950/60 p-2">
+							<div class="text-gray-500">Конверсия</div>
+							<div class="text-indigo-200 font-medium">{$voiceModal.payload.report.conversion_pct ?? '—'}%</div>
+						</div>
+						<div class="rounded bg-gray-950/60 p-2">
+							<div class="text-gray-500">Ср. скор</div>
+							<div class="text-indigo-200 font-medium">{$voiceModal.payload.report.avg_score ?? '—'}</div>
+						</div>
+						<div class="rounded bg-gray-950/60 p-2">
+							<div class="text-gray-500">Задач</div>
+							<div class="text-indigo-200 font-medium">{$voiceModal.payload.report.open_tasks ?? '—'}</div>
+						</div>
+					</div>
+				</section>
+			{/if}
+
 			{#if $voiceModal.agents_used?.length}
 				<div class="flex flex-wrap gap-1 mb-3">
 					{#each $voiceModal.agents_used as agent}

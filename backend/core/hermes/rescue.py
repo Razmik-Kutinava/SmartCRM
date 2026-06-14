@@ -86,6 +86,24 @@ def rescue_route(text: str) -> dict | None:
             "_model": "rescue",
         })
 
+    from agents.scenarios.weekly_report import (
+        AGENTS as WEEKLY_AGENTS,
+        INTENT as WEEKLY_INTENT,
+        matches_rescue as weekly_matches_rescue,
+        weekly_report_slots_from_text,
+    )
+
+    if weekly_matches_rescue(text):
+        slots_wr = weekly_report_slots_from_text(text)
+        return enrich_module_ui({
+            "intent": WEEKLY_INTENT,
+            "agents": list(WEEKLY_AGENTS),
+            "slots": slots_wr,
+            "parallel": True,
+            "reply": "Собираю еженедельный отчёт: аналитик, экономист и маркетолог.",
+            "_model": "rescue",
+        })
+
     if ("анализ" in t or "проанализ" in t or "оцени" in t) and (
         "лид" in t or "компан" in t or "клиент" in t
     ):

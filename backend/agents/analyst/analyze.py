@@ -150,6 +150,9 @@ async def analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
             result["_score_applied_to_db"] = True
         return result
 
+    if intent == "weekly_report":
+        return await _analyze_weekly_report(slots)
+
     if intent == "list_leads":
         leads = await read_leads(limit=50)
         if not leads:
@@ -184,6 +187,30 @@ async def analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
         "summary": f"Интент «{intent}» — анализ лидов не требуется.",
         "score": None,
     }
+
+
+async def _analyze_weekly_report(slots: dict[str, Any]) -> dict[str, Any]:
+    from agents.scenarios.report_context import (
+        load_weekly_report_data,
+        report_context_lines,
+        report_snapshot,
+    )
+
+    data = await load_weekly_report_data(slots)
+    ctx = "\n".join(report_context_lines(data))
+    messages = [
+        {"role": "system", "content": ANALYST_SYSTEM_PROMPT},
+        {"role": "user", "content": (
+            f"Сценарий: еженедельный отчёт по CRM.\n\n"
+            f"Метрики:\n{ctx}\n\n"
+            f"Дай воронку и тренды за период. Ответ строго JSON:\n"
+            f'{{"summary":"<2-3 предложения>","highlights":["<факт1>","<факт2>"],"funnel_insights":"<узкие места воронки>"}}'
+        ) + rag_block(slots, "analyst")},
+    ]
+    raw = await chat(messages, temperature=0.3, max_tokens=900, json_mode=True)
+    result = parse_json_safe(raw)
+    result["report_metrics"] = report_snapshot(data)
+    return result
 
 
 # Backward-compat private alias

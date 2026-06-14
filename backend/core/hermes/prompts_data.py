@@ -27,6 +27,7 @@ tech_specialist — IT-стек, технологии, интеграции, в�
 - analyze_lead: company или lead_id (глубокий анализ существующего лида)
 - analyze_and_email: company (анализ ∥ черновик письма → modal)
 - evaluate_tender: title, budget, customer, law, description, document_text (тех∥эконом → modal)
+- weekly_report: period (week|month), question (аналитик∥экономист∥маркетолог → modal)
 - lead_history: company или lead_id (история изменений, комментарии, касания)
 - add_communication: company, content, kind (comment|communication), communication_type (call|meeting|email)
 - create_task: title, due, assignee, related_lead, note

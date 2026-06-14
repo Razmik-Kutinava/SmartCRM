@@ -89,6 +89,8 @@ async def run(state: AgentState) -> AgentState:
 
 
 async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
+    if intent == "weekly_report":
+        return await _analyze_weekly_outreach(slots)
     if intent not in ("create_lead", "write_email", "analyze_lead", "analyze_and_email"):
         return {
             "summary": f"Интент «{intent}» — маркетинговый анализ не требуется.",
@@ -154,6 +156,30 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
     ]
     raw = await chat(messages, temperature=0.5, max_tokens=1200, json_mode=True)
     return _parse_json_safe(raw)
+
+
+async def _analyze_weekly_outreach(slots: dict[str, Any]) -> dict[str, Any]:
+    from agents.scenarios.report_context import (
+        load_weekly_report_data,
+        report_context_lines,
+        report_snapshot,
+    )
+
+    data = await load_weekly_report_data(slots)
+    ctx = "\n".join(report_context_lines(data))
+    messages = [
+        {"role": "system", "content": MARKETER_SYSTEM_PROMPT},
+        {"role": "user", "content": (
+            f"Сценарий: маркетинговая часть еженедельного отчёта CRM.\n\n"
+            f"{ctx}\n\n"
+            f"Предложи приоритеты касаний на следующую неделю: кому писать, какие темы. "
+            f"JSON: summary, priorities (массив), touch_sequence (массив шагов)."
+        ) + rag_block(slots, "marketer")},
+    ]
+    raw = await chat(messages, temperature=0.4, max_tokens=900, json_mode=True)
+    result = _parse_json_safe(raw)
+    result["report_metrics"] = report_snapshot(data)
+    return result
 
 
 def _parse_json_safe(raw: str) -> dict:
