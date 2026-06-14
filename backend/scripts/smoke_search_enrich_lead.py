@@ -19,6 +19,8 @@ OUT = BACKEND / "data" / "artifacts" / "search" / "enrich_lead_smoke.json"
 PYTEST = [
     "tests/rag/test_brave_limit.py",
     "tests/rag/test_enrich_sources.py",
+    "tests/rag/test_enrich_cache.py",
+    "tests/rag/test_qa_structure.py",
     "tests/rag/test_search_modes.py",
     "tests/api/test_search_modes_api.py",
     "tests/api/test_search_enrich_lead_api.py",
@@ -53,6 +55,7 @@ async def _live_enrich() -> dict:
             timeout=90.0,
         )
         enriched = out.get("enriched") or {}
+        cached_run = await enrich_lead({"company": "Сбербанк", "industry": "финансы"})
         return {
             "ok": bool(enriched) or bool(out.get("raw_results")),
             "enriched_keys": list(enriched.keys()),
@@ -60,6 +63,7 @@ async def _live_enrich() -> dict:
             "providers_used": out.get("providers_used", []),
             "raw_count": len(out.get("raw_results") or []),
             "sample": {k: enriched[k] for k in list(enriched.keys())[:3]},
+            "cache_repeat": bool(cached_run.get("cached")),
         }
     except Exception as e:
         return {"ok": False, "error": type(e).__name__, "detail": str(e)[:200]}

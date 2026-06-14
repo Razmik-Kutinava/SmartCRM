@@ -118,8 +118,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
                     from rag.dialogue_facts import dialogue_auto_enabled, ingest_orchestrator_dialogues
 
                     if dialogue_auto_enabled():
-                        agent_result["rag_dialogue_ingest"] = await asyncio.to_thread(
-                            ingest_orchestrator_dialogues,
+                        agent_result["rag_dialogue_ingest"] = await ingest_orchestrator_dialogues(
                             agent_result,
                             transcript=text,
                             slots=slots,

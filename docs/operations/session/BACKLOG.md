@@ -45,13 +45,11 @@
 
 `[2026-06-13] | PRD_MAP: переход Ф1→Ф2 | DoD Ф1 6/6; хвосты L306–318 не блокируют; PHASE2_ENTRY.md | **Push:** ждём go | **Ф2 код:** ждём go + номер очереди | gate live — параллельно`
 
-`[2026-06-14] | PRD_MAP: «§4 факты диалога» | Отложено: LLM-извлечение фактов из диалога (сейчас heuristic из JSON output) | Причина: scope п.2 — эвристика + auto без live LLM в CI | Нужна фаза MAP: 2/3 | Из шага: п.2 dialogue RAG | Действие: опц. `RAG_DIALOGUE_LLM=1` + eval`
+`[2026-06-14] | PRD_MAP: «§4 факты диалога» | **ЗАКРЫТО ✅** | `RAG_DIALOGUE_LLM=0/1` + `collect_deal_facts`; pytest | Коммит: см. CHANGELOG RAG tail`
 
-`[2026-06-14] | PRD_MAP: «Quality gates Ф3 тюнинг» | Отложено: довести всех агентов ≥85% (stretch 90–100%); Hermes 72.2%, Tech 60%, Economist 73.3% — baseline `AGENTS_GATE_TUNING_BASELINE.md` | Причина: тюнинг **после** закрытия функционала Ф2; сейчас не блокер MAP | Нужна фаза MAP: **3** | Из шага: full gate 2026-06-14 | Действие: Hermes parse/rescue → Tech/Economist промпты → re-gate vs baseline`
+`[2026-06-14] | PRD_MAP: «§4 Авто-чанки» | **ЗАКРЫТО ✅** | `RAG_AUTO_STRUCTURE_LLM=0/1` + `qa_structure.py`; pytest | Коммит: см. CHANGELOG RAG tail`
 
-`[2026-06-14] | PRD_MAP: «§4 Авто-чанки» | Отложено: LLM-структурирование пар {question, answer} перед ingest (сейчас heuristic Q&A) | Причина: scope п.1 — порог + авто-путь без live LLM в CI | Нужна фаза MAP: 2 | Из шага: п.1 auto-chunks | Действие: опц. `RAG_AUTO_STRUCTURE_LLM=1` + eval`
-
-`[2026-06-13] | PRD_MAP: quality gates шаг 6 | Коммит 7be7bdb: tuning import failed, delta was→became % | **Не вышло:** live gate MAP 🔲 | Действие: EVAL_OLLAMA_TIMEOUT=1200`
+`[2026-06-14] | PRD_MAP: «Quality gates Ф3 тюнинг» | Отложено: довести всех агентов ≥85%; baseline `AGENTS_GATE_TUNING_BASELINE.md` | Причина: **Ф3**, не блокер Ф2; нужен live Ollama/Groq + go | Нужна фаза MAP: **3** | Действие: Hermes/Tech/Economist промпты → re-gate` | Коммит 7be7bdb: tuning import failed, delta was→became % | **Не вышло:** live gate MAP 🔲 | Действие: EVAL_OLLAMA_TIMEOUT=1200`
 
 `[2026-06-13] | PRD_MAP: Агенты quality gates UI финал | Коммит 596d2e1: вкладки Hermes/gate, download, режимы, bulk→eval-failed-gate, insights pass rate | **Не вышло:** live gate MAP 🔲; agents-only оборван analyst | Действие: EVAL_OLLAMA_TIMEOUT=1200 --write-acceptance`
 
@@ -100,7 +98,8 @@
 | ✅ | enrich-lead | Смоук `enrich-lead` live E2E | **1** | `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` |
 | 🟢 | prospect/agent | Spot-check live Groq в UI (prospect, enrich, agent) | **1** | 👤 опционально |
 | ✅ | Ф2 §4 | Кэш результата enrich (company+ИНН+industry, TTL ~24 ч) | **2** | `SEARCH_ENRICH_CACHE_ACCEPTANCE.md` |
-| 🟡 | Ф2 §9 | Кнопка «Обогатить» на `/leads/{id}` | **2** | агент по `go` |
+| ✅ | Ф2 §9 | Кнопка «Обогатить» на `/leads/{id}` | **2** | `LEADS_CARD_ENRICH_ACCEPTANCE.md` |
+| ✅ | RAG tail | LLM flags + page_fetch + smoke cache | **2** | `RAG_BACKLOG_TAIL_CLOSED.md` |
 | ✅ | Ф2 §4 | Авто-чанки «поиск → RAG» | **2** | `SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md` |
 
 **Ф1 enrich** — `phase1/search/SEARCH_ENRICH_LEAD_ACCEPTANCE.md` ✅. **п.1–5 RAG** — `docs/operations/phase1/search/`.
@@ -130,7 +129,7 @@
 | 🟡 | Агенты · quality gates | `[x]` в MAP — только после зелёного `overall_gate` | **2** | после live |
 | 🟢 | Агенты · quality gates | Тюнинг `must_contain` под hermes3 JSON | **2** | агент |
 | 🟡 | Голос → лиды п.3, п.5 | Spot-check approve / fanout | **1** | 👤 ты |
-| 🟡 | Ф2 §9 | Кнопка «Обогатить» на карточке лида `/leads/{id}` | **2** | агент по `go` |
+| 🟡 | Ф2 §9 | Кнопка «Обогатить» на карточке лида `/leads/{id}` | **2** | ✅ `LEADS_CARD_ENRICH_ACCEPTANCE.md` |
 | 🟡 | Лиды п.2 Битрикс синк | Туннель :8000 + вебхук | **2** / DevOps | 👤 ты |
 | 🟡 | Ф2 очередь 5 §8 leadgen голос | Голос `/leadgen` | **2** | агент по `go` |
 | 🟢 | Layout кода (не ops) | Сплит монолитов, backend/data gitignore | **2+** | см. [`debt/REPO_LAYOUT_DEBT.md`](../debt/REPO_LAYOUT_DEBT.md) |

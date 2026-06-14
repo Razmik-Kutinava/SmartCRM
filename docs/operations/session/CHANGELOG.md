@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — RAG хвост BACKLOG + §9 enrich на карточке
+
+**Сделано:** `qa_structure.py` (`RAG_AUTO_STRUCTURE_LLM`); async `collect_deal_facts` (`RAG_DIALOGUE_LLM`); `fetch_urls_from_hits`/`page_fetch`; кнопка «Обогатить» `/leads/{id}`; smoke+cache; pytest 31 passed; `RAG_BACKLOG_TAIL_CLOSED.md`, `LEADS_CARD_ENRICH_ACCEPTANCE.md`; MAP §9 `[x]`. **Не закрыто:** quality gate ≥85% — **Ф3**. **Коммит:** `<hash>`.
+
 ## 2026-06-14 — Ф2 §4 п.4: кэш enrich + закрытие §4
 
 **Сделано:** `enrich_cache.py`; `enrich_lead(force)`; API/UI force + бейдж кэша; GET/DELETE cache расширен; pytest 14 passed; `SEARCH_ENRICH_CACHE_ACCEPTANCE.md`; MAP п.418 `[x]`; **§4 «Поиск → RAG авто» закрыт (п.1–4).** **Коммит:** `9dcf749`.

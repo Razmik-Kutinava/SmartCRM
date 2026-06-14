@@ -46,15 +46,17 @@ python -m pytest tests/rag/test_enrich_cache.py tests/rag/test_search_modes.py t
 
 **§4 закрыт** (все 4 пункта MAP).
 
-### Не сделано / отложено (вне scope §4)
+### Не сделано / отложено
 
 | Что | Где |
 |-----|-----|
-| LLM-структурирование Q&A перед авто-ingest | BACKLOG `RAG_AUTO_STRUCTURE_LLM` |
-| LLM-извлечение фактов из диалога | BACKLOG `RAG_DIALOGUE_LLM` |
-| Live E2E enrich smoke (реальные ключи) | BACKLOG phase1 |
-| Полный fetch страницы по URL при enrich | улучшение, не в MAP §4 |
-| Quality gate тюнинг ≥85% | Ф3 `AGENTS_GATE_TUNING_BASELINE.md` |
+| **Quality gate ≥85% все агенты** | **Ф3** — `AGENTS_GATE_TUNING_BASELINE.md` |
+| Голос «обогати лид …» | MAP §9 опц. |
+| Spot-check live Groq в UI | 👤 опционально |
+
+### Закрыто хвост BACKLOG (2026-06-14)
+
+См. [`RAG_BACKLOG_TAIL_CLOSED.md`](RAG_BACKLOG_TAIL_CLOSED.md): `RAG_AUTO_STRUCTURE_LLM`, `RAG_DIALOGUE_LLM`, live smoke, `page_fetch`, кнопка на карточке.
 
 ### Следующий блок MAP
 

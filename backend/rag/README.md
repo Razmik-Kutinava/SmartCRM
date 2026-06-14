@@ -12,7 +12,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `merge.py` | Слияние результатов источников |
 | `company_search.py` | Поиск компании по запросу |
 | `prospect.py` | prospect + `enrich_lead` |
-| `enrich_sources.py` | Checko/ИНН, таргет-запросы, парсинг сайта для enrich |
+| `enrich_sources.py` | Checko/ИНН, таргет-запросы, парсинг сайта, fetch URL из поиска |
 | `brave_limit.py` | Кэш и semaphore Brave (429) |
 | `rag_queries.py` | Запросы к Chroma |
 | `relevance.py` | Score релевантности для авто-чанков |
@@ -32,7 +32,8 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `chroma.py` | Низкоуровневый клиент |
 | `ingest.py` | Загрузка в индекс; `ingest_manual_text` + `_metadata_from_search_doc` (URL → `source_url` в чанках) |
 | `auto_ingest.py` | Авто-чанки Search→RAG при relevance > порога |
-| `dialogue_facts.py` | Факты из диалога агента → RAG (тот же for_agent) |
+| `dialogue_facts.py` | Факты из диалога агента → RAG; опц. `RAG_DIALOGUE_LLM=1` |
+| `qa_structure.py` | LLM Q&A для auto-ingest; опц. `RAG_AUTO_STRUCTURE_LLM=1` |
 | `search_hits.py` | Нормализация web-hits → документы ingest-batch |
 | `retrieve.py` | Получение чанков по запросу |
 | `chunking.py` | Разбиение текста на чанки |

@@ -186,7 +186,7 @@ async def run_agent(agent_id: str, body: AgentRunBody):
     if output and isinstance(output, dict):
         from rag.dialogue_facts import dialogue_auto_enabled, ingest_dialogue_facts
 
-        rag_ingest = ingest_dialogue_facts(
+        rag_ingest = await ingest_dialogue_facts(
             agent_id,
             output,
             transcript=transcript,

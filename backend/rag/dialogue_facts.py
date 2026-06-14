@@ -101,7 +101,77 @@ def dialogue_auto_enabled() -> bool:
     return os.getenv("RAG_DIALOGUE_AUTO_INGEST", "1").strip().lower() in ("1", "true", "yes")
 
 
-def ingest_dialogue_facts(
+def dialogue_llm_enabled() -> bool:
+    return os.getenv("RAG_DIALOGUE_LLM", "0").strip().lower() in ("1", "true", "yes")
+
+
+def _merge_facts(primary: list[str], extra: list[str]) -> list[str]:
+    seen = {f[:80].lower() for f in primary}
+    out = list(primary)
+    for line in extra:
+        key = line[:80].lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(line)
+    return out
+
+
+async def extract_deal_facts_llm(
+    output: dict[str, Any],
+    *,
+    transcript: str = "",
+) -> list[str]:
+    """LLM-извлечение фактов (RAG_DIALOGUE_LLM=1)."""
+    import json
+    import re
+
+    from core.llm import chat
+
+    blob = json.dumps(output, ensure_ascii=False)[:3500]
+    tr = (transcript or "").strip()[:500]
+    raw = await chat(
+        [{
+            "role": "user",
+            "content": (
+                "Из JSON-ответа агента CRM извлеки 2–6 конкретных фактов о сделке/лиде.\n"
+                f"Диалог: {tr or '—'}\n"
+                f"Ответ агента: {blob}\n\n"
+                "Верни строго JSON-массив строк. Только проверяемые факты, без выдумок."
+            ),
+        }],
+        temperature=0.1,
+        max_tokens=400,
+        json_mode=False,
+    )
+    match = re.search(r"\[[\s\S]*\]", raw)
+    if not match:
+        return []
+    parsed = json.loads(match.group(0))
+    facts: list[str] = []
+    for item in parsed:
+        s = str(item).strip()
+        if len(s) >= 12 and not any(p in s.lower() for p in _SKIP):
+            facts.append(s[:800])
+    return facts
+
+
+async def collect_deal_facts(
+    output: dict[str, Any] | None,
+    *,
+    transcript: str = "",
+) -> list[str]:
+    facts = extract_deal_facts(output)
+    if dialogue_llm_enabled() and output and isinstance(output, dict):
+        try:
+            llm_facts = await extract_deal_facts_llm(output, transcript=transcript)
+            facts = _merge_facts(facts, llm_facts)
+        except Exception as e:
+            logger.warning("RAG_DIALOGUE_LLM fallback: %s", e)
+    return facts
+
+
+async def ingest_dialogue_facts(
     agent_id: str,
     output: dict[str, Any] | None,
     *,
@@ -110,7 +180,7 @@ def ingest_dialogue_facts(
     dry_run: bool = False,
 ) -> dict[str, Any]:
     slots = slots or {}
-    facts = extract_deal_facts(output)
+    facts = await collect_deal_facts(output, transcript=transcript)
     company = _company(slots)
     agent = normalize_for_agent(agent_id)
     if not is_dialogue_eligible(facts):
@@ -155,7 +225,7 @@ def ingest_dialogue_facts(
     }
 
 
-def ingest_orchestrator_dialogues(
+async def ingest_orchestrator_dialogues(
     agent_result: dict[str, Any],
     *,
     transcript: str = "",
@@ -168,7 +238,7 @@ def ingest_orchestrator_dialogues(
         payload = agent_result.get(key)
         if payload:
             out.append(
-                ingest_dialogue_facts(
+                await ingest_dialogue_facts(
                     agent_id,
                     payload,
                     transcript=transcript,

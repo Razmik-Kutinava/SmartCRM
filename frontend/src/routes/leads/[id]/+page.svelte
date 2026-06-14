@@ -37,6 +37,7 @@
 	import { buildMoneyPatch, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
+	import { enrichLeadOnCard } from '$lib/search/enrichLeadOnCard.js';
 
 	let lead    = $state(null);
 	let notFound = $state(false);
@@ -97,6 +98,33 @@
 	let approvalsSaving = $state(false);
 	let detailsDraft = $state(detailsDraftFromLead(null));
 	let detailsSaving = $state(false);
+	let enrichRunning = $state(false);
+	let enrichMsg = $state('');
+
+	async function runLeadEnrich(force = false) {
+		if (!lead || enrichRunning) return;
+		enrichRunning = true;
+		enrichMsg = '';
+		try {
+			const { data, patch, applied } = await enrichLeadOnCard(lead, { force });
+			await fetchLeadById(lead.id);
+			const fresh = await fetchLeads();
+			writeLeadsCache(fresh);
+			sync();
+			syncDetailsDraftFromLead();
+			if (data.cached) {
+				enrichMsg = 'Данные из кэша enrich (24 ч)';
+			} else if (applied) {
+				enrichMsg = `Обновлено: ${Object.keys(patch).join(', ')}`;
+			} else {
+				enrichMsg = 'Новых полей не найдено';
+			}
+		} catch (e) {
+			enrichMsg = e?.message || String(e);
+		} finally {
+			enrichRunning = false;
+		}
+	}
 
 	function syncDetailsDraftFromLead() {
 		detailsDraft = detailsDraftFromLead(lead);
@@ -527,6 +555,13 @@
 			<span class="text-sm text-white font-medium">{lead.company}</span>
 		</div>
 		<div class="flex items-center gap-2">
+			<button
+				type="button"
+				data-testid="lead-card-enrich"
+				class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-sm text-white rounded-lg transition-colors"
+				disabled={enrichRunning || !lead?.company}
+				onclick={() => runLeadEnrich(false)}
+			>{enrichRunning ? '⟳ Обогащение…' : '✨ Обогатить'}</button>
 			<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">🔍 Исследовать</button>
 			<button
 				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
@@ -536,6 +571,9 @@
 			<button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">🎙 Голос</button>
 		</div>
 	</div>
+	{#if enrichMsg}
+		<div class="px-6 py-1.5 text-xs border-b border-gray-800 bg-gray-900/80 text-gray-400" data-testid="lead-card-enrich-msg">{enrichMsg}</div>
+	{/if}
 
 	<div class="flex-1 overflow-hidden flex">
 		<!-- Left: Lead info -->

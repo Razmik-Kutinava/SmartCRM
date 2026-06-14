@@ -184,6 +184,7 @@ async def enrich_lead(lead: dict, *, force: bool = False) -> dict[str, Any]:
 
     from .enrich_sources import (
         checko_enrich_by_inn,
+        fetch_urls_from_hits,
         merge_enriched,
         scrape_website_contacts,
         targeted_enrich_queries,
@@ -261,6 +262,10 @@ async def enrich_lead(lead: dict, *, force: bool = False) -> dict[str, Any]:
 
     deduped = _deduplicate(checko_raw + all_raw)
 
+    page_text, page_raw = await fetch_urls_from_hits(deduped[:12], max_urls=3)
+    if page_raw:
+        deduped = _deduplicate(deduped + page_raw)
+
     site_url = (
         lead.get("website")
         or pre_enriched.get("website")
@@ -271,8 +276,13 @@ async def enrich_lead(lead: dict, *, force: bool = False) -> dict[str, Any]:
         deduped = _deduplicate(deduped + site_raw)
 
     formatted = _format_results(deduped[:24])
+    extra_blocks = []
+    if page_text:
+        extra_blocks.append(f"--- Текст со страниц поиска ---\n{page_text[:4000]}")
     if site_text:
-        formatted += f"\n\n--- Текст с сайта ---\n{site_text[:3000]}"
+        extra_blocks.append(f"--- Текст с сайта ---\n{site_text[:3000]}")
+    if extra_blocks:
+        formatted += "\n\n" + "\n\n".join(extra_blocks)
 
     # LLM извлекает значения для пустых полей
     enriched: dict[str, str] = dict(pre_enriched)
@@ -313,6 +323,8 @@ async def enrich_lead(lead: dict, *, force: bool = False) -> dict[str, Any]:
         sources.append("checko")
     if site_raw:
         sources.append("website_scrape")
+    if page_raw:
+        sources.append("page_fetch")
 
     result = {
         "enriched":       enriched,

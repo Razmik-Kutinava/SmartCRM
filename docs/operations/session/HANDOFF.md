@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф2] | Задача:[RAG хвост + §9 enrich карточка] | Статус: ✅ done`
+
+> **→ Следующий агент:** §5 Self-improvement — [`PRD_MAP.md`](../product/PRD_MAP.md) · **Ф3:** quality gate tuning по `go`
+
+**2026-06-14:** Закрыт хвост BACKLOG §4: `RAG_AUTO_STRUCTURE_LLM`, `RAG_DIALOGUE_LLM`, `page_fetch`, smoke+cache; кнопка «Обогатить» на `/leads/{id}`; pytest 31 passed. **Quality gate ≥85%** — остаётся **Ф3** (`AGENTS_GATE_TUNING_BASELINE.md`). **Коммит:** `<hash>`.
+
+**Следующий `go`:** §5 Self-improvement или Ф3 gate tuning.
+
+---
+
 `Спринт:[Ф2] | Задача:[§4 RAG п.4 кэш enrich] | Статус: ✅ done`
 
 > **→ Следующий агент:** §5 Self-improvement (версионирование промптов) — [`PRD_MAP.md`](../product/PRD_MAP.md)

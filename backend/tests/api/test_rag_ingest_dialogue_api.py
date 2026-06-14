@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
 
 @pytest.mark.asyncio
 async def test_ingest_dialogue_ok(client):
-    with patch("rag.dialogue_facts.ingest_dialogue_facts") as m:
+    with patch("rag.dialogue_facts.ingest_dialogue_facts", new_callable=AsyncMock) as m:
         m.return_value = {
             "ok": True,
             "eligible": True,
@@ -33,7 +33,7 @@ async def test_ingest_dialogue_ok(client):
     data = r.json()
     assert data["ok"] is True
     assert data["chunks"] == 2
-    m.assert_called_once()
+    m.assert_awaited_once()
 
 
 @pytest.mark.asyncio

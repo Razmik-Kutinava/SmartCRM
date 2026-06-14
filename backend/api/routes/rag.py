@@ -228,8 +228,7 @@ async def rag_ingest_dialogue(body: IngestDialogueBody):
     }:
         raise HTTPException(400, detail=f"Неизвестный agent_id: {body.agent_id}")
     fa = normalize_for_agent(body.agent_id)
-    result = await asyncio.to_thread(
-        ingest_dialogue_facts,
+    result = await ingest_dialogue_facts(
         fa,
         body.output or None,
         transcript=body.transcript,

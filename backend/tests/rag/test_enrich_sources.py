@@ -82,3 +82,39 @@ async def test_scrape_website_mock(monkeypatch):
     text, raw = await scrape_website_contacts("https://example.ru")
     assert "Контакты" in text
     assert raw
+
+
+@pytest.mark.asyncio
+async def test_fetch_page_text_mock(monkeypatch):
+    class FakeResp:
+        status_code = 200
+        text = "<html><body><p>" + ("полный текст страницы " * 30) + "</p></body></html>"
+
+        @property
+        def headers(self):
+            return {"content-type": "text/html"}
+
+    class FakeClient:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *a):
+            pass
+
+        async def get(self, url):
+            return FakeResp()
+
+    monkeypatch.setattr("httpx.AsyncClient", lambda **kw: FakeClient())
+
+    from rag.search.enrich_sources import fetch_page_text, fetch_urls_from_hits
+
+    text, block = await fetch_page_text("https://example.ru/about")
+    assert len(text) >= 120
+    assert block and block["source"] == "page_fetch"
+
+    merged, raw = await fetch_urls_from_hits(
+        [{"url": "https://example.ru/a", "source": "serper"}, {"url": "", "source": "serper"}],
+        max_urls=2,
+    )
+    assert "полный текст" in merged
+    assert len(raw) == 1

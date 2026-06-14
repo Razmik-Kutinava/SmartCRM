@@ -174,6 +174,83 @@ async def scrape_website_contacts(website: str) -> tuple[str, list[dict]]:
     return "\n\n".join(chunks), raw
 
 
+_SKIP_FETCH_HOSTS = frozenset({"youtube.com", "facebook.com", "instagram.com", "twitter.com", "x.com"})
+
+
+def _is_fetchable_url(url: str) -> bool:
+    u = (url or "").strip()
+    if not u.startswith("http"):
+        return False
+    low = u.lower()
+    if any(h in low for h in _SKIP_FETCH_HOSTS):
+        return False
+    if low.endswith(".pdf") or ".pdf?" in low:
+        return False
+    return True
+
+
+async def fetch_page_text(url: str, *, limit: int = 5000) -> tuple[str, dict | None]:
+    """Полный fetch HTML-страницы по URL."""
+    if not _is_fetchable_url(url):
+        return "", None
+    async with httpx.AsyncClient(
+        timeout=10.0,
+        follow_redirects=True,
+        headers={"User-Agent": "SmartCRM-enrich/1.0"},
+    ) as client:
+        try:
+            r = await client.get(url)
+            if r.status_code >= 400:
+                return "", None
+            ctype = (r.headers.get("content-type") or "").lower()
+            if "html" not in ctype and "text" not in ctype:
+                return "", None
+            text = _html_to_text(r.text, limit=limit)
+            if len(text) < 120:
+                return "", None
+            block = {
+                "title": f"Страница: {url}",
+                "snippet": text[:500],
+                "url": url,
+                "date": "",
+                "source": "page_fetch",
+            }
+            return text, block
+        except Exception as e:
+            logger.debug("fetch_page_text %s: %s", url, e)
+            return "", None
+
+
+async def fetch_urls_from_hits(
+    hits: list[dict],
+    *,
+    max_urls: int = 3,
+    skip_sources: frozenset[str] | None = None,
+) -> tuple[str, list[dict]]:
+    """Fetch полного текста топ URL из результатов поиска."""
+    skip = skip_sources or frozenset({"website_scrape", "checko", "checko_finance"})
+    seen: set[str] = set()
+    chunks: list[str] = []
+    raw: list[dict] = []
+    for hit in hits:
+        url = str(hit.get("url") or "").strip()
+        src = str(hit.get("source") or "")
+        if not url or src in skip:
+            continue
+        key = url.lower().rstrip("/")
+        if key in seen:
+            continue
+        seen.add(key)
+        text, block = await fetch_page_text(url)
+        if not text or not block:
+            continue
+        chunks.append(f"--- {url} ---\n{text}")
+        raw.append(block)
+        if len(raw) >= max_urls:
+            break
+    return "\n\n".join(chunks), raw
+
+
 def merge_enriched(base: dict[str, str], extra: dict[str, str]) -> dict[str, str]:
     """extra заполняет только пустые ключи в base."""
     out = dict(base)

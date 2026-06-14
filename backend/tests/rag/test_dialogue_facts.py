@@ -1,6 +1,9 @@
 """Тесты извлечения фактов из диалога агента."""
 
+import pytest
+
 from rag.dialogue_facts import (
+    collect_deal_facts,
     dialogue_to_rag_text,
     extract_deal_facts,
     ingest_dialogue_facts,
@@ -44,15 +47,20 @@ def test_ingest_dialogue_dry_run_eligible(monkeypatch):
         return {"chunks": 2, "chunk_previews": [{"text": "x"}]}
 
     monkeypatch.setattr("rag.dialogue_facts.ingest_manual_text", fake_ingest)
-    out = ingest_dialogue_facts(
-        "analyst",
-        {
-            "summary": "Сильный интерес к интеграции CRM с 1С.",
-            "decision": "Перевести на этап переговоры с ЛПР.",
-        },
-        transcript="анализ",
-        slots={"company": "АКМЕ", "lead_id": 7},
-        dry_run=True,
+
+    import asyncio
+
+    out = asyncio.run(
+        ingest_dialogue_facts(
+            "analyst",
+            {
+                "summary": "Сильный интерес к интеграции CRM с 1С.",
+                "decision": "Перевести на этап переговоры с ЛПР.",
+            },
+            transcript="анализ",
+            slots={"company": "АКМЕ", "lead_id": 7},
+            dry_run=True,
+        )
     )
     assert out["eligible"] is True
     assert out["facts_count"] >= 2
@@ -61,10 +69,31 @@ def test_ingest_dialogue_dry_run_eligible(monkeypatch):
 
 def test_ingest_not_eligible_with_one_fact(monkeypatch):
     monkeypatch.setenv("RAG_DIALOGUE_MIN_FACTS", "2")
-    out = ingest_dialogue_facts(
-        "analyst",
-        {"summary": "Единственный длинный факт о компании и сделке."},
-        dry_run=True,
+
+    import asyncio
+
+    out = asyncio.run(
+        ingest_dialogue_facts(
+            "analyst",
+            {"summary": "Единственный длинный факт о компании и сделке."},
+            dry_run=True,
+        )
     )
     assert out["eligible"] is False
     assert out["ingested"] == 0
+
+
+@pytest.mark.asyncio
+async def test_collect_deal_facts_llm_merge(monkeypatch):
+    monkeypatch.setenv("RAG_DIALOGUE_LLM", "1")
+
+    async def fake_llm(output, *, transcript=""):
+        return ["LLM факт: клиент готов к пилоту на две недели без рисков."]
+
+    monkeypatch.setattr("rag.dialogue_facts.extract_deal_facts_llm", fake_llm)
+    facts = await collect_deal_facts(
+        {"summary": "Клиент готов к пилоту на 2 недели, бюджет согласован."},
+        transcript="анализ",
+    )
+    assert any("LLM факт" in f for f in facts)
+    assert len(facts) >= 2

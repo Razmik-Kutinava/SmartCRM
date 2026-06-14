@@ -6,24 +6,15 @@ import logging
 from typing import Any
 
 from rag.ingest import ingest_manual_text, normalize_for_agent
+from rag.qa_structure import build_hit_rag_text, hit_to_rag_text_heuristic
 from rag.search.relevance import enrich_results_with_relevance, get_relevance_threshold
 
 logger = logging.getLogger(__name__)
 
 
 def hit_to_rag_text(query: str, hit: dict[str, Any]) -> str:
-    """Структура Q&A для чанкинга (без live LLM в CI)."""
-    title = str(hit.get("title") or "").strip()
-    snippet = str(hit.get("snippet") or "").strip()
-    url = str(hit.get("url") or hit.get("source") or "").strip()
-    parts = [f"Вопрос: {query.strip()}"]
-    if title:
-        parts.append(f"Тема: {title}")
-    if snippet:
-        parts.append(f"Ответ: {snippet}")
-    if url:
-        parts.append(f"Источник: {url}")
-    return "\n\n".join(parts)
+    """Синхронная эвристика (тесты / fallback)."""
+    return hit_to_rag_text_heuristic(query, hit)
 
 
 async def auto_ingest_search_hits(
@@ -45,7 +36,7 @@ async def auto_ingest_search_hits(
     errors: list[str] = []
 
     for hit in eligible[:10]:
-        text = hit_to_rag_text(query, hit)
+        text = await build_hit_rag_text(query, hit)
         title = str(hit.get("title") or query)[:200]
         try:
             out = ingest_manual_text(
