@@ -78,7 +78,7 @@ def test_voice_action_analytics_navigate():
     )
     assert va["module"] == "analytics"
     assert va["ui"] == "navigate"
-    assert va["route"] == "/leads/analytics"
+    assert va["route"] == "/leads/analytics?period=month&view=funnel"
     assert va["payload"]["period"] == "month"
 
 
@@ -108,6 +108,32 @@ def test_voice_action_send_email_approve():
     )
     assert va["ui"] == "approve"
     assert va["route"] == "/email"
+
+
+def test_voice_action_analytics_conversion_navigate():
+    va = build_voice_action(
+        intent="analytics_conversion",
+        slots={"period": "quarter", "source": "email"},
+        reply="Конверсия.",
+        agents=["analyst"],
+        module="analytics",
+        ui_action="navigate",
+    )
+    assert "period=quarter" in va["route"]
+    assert "source=email" in va["route"]
+    assert "view=conversion" in va["route"]
+
+
+def test_voice_action_analytics_cycle_navigate():
+    va = build_voice_action(
+        intent="analytics_cycle",
+        slots={"period": "month"},
+        reply="Цикл.",
+        agents=["analyst"],
+        module="analytics",
+        ui_action="navigate",
+    )
+    assert va["route"] == "/leads/analytics?period=month&view=cycle"
 
 
 def test_voice_action_analytics_score_filter():

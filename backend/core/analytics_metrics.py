@@ -4,8 +4,23 @@ from __future__ import annotations
 import csv
 import io
 import re
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any
+
+PERIOD_DAYS: dict[str, int] = {
+    "week": 7,
+    "month": 30,
+    "quarter": 90,
+    "year": 365,
+}
+
+PERIOD_LABELS: dict[str, str] = {
+    "week": "неделя",
+    "month": "месяц",
+    "quarter": "квартал",
+    "year": "год",
+    "last_year": "прошлый год",
+}
 
 WON_STAGE = "Выигран"
 LOST_STAGE = "Проигран"
@@ -71,6 +86,86 @@ def normalize_stage(stage: str | None, stages: list[str]) -> str:
     return s if s in stages else "Новый"
 
 
+def period_days(period: str) -> int:
+    return PERIOD_DAYS.get(period, 7)
+
+
+def period_label(period: str) -> str:
+    return PERIOD_LABELS.get(period, period)
+
+
+def lead_source(lead: dict[str, Any]) -> str:
+    return str(lead.get("source") or "—").strip() or "—"
+
+
+def filter_leads_by_period(
+    leads: list[dict[str, Any]],
+    period: str | None,
+) -> list[dict[str, Any]]:
+    if not period:
+        return leads
+    now = datetime.now(timezone.utc)
+    if period == "last_year":
+        start = datetime(now.year - 1, 1, 1, tzinfo=timezone.utc)
+        end = datetime(now.year, 1, 1, tzinfo=timezone.utc)
+    else:
+        cutoff = now - timedelta(days=period_days(period))
+        start, end = cutoff, None
+    out: list[dict[str, Any]] = []
+    for lead in leads:
+        created = parse_created_date(lead)
+        if created is None:
+            continue
+        if created.tzinfo is None:
+            created = created.replace(tzinfo=timezone.utc)
+        if period == "last_year":
+            if start <= created < end:
+                out.append(lead)
+        elif created >= start:
+            out.append(lead)
+    return out
+
+
+def filter_leads_by_source(
+    leads: list[dict[str, Any]],
+    source: str | None,
+) -> list[dict[str, Any]]:
+    if not source:
+        return leads
+    needle = str(source).strip().lower()
+    return [lead for lead in leads if needle in lead_source(lead).lower()]
+
+
+def apply_analytics_filters(
+    leads: list[dict[str, Any]],
+    *,
+    period: str | None = None,
+    source: str | None = None,
+) -> list[dict[str, Any]]:
+    return filter_leads_by_source(filter_leads_by_period(leads, period), source)
+
+
+def compute_conversion_by_source(
+    leads: list[dict[str, Any]],
+    stages: list[str] | None = None,
+) -> list[dict[str, Any]]:
+    sts = stages or DEFAULT_STAGES
+    buckets: dict[str, dict[str, Any]] = {}
+    for lead in leads:
+        src = lead_source(lead)
+        row = buckets.setdefault(src, {"source": src, "total": 0, "won": 0})
+        row["total"] += 1
+        if normalize_stage(lead.get("stage"), sts) == WON_STAGE:
+            row["won"] += 1
+    out: list[dict[str, Any]] = []
+    for row in sorted(buckets.values(), key=lambda item: -int(item["total"])):
+        total = int(row["total"])
+        won = int(row["won"])
+        row["conversionPct"] = round(100 * won / total, 1) if total else 0.0
+        out.append(row)
+    return out
+
+
 def compute_analytics(leads: list[dict[str, Any]], stages: list[str] | None = None) -> dict[str, Any]:
     sts = stages or DEFAULT_STAGES
     by_stage = {s: 0 for s in sts}
@@ -123,6 +218,25 @@ def compute_analytics(leads: list[dict[str, Any]], stages: list[str] | None = No
     }
 
 
+def compute_analytics_report(
+    leads: list[dict[str, Any]],
+    stages: list[str] | None = None,
+    *,
+    period: str | None = None,
+    source: str | None = None,
+) -> dict[str, Any]:
+    sts = stages or DEFAULT_STAGES
+    filtered = apply_analytics_filters(leads, period=period, source=source)
+    metrics = compute_analytics(filtered, sts)
+    metrics["conversionBySource"] = compute_conversion_by_source(filtered, sts)
+    metrics["filters"] = {
+        "period": period or "",
+        "periodLabel": period_label(period) if period else "",
+        "source": source or "",
+    }
+    return metrics
+
+
 def analytics_to_csv(metrics: dict[str, Any]) -> str:
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")
@@ -138,4 +252,10 @@ def analytics_to_csv(metrics: dict[str, Any]) -> str:
     w.writerow(["stage", "count", "pct"])
     for row in metrics["funnel"]:
         w.writerow([row["stage"], row["count"], row["pct"]])
+    by_src = metrics.get("conversionBySource") or []
+    if by_src:
+        w.writerow([])
+        w.writerow(["source", "total", "won", "conversionPct"])
+        for row in by_src:
+            w.writerow([row["source"], row["total"], row["won"], row["conversionPct"]])
     return buf.getvalue()

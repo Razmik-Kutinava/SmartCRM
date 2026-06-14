@@ -14,7 +14,7 @@ CRUD лидов, вовлечённость, Битрикс.
 |------|--------|
 | `__init__.py` | Сборка роутера |
 | `crud.py` | Список, создать, lookalike-import, прочитать, обновить, удалить лид |
-| `analytics_routes.py` | Сводка KPI и CSV-экспорт `/analytics/summary`, `/analytics/export` |
+| `analytics_routes.py` | Сводка KPI и CSV `/analytics/summary`, `/analytics/export` — query `period`, `source` |
 | `engagement.py` | Комментарии, логи связи, аудит полей, стадии |
 | `bitrix_routes.py` | Импорт лидов из Битрикс24, статус синка |
 | `presenter.py` | Как отдать лид в JSON для API |

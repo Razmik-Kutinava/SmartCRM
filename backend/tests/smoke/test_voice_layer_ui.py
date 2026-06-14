@@ -50,3 +50,12 @@ def test_analytics_voice_context_marker():
     text = path.read_text(encoding="utf-8")
     assert "voice-analytics-context" in text
     assert "voiceAnalyticsContext" in text
+    assert "analytics-conversion-by-source" in text
+    assert "period=month" not in text  # query строится в voiceAction.js
+
+
+def test_voice_action_analytics_query_builder():
+    text = _VOICE_JS.read_text(encoding="utf-8")
+    assert "analytics_" in text
+    assert "params.set('period'" in text
+    assert "params.set('view'" in text

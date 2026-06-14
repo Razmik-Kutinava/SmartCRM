@@ -1,9 +1,14 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { apiFetch } from '$lib/api.js';
 	import { fetchLeads } from '$lib/leadsStorage.js';
 	import { CRM_STAGES, loadCrmConfig } from '$lib/crmStages.js';
-	import { computeAnalytics, formatRub } from '$lib/leads/analyticsMetrics.js';
+	import {
+		computeAnalyticsReport,
+		formatRub,
+		PERIOD_LABELS,
+	} from '$lib/leads/analyticsMetrics.js';
 	import { voiceAnalyticsContext } from '$lib/voice/voiceAction.js';
 
 	let metrics = $state(null);
@@ -11,37 +16,75 @@
 	let err = $state('');
 	let exporting = $state(false);
 	let voiceCtx = $state(null);
+	let activeView = $state('');
 
-	onMount(async () => {
-		const unsubVoice = voiceAnalyticsContext.subscribe((v) => {
-			voiceCtx = v;
-		});
-		await loadCrmConfig();
+	function readFilters() {
+		const params = $page.url.searchParams;
+		const voice = voiceCtx || {};
+		const period = params.get('period') || voice.period || '';
+		const source = params.get('source') || voice.source || '';
+		const view = params.get('view') || voice.intent?.replace?.('analytics_', '') || '';
+		activeView = view;
+		return { period, source, view };
+	}
+
+	function summaryQuery(filters) {
+		const q = new URLSearchParams();
+		if (filters.period) q.set('period', filters.period);
+		if (filters.source) q.set('source', filters.source);
+		const qs = q.toString();
+		return qs ? `/api/leads/analytics/summary?${qs}` : '/api/leads/analytics/summary';
+	}
+
+	async function loadMetrics() {
+		loading = true;
+		err = '';
+		const filters = readFilters();
 		try {
-			const r = await apiFetch('/api/leads/analytics/summary');
+			const r = await apiFetch(summaryQuery(filters));
 			if (r.ok) {
 				metrics = await r.json();
 			} else {
 				const leads = await fetchLeads();
-				metrics = computeAnalytics(leads, CRM_STAGES);
+				metrics = computeAnalyticsReport(leads, CRM_STAGES, filters);
 			}
 		} catch (e) {
 			try {
 				const leads = await fetchLeads();
-				metrics = computeAnalytics(leads, CRM_STAGES);
+				metrics = computeAnalyticsReport(leads, CRM_STAGES, filters);
 			} catch (e2) {
 				err = e2?.message || e?.message || String(e2);
 			}
 		} finally {
 			loading = false;
 		}
-		return () => unsubVoice();
+	}
+
+	onMount(async () => {
+		const unsubVoice = voiceAnalyticsContext.subscribe((v) => {
+			voiceCtx = v;
+		});
+		const unsubPage = page.subscribe(() => {
+			loadMetrics();
+		});
+		await loadCrmConfig();
+		await loadMetrics();
+		return () => {
+			unsubVoice();
+			unsubPage();
+		};
 	});
 
 	async function exportReport() {
 		exporting = true;
+		const filters = readFilters();
 		try {
-			const r = await apiFetch('/api/leads/analytics/export');
+			const q = new URLSearchParams();
+			if (filters.period) q.set('period', filters.period);
+			if (filters.source) q.set('source', filters.source);
+			const qs = q.toString();
+			const path = qs ? `/api/leads/analytics/export?${qs}` : '/api/leads/analytics/export';
+			const r = await apiFetch(path);
 			if (!r.ok) throw new Error(`Экспорт: HTTP ${r.status}`);
 			const blob = await r.blob();
 			const url = URL.createObjectURL(blob);
@@ -56,6 +99,14 @@
 			exporting = false;
 		}
 	}
+
+	const periodLabel = $derived(
+		metrics?.filters?.periodLabel ||
+			PERIOD_LABELS[metrics?.filters?.period] ||
+			metrics?.filters?.period ||
+			voiceCtx?.periodLabel ||
+			'',
+	);
 </script>
 
 <div class="flex flex-col flex-1 min-h-0 overflow-hidden">
@@ -63,11 +114,13 @@
 		<div>
 			<h1 class="text-lg font-semibold text-white">Аналитика CRM</h1>
 			<p class="text-xs text-gray-500">Воронка и KPI по лидам в БД</p>
-			{#if voiceCtx?.periodLabel || voiceCtx?.title}
+			{#if voiceCtx?.periodLabel || voiceCtx?.title || metrics?.filters?.period || metrics?.filters?.source}
 				<p class="text-xs text-indigo-400 mt-1" data-testid="voice-analytics-context">
-					🎙 {voiceCtx.title || 'Аналитика'}
-					{#if voiceCtx.periodLabel} · период: {voiceCtx.periodLabel}{/if}
-					{#if voiceCtx.source} · источник: {voiceCtx.source}{/if}
+					🎙 {voiceCtx?.title || 'Аналитика'}
+					{#if periodLabel} · период: {periodLabel}{/if}
+					{#if metrics?.filters?.source || voiceCtx?.source}
+						· источник: {metrics?.filters?.source || voiceCtx?.source}
+					{/if}
 				</p>
 			{/if}
 		</div>
@@ -87,23 +140,33 @@
 			<p class="text-red-400">{err}</p>
 		{:else if metrics}
 			<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl">
-				<div class="rounded-xl border border-gray-800 bg-gray-900/80 p-4">
+				<div class="rounded-xl border border-gray-800 bg-gray-900/80 p-4" data-testid="kpi-funnel">
 					<div class="text-xs text-gray-500 uppercase">Всего лидов</div>
 					<div class="text-3xl font-bold text-white mt-1">{metrics.total}</div>
 				</div>
-				<div class="rounded-xl border border-gray-800 bg-gray-900/80 p-4">
+				<div
+					class="rounded-xl border border-gray-800 bg-gray-900/80 p-4"
+					data-testid="kpi-conversion"
+					class:ring-1={activeView === 'conversion'}
+					class:ring-indigo-500={activeView === 'conversion'}
+				>
 					<div class="text-xs text-gray-500 uppercase">Конверсия в сделку</div>
 					<div class="text-3xl font-bold text-green-400 mt-1">{metrics.conversionPct}%</div>
 					{#if metrics.winRatePct != null}
 						<div class="text-xs text-gray-500 mt-1">Win-rate: {metrics.winRatePct}%</div>
 					{/if}
 				</div>
-				<div class="rounded-xl border border-gray-800 bg-gray-900/80 p-4">
+				<div
+					class="rounded-xl border border-gray-800 bg-gray-900/80 p-4"
+					data-testid="kpi-cycle"
+					class:ring-1={activeView === 'cycle'}
+					class:ring-indigo-500={activeView === 'cycle'}
+				>
 					<div class="text-xs text-gray-500 uppercase">Средний чек</div>
 					<div class="text-2xl font-bold text-white mt-1">{formatRub(metrics.avgDealRub)}</div>
 					<div class="text-xs text-gray-500 mt-1">по выигранным с суммой</div>
 				</div>
-				<div class="rounded-xl border border-gray-800 bg-gray-900/80 p-4">
+				<div class="rounded-xl border border-gray-800 bg-gray-900/80 p-4" data-testid="kpi-cycle-days">
 					<div class="text-xs text-gray-500 uppercase">Цикл сделки</div>
 					<div class="text-3xl font-bold text-indigo-400 mt-1">
 						{metrics.avgCycleDays != null ? `${metrics.avgCycleDays} дн.` : '—'}
@@ -124,7 +187,7 @@
 				</div>
 			</div>
 
-			<div class="max-w-3xl">
+			<div class="max-w-3xl" data-testid="analytics-funnel" class:ring-1={activeView === 'funnel'} class:ring-indigo-500={activeView === 'funnel'} class:rounded-xl={activeView === 'funnel'} class:p-2={activeView === 'funnel'}>
 				<h2 class="text-sm font-medium text-white mb-3">Воронка по этапам</h2>
 				<div class="space-y-2">
 					{#each metrics.funnel as item}
@@ -141,6 +204,29 @@
 					{/each}
 				</div>
 			</div>
+
+			{#if metrics.conversionBySource?.length}
+				<div
+					class="max-w-3xl"
+					data-testid="analytics-conversion-by-source"
+					class:ring-1={activeView === 'conversion'}
+					class:ring-indigo-500={activeView === 'conversion'}
+					class:rounded-xl={activeView === 'conversion'}
+					class:p-2={activeView === 'conversion'}
+				>
+					<h2 class="text-sm font-medium text-white mb-3">Конверсия по источнику</h2>
+					<div class="space-y-2">
+						{#each metrics.conversionBySource as row}
+							<div class="flex items-center gap-3 text-sm">
+								<span class="text-gray-400 w-40 shrink-0 truncate" title={row.source}>{row.source}</span>
+								<span class="text-gray-500 w-16">{row.total} лид.</span>
+								<span class="text-green-400 w-20">{row.conversionPct}%</span>
+								<span class="text-gray-600 text-xs">выиграно: {row.won}</span>
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if}
 		{/if}
 	</div>
 </div>

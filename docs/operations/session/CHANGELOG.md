@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-14 — Ф2 §6: Аналитика + голос
+
+**Сделано:** фильтры `period`/`source` в `analytics_metrics` + API summary/export; `conversionBySource`; voice navigate с query (`view=funnel|cycle|conversion`); UI `/leads/analytics` с контекстом и подсветкой; pytest 47 passed; `ANALYTICS_VOICE_ACCEPTANCE.md`; MAP §6 `[x]`. **Коммит:** `TBD`.
+
 ## 2026-06-14 — Ф2 §5 доп: Hermes prompt versioning
 
 **Сделано:** версии Hermes в `hermes_prompt_store` + API `/hermes/prompt/versions/*`; UI `/ops/intents/improve`; `PromptVersionPanel` через `promptBasePath`; compare-роут до `{version_id}`; pytest 27 passed. **Коммит:** `60a045b`.

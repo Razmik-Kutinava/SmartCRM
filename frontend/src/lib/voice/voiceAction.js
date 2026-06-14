@@ -93,7 +93,19 @@ export function handleVoiceAction(action, { goto }) {
 
 	if (ui === 'navigate' && action.route) {
 		applyAnalyticsPayload(action);
-		const route = String(action.route);
+		let route = String(action.route);
+		if (intent.startsWith('analytics_') && !route.includes('?')) {
+			const params = new URLSearchParams();
+			const payload = action.payload || {};
+			const period = payload.period || action.slots?.period;
+			const source = payload.source || action.slots?.source;
+			if (period) params.set('period', String(period));
+			if (source) params.set('source', String(source));
+			const view = intent.replace(/^analytics_/, '');
+			if (view && view !== 'report') params.set('view', view);
+			const qs = params.toString();
+			if (qs) route = `${route}?${qs}`;
+		}
 		if (intent === 'search_web' && action.slots?.query && !route.includes('?')) {
 			goto(`${route}?q=${encodeURIComponent(String(action.slots.query))}`);
 		} else {

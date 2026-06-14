@@ -3,6 +3,16 @@
 export const WON_STAGE = 'Выигран';
 export const LOST_STAGE = 'Проигран';
 
+export const PERIOD_LABELS = {
+	week: 'неделя',
+	month: 'месяц',
+	quarter: 'квартал',
+	year: 'год',
+	last_year: 'прошлый год',
+};
+
+const PERIOD_DAYS = { week: 7, month: 30, quarter: 90, year: 365 };
+
 export function parseBudgetRub(raw) {
 	if (!raw) return null;
 	const s = String(raw).replace(/\s/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
@@ -38,6 +48,72 @@ function parseCreatedDate(lead) {
 function normalizeStage(stage, stages) {
 	const s = String(stage || 'Новый').trim();
 	return stages.includes(s) ? s : 'Новый';
+}
+
+function leadSource(lead) {
+	return String(lead?.source || '—').trim() || '—';
+}
+
+/** @param {object[]} leads @param {string | null | undefined} period */
+export function filterLeadsByPeriod(leads, period) {
+	if (!period) return leads;
+	const now = new Date();
+	let start;
+	let end;
+	if (period === 'last_year') {
+		start = new Date(now.getFullYear() - 1, 0, 1);
+		end = new Date(now.getFullYear(), 0, 1);
+	} else {
+		const days = PERIOD_DAYS[period] || 7;
+		start = new Date(now.getTime() - days * 86400000);
+		end = null;
+	}
+	return leads.filter((lead) => {
+		const created = parseCreatedDate(lead);
+		if (!created) return false;
+		if (period === 'last_year') return created >= start && created < end;
+		return created >= start;
+	});
+}
+
+/** @param {object[]} leads @param {string | null | undefined} source */
+export function filterLeadsBySource(leads, source) {
+	if (!source) return leads;
+	const needle = String(source).trim().toLowerCase();
+	return leads.filter((lead) => leadSource(lead).toLowerCase().includes(needle));
+}
+
+/** @param {object[]} leads @param {string[]} stages */
+export function computeConversionBySource(leads, stages) {
+	const buckets = new Map();
+	for (const lead of leads) {
+		const src = leadSource(lead);
+		const row = buckets.get(src) || { source: src, total: 0, won: 0 };
+		row.total += 1;
+		if (normalizeStage(lead.stage, stages) === WON_STAGE) row.won += 1;
+		buckets.set(src, row);
+	}
+	return [...buckets.values()]
+		.sort((a, b) => b.total - a.total)
+		.map((row) => ({
+			...row,
+			conversionPct: row.total ? Math.round((1000 * row.won) / row.total) / 10 : 0,
+		}));
+}
+
+/** @param {object[]} leads @param {string[]} stages @param {{ period?: string, source?: string }} [filters] */
+export function computeAnalyticsReport(leads, stages, filters = {}) {
+	const filtered = filterLeadsBySource(filterLeadsByPeriod(leads, filters.period), filters.source);
+	const metrics = computeAnalytics(filtered, stages);
+	return {
+		...metrics,
+		conversionBySource: computeConversionBySource(filtered, stages),
+		filters: {
+			period: filters.period || '',
+			periodLabel: filters.period ? PERIOD_LABELS[filters.period] || filters.period : '',
+			source: filters.source || '',
+		},
+	};
 }
 
 /** @param {object[]} leads @param {string[]} stages */

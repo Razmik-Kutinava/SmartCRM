@@ -176,6 +176,25 @@ def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
     return None
 
 
+def _analytics_route(intent: str, slots: dict) -> str:
+    from urllib.parse import urlencode
+
+    params: dict[str, str] = {}
+    period = slots.get("period")
+    if period:
+        params["period"] = str(period)
+    source = slots.get("source")
+    if source:
+        params["source"] = str(source)
+    view = intent.removeprefix("analytics_")
+    if view and view != "report":
+        params["view"] = view
+    base = MODULE_ROUTES["analytics"]
+    if not params:
+        return base
+    return f"{base}?{urlencode(params)}"
+
+
 def _route(intent: str, slots: dict, agent_result: dict) -> str:
     target = slots.get("target") or slots.get("route")
     if target:
@@ -184,7 +203,7 @@ def _route(intent: str, slots: dict, agent_result: dict) -> str:
     if lead_route:
         return lead_route
     if intent in ANALYTICS_INTENTS:
-        return MODULE_ROUTES["analytics"]
+        return _analytics_route(intent, slots)
     if intent in RAG_INTENTS:
         return MODULE_ROUTES["rag"]
     if intent in ("list_emails", "write_email", "send_email"):

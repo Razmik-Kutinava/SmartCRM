@@ -1,37 +1,19 @@
 """CRM-метрики для сценария еженедельного отчёта (Ф2 §2)."""
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from core.analytics_metrics import DEFAULT_STAGES, compute_analytics, parse_created_date
+from core.analytics_metrics import (
+    DEFAULT_STAGES,
+    compute_analytics,
+    filter_leads_by_period,
+    period_days,
+    period_label,
+)
 
 
 def period_from_slots(slots: dict[str, Any]) -> str:
     return str(slots.get("period") or "week").strip().lower() or "week"
-
-
-def period_label(period: str) -> str:
-    return {"week": "неделя", "month": "месяц", "quarter": "квартал"}.get(period, period)
-
-
-def period_days(period: str) -> int:
-    return {"week": 7, "month": 30, "quarter": 90}.get(period, 7)
-
-
-def filter_leads_by_period(leads: list[dict[str, Any]], period: str) -> list[dict[str, Any]]:
-    days = period_days(period)
-    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
-    out: list[dict[str, Any]] = []
-    for lead in leads:
-        created = parse_created_date(lead)
-        if created is None:
-            continue
-        if created.tzinfo is None:
-            created = created.replace(tzinfo=timezone.utc)
-        if created >= cutoff:
-            out.append(lead)
-    return out
 
 
 async def load_weekly_report_data(slots: dict[str, Any]) -> dict[str, Any]:

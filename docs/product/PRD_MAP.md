@@ -352,7 +352,7 @@
 | 5 | §8 | Лидоген + голос `/leadgen` | важно · **в работе** | ⚠️ smoke slice |
 | 6 | §9 | Лиды enrich — кнопка на карточке | важно | ✅ |
 | 7 | §5 | Self-improvement — версии промптов | можно позже | ✅ |
-| 8 | §6 | Аналитика + голос | можно позже | 🔲 |
+| 8 | §6 | Аналитика + голос | ✅ Ф2 | ✅ |
 | 9 | §7 | Тендеры — агент-анализ | можно позже | 🔲 |
 | **10** | **§Безопасность** | **Перед деплоем в интернет** | **блокер прода** | 🔲 |
 
@@ -425,11 +425,11 @@
 
 ### 6. Аналитика + голос
 
-- [ ] «Воронка за период»
-- [ ] «Цикл сделки / средний чек»
-- [ ] «Лиды со скором > N»
-- [ ] «Конверсия по источнику»
-- [ ] Навигация на `/leads/analytics` с фильтром
+- [x] «Воронка за период» — ✅ `analytics_funnel` + API/UI period filter · acceptance: [`ANALYTICS_VOICE_ACCEPTANCE.md`](../operations/phase2/analytics/ANALYTICS_VOICE_ACCEPTANCE.md)
+- [x] «Цикл сделки / средний чек» — ✅ `analytics_cycle` + KPI на `/leads/analytics`
+- [x] «Лиды со скором > N» — ✅ `analytics_score` → minScore на `/leads/list`
+- [x] «Конверсия по источнику» — ✅ `conversionBySource` + `analytics_conversion`
+- [x] Навигация на `/leads/analytics` с фильтром — ✅ voice_action query + UI context
 
 ### 7. Тендеры
 
