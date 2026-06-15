@@ -4,7 +4,7 @@
 
 ## 2026-06-13 — fix: 500 industryCatalog (неверные импорты)
 
-**Сделано:** `$lib/api.js`, `$lib/leadsStorage.js`, `$lib/leads/leadMailingUi.js` в `industryCatalog.js`; npm build OK. **Коммит:** `PLACEHOLDER`.
+**Сделано:** `$lib/api.js`, `$lib/leadsStorage.js`, `$lib/leads/leadMailingUi.js` в `industryCatalog.js`; npm build OK. **Коммит:** `3eba285`.
 
 ## 2026-06-13 — D+: чекбоксы отраслей в массовой рассылке
 

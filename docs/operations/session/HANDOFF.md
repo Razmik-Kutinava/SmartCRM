@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[fix industryCatalog imports] | Статус: ✅ done`
 
-**2026-06-13:** 500 на `/email` — `industryCatalog.js` импортировал несуществующий `./api.js`. **Коммит:** `PLACEHOLDER`.
+**2026-06-13:** 500 на `/email` — `industryCatalog.js` импортировал несуществующий `./api.js`. **Коммит:** `3eba285`.
 
 ---
 
