@@ -60,8 +60,9 @@ python -m pytest tests/email/test_email_f3.py tests/api/test_email_sync_api.py -
 | Relink | `POST /api/email/relink-orphans?limit=100` | OK `scanned=100` |
 | DevTools UI | `/email`, `/ops/email`, `/ops/email-agents` | OK: треды «прайс», Relink, FAQ-правила |
 | Nurture live | `python scripts/smoke_email_nurture_live.py` | **OK** лид 3191 → chain 2 → `emails_sent=1`, subject с `Nurture Live Клиент ООО` |
-| Nurture API | `GET /api/email/nurture/chains` | **OK** 2 active chains, `stepsSent=1/20` |
-| DevTools `/ops/email` | nurture table | API контракт OK; UI в браузере без `PUBLIC_SMARTCRM_API_KEY` — пустая страница (ожидаемо) |
+| Nurture segment | `python scripts/smoke_email_nurture_segment_live.py` | **OK** preview count=2 → `started=2`, chains 3–4 |
+| Nurture API | `GET /api/email/nurture/chains` | **OK** active chains в UI |
+| DevTools `/ops/email` | nurture table | **OK** таблица `nurture-chains-table`: ID, лид, active, шаги 1/20 (vite proxy + `PUBLIC_SMARTCRM_API_KEY`) |
 
 ## ENV
 

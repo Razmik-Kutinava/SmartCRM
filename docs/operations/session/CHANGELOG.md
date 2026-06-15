@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-15 — Nurture хвост A: DevTools UI + segment batch live
+
+**Сделано:** `smoke_email_nurture_segment_live.py`; DevTools `/ops/email` таблица chains OK; segment `Nurture Live` started=2; BACKLOG LLM-тексты. **Коммит:** см. SESSION_STATE.
+
 ## 2026-06-15 — Nurture 20 касаний live + персонализация
 
 **Сделано:** `email_nurture_plan.py` (шаблоны маркетолога, `{{company}}`/`{{contact}}`); `start-segment`, `process-due`; `smoke_email_nurture_live.py` — лид → 1-е письмо на ib@; pytest 14 passed; acceptance §Nurture. **Коммит:** `1a2edd7`.

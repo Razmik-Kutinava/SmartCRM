@@ -1,5 +1,17 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Nurture хвост A — UI + segment live] | Статус: ✅ done — ждём апрув`
+
+> **→ Следующий агент:** LLM 20 касаний (после апрува) — [`PRD_MAP.md`](../product/PRD_MAP.md) Ф3 Email
+
+**2026-06-15:** DevTools `/ops/email` — таблица 4 chains; `smoke_email_nurture_segment_live.py` started=2; acceptance обновлён. **Коммит:** см. SESSION_STATE.
+
+**2026-06-15:** nurture live на ib@agneko.com; персонализация; `smoke_email_nurture_live.py`; pytest 14. **Коммит:** `1a2edd7`.
+
+**Следующий `go`:** апрув nurture → **go LLM 20 касаний** (BACKLOG).
+
+---
+
 `Спринт:[Ф3] | Задача:[Nurture 20 касаний live] | Статус: ✅ done — ждём апрув`
 
 > **→ Следующий агент:** Ф3 Self-improvement — [`PRD_MAP.md`](../product/PRD_MAP.md)

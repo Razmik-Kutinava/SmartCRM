@@ -50,6 +50,7 @@
 | `smoke_email_faq.py` | FAQ smoke: триггер «прайс» → `try_faq_autoreply` (SMTP mock) |
 | `smoke_email_faq_live.py` | Live: me@ SMTP + ib@→me@ «прайс» + sync + faq_auto outbound |
 | `smoke_email_nurture_live.py` | Live: тестовый лид-клиент → nurture start → process-due → 1-е письмо с `{{company}}` |
+| `smoke_email_nurture_segment_live.py` | Live: узкий сегмент `Nurture Live` → `start-segment` batch (без mass send) |
 | `probe_email_host.py` | Диагностика IMAP/SMTP портов для кастомного хоста (me@) |
 | `smoke_scoring_funnel.py` | Смоук балльной воронки: формула scoreAdvisory + приоритеты |
 | `smoke_whisper_stt.py` | Смоук Groq Whisper STT + опц. live Groq |
