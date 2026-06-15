@@ -10,10 +10,19 @@ export function isIndustryEmpty(value) {
 }
 
 export async function fetchLeadIndustries() {
+	const data = await fetchLeadIndustryCatalog();
+	return data.industries || [];
+}
+
+export async function fetchLeadIndustryCatalog() {
 	const r = await apiFetch('/api/leads/industries');
 	if (!r.ok) throw new Error(`industries ${r.status}`);
 	const data = await r.json();
-	return data.industries || [];
+	return {
+		industries: data.industries || [],
+		items: data.items || [],
+		withoutIndustryCount: data.withoutIndustryCount ?? 0,
+	};
 }
 
 export async function saveLeadIndustry(leadId, { industry, industryVerified = true }) {

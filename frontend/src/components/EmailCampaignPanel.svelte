@@ -13,17 +13,24 @@
 		campaignPreviewPayload,
 		campaignLaunchPayload,
 		firstExample,
+		WITHOUT_INDUSTRY_TOKEN,
 	} from '$lib/email/campaignSegmentLogic.js';
-	import { fetchLeadIndustries } from '$lib/leads/industryCatalog.js';
+	import {
+		toggleIndustry,
+		selectIndustriesWithLeads,
+	} from '$lib/email/campaignIndustryFilters.js';
+	import { fetchLeadIndustryCatalog } from '$lib/leads/industryCatalog.js';
 
 	let { accounts = [], error = $bindable(''), success = $bindable('') } = $props();
 
 	let accountId = $state(null);
 	let stage = $state('all');
 	let minScore = $state(50);
-	let industry = $state('');
+	let selectedIndustries = $state([]);
 	let industryVerified = $state(false);
-	let industryOptions = $state([]);
+	let industryItems = $state([]);
+	let withoutIndustryPool = $state(0);
+	let showAllIndustries = $state(false);
 	let withoutIndustry = $state(null);
 	let city = $state('');
 	let search = $state('');
@@ -47,7 +54,7 @@
 	const filterState = $derived({
 		stage,
 		minScore,
-		industry,
+		selectedIndustries,
 		industryVerified,
 		city,
 		search,
@@ -61,11 +68,42 @@
 		campaignName,
 	});
 
+	const visibleIndustryItems = $derived(
+		showAllIndustries ? industryItems : industryItems.filter((it) => (it.count ?? 0) > 0)
+	);
+
+	const selectedIndustryLabel = $derived(
+		selectedIndustries.length
+			? selectedIndustries
+					.map((n) => (n === WITHOUT_INDUSTRY_TOKEN ? 'без отрасли' : n))
+					.join(', ')
+			: 'все'
+	);
+
+	function isIndustryChecked(name) {
+		return selectedIndustries.includes(name);
+	}
+
+	function onIndustryToggle(name) {
+		selectedIndustries = toggleIndustry(selectedIndustries, name);
+	}
+
+	function onSelectWithLeads() {
+		selectedIndustries = selectIndustriesWithLeads(industryItems);
+	}
+
+	function onClearIndustries() {
+		selectedIndustries = [];
+	}
+
 	async function loadIndustryOptions() {
 		try {
-			industryOptions = await fetchLeadIndustries();
+			const data = await fetchLeadIndustryCatalog();
+			industryItems = data.items || [];
+			withoutIndustryPool = data.withoutIndustryCount ?? 0;
 		} catch {
-			industryOptions = [];
+			industryItems = [];
+			withoutIndustryPool = 0;
 		}
 	}
 
@@ -165,13 +203,53 @@
 				</select>
 				<input type="number" bind:value={minScore} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Min score" />
 			</div>
-			<div class="grid grid-cols-2 gap-2">
-				<select bind:value={industry} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" data-testid="campaign-industry">
-					<option value="">Все отрасли</option>
-					{#each industryOptions as opt (opt)}<option value={opt}>{opt}</option>{/each}
-				</select>
-				<input bind:value={city} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Город" />
+			<div class="space-y-2 rounded-xl border border-gray-800 bg-gray-950 p-3" data-testid="campaign-industry-box">
+				<div class="flex items-center justify-between gap-2">
+					<p class="text-xs text-gray-400 uppercase font-semibold">Отрасли сегмента</p>
+					<div class="flex gap-2 text-[11px]">
+						<button type="button" class="text-indigo-400 hover:underline" onclick={onSelectWithLeads} data-testid="campaign-industry-with-leads">С лидами</button>
+						<button type="button" class="text-gray-500 hover:underline" onclick={onClearIndustries} data-testid="campaign-industry-clear">Сброс</button>
+					</div>
+				</div>
+				<p class="text-[11px] text-gray-500">Выбрано: {selectedIndustryLabel}</p>
+				<div class="max-h-40 overflow-y-auto space-y-1 pr-1">
+					{#each visibleIndustryItems as it (it.name)}
+						<label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+							<input
+								type="checkbox"
+								class="accent-indigo-500 shrink-0"
+								checked={isIndustryChecked(it.name)}
+								onchange={() => onIndustryToggle(it.name)}
+								data-testid="campaign-industry-{it.name}"
+							/>
+							<span class="flex-1 truncate">{it.name}</span>
+							<span class="text-gray-600 tabular-nums">{it.count ?? 0}</span>
+						</label>
+					{/each}
+					{#if withoutIndustryPool > 0}
+						<label class="flex items-center gap-2 text-xs text-amber-400/90 cursor-pointer border-t border-gray-800 pt-1 mt-1">
+							<input
+								type="checkbox"
+								class="accent-indigo-500 shrink-0"
+								checked={isIndustryChecked(WITHOUT_INDUSTRY_TOKEN)}
+								onchange={() => onIndustryToggle(WITHOUT_INDUSTRY_TOKEN)}
+								data-testid="campaign-industry-without"
+							/>
+							<span class="flex-1">Без отрасли</span>
+							<span class="text-gray-600 tabular-nums">{withoutIndustryPool}</span>
+						</label>
+					{/if}
+					{#if !visibleIndustryItems.length && !withoutIndustryPool}
+						<p class="text-xs text-gray-600">Нет отраслей с лидами — заполни на карточках или «Указать отрасль»</p>
+					{/if}
+				</div>
+				{#if industryItems.some((it) => (it.count ?? 0) === 0)}
+					<button type="button" class="text-[11px] text-gray-500 hover:text-gray-300" onclick={() => { showAllIndustries = !showAllIndustries; }}>
+						{showAllIndustries ? 'Только с лидами' : 'Показать весь справочник'}
+					</button>
+				{/if}
 			</div>
+			<input bind:value={city} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Город" />
 			<label class="flex items-center gap-2 text-xs text-gray-400">
 				<input type="checkbox" bind:checked={industryVerified} class="accent-indigo-500" data-testid="campaign-industry-verified" />
 				Только лиды с проверенной отраслью

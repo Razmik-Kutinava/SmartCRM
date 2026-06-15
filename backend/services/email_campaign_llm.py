@@ -72,6 +72,7 @@ async def preview_segment_campaign(
         "stage": segment.get("stage") or "",
         "min_score": segment.get("min_score"),
         "industry": segment.get("industry") or "",
+        "industries": segment.get("industries") or [],
         "city": segment.get("city") or "",
         "search": segment.get("search") or "",
         "sample_leads": [l.to_dict() for l in samples],

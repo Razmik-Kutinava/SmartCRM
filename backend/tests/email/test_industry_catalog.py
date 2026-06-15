@@ -68,8 +68,28 @@ async def test_leads_industries_api(client, db_session):
     assert r.status_code == 200, r.text
     data = r.json()
     assert "industries" in data
+    assert "items" in data
     assert "Уникальная" in data["industries"]
     assert "IT и телеком" in data["industries"]
+    row = next((x for x in data["items"] if x["name"] == "Уникальная"), None)
+    assert row and row["count"] == 1
+
+
+@pytest.mark.asyncio
+async def test_industry_catalog_with_counts(db_session):
+    from services.industry_catalog import industry_catalog_with_counts
+
+    db_session.add_all(
+        [
+            Lead(company="A", industry="IT и телеком", email="a@a.ru"),
+            Lead(company="B", industry="—", email="b@b.ru"),
+        ]
+    )
+    await db_session.commit()
+    data = await industry_catalog_with_counts(db_session)
+    assert data["withoutIndustryCount"] == 1
+    it_row = next(x for x in data["items"] if x["name"] == "IT и телеком")
+    assert it_row["count"] == 1
 
 
 @pytest.mark.asyncio
@@ -84,6 +104,25 @@ async def test_patch_industry_verified(client):
     )
     assert patch_r.status_code == 200
     assert patch_r.json().get("industryVerified") is True
+
+
+@pytest.mark.asyncio
+async def test_campaign_segment_preview_multi_industry(client, db_session):
+    db_session.add_all(
+        [
+            Lead(company="It Co", industry="IT и телеком", email="it@it.ru", score=80),
+            Lead(company="Fin Co", industry="Финансы", email="fin@fin.ru", score=80),
+            Lead(company="Other", industry="Ритейл", email="r@r.ru", score=80),
+        ]
+    )
+    await db_session.commit()
+
+    r = await client.post(
+        "/api/email/campaigns/segment-preview",
+        json={"segment": {"industries": ["IT и телеком", "Финансы"], "min_score": 0}},
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["count"] == 2
 
 
 @pytest.mark.asyncio

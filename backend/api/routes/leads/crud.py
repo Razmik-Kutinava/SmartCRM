@@ -26,9 +26,9 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
 
 
 async def list_industries(db: AsyncSession = Depends(get_db)):
-    from services.industry_catalog import list_industry_catalog
+    from services.industry_catalog import industry_catalog_with_counts
 
-    return {"industries": await list_industry_catalog(db)}
+    return await industry_catalog_with_counts(db)
 
 
 async def create_lead(body: LeadCreate, db: AsyncSession = Depends(get_db)):

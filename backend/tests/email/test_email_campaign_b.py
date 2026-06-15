@@ -37,6 +37,26 @@ def test_segment_filters_industry_city_search():
     assert not lead_matches_segment(lead, {"industry": "ритейл"})
 
 
+def test_segment_filters_multiple_industries_or():
+    it = Lead(company="A", industry="IT и телеком", email="a@a.ru")
+    fin = Lead(company="B", industry="Финансы", email="b@b.ru")
+    retail = Lead(company="C", industry="Ритейл", email="c@c.ru")
+    seg = {"industries": ["IT и телеком", "Финансы"]}
+    assert lead_matches_segment(it, seg)
+    assert lead_matches_segment(fin, seg)
+    assert not lead_matches_segment(retail, seg)
+
+
+def test_segment_filters_without_industry_token():
+    from services.lead_segment_query import WITHOUT_INDUSTRY_TOKEN
+
+    empty = Lead(company="E", industry="—", email="e@e.ru")
+    filled = Lead(company="F", industry="IT", email="f@f.ru")
+    seg = {"industries": [WITHOUT_INDUSTRY_TOKEN]}
+    assert lead_matches_segment(empty, seg)
+    assert not lead_matches_segment(filled, seg)
+
+
 @pytest.mark.asyncio
 async def test_preview_manual_segment(db_session):
     from services.email_campaign_llm import preview_segment_campaign

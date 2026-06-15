@@ -1,7 +1,8 @@
 /** Массовая рассылка — сегмент и пресеты (этап B) */
 import { NURTURE_PRODUCT_PRESETS, DEFAULT_TEST_EMAIL } from './nurtureTouchLogic.js';
+import { WITHOUT_INDUSTRY_TOKEN } from './campaignIndustryFilters.js';
 
-export { NURTURE_PRODUCT_PRESETS, DEFAULT_TEST_EMAIL };
+export { NURTURE_PRODUCT_PRESETS, DEFAULT_TEST_EMAIL, WITHOUT_INDUSTRY_TOKEN };
 
 export function buildSegmentFilters(state) {
 	const seg = {};
@@ -9,8 +10,10 @@ export function buildSegmentFilters(state) {
 	if (stage && stage !== 'all') seg.stage = stage;
 	const ms = state.minScore;
 	if (ms != null && ms !== '' && !Number.isNaN(Number(ms))) seg.min_score = Number(ms);
-	const ind = (state.industry || '').trim();
-	if (ind) seg.industry = ind;
+
+	const selected = (state.selectedIndustries || []).filter(Boolean);
+	if (selected.length) seg.industries = selected;
+
 	if (state.industryVerified) seg.industry_verified = true;
 	const city = (state.city || '').trim();
 	if (city) seg.city = city;

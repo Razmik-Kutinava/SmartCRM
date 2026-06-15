@@ -73,7 +73,7 @@ UI: `EmailCampaignPanel.svelte` · логика: `campaignSegmentLogic.js`
 | Поле лида | `industry` + флаг `industryVerified` (`industry_verified` в БД) |
 | Модалка | `LeadIndustryModal` + `LeadIndustryHost` в root layout |
 | Пустая отрасль | Перед рассылкой с карточки (`openLeadMailing`) и перед превью nurture |
-| Массовый сегмент | Select отрасли, чекбокс «только проверенные», счётчик `withoutIndustry` |
+| Массовый сегмент | Чекбоксы отраслей (мультивыбор + счётчики), «без отрасли», verified |
 
 UI: `industryCatalog.js`, `leadIndustryUi.js`, карточка `/leads/{id}` — datalist + «Указать отрасль».
 

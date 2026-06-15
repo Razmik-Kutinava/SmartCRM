@@ -9,12 +9,46 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.lead_priority_tier import lead_priority_tier
 from db.models import Lead
 
+from services.industry_catalog import is_industry_empty
+
+
+WITHOUT_INDUSTRY_TOKEN = "__without_industry__"
+
 
 def _contains(hay: str, needle: str) -> bool:
     n = (needle or "").strip().lower()
     if not n:
         return True
     return n in (hay or "").lower()
+
+
+def _segment_industry_filters(seg: dict[str, Any]) -> list[str]:
+    raw = seg.get("industries") or seg.get("industry_list") or []
+    if isinstance(raw, str):
+        raw = [raw]
+    items = [str(x).strip() for x in raw if str(x).strip()]
+    single = str(seg.get("industry") or seg.get("filterIndustry") or "").strip()
+    if single and single not in items:
+        items.append(single)
+    return items
+
+
+def _industry_matches_filters(lead_industry: str | None, filters: list[str]) -> bool:
+    if not filters:
+        return True
+    empty = is_industry_empty(lead_industry)
+    if empty:
+        return WITHOUT_INDUSTRY_TOKEN in filters
+    hay = str(lead_industry).strip().lower()
+    for needle in filters:
+        if needle == WITHOUT_INDUSTRY_TOKEN:
+            continue
+        n = needle.strip().lower()
+        if not n:
+            continue
+        if hay == n or n in hay or hay in n:
+            return True
+    return False
 
 
 def lead_matches_segment(lead: Lead, seg: dict[str, Any], config: dict | None = None) -> bool:
@@ -35,8 +69,8 @@ def lead_matches_segment(lead: Lead, seg: dict[str, Any], config: dict | None = 
                 return False
         except (TypeError, ValueError):
             pass
-    industry = seg.get("industry") or seg.get("filterIndustry") or ""
-    if not _contains(lead.industry or "", industry):
+    industry_filters = _segment_industry_filters(seg)
+    if not _industry_matches_filters(lead.industry, industry_filters):
         return False
     city = seg.get("city") or seg.get("filterCity") or ""
     if not _contains(lead.city or "", city):
