@@ -4,7 +4,7 @@
 
 ## 2026-06-15 — Ф3 Email: автономия
 
-**Сделано:** FAQ autoreply по Ops-правилам; рассылки по сегменту; nurture 20 касаний + scheduler; autolink по домену; pytest 17 passed; `F3_EMAIL_AUTONOMY_ACCEPTANCE.md`; MAP Email `[x]`. **Коммит:** см. SESSION_STATE.
+**Сделано:** FAQ autoreply по Ops-правилам; рассылки по сегменту; nurture 20 касаний + scheduler; autolink по домену; pytest 17 passed; `F3_EMAIL_AUTONOMY_ACCEPTANCE.md`; MAP Email `[x]`. **Коммит:** `9a3be09`.
 
 ## 2026-06-15 — Ф3 Voice: апрув, revise, history
 

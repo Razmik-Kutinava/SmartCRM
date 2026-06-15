@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** Ф3 Self-improvement или Тендерный агент — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-15 (Ф3 Email):** FAQ autoreply (`AgentEmailIntent.auto_send` + post-sync); segment campaigns API+UI; 20-touch nurture chains + background scheduler; domain autolink + relink; pytest 17 passed; `F3_EMAIL_AUTONOMY_ACCEPTANCE.md`; MAP Email 4 пункта `[x]`. **Коммит:** см. SESSION_STATE.
+**2026-06-15 (Ф3 Email):** FAQ autoreply (`AgentEmailIntent.auto_send` + post-sync); segment campaigns API+UI; 20-touch nurture chains + background scheduler; domain autolink + relink; pytest 17 passed; `F3_EMAIL_AUTONOMY_ACCEPTANCE.md`; MAP Email 4 пункта `[x]`. **Коммит:** `9a3be09`.
 
 **Следующий `go`:** Ф3 Self-improvement / тендеры / ручной email смоук.
 

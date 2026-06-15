@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-15 | Действие: Ф3 §Email: FAQ autoreply, segment campaigns, 20-touch nurture, domain autolink; pytest 17 passed; MAP Email `[x]`; acceptance F3_EMAIL_AUTONOMY. | Коммит: `PENDING` | Хвост A: live SMTP/IMAP смоук — не запускали | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф3 Self-improvement или ручной email смоук. | Статус: done
+2026-06-15 | Действие: Ф3 §Email: FAQ autoreply, segment campaigns, 20-touch nurture, domain autolink; pytest 17 passed; MAP Email `[x]`; acceptance F3_EMAIL_AUTONOMY. | Коммит: `9a3be09` | Хвост A: live SMTP/IMAP смоук — не запускали | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф3 Self-improvement или ручной email смоук. | Статус: done
 
 2026-06-15 | Действие: Ф3 §Voice: голосовой апрув да/нет, revise «короче», ops history; pytest 27 passed 1 skipped; MAP Voice `[x]`; acceptance F3_VOICE_APPROVAL. | Коммит: `cad831c` | Хвост A: live DevTools смоук approve/revise — не запускали (фронт не поднят) | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф3 Email или ручной смоук голоса. | Статус: done
 
