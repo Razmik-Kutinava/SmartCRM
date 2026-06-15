@@ -4,7 +4,7 @@
 
 ## 2026-06-15 — Nurture хвост A: DevTools UI + segment batch live
 
-**Сделано:** `smoke_email_nurture_segment_live.py`; DevTools `/ops/email` таблица chains OK; segment `Nurture Live` started=2; BACKLOG LLM-тексты. **Коммит:** см. SESSION_STATE.
+**Сделано:** `smoke_email_nurture_segment_live.py`; DevTools `/ops/email` таблица chains OK; segment `Nurture Live` started=2; BACKLOG LLM-тексты. **Коммит:** `6f69239`.
 
 ## 2026-06-15 — Nurture 20 касаний live + персонализация
 

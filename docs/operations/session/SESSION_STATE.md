@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-15 | Действие: Nurture хвост A закрыт: DevTools /ops/email таблица 4 chains OK; smoke_email_nurture_segment_live started=2 (chains 3–4); acceptance обновлён. | Хвост A: нет | Хвост B: LLM-тексты 20 касаний → BACKLOG (ждём апрув) | Хвост C: нет | Следующий шаг: апрув nurture → go LLM 20 касаний. | Статус: in_progress
+2026-06-15 | Действие: Nurture хвост A закрыт: DevTools /ops/email таблица 4 chains OK; smoke_email_nurture_segment_live started=2 (chains 3–4); acceptance обновлён. | Коммит: `6f69239` | Хвост A: нет | Хвост B: LLM-тексты 20 касаний → BACKLOG (ждём апрув) | Хвост C: нет | Следующий шаг: апрув nurture → go LLM 20 касаний. | Статус: done
 
 2026-06-15 | Действие: Nurture live: персонализация {{company}}/{{contact}}, start-segment API, smoke_email_nurture_live OK (lead 3191, emails_sent=1); pytest test_email_f3 14 passed; acceptance §Nurture; README routes/scripts. | Коммит: `1a2edd7` | Хвост A: DevTools /ops/email таблица — браузер без PUBLIC_SMARTCRM_API_KEY; segment batch live не гоняли | Хвост B: нет | Хвост C: LLM-генерация текстов nurture — не в scope (шаблоны детерминированные) | Следующий шаг: апрув nurture → go Ф3 Self-improvement. | Статус: done
 
