@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-15 | Действие: fix drawer «Рассылка»: portal в body (не обрезался overflow), onclose вместо bindable, z-100; EmailNurturePanel leadId; pytest portal 2. | Коммит: `e440e00` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: проверить UI / go B. | Статус: done
+
 2026-06-15 | Действие: Рассылка с карточки лида: LeadMailingDrawer, реестр leadMailingTypes, кнопка «Рассылка» /leads/{id}, EmailNurturePanel lockLead/compact, deep link /email?lead&panel=nurture; smoke pytest 1. | Коммит: `14678ac` | Хвост A: нет | Хвост B: этапы B–D — BACKLOG | Хвост C: нет | Следующий шаг: go этап B или апрув. | Статус: done
 
 2026-06-15 | Действие: Этап A UI: EmailNurturePanel на /email — превью LLM, тест ib@, запуск цепочки 1/3/20, история; API preview-llm/test-send; RAG строгий; pytest 18. | Коммит: `e425c77` | Хвост A: нет | Хвост B: этапы B–D — BACKLOG/plan | Хвост C: нет | Следующий шаг: go этап B (массовый сегмент) или апрув A. | Статус: done
