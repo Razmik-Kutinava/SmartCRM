@@ -1,5 +1,17 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[LLM nurture 3 — MaxPatrol VM] | Статус: ✅ done — ждём апрув`
+
+> **→ Следующий агент:** расширение до 20 LLM касаний (после апрув) или Ф3 Self-improvement — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-15:** `POST /nurture/start-llm`; маркетолог 3 письма PT MaxPatrol VM; live lead 3187 HOCHLAND → ib@; `docs/modules/email_nurture.md`. **Коммит:** см. SESSION_STATE.
+
+**2026-06-15:** DevTools `/ops/email`; segment live `6f69239`. **Коммит:** `6f69239`.
+
+**Следующий `go`:** апрув LLM nurture → **go 20 касаний LLM** или Self-improvement.
+
+---
+
 `Спринт:[Ф3] | Задача:[Nurture хвост A — UI + segment live] | Статус: ✅ done — ждём апрув`
 
 > **→ Следующий агент:** LLM 20 касаний (после апрува) — [`PRD_MAP.md`](../product/PRD_MAP.md) Ф3 Email

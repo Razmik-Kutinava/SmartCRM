@@ -24,6 +24,7 @@ async def start_nurture_chain(
     account_id: int,
     plan: list[dict[str, Any]] | None = None,
     product: str | None = None,
+    chain_label: str | None = None,
 ) -> EmailNurtureChain:
     lead = await db.get(Lead, lead_id)
     if not lead:
@@ -43,10 +44,11 @@ async def start_nurture_chain(
 
     touches = plan or build_20_touch_plan(lead, product=product)
     now = datetime.now(timezone.utc)
+    label = chain_label or f"{len(touches)} касаний · {lead.company}"
     chain = EmailNurtureChain(
         lead_id=lead_id,
         account_id=account_id,
-        name=f"20 касаний · {lead.company}",
+        name=label,
         status="active",
         steps_total=len(touches),
     )

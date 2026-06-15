@@ -502,6 +502,74 @@ class NurtureSegmentStartBody(BaseModel):
     limit: int = 50
 
 
+class NurtureLlmStartBody(BaseModel):
+    account_id: int
+    lead_id: Optional[int] = None
+    product_name: str = "Positive Technologies MaxPatrol VM"
+    email_count: int = 3
+    sender_name: str = "Иван Б."
+    sender_email: str = "ib@agneko.com"
+    client_email: Optional[str] = None
+    send_now: bool = True
+
+
+@router.post("/nurture/start-llm", status_code=201)
+async def nurture_start_llm(body: NurtureLlmStartBody, db: AsyncSession = Depends(get_db)):
+    from agents.marketer_nurture import analyze_product_nurture
+    from services.email_nurture_llm import (
+        build_marketer_slots,
+        pick_nurture_lead,
+        run_llm_nurture_chain,
+    )
+
+    lead = await db.get(Lead, body.lead_id) if body.lead_id else None
+    if not lead:
+        lead = await pick_nurture_lead(db)
+    if not lead:
+        raise HTTPException(404, detail="Подходящий лид не найден")
+
+    if body.client_email:
+        lead.email = body.client_email.strip()
+
+    slots = await build_marketer_slots(
+        db,
+        lead,
+        product_name=body.product_name,
+        email_count=body.email_count,
+        sender_name=body.sender_name,
+        sender_email=body.sender_email,
+    )
+    llm_result = await analyze_product_nurture(slots)
+    if not llm_result.get("emails"):
+        raise HTTPException(502, detail=llm_result.get("summary") or "LLM не вернул письма")
+
+    try:
+        chain, meta = await run_llm_nurture_chain(
+            db,
+            lead_id=lead.id,
+            account_id=body.account_id,
+            llm_result=llm_result,
+            product_name=body.product_name,
+            live_all_now=body.send_now,
+        )
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e)) from e
+
+    send_stats: dict[str, int] = {}
+    if body.send_now:
+        send_stats = await run_nurture_due_steps(db)
+
+    await db.commit()
+    await db.refresh(chain)
+    return {
+        "lead": lead.to_dict(),
+        "chain": chain.to_dict(),
+        "marketer": meta,
+        "llm_emails": llm_result.get("emails"),
+        "process_due": send_stats,
+    }
+
+
 @router.post("/nurture/start", status_code=201)
 async def nurture_start(body: NurtureStartBody, db: AsyncSession = Depends(get_db)):
     try:

@@ -34,7 +34,17 @@ python -m pytest tests/email/test_email_f3.py tests/api/test_email_sync_api.py -
 
 **Плейсхолдеры:** `{{company}}`, `{{contact}}`, `{{greeting}}` — при отправке; продукт вшивается в шаблон при создании плана.
 
-**Код:** `services/email_nurture_plan.py`, `services/email_nurture.py`.
+**Код:** `services/email_nurture_plan.py`, `services/email_nurture.py`, `services/email_nurture_llm.py`, `agents/marketer_nurture.py`.
+
+### LLM-цепочка под продукт (пилот 3 письма)
+
+Маркетолог анализирует лида → генерирует N писем под продукт (MaxPatrol VM) → nurture с кастомным планом.
+
+| API | `POST /api/email/nurture/start-llm` |
+| Smoke | `python scripts/smoke_email_nurture_llm_live.py` |
+| Модуль | [`docs/modules/email_nurture.md`](../../../modules/email_nurture.md) |
+
+Live 2026-06-15: лид HOCHLAND (3187) → 3 письма на ib@, `emails_sent=3`.
 
 ## ENV (nurture)
 
@@ -63,6 +73,7 @@ python -m pytest tests/email/test_email_f3.py tests/api/test_email_sync_api.py -
 | Nurture segment | `python scripts/smoke_email_nurture_segment_live.py` | **OK** preview count=2 → `started=2`, chains 3–4 |
 | Nurture API | `GET /api/email/nurture/chains` | **OK** active chains в UI |
 | DevTools `/ops/email` | nurture table | **OK** таблица `nurture-chains-table`: ID, лид, active, шаги 1/20 (vite proxy + `PUBLIC_SMARTCRM_API_KEY`) |
+| LLM nurture 3 | `python scripts/smoke_email_nurture_llm_live.py` | **OK** lead 3187 HOCHLAND → 3 emails ib@, MaxPatrol VM |
 
 ## ENV
 
