@@ -4,7 +4,7 @@
 
 ## 2026-06-13 — me@agneko.am: хост Яндекс (MX)
 
-**Сделано:** `me@` на `imap.yandex.com` (MX → Yandex, не Hostland webmail); connect OK; `.env.example` комментарий; ISSUES закрыта. **Коммит:** см. SESSION_STATE.
+**Сделано:** `me@` на `imap.yandex.com` (MX → Yandex, не Hostland webmail); connect OK; `.env.example` комментарий; ISSUES закрыта. **Коммит:** `6ff7f4e`.
 
 ## 2026-06-13 — me@ диагностика (Hostland ложный след)
 

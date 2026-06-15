@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** Ф3 Self-improvement — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-13:** me@ — MX Яндекс, хост `imap.yandex.com` (не Hostland); connect OK `imported=50`; relink+FAQ OK. **Коммит:** см. SESSION_STATE.
+**2026-06-13:** me@ — MX Яндекс, хост `imap.yandex.com` (не Hostland); connect OK `imported=50`; relink+FAQ OK. **Коммит:** `6ff7f4e`.
 
 **2026-06-15 (Ф3 Email live):** ib@ connect+sync+SMTP OK; me@ connect 400; `smoke_email_smtp_send.py`; acceptance §Live. **Коммит:** `b207622`.
 

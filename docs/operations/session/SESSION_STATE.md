@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-13 | Действие: me@ fix — IMAP/SMTP на imap.yandex.com (MX Яндекс); connect OK imported=50; ib@ regression OK; FAQ on me@; pytest 21; ISSUES me@ закрыта. | Коммит: `PENDING` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф3 Self-improvement. | Статус: done
+2026-06-13 | Действие: me@ fix — IMAP/SMTP на imap.yandex.com (MX Яндекс); connect OK imported=50; ib@ regression OK; FAQ on me@; pytest 21; ISSUES me@ закрыта. | Коммит: `6ff7f4e` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф3 Self-improvement. | Статус: done
 
 2026-06-13 | Действие: повтор me@ connect после смены пароля — IMAP Invalid login; relink OK scanned=100; FAQ smoke OK; pytest 21; DevTools busy. | Коммит: `a987047` | Хвост A: me@ — пароль не принят mail.agneko.am (cPanel) | Хвост B: нет | Хвост C: нет | Следующий шаг: webmail login me@ → верный пароль в .env. | Статус: done
 
