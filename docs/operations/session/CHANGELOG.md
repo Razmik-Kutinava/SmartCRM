@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Этап D: отрасль (справочник и дозаполнение)
+
+**Сделано:** `GET /api/leads/industries`, поле `industry_verified`, модалка `LeadIndustryHost`, фильтр отрасли/verified в массовой рассылке, gate nurture без отрасли; pytest 12 (industry + campaign B). **Коммит:** `df12d01`.
+
 ## 2026-06-15 — Этап B: массовая рассылка по сегменту
 
 **Сделано:** `EmailCampaignPanel`, `preview-llm`/`test-send`, send_now, RAG маркетолог; pytest 6. **Коммит:** `e2257b4`.
