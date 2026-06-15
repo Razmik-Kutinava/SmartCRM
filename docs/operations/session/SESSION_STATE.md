@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-13 | Действие: Этап D: справочник отраслей — industry_catalog, GET /industries, industry_verified, модалка LeadIndustryHost, фильтр/verified в массовой рассылке, gate nurture; pytest 12. | Коммит: `df12d01` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go этап C. | Статус: done
+2026-06-13 | Действие: Массовая рассылка — чекбоксы отраслей (мультивыбор), счётчики лидов в /industries, фильтр industries[] + без отрасли; pytest 16. | Коммит: `e88a41f` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go этап C. | Статус: done
 
 2026-06-15 | Действие: fix рассылка навсегда: leadMailingUi store + LeadMailingHost в root layout; кнопка openLeadMailing(lead); pytest ui 2. | Коммит: `f47dd70` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: проверить UI. | Статус: done
 
