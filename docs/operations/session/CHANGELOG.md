@@ -4,7 +4,7 @@
 
 ## 2026-06-15 — LLM nurture: 3 письма под продукт (MaxPatrol VM)
 
-**Сделано:** `marketer_nurture.py`, `email_nurture_llm.py`, `POST /nurture/start-llm`; live HOCHLAND→ib@ 3 emails; `docs/modules/email_nurture.md`; PRD_MAP. **Коммит:** см. SESSION_STATE.
+**Сделано:** `marketer_nurture.py`, `email_nurture_llm.py`, `POST /nurture/start-llm`; live HOCHLAND→ib@ 3 emails; `docs/modules/email_nurture.md`; PRD_MAP. **Коммит:** `da4d49f`.
 
 ## 2026-06-15 — Nurture хвост A: DevTools UI + segment batch live
 
