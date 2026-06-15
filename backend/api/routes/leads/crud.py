@@ -25,6 +25,12 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
     return [lead_row.to_dict() for lead_row in leads]
 
 
+async def list_industries(db: AsyncSession = Depends(get_db)):
+    from services.industry_catalog import list_industry_catalog
+
+    return {"industries": await list_industry_catalog(db)}
+
+
 async def create_lead(body: LeadCreate, db: AsyncSession = Depends(get_db)):
     lead = Lead(**dump_lead_create(body))
     db.add(lead)

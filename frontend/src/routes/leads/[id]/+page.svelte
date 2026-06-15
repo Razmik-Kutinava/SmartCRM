@@ -39,6 +39,8 @@
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 	import { enrichLeadOnCard } from '$lib/search/enrichLeadOnCard.js';
 	import { openLeadMailing } from '$lib/leads/leadMailingUi.js';
+	import { openLeadIndustryModal } from '$lib/leads/leadIndustryUi.js';
+	import { fetchLeadIndustries, isIndustryEmpty } from '$lib/leads/industryCatalog.js';
 
 	let lead    = $state(null);
 	let notFound = $state(false);
@@ -80,6 +82,7 @@
 			await loadLeadTasks();
 		}
 		pullLead();
+		loadIndustryOptions();
 		return page.subscribe(pullLead);
 	});
 
@@ -101,6 +104,25 @@
 	let detailsSaving = $state(false);
 	let enrichRunning = $state(false);
 	let enrichMsg = $state('');
+	let industryOptions = $state([]);
+
+	async function loadIndustryOptions() {
+		try {
+			industryOptions = await fetchLeadIndustries();
+		} catch {
+			industryOptions = [];
+		}
+	}
+
+	function openIndustryModal() {
+		if (!lead) return;
+		openLeadIndustryModal(lead, {
+			onSaved: (saved) => {
+				sync();
+				syncDetailsDraftFromLead();
+			},
+		});
+	}
 
 	async function runLeadEnrich(force = false) {
 		if (!lead || enrichRunning) return;
@@ -679,7 +701,23 @@
 						</label>
 						<label class="block">
 							<span class="text-gray-500 text-xs">Отрасль</span>
-							<input bind:value={detailsDraft.industry} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
+							<div class="flex gap-1 mt-0.5">
+								<input
+									list="lead-card-industries"
+									bind:value={detailsDraft.industry}
+									class="flex-1 bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm"
+									data-testid="lead-card-industry"
+								/>
+								{#if lead.industryVerified}
+									<span class="shrink-0 px-1.5 py-1 text-[10px] rounded bg-emerald-900/50 text-emerald-300" title="Проверено">✓</span>
+								{/if}
+							</div>
+							<datalist id="lead-card-industries">
+								{#each industryOptions as opt (opt)}<option value={opt}></option>{/each}
+							</datalist>
+							{#if isIndustryEmpty(lead.industry)}
+								<button type="button" class="mt-1 text-[11px] text-amber-400 hover:underline" onclick={openIndustryModal} data-testid="lead-industry-prompt">Указать отрасль</button>
+							{/if}
 						</label>
 						<label class="block">
 							<span class="text-gray-500 text-xs">Город</span>

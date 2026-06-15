@@ -11,6 +11,7 @@ export function buildSegmentFilters(state) {
 	if (ms != null && ms !== '' && !Number.isNaN(Number(ms))) seg.min_score = Number(ms);
 	const ind = (state.industry || '').trim();
 	if (ind) seg.industry = ind;
+	if (state.industryVerified) seg.industry_verified = true;
 	const city = (state.city || '').trim();
 	if (city) seg.city = city;
 	const q = (state.search || '').trim();

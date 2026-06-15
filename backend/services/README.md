@@ -13,6 +13,8 @@
 | `email_bootstrap.py` | Подключение почты из `.env` в БД (`bootstrap-from-env`) |
 | `email_thread_list.py` | Enriched список тредов для UI (`isArchived`, `previewFrom`) |
 | `email_thread_analyze.py` | Анализ треда: тип письма + черновик маркетолога |
+| `industry_catalog.py` | Справочник отраслей (фикс + CRM) и статистика сегмента |
+| `lead_segment_query.py` | Фильтр лидов по сегменту для рассылок |
 
 Кэш ответов: `data/moy_zakupki_cache/`.  
 Тесты: `tests/test_tender_sources.py`.

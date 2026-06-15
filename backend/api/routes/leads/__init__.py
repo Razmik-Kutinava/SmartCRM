@@ -15,6 +15,7 @@ router.get("/analytics/export")(analytics_routes.analytics_export)
 router.include_router(engagement.router)
 
 router.get("")(crud.list_leads)
+router.get("/industries")(crud.list_industries)
 router.post("", status_code=201)(crud.create_lead)
 router.post("/lookalike-import", status_code=201)(crud.import_lookalike_leads)
 router.get("/{lead_id}")(crud.get_lead)

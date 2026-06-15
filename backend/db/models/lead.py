@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any, Optional
 
-from sqlalchemy import JSON, DateTime, Integer, Numeric, String, Text, func
+from sqlalchemy import JSON, Boolean, DateTime, Integer, Numeric, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from db.session import Base
@@ -32,6 +32,7 @@ class Lead(Base):
     website: Mapped[str] = mapped_column(String(255), default="—")
     employees: Mapped[str] = mapped_column(String(100), default="—")
     industry: Mapped[str] = mapped_column(String(255), default="—")
+    industry_verified: Mapped[bool] = mapped_column(default=False)
     city: Mapped[str] = mapped_column(String(255), default="—")
     responsible: Mapped[str] = mapped_column(String(255), default="Я")
     next_call: Mapped[str] = mapped_column(String(100), default="—")
@@ -108,6 +109,7 @@ class Lead(Base):
             "website": self.website,
             "employees": self.employees,
             "industry": self.industry,
+            "industryVerified": bool(getattr(self, "industry_verified", False)),
             "city": self.city,
             "responsible": self.responsible,
             "nextCall": self.next_call,

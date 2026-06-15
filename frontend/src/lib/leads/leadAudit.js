@@ -15,6 +15,7 @@ export const AUDIT_FIELD_LABELS = {
 	website: 'Сайт',
 	employees: 'Сотрудники',
 	industry: 'Отрасль',
+	industry_verified: 'Отрасль проверена',
 	city: 'Город',
 	responsible: 'Ответственный',
 	next_call: 'След. звонок',

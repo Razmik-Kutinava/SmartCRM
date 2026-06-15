@@ -12,6 +12,8 @@
 		nurturePayloadBase,
 		firstEmailForTest,
 	} from '$lib/email/nurtureTouchLogic.js';
+	import { isIndustryEmpty } from '$lib/leads/industryCatalog.js';
+	import { openLeadIndustryModal } from '$lib/leads/leadIndustryUi.js';
 
 	let {
 		accounts = [],
@@ -38,12 +40,35 @@
 	let previewEmails = $state([]);
 	let chains = $state([]);
 	let busy = $state('');
+	let localLeadPatch = $state(null);
 
 	const productValue = $derived(
 		product === '__custom__' ? (productCustom || '').trim() : product
 	);
 
-	const selectedLead = $derived(leads.find((l) => l.id === leadId) ?? null);
+	const selectedLead = $derived.by(() => {
+		const fromList = leads.find((l) => l.id === leadId) ?? null;
+		if (!fromList) return localLeadPatch;
+		return localLeadPatch ? { ...fromList, ...localLeadPatch } : fromList;
+	});
+
+	function runWithIndustry(fn) {
+		const lead = selectedLead;
+		if (!leadId || !lead) {
+			error = 'Выбери лида';
+			return;
+		}
+		if (isIndustryEmpty(lead.industry)) {
+			openLeadIndustryModal(lead, {
+				onSaved: (saved) => {
+					localLeadPatch = saved;
+					fn();
+				},
+			});
+			return;
+		}
+		fn();
+	}
 
 	$effect(() => {
 		if (initialLeadId != null) leadId = initialLeadId;
@@ -66,31 +91,33 @@
 			error = 'Выбери лида и продукт';
 			return;
 		}
-		error = '';
-		success = '';
-		busy = 'preview';
-		try {
-			const base = nurturePayloadBase({
-				leadId,
-				product: productValue,
-				touchCount,
-				senderName,
-				senderEmail,
-				themeMode,
-				subjectTemplate,
-				bodyTemplate,
-			});
-			const r = await previewNurtureLlm(base);
-			preview = r.marketer;
-			previewEmails = r.emails || [];
-			success = r.has_rag
-				? 'Превью готово (RAG подключён)'
-				: 'Превью готово (без RAG — только общие формулировки)';
-		} catch (e) {
-			error = e?.message || String(e);
-		} finally {
-			busy = '';
-		}
+		runWithIndustry(async () => {
+			error = '';
+			success = '';
+			busy = 'preview';
+			try {
+				const base = nurturePayloadBase({
+					leadId,
+					product: productValue,
+					touchCount,
+					senderName,
+					senderEmail,
+					themeMode,
+					subjectTemplate,
+					bodyTemplate,
+				});
+				const r = await previewNurtureLlm(base);
+				preview = r.marketer;
+				previewEmails = r.emails || [];
+				success = r.has_rag
+					? 'Превью готово (RAG подключён)'
+					: 'Превью готово (без RAG — только общие формулировки)';
+			} catch (e) {
+				error = e?.message || String(e);
+			} finally {
+				busy = '';
+			}
+		});
 	}
 
 	async function onTestIb() {
@@ -179,8 +206,13 @@
 					data-testid="nurture-lead-locked"
 				>
 					{selectedLead?.company || `Лид #${leadId}`}
-					{#if selectedLead?.industry}
+					{#if selectedLead?.industry && !isIndustryEmpty(selectedLead.industry)}
 						<span class="text-gray-500"> · {selectedLead.industry}</span>
+						{#if selectedLead.industryVerified}
+							<span class="text-emerald-500 text-[10px]" title="Отрасль проверена"> ✓</span>
+						{/if}
+					{:else}
+						<span class="text-amber-500 text-xs"> · укажи отрасль</span>
 					{/if}
 				</div>
 			{:else}

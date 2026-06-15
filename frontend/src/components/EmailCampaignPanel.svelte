@@ -14,6 +14,7 @@
 		campaignLaunchPayload,
 		firstExample,
 	} from '$lib/email/campaignSegmentLogic.js';
+	import { fetchLeadIndustries } from '$lib/leads/industryCatalog.js';
 
 	let { accounts = [], error = $bindable(''), success = $bindable('') } = $props();
 
@@ -21,6 +22,9 @@
 	let stage = $state('all');
 	let minScore = $state(50);
 	let industry = $state('');
+	let industryVerified = $state(false);
+	let industryOptions = $state([]);
+	let withoutIndustry = $state(null);
 	let city = $state('');
 	let search = $state('');
 	let product = $state(NURTURE_PRODUCT_PRESETS[0]);
@@ -40,7 +44,30 @@
 	let busy = $state('');
 
 	const productValue = $derived(product === '__custom__' ? (productCustom || '').trim() : product);
-	const filterState = $derived({ stage, minScore, industry, city, search, product: productValue, senderName, senderEmail, themeMode, subjectTemplate, bodyTemplate, accountId, campaignName });
+	const filterState = $derived({
+		stage,
+		minScore,
+		industry,
+		industryVerified,
+		city,
+		search,
+		product: productValue,
+		senderName,
+		senderEmail,
+		themeMode,
+		subjectTemplate,
+		bodyTemplate,
+		accountId,
+		campaignName,
+	});
+
+	async function loadIndustryOptions() {
+		try {
+			industryOptions = await fetchLeadIndustries();
+		} catch {
+			industryOptions = [];
+		}
+	}
 
 	async function loadHistory() {
 		try {
@@ -56,6 +83,7 @@
 		try {
 			const r = await previewCampaignSegment(buildSegmentFilters(filterState));
 			segmentCount = r.count;
+			withoutIndustry = r.withoutIndustry ?? null;
 		} catch (e) {
 			error = e?.message || String(e);
 		} finally {
@@ -73,6 +101,7 @@
 			preview = r;
 			examples = r.examples || [];
 			segmentCount = r.count;
+			withoutIndustry = r.withoutIndustry ?? null;
 			success = r.has_rag ? '3 примера готовы (RAG)' : '3 примера готовы';
 		} catch (e) {
 			error = e?.message || String(e);
@@ -111,7 +140,10 @@
 		}
 	}
 
-	$effect(() => { loadHistory(); });
+	$effect(() => {
+		loadHistory();
+		loadIndustryOptions();
+	});
 </script>
 
 <div class="flex-1 overflow-y-auto min-h-0 px-5 py-4 space-y-5" data-testid="campaign-mass-panel">
@@ -134,12 +166,26 @@
 				<input type="number" bind:value={minScore} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Min score" />
 			</div>
 			<div class="grid grid-cols-2 gap-2">
-				<input bind:value={industry} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Отрасль" />
+				<select bind:value={industry} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" data-testid="campaign-industry">
+					<option value="">Все отрасли</option>
+					{#each industryOptions as opt (opt)}<option value={opt}>{opt}</option>{/each}
+				</select>
 				<input bind:value={city} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Город" />
 			</div>
+			<label class="flex items-center gap-2 text-xs text-gray-400">
+				<input type="checkbox" bind:checked={industryVerified} class="accent-indigo-500" data-testid="campaign-industry-verified" />
+				Только лиды с проверенной отраслью
+			</label>
 			<input bind:value={search} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Поиск (компания, контакт…)" />
 			<button type="button" onclick={onCountPreview} disabled={!!busy} class="text-xs text-indigo-400 hover:underline text-left">1. Сколько лидов в сегменте?</button>
-			{#if segmentCount != null}<p class="text-xs text-gray-500" data-testid="campaign-segment-count">Лидов: {segmentCount}</p>{/if}
+			{#if segmentCount != null}
+				<p class="text-xs text-gray-500" data-testid="campaign-segment-count">
+					Лидов: {segmentCount}
+					{#if withoutIndustry != null && withoutIndustry > 0}
+						<span class="text-amber-500/90"> · без отрасли: {withoutIndustry}</span>
+					{/if}
+				</p>
+			{/if}
 			<select bind:value={product} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white">
 				{#each NURTURE_PRODUCT_PRESETS as p}<option value={p}>{p}</option>{/each}
 				<option value="__custom__">Свой продукт…</option>

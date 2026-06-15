@@ -9,6 +9,7 @@
 	import { tryHandleVoiceFollowup, hasVoiceFollowupContext, parseVoiceFollowup } from '$lib/voice/voiceFollowup.js';
 	import VoiceActionHost from '../components/VoiceActionHost.svelte';
 	import LeadMailingHost from '../components/LeadMailingHost.svelte';
+	import LeadIndustryHost from '../components/LeadIndustryHost.svelte';
 	import { goto } from '$app/navigation';
 
 	let { children } = $props();
@@ -467,4 +468,5 @@
 
 	<VoiceActionHost />
 	<LeadMailingHost />
+	<LeadIndustryHost />
 </div>

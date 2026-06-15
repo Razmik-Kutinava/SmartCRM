@@ -63,10 +63,20 @@ Host в корневом `+layout.svelte` — `fixed` поверх всего UI
 
 UI: `EmailCampaignPanel.svelte` · логика: `campaignSegmentLogic.js`
 
-Фильтры: stage, score, industry, city, search. Апрув чекбокс после 3 примеров.
+Фильтры: stage, score, industry (справочник), city, search, `industry_verified`. Апрув чекбокс после 3 примеров.
 
-## Дальше (план C–D)
+## Этап D — отрасль (справочник и дозаполнение) ✅
 
-- B: ~~массовый сегмент + апрув 3 примеров~~ → см. § этап B
+| Что | Где |
+|-----|-----|
+| Справочник | `GET /api/leads/industries` — фиксированный список + значения из CRM (`services/industry_catalog.py`) |
+| Поле лида | `industry` + флаг `industryVerified` (`industry_verified` в БД) |
+| Модалка | `LeadIndustryModal` + `LeadIndustryHost` в root layout |
+| Пустая отрасль | Перед рассылкой с карточки (`openLeadMailing`) и перед превью nurture |
+| Массовый сегмент | Select отрасли, чекбокс «только проверенные», счётчик `withoutIndustry` |
+
+UI: `industryCatalog.js`, `leadIndustryUi.js`, карточка `/leads/{id}` — datalist + «Указать отрасль».
+
+## Дальше (план C)
+
 - C: тип цепочки new/cross/upsell + `products_owned`
-- D: справочник отраслей

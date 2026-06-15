@@ -467,8 +467,11 @@ class SegmentPreviewBody(BaseModel):
 
 @router.post("/campaigns/segment-preview")
 async def preview_campaign_segment(body: SegmentPreviewBody, db: AsyncSession = Depends(get_db)):
+    from services.industry_catalog import segment_industry_stats
+
     ids = await resolve_segment_lead_ids(db, body.segment)
-    return {"count": len(ids), "leadIds": ids[:100]}
+    stats = await segment_industry_stats(db, ids)
+    return {"count": len(ids), "leadIds": ids[:100], **stats}
 
 
 class CampaignPreviewLlmBody(BaseModel):

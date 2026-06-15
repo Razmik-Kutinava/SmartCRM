@@ -27,6 +27,10 @@ async def preview_segment_campaign(
     if not lead_ids:
         return {"count": 0, "leadIds": [], "error": "Сегмент пуст (нет лидов с email)"}
 
+    from services.industry_catalog import segment_industry_stats
+
+    industry_stats = await segment_industry_stats(db, lead_ids)
+
     rows = (await db.execute(select(Lead).where(Lead.id.in_(lead_ids[:200])))).scalars().all()
     by_id = {r.id: r for r in rows}
     ordered = [by_id[i] for i in lead_ids if i in by_id]
@@ -49,6 +53,7 @@ async def preview_segment_campaign(
         return {
             "count": len(lead_ids),
             "leadIds": lead_ids[:100],
+            **industry_stats,
             "subject_template": subj_t,
             "body_template": body_t,
             "examples": examples,
@@ -92,6 +97,7 @@ async def preview_segment_campaign(
     return {
         "count": len(lead_ids),
         "leadIds": lead_ids[:100],
+        **industry_stats,
         "subject_template": subj_t,
         "body_template": body_t,
         "examples": examples[:3],

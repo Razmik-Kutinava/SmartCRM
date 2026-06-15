@@ -44,6 +44,9 @@ def lead_matches_segment(lead: Lead, seg: dict[str, Any], config: dict | None = 
     source = seg.get("source") or ""
     if source and not _contains(getattr(lead, "source", "") or "", source):
         return False
+    if seg.get("industry_verified") is True:
+        if not bool(getattr(lead, "industry_verified", False)):
+            return False
     q = (seg.get("search") or seg.get("query") or "").strip().lower()
     if q:
         blob = " ".join(

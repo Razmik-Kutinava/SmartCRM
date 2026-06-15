@@ -73,6 +73,9 @@ class LeadPatch(BaseModel):
     website: Optional[str] = None
     employees: Optional[str] = None
     industry: Optional[str] = None
+    industry_verified: Optional[bool] = Field(
+        None, validation_alias=AliasChoices("industryVerified", "industry_verified")
+    )
     city: Optional[str] = None
     responsible: Optional[str] = None
     next_call: Optional[str] = None
