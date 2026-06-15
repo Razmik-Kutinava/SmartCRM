@@ -49,6 +49,7 @@ def test_load_accounts_empty_without_password(monkeypatch):
 def test_account_password_per_account(monkeypatch):
     monkeypatch.delenv("EMAIL_APP_PASSWORD", raising=False)
     monkeypatch.delenv("EMAIL_PASSWORD", raising=False)
+    monkeypatch.delenv("EMAIL_CONNECT_ONLY", raising=False)
     monkeypatch.setenv("EMAIL_ACCOUNT_1_USER", "me@custom.am")
     monkeypatch.setenv("EMAIL_ACCOUNT_1_APP_PASSWORD", "secret-one")
     for i in range(2, 6):

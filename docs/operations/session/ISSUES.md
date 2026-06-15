@@ -10,17 +10,15 @@
 
 ---
 
-[2026-06-13] — me@agneko.am: IMAP Invalid login (после смены пароля)
+[2026-06-13] — me@agneko.am: IMAP Invalid login (Hostland vs Yandex)
 
-Приоритет: 🟡 | Статус: открыта
+Приоритет: 🟡 | Статус: закрыта ✅
 
-Описание: `mail.agneko.am:993` + `EMAIL_ACCOUNT_1_INSECURE_SSL=1` → `Invalid login or password`. SMTP 535. Новый пароль в `.env` (16 символов) — сервер не принимает. Код SmartCRM OK; `ib@` OK. DevTools webmail — browser busy.
+Описание: Webmail `mail.hostland.ru` пускал, но IMAP на `mail.agneko.am`/`mail.hostland.ru` — `Invalid login`. MX `agneko.am` → `mx.yandex.net`. Ящик на **Яндекс** (`imap.yandex.com`).
 
-Влияние: me@ не синкается.
+Решение: `EMAIL_ACCOUNT_1_IMAP_HOST=imap.yandex.com`, `SMTP=smtp.yandex.com`, убрать `INSECURE_SSL`. Connect OK `imported=50`.
 
-Решение: в cPanel → Email Accounts сбросить пароль ящика `me@agneko.am`; проверить вход на `https://mail.agneko.am/webmail`; в `.env` — **пароль ящика cPanel**, не Яндекс app-password.
-
-Агент: F3 email хвост A
+Агент: F3 email me@
 
 ---
 

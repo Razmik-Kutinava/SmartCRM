@@ -32,8 +32,7 @@ python -m pytest tests/email/test_email_f3.py tests/api/test_email_sync_api.py -
 
 | Шаг | Команда | Результат |
 |-----|---------|-----------|
-| Connect | `EMAIL_CONNECT_ONLY=1 python scripts/smoke_email_connect.py` | **me@agneko.am** FAIL — IMAP `Invalid login or password` на `mail.agneko.am` (креды cPanel, не код) |
-| Probe | `python scripts/probe_email_host.py` | SSL mismatch → `EMAIL_ACCOUNT_1_INSECURE_SSL=1`; SMTP 535 auth |
+| Connect me@ | `EMAIL_CONNECT_ONLY=1 python scripts/smoke_email_connect.py` | **OK** `imported=50` — хост `imap.yandex.com` (MX Яндекс, не Hostland webmail) |
 | IMAP sync | `python scripts/smoke_email_sync.py` | OK ib@ `total=50` |
 | SMTP send | `python scripts/smoke_email_smtp_send.py` | OK ib@ self-send |
 | Relink | `POST /api/email/relink-orphans?limit=100` | OK `scanned=100` ~15s (индекс лидов) |

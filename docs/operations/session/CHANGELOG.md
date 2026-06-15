@@ -2,7 +2,11 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
-## 2026-06-15 — Ф3 Email хвосты A (relink, FAQ, me@ диагностика)
+## 2026-06-13 — me@agneko.am: хост Яндекс (MX)
+
+**Сделано:** `me@` на `imap.yandex.com` (MX → Yandex, не Hostland webmail); connect OK; `.env.example` комментарий; ISSUES закрыта. **Коммит:** см. SESSION_STATE.
+
+## 2026-06-13 — me@ диагностика (Hostland ложный след)
 
 **Сделано:** `EMAIL_ACCOUNT_N_APP_PASSWORD`; `email_tls` insecure SSL; relink orphans `limit` + lead index; `smoke_email_faq.py`, `probe_email_host.py`; connect 400 с явным auth hint; pytest 21; me@ — IMAP Invalid login (креды cPanel). **Коммит:** `77419d9`.
 
