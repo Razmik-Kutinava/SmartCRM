@@ -11,33 +11,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models import EmailAccount, EmailMessage, EmailThread, Lead, Task
 from db.models.email_nurture import EmailNurtureChain, EmailNurtureStep
+from services.email_nurture_plan import build_20_touch_plan, personalize_touch
+from services.lead_segment_query import resolve_segment_lead_ids
 
 logger = logging.getLogger(__name__)
-
-_CHANNELS = ("email", "phone", "linkedin", "email")
-
-
-def build_20_touch_plan(lead: Lead) -> list[dict[str, Any]]:
-    """Детерминированный план 20 касаний (каждые 3 дня)."""
-    company = lead.company or "клиент"
-    contact = lead.contact or ""
-    steps = []
-    for i in range(20):
-        ch = _CHANNELS[i % len(_CHANNELS)]
-        day = i * 3
-        if ch == "email":
-            subj = f"{company}: касание {i + 1}"
-            body = (
-                f"Здравствуйте{', ' + contact if contact else ''}!\n\n"
-                f"Короткое напоминание по сотрудничеству с {company} (шаг {i + 1} из 20).\n"
-                f"Готовы обсудить следующий шаг.\n\nС уважением,\nSmartCRM"
-            )
-            steps.append({"day": day, "channel": ch, "action": f"Email {i + 1}", "subject": subj, "body": body})
-        elif ch == "phone":
-            steps.append({"day": day, "channel": ch, "action": f"Звонок — {company}", "subject": "", "body": ""})
-        else:
-            steps.append({"day": day, "channel": ch, "action": f"LinkedIn касание {i + 1}", "subject": "", "body": ""})
-    return steps
 
 
 async def start_nurture_chain(
@@ -46,6 +23,7 @@ async def start_nurture_chain(
     lead_id: int,
     account_id: int,
     plan: list[dict[str, Any]] | None = None,
+    product: str | None = None,
 ) -> EmailNurtureChain:
     lead = await db.get(Lead, lead_id)
     if not lead:
@@ -63,7 +41,7 @@ async def start_nurture_chain(
     if existing.scalars().first():
         raise ValueError("У лида уже есть активная цепочка")
 
-    touches = plan or build_20_touch_plan(lead)
+    touches = plan or build_20_touch_plan(lead, product=product)
     now = datetime.now(timezone.utc)
     chain = EmailNurtureChain(
         lead_id=lead_id,
@@ -93,6 +71,42 @@ async def start_nurture_chain(
         )
     await db.flush()
     return chain
+
+
+async def start_nurture_for_segment(
+    db: AsyncSession,
+    *,
+    account_id: int,
+    segment: dict[str, Any],
+    product: str | None = None,
+    limit: int = 50,
+) -> dict[str, Any]:
+    """Старт 20 касаний для каждого лида сегмента (персональный план на лид)."""
+    lead_ids = await resolve_segment_lead_ids(db, segment)
+    if not lead_ids:
+        return {"started": 0, "skipped": 0, "chains": [], "reason": "сегмент пуст"}
+
+    started = skipped = 0
+    chains: list[dict] = []
+    for lid in lead_ids[: max(1, min(limit, 200))]:
+        lead = await db.get(Lead, lid)
+        if not lead or not (lead.email or "").strip() or lead.email.strip() == "—":
+            skipped += 1
+            continue
+        try:
+            chain = await start_nurture_chain(
+                db, lead_id=lid, account_id=account_id, product=product
+            )
+            chains.append(chain.to_dict())
+            started += 1
+        except ValueError:
+            skipped += 1
+    return {"started": started, "skipped": skipped, "chains": chains}
+
+
+async def run_nurture_due_steps(db: AsyncSession) -> dict[str, int]:
+    """Публичная обёртка для smoke/cron."""
+    return await process_due_nurture_steps(db)
 
 
 async def pause_chain_on_inbound(db: AsyncSession, thread_id: int) -> bool:
@@ -156,8 +170,8 @@ async def process_due_nurture_steps(db: AsyncSession) -> dict[str, int]:
                 step.status = "skipped"
                 skipped += 1
                 continue
-            subj = step.subject or f"Касание {step.step_index}"
-            body = step.body or step.action
+            subj = personalize_touch(step.subject or f"Касание {step.step_index}", lead)
+            body = personalize_touch(step.body or step.action, lead)
             try:
                 await send_email_via_smtp(account, subj, body, [em], [], [])
             except Exception as e:
@@ -197,7 +211,7 @@ async def process_due_nurture_steps(db: AsyncSession) -> dict[str, int]:
         else:
             db.add(
                 Task(
-                    title=f"[{step.channel}] {step.action or 'Касание'}",
+                    title=f"[{step.channel}] {personalize_touch(step.action or 'Касание', lead)}",
                     status="open",
                     due=step.scheduled_at.strftime("%d.%m.%Y"),
                     assignee="Маркетолог",

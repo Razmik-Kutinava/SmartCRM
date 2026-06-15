@@ -8,7 +8,7 @@
 |---|-------|----------|
 | 1 | FAQ auto-reply по Ops | `AgentEmailIntent.auto_send` + триггеры; после IMAP sync → `try_faq_autoreply` |
 | 2 | Рассылки по сегменту | `POST /api/email/campaigns` с `segment`; UI `/email` campaigns |
-| 3 | 20 касаний автономно | `POST /api/email/nurture/start`; фон `process_due_nurture_steps` |
+| 3 | 20 касаний автономно | `POST /api/email/nurture/start` (лид) или `/nurture/start-segment` (фильтры); фон `process_due_nurture_steps`; персонализация `{{company}}`/`{{contact}}` |
 | 4 | Автолинк по домену | `find_lead_for_email` domain; `POST /api/email/relink-orphans` |
 
 ## Автотесты
@@ -18,10 +18,29 @@ cd backend
 python -m pytest tests/email/test_email_f3.py tests/api/test_email_sync_api.py -q
 ```
 
-## ENV
+## Nurture 20 касаний (маркетолог)
 
-- `EMAIL_FAQ_AUTOREPLY=1` (default) — вкл FAQ
-- `EMAIL_FAQ_MAX_PER_DAY=50` — лимит автоответов/день
+**Смысл:** одна цепочка = один клиент (лид) или пакет лидов по сегменту. Шаблоны писем общие, при отправке подставляются имя компании и контакт; продукт задаётся при старте (`product_name`).
+
+| Режим | API | Когда |
+|-------|-----|-------|
+| Один клиент | `POST /api/email/nurture/start` | `lead_id`, `account_id`, опц. `product_name` |
+| Сегмент | `POST /api/email/nurture/start-segment` | `segment` (как campaigns: `stage`, `min_score`), `limit` до 200 |
+| Исполнение | `POST /api/email/nurture/process-due` | шаги с `scheduled_at <= now`; шаг 1 — сразу (day=0) |
+| Пауза | `POST /api/email/nurture/{id}/pause` | вручную или при inbound ответе |
+| Список | `GET /api/email/nurture/chains?lead_id=` | UI `/ops/email` |
+
+**20 шагов:** каналы email → phone → linkedin → email…; интервал 3 дня; ~10 писем SMTP, остальное — задачи CRM (Маркетолог).
+
+**Плейсхолдеры:** `{{company}}`, `{{contact}}`, `{{greeting}}` — при отправке; продукт вшивается в шаблон при создании плана.
+
+**Код:** `services/email_nurture_plan.py`, `services/email_nurture.py`.
+
+## ENV (nurture)
+
+- `NURTURE_TEST_CLIENT_EMAIL` — email тестового «клиента» для live smoke (иначе `EMAIL_ACCOUNT_2_USER`)
+- `NURTURE_PRODUCT_NAME` — дефолт продукта в шаблонах, если не передан `product_name`
+
 
 ## Ops UI
 
@@ -40,6 +59,14 @@ python -m pytest tests/email/test_email_f3.py tests/api/test_email_sync_api.py -
 | SMTP ib@ | `python scripts/smoke_email_smtp_send.py` | OK |
 | Relink | `POST /api/email/relink-orphans?limit=100` | OK `scanned=100` |
 | DevTools UI | `/email`, `/ops/email`, `/ops/email-agents` | OK: треды «прайс», Relink, FAQ-правила |
+| Nurture live | `python scripts/smoke_email_nurture_live.py` | **OK** лид 3191 → chain 2 → `emails_sent=1`, subject с `Nurture Live Клиент ООО` |
+| Nurture API | `GET /api/email/nurture/chains` | **OK** 2 active chains, `stepsSent=1/20` |
+| DevTools `/ops/email` | nurture table | API контракт OK; UI в браузере без `PUBLIC_SMARTCRM_API_KEY` — пустая страница (ожидаемо) |
+
+## ENV
+
+- `EMAIL_FAQ_AUTOREPLY=1` (default) — вкл FAQ
+- `EMAIL_FAQ_MAX_PER_DAY=50` — лимит автоответов/день
 
 Backend: `uvicorn` :8000, фоновый auto-sync `imported=0 total=50` в логах.
 

@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-15 | Действие: Nurture live: персонализация {{company}}/{{contact}}, start-segment API, smoke_email_nurture_live OK (lead 3191, emails_sent=1); pytest test_email_f3 14 passed; acceptance §Nurture; README routes/scripts. | Хвост A: DevTools /ops/email таблица — браузер без PUBLIC_SMARTCRM_API_KEY; segment batch live не гоняли | Хвост B: нет | Хвост C: LLM-генерация текстов nurture — не в scope (шаблоны детерминированные) | Следующий шаг: ops commit с хешем. | Статус: in_progress
+
 2026-06-15 | Действие: Email live полный: me@ SMTP, FAQ live ib@→me@, fix threads API max(bool); DevTools /email /ops/email; smoke_email_faq_live.py; pytest 16. | Коммит: `82a5803` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: апрув Email → go Self-improvement. | Статус: done
 
 2026-06-13 | Действие: me@ fix — IMAP/SMTP на imap.yandex.com (MX Яндекс); connect OK imported=50; ib@ regression OK; FAQ on me@; pytest 21; ISSUES me@ закрыта. | Коммит: `6ff7f4e` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф3 Self-improvement. | Статус: done

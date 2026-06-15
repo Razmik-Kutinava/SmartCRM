@@ -24,7 +24,7 @@ from services.email_thread_analyze import analyze_email_thread
 from services.email_smtp import send_email_via_smtp as _send_email_via_smtp
 from services.lead_segment_query import resolve_segment_lead_ids
 from services.email_lead_match import relink_orphan_threads
-from services.email_nurture import start_nurture_chain
+from services.email_nurture import run_nurture_due_steps, start_nurture_chain, start_nurture_for_segment
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/email", tags=["email"])
@@ -492,12 +492,25 @@ async def relink_orphan_email_threads(
 class NurtureStartBody(BaseModel):
     lead_id: int
     account_id: int
+    product_name: Optional[str] = None
+
+
+class NurtureSegmentStartBody(BaseModel):
+    account_id: int
+    segment: dict[str, Any]
+    product_name: Optional[str] = "новый продукт"
+    limit: int = 50
 
 
 @router.post("/nurture/start", status_code=201)
 async def nurture_start(body: NurtureStartBody, db: AsyncSession = Depends(get_db)):
     try:
-        chain = await start_nurture_chain(db, lead_id=body.lead_id, account_id=body.account_id)
+        chain = await start_nurture_chain(
+            db,
+            lead_id=body.lead_id,
+            account_id=body.account_id,
+            product=body.product_name,
+        )
     except ValueError as e:
         raise HTTPException(400, detail=str(e)) from e
     await db.commit()
@@ -508,6 +521,28 @@ async def nurture_start(body: NurtureStartBody, db: AsyncSession = Depends(get_d
         )
     ).scalars().all()
     return {"chain": chain.to_dict(), "steps": [s.to_dict() for s in steps]}
+
+
+@router.post("/nurture/start-segment", status_code=201)
+async def nurture_start_segment(body: NurtureSegmentStartBody, db: AsyncSession = Depends(get_db)):
+    result = await start_nurture_for_segment(
+        db,
+        account_id=body.account_id,
+        segment=body.segment,
+        product=body.product_name,
+        limit=body.limit,
+    )
+    if result.get("started", 0) == 0 and not result.get("chains"):
+        raise HTTPException(400, detail=result.get("reason", "Не удалось запустить цепочки"))
+    await db.commit()
+    return result
+
+
+@router.post("/nurture/process-due")
+async def nurture_process_due(db: AsyncSession = Depends(get_db)):
+    stats = await run_nurture_due_steps(db)
+    await db.commit()
+    return stats
 
 
 @router.get("/nurture/chains")

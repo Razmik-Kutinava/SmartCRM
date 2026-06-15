@@ -14,7 +14,8 @@ from db.models.email_nurture import EmailNurtureChain, EmailNurtureStep
 from main import app
 from services.email_faq_matcher import match_faq_intent
 from services.email_lead_match import email_domain, find_lead_for_email, lead_domain_keys
-from services.email_nurture import build_20_touch_plan, start_nurture_chain
+from services.email_nurture import start_nurture_chain
+from services.email_nurture_plan import build_20_touch_plan, personalize_touch
 from services.lead_segment_query import lead_matches_segment, resolve_segment_lead_ids
 
 import core.auth as auth_module
@@ -63,9 +64,46 @@ def test_faq_matcher_keywords():
 
 def test_build_20_touch_plan():
     lead = Lead(company="Acme", contact="Ivan")
-    plan = build_20_touch_plan(lead)
+    plan = build_20_touch_plan(lead, product="MegaCRM")
     assert len(plan) == 20
     assert plan[0]["channel"] == "email"
+    assert "{{company}}" in plan[0]["subject"]
+    rendered = personalize_touch(plan[0]["body"], lead, product="MegaCRM")
+    assert "Acme" in rendered
+    assert "Ivan" in rendered
+    assert "MegaCRM" in rendered
+
+
+@pytest.mark.asyncio
+async def test_nurture_process_due_personalized(db_session):
+    from db.models import EmailAccount
+    from services.email_nurture import process_due_nurture_steps, start_nurture_chain
+
+    acc = EmailAccount(
+        name="t", username="me@test.ru", password="x", imap_server="i", smtp_server="s"
+    )
+    db_session.add(acc)
+    await db_session.flush()
+    lead = Lead(company="BetaCorp", contact="Anna", email="client@betacorp.ru", score=60)
+    db_session.add(lead)
+    await db_session.commit()
+
+    await start_nurture_chain(
+        db_session, lead_id=lead.id, account_id=acc.id, product="NewProduct"
+    )
+    await db_session.commit()
+
+    from unittest.mock import AsyncMock, patch
+
+    with patch("services.email_smtp.send_email_via_smtp", AsyncMock()) as mock_send:
+        stats = await process_due_nurture_steps(db_session)
+        await db_session.commit()
+
+    assert stats["emails_sent"] == 1
+    args = mock_send.call_args[0]
+    assert "BetaCorp" in args[1]
+    assert "Anna" in args[2]
+    assert "NewProduct" in args[2]
 
 
 def test_lead_matches_segment_stage():
