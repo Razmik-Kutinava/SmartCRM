@@ -4,7 +4,7 @@
 
 ## 2026-06-15 — Ф3 Email live smoke
 
-**Сделано:** ib@ IMAP+SMTP OK; me@ connect 400; `smoke_email_smtp_send.py`; acceptance §Live. **Коммит:** см. SESSION_STATE.
+**Сделано:** ib@ IMAP+SMTP OK; me@ connect 400; `smoke_email_smtp_send.py`; acceptance §Live. **Коммит:** `b207622`.
 
 ## 2026-06-15 — Ф3 Email: автономия
 
