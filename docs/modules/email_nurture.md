@@ -6,34 +6,35 @@
 
 - Код: `services/email_nurture_plan.py`, `services/email_nurture.py`
 - API: `POST /api/email/nurture/start`, `/start-segment`, `/process-due`
-- Acceptance: `docs/operations/phase3/email/F3_EMAIL_AUTONOMY_ACCEPTANCE.md`
 
 ## LLM-цепочка под продукт (маркетолог)
 
-**Фича:** маркетолог анализирует лида из CRM и генерирует **N писем** (пилот: 3) под конкретный продукт (например **Positive Technologies MaxPatrol VM**), затем запускается nurture-цепочка с кастомным планом.
+Маркетолог анализирует лида → **N писем** под продукт → nurture с кастомным планом.
 
-| Шаг | Что |
-|-----|-----|
-| 1 | Выбор лида (`pick_nurture_lead`) или `lead_id` |
-| 2 | Опц. подмена email на тестовый (`client_email`) |
-| 3 | `agents/marketer_nurture.py` — LLM: профиль, attack surface, 3 письма |
-| 4 | `services/email_nurture_llm.py` — план → `start_nurture_chain(plan=...)` |
-| 5 | `send_now=true` — все шаги `scheduled_at=now` → `process-due` |
-
-**API:** `POST /api/email/nurture/start-llm`
-
-```json
-{
-  "account_id": 11,
-  "product_name": "Positive Technologies MaxPatrol VM",
-  "email_count": 3,
-  "sender_name": "Иван Б.",
-  "sender_email": "ib@agneko.com",
-  "client_email": "ib@agneko.com",
-  "send_now": true
-}
-```
+- `agents/marketer_nurture.py` — LLM, строгий RAG
+- `services/email_nurture_llm.py`, `services/email_nurture_rag.py`
+- API: `preview-llm`, `test-send`, `start-llm`
 
 **Live smoke:** `python scripts/smoke_email_nurture_llm_live.py`
 
-**Расширение до 20 касаний:** тот же пайплайн, `email_count: 20` + промпт маркетолога (после апрува пилота).
+## Этап A — UI `/email` (точечные касания) ✅
+
+Вкладка **«Касания (1 лид)»**:
+
+| Шаг | API |
+|-----|-----|
+| Превью | `POST /nurture/preview-llm` |
+| Тест ib@ | `POST /nurture/test-send` |
+| Запуск | `POST /nurture/start-llm` |
+| История | `GET /nurture/chains` |
+
+UI: `frontend/src/components/EmailNurturePanel.svelte`  
+Логика: `frontend/src/lib/email/nurtureTouchLogic.js`
+
+Настройки: 1/3/20 касаний, продукт, LLM или свои шаблоны, аккаунт, подпись.
+
+## Дальше (план B–D)
+
+- B: массовый сегмент + апрув 3 примеров
+- C: тип цепочки new/cross/upsell + `products_owned`
+- D: справочник отраслей

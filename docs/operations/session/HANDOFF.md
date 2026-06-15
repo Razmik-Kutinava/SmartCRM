@@ -1,5 +1,17 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Email UI этап A — точечные касания] | Статус: ✅ done — ждём апрув`
+
+> **→ Следующий агент:** этап B (массовый сегмент + апрув 3 примеров) — [`email_nurture.md`](../modules/email_nurture.md)
+
+**2026-06-15:** UI `/email` → Касания (1 лид): превью, тест ib@, запуск; API preview/test-send; pytest 18. **Коммит:** см. SESSION_STATE.
+
+**2026-06-15:** LLM nurture пилот `da4d49f`; live HOCHLAND→ib@.
+
+**Следующий `go`:** этап B или апрув A.
+
+---
+
 `Спринт:[Ф3] | Задача:[LLM nurture 3 — MaxPatrol VM] | Статус: ✅ done — ждём апрув`
 
 > **→ Следующий агент:** расширение до 20 LLM касаний (после апрув) или Ф3 Self-improvement — [`PRD_MAP.md`](../product/PRD_MAP.md)

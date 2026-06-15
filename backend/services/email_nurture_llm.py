@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.models import Lead
 from db.models.email_nurture import EmailNurtureChain, EmailNurtureStep
 from services.email_nurture import process_due_nurture_steps, start_nurture_chain
+from services.email_nurture_rag import attach_product_rag
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +71,7 @@ async def pick_nurture_lead(db: AsyncSession, *, exclude_prefix: str = "Nurture 
 
 
 async def build_marketer_slots(db: AsyncSession, lead: Lead, **extra: Any) -> dict[str, Any]:
-    return {
+    slots = {
         "company": lead.company or "",
         "contact": lead.contact or "",
         "industry": lead.industry or "",
@@ -79,6 +80,63 @@ async def build_marketer_slots(db: AsyncSession, lead: Lead, **extra: Any) -> di
         "description": lead.description or "",
         **extra,
     }
+    return await attach_product_rag(slots)
+
+
+def build_manual_emails(
+    *,
+    count: int,
+    product_name: str,
+    company: str,
+    contact: str,
+    sender_name: str,
+    sender_email: str,
+    subject_template: str = "",
+    body_template: str = "",
+) -> dict[str, Any]:
+    """Свои темы/текст — шаблон с плейсхолдерами."""
+    subj_t = subject_template or "{{company}} — {{product}} · касание {{n}}"
+    body_t = (
+        body_template
+        or "{{greeting}}\n\nПишем по поводу {{product}} для {{company}} (письмо {{n}} из цепочки).\n"
+        "Готовы ответить на вопросы.\n\nС уважением,\n{{sender}}"
+    )
+    emails: list[dict[str, Any]] = []
+    greeting = f"Здравствуйте, {contact}!" if contact and contact != "—" else "Здравствуйте!"
+    sender = f"{sender_name}, {sender_email}, Agneko"
+    for i in range(max(1, min(count, 20))):
+        n = i + 1
+        repl = {
+            "{{n}}": str(n),
+            "{{product}}": product_name,
+            "{{company}}": company or "ваша компания",
+            "{{contact}}": contact or "",
+            "{{greeting}}": greeting,
+            "{{sender}}": sender,
+        }
+        subj, body = subj_t, body_t
+        for k, v in repl.items():
+            subj = subj.replace(k, v)
+            body = body.replace(k, v)
+        emails.append({"step": n, "day": i * 3, "subject": subj, "body": body})
+    return {"emails": emails, "summary": f"Ручной шаблон · {len(emails)} писем", "theme_mode": "manual"}
+
+
+async def generate_nurture_emails(slots: dict[str, Any], *, theme_mode: str = "marketer") -> dict[str, Any]:
+    if theme_mode == "manual":
+        return build_manual_emails(
+            count=int(slots.get("email_count") or 3),
+            product_name=str(slots.get("product_name") or ""),
+            company=str(slots.get("company") or ""),
+            contact=str(slots.get("contact") or ""),
+            sender_name=str(slots.get("sender_name") or "Иван Б."),
+            sender_email=str(slots.get("sender_email") or "ib@agneko.com"),
+            subject_template=str(slots.get("subject_template") or ""),
+            body_template=str(slots.get("body_template") or ""),
+        )
+    from agents.marketer_nurture import analyze_product_nurture
+
+    return await analyze_product_nurture(slots)
 
 
 async def run_llm_nurture_chain(

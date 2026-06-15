@@ -27,6 +27,22 @@ def test_llm_emails_to_plan_spaced():
     assert plan[0]["day"] == 6
 
 
+def test_build_manual_emails():
+    from services.email_nurture_llm import build_manual_emails
+
+    r = build_manual_emails(
+        count=2,
+        product_name="PT VM",
+        company="ООО Тест",
+        contact="Иван",
+        sender_name="IB",
+        sender_email="ib@test.ru",
+    )
+    assert len(r["emails"]) == 2
+    assert "ООО Тест" in r["emails"][0]["subject"]
+    assert "Иван" in r["emails"][0]["body"]
+
+
 @pytest.mark.asyncio
 async def test_pick_nurture_lead_skips_test_prefix(db_session):
     db_session.add(

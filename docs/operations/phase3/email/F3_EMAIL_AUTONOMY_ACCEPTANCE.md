@@ -46,6 +46,14 @@ python -m pytest tests/email/test_email_f3.py tests/api/test_email_sync_api.py -
 
 Live 2026-06-15: лид HOCHLAND (3187) → 3 письма на ib@, `emails_sent=3`.
 
+### UI этап A — точечные касания `/email`
+
+| Элемент | Где |
+|---------|-----|
+| Вкладка «Касания (1 лид)» | `/email` sidebar |
+| Превью / тест ib@ / запуск | `EmailNurturePanel.svelte` |
+| API | `preview-llm`, `test-send`, `start-llm` |
+
 ## ENV (nurture)
 
 - `NURTURE_TEST_CLIENT_EMAIL` — email тестового «клиента» для live smoke (иначе `EMAIL_ACCOUNT_2_USER`)

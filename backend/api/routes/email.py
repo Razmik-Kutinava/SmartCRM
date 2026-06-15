@@ -511,26 +511,36 @@ class NurtureLlmStartBody(BaseModel):
     sender_email: str = "ib@agneko.com"
     client_email: Optional[str] = None
     send_now: bool = True
+    theme_mode: str = "marketer"  # marketer | manual
+    subject_template: Optional[str] = None
+    body_template: Optional[str] = None
+    emails: Optional[list[dict[str, Any]]] = None  # из превью — не вызывать LLM снова
 
 
-@router.post("/nurture/start-llm", status_code=201)
-async def nurture_start_llm(body: NurtureLlmStartBody, db: AsyncSession = Depends(get_db)):
-    from agents.marketer_nurture import analyze_product_nurture
-    from services.email_nurture_llm import (
-        build_marketer_slots,
-        pick_nurture_lead,
-        run_llm_nurture_chain,
-    )
+class NurturePreviewBody(BaseModel):
+    lead_id: int
+    product_name: str = "Positive Technologies MaxPatrol VM"
+    email_count: int = 3
+    sender_name: str = "Иван Б."
+    sender_email: str = "ib@agneko.com"
+    theme_mode: str = "marketer"
+    subject_template: Optional[str] = None
+    body_template: Optional[str] = None
 
-    lead = await db.get(Lead, body.lead_id) if body.lead_id else None
+
+class NurtureTestSendBody(BaseModel):
+    account_id: int
+    to_email: str
+    subject: str
+    body: str
+
+
+async def _nurture_slots_from_body(db: AsyncSession, lead_id: int, body: Any) -> tuple[Lead, dict]:
+    from services.email_nurture_llm import build_marketer_slots
+
+    lead = await db.get(Lead, lead_id)
     if not lead:
-        lead = await pick_nurture_lead(db)
-    if not lead:
-        raise HTTPException(404, detail="Подходящий лид не найден")
-
-    if body.client_email:
-        lead.email = body.client_email.strip()
-
+        raise HTTPException(404, detail="Лид не найден")
     slots = await build_marketer_slots(
         db,
         lead,
@@ -538,9 +548,72 @@ async def nurture_start_llm(body: NurtureLlmStartBody, db: AsyncSession = Depend
         email_count=body.email_count,
         sender_name=body.sender_name,
         sender_email=body.sender_email,
+        theme_mode=getattr(body, "theme_mode", "marketer"),
+        subject_template=getattr(body, "subject_template", None) or "",
+        body_template=getattr(body, "body_template", None) or "",
     )
-    llm_result = await analyze_product_nurture(slots)
+    return lead, slots
+
+
+@router.post("/nurture/preview-llm")
+async def nurture_preview_llm(body: NurturePreviewBody, db: AsyncSession = Depends(get_db)):
+    from services.email_nurture_llm import generate_nurture_emails
+
+    lead, slots = await _nurture_slots_from_body(db, body.lead_id, body)
+    llm_result = await generate_nurture_emails(slots, theme_mode=body.theme_mode)
     if not llm_result.get("emails"):
+        raise HTTPException(502, detail=llm_result.get("summary") or "Не удалось сгенерировать письма")
+    return {
+        "lead": lead.to_dict(),
+        "marketer": {
+            "buyer_profile": llm_result.get("buyer_profile"),
+            "attack_surface": llm_result.get("attack_surface"),
+            "product_fit": llm_result.get("product_fit"),
+            "summary": llm_result.get("summary"),
+        },
+        "emails": llm_result.get("emails"),
+        "has_rag": bool(slots.get("_rag_marketer")),
+    }
+
+
+@router.post("/nurture/test-send")
+async def nurture_test_send(body: NurtureTestSendBody, db: AsyncSession = Depends(get_db)):
+    from services.email_smtp import send_email_via_smtp
+
+    account = await db.get(EmailAccount, body.account_id)
+    if not account:
+        raise HTTPException(404, detail="Почтовый аккаунт не найден")
+    to = (body.to_email or "").strip()
+    if not to or "@" not in to:
+        raise HTTPException(400, detail="Некорректный email")
+    try:
+        await send_email_via_smtp(account, body.subject, body.body, [to], [], [])
+    except Exception as e:
+        raise HTTPException(502, detail=f"SMTP: {e}") from e
+    return {"status": "ok", "to": to, "subject": body.subject}
+
+
+@router.post("/nurture/start-llm", status_code=201)
+async def nurture_start_llm(body: NurtureLlmStartBody, db: AsyncSession = Depends(get_db)):
+    from services.email_nurture_llm import generate_nurture_emails, pick_nurture_lead, run_llm_nurture_chain
+
+    lead = await db.get(Lead, body.lead_id) if body.lead_id else None
+    if not lead:
+        lead = await pick_nurture_lead(db)
+    if not lead:
+        raise HTTPException(404, detail="Подходящий лид не найден")
+
+    client_email_saved = lead.email
+    if body.client_email:
+        lead.email = body.client_email.strip()
+
+    if body.emails:
+        llm_result = {"emails": body.emails, "summary": "из превью UI"}
+    else:
+        _, slots = await _nurture_slots_from_body(db, lead.id, body)
+        llm_result = await generate_nurture_emails(slots, theme_mode=body.theme_mode)
+    if not llm_result.get("emails"):
+        lead.email = client_email_saved
         raise HTTPException(502, detail=llm_result.get("summary") or "LLM не вернул письма")
 
     try:
@@ -553,11 +626,15 @@ async def nurture_start_llm(body: NurtureLlmStartBody, db: AsyncSession = Depend
             live_all_now=body.send_now,
         )
     except ValueError as e:
+        lead.email = client_email_saved
         raise HTTPException(400, detail=str(e)) from e
 
     send_stats: dict[str, int] = {}
     if body.send_now:
         send_stats = await run_nurture_due_steps(db)
+
+    if body.client_email:
+        lead.email = client_email_saved
 
     await db.commit()
     await db.refresh(chain)
@@ -619,7 +696,15 @@ async def nurture_list(lead_id: Optional[int] = None, db: AsyncSession = Depends
     if lead_id:
         q = q.where(EmailNurtureChain.lead_id == lead_id)
     chains = (await db.execute(q)).scalars().all()
-    return [c.to_dict() for c in chains]
+    out: list[dict] = []
+    for c in chains:
+        row = c.to_dict()
+        lead = await db.get(Lead, c.lead_id)
+        if lead:
+            row["leadCompany"] = lead.company
+            row["leadIndustry"] = lead.industry
+        out.append(row)
+    return out
 
 
 @router.post("/nurture/{chain_id}/pause")

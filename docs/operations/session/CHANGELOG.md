@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-15 — Email UI этап A: точечные касания из панели
+
+**Сделано:** `EmailNurturePanel`, API `preview-llm`/`test-send`, RAG строгий, история chains; `email_nurture.md` §A. **Коммит:** см. SESSION_STATE.
+
 ## 2026-06-15 — LLM nurture: 3 письма под продукт (MaxPatrol VM)
 
 **Сделано:** `marketer_nurture.py`, `email_nurture_llm.py`, `POST /nurture/start-llm`; live HOCHLAND→ib@ 3 emails; `docs/modules/email_nurture.md`; PRD_MAP. **Коммит:** `da4d49f`.

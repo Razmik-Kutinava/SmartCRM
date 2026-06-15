@@ -14,6 +14,7 @@
     import { buildReplyApprovePreview, buildComposeApprovePreview } from '$lib/email/emailApproveLogic.js';
     import { voiceEmailContext } from '$lib/voice/voiceAction.js';
     import EmailApproveModal from '../../components/EmailApproveModal.svelte';
+    import EmailNurturePanel from '../../components/EmailNurturePanel.svelte';
     import { fetchLeads } from '$lib/leadsStorage.js';
 
     // ─── данные ──────────────────────────────────────────────────
@@ -392,6 +393,15 @@
                 <span class="text-base leading-none">📋</span>
                 <span>Управление</span>
             </button>
+            <button
+                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left
+                       {activeFolder === 'nurture_touch' ? 'bg-indigo-600 text-white font-semibold' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}"
+                onclick={() => { activeFolder = 'nurture_touch'; error = ''; success = ''; }}
+                data-testid="nav-nurture-touch"
+            >
+                <span class="text-base leading-none">🔗</span>
+                <span>Касания (1 лид)</span>
+            </button>
         </nav>
 
         <!-- аккаунт внизу -->
@@ -439,7 +449,7 @@
         {/if}
 
         <!-- ════ СПИСОК ПИСЕМ ════ -->
-        {#if activeFolder !== 'campaign' && activeFolder !== 'campaigns_manage'}
+        {#if activeFolder !== 'campaign' && activeFolder !== 'campaigns_manage' && activeFolder !== 'nurture_touch'}
 
             <!-- поиск -->
             <div class="px-5 pt-4 pb-3 flex-shrink-0">
@@ -503,6 +513,10 @@
                     {/each}
                 {/if}
             </div>
+        {/if}
+
+        {#if activeFolder === 'nurture_touch'}
+            <EmailNurturePanel {accounts} {leads} bind:error bind:success />
         {/if}
 
         <!-- ════ УПРАВЛЕНИЕ КАМПАНИЯМИ ════ -->
