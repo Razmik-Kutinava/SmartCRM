@@ -73,6 +73,22 @@ export async function previewCampaignSegment(segment) {
 	});
 }
 
+export async function previewCampaignLlm(body) {
+	return emailJson('/campaigns/preview-llm', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
+}
+
+export async function testCampaignSend(body) {
+	return emailJson('/campaigns/test-send', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
+}
+
 export async function startNurtureLlm(body) {
 	return emailJson('/nurture/start-llm', {
 		method: 'POST',

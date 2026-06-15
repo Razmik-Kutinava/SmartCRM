@@ -15,6 +15,7 @@
     import { voiceEmailContext } from '$lib/voice/voiceAction.js';
     import EmailApproveModal from '../../components/EmailApproveModal.svelte';
     import EmailNurturePanel from '../../components/EmailNurturePanel.svelte';
+    import EmailCampaignPanel from '../../components/EmailCampaignPanel.svelte';
     import { fetchLeads } from '$lib/leadsStorage.js';
 
     // ─── данные ──────────────────────────────────────────────────
@@ -399,6 +400,15 @@
             </div>
             <button
                 class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left
+                       {activeFolder === 'campaign_mass' ? 'bg-indigo-600 text-white font-semibold' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}"
+                onclick={() => { activeFolder = 'campaign_mass'; error = ''; success = ''; }}
+                data-testid="nav-campaign-mass"
+            >
+                <span class="text-base leading-none">📣</span>
+                <span>Массовая (сегмент)</span>
+            </button>
+            <button
+                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left
                        {activeFolder === 'campaigns_manage' ? 'bg-indigo-600 text-white font-semibold' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}"
                 onclick={() => { activeFolder = 'campaigns_manage'; error = ''; success = ''; }}
             >
@@ -461,7 +471,7 @@
         {/if}
 
         <!-- ════ СПИСОК ПИСЕМ ════ -->
-        {#if activeFolder !== 'campaign' && activeFolder !== 'campaigns_manage' && activeFolder !== 'nurture_touch'}
+        {#if activeFolder !== 'campaign' && activeFolder !== 'campaigns_manage' && activeFolder !== 'campaign_mass' && activeFolder !== 'nurture_touch'}
 
             <!-- поиск -->
             <div class="px-5 pt-4 pb-3 flex-shrink-0">
@@ -529,6 +539,10 @@
 
         {#if activeFolder === 'nurture_touch'}
             <EmailNurturePanel {accounts} {leads} bind:error bind:success initialLeadId={nurtureInitialLeadId} />
+        {/if}
+
+        {#if activeFolder === 'campaign_mass'}
+            <EmailCampaignPanel {accounts} bind:error bind:success />
         {/if}
 
         <!-- ════ УПРАВЛЕНИЕ КАМПАНИЯМИ ════ -->

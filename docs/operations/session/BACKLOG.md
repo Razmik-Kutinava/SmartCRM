@@ -43,7 +43,9 @@
 
 ## Записи
 
-`[2026-06-15] | PRD_MAP: Ф3 Email · этап B массовый сегмент | Отложено: UI массовый + апрув 3 примеров + send кампании | После go на этап A | docs/modules/email_nurture.md §B`
+`[2026-06-15] | PRD_MAP: Ф3 Email · этап B массовый сегмент | **✅ сделано** — `EmailCampaignPanel`, preview-llm, send_now | Коммит: см. CHANGELOG`
+
+`[2026-06-15] | PRD_MAP: Ф3 Email · этап B массовый сегмент | ~~Отложено~~ → закрыто в коммите этапа B`
 
 `[2026-06-15] | PRD_MAP: Ф3 Email · лимит писем/день | Отложено: антиспам лимит nurture+campaigns | Причина: после этапа B | BACKLOG`
 

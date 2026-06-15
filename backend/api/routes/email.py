@@ -84,6 +84,9 @@ class EmailCampaignCreate(BaseModel):
     lead_ids: List[int] = []
     segment: Optional[dict[str, Any]] = None
     send_now: bool = False
+    product_name: Optional[str] = None
+    sender_name: Optional[str] = "Иван Б."
+    sender_email: Optional[str] = "ib@agneko.com"
 
     @model_validator(mode="after")
     def lead_ids_or_segment(self):
@@ -347,6 +350,8 @@ async def reply_email(body: EmailReplyBody, db: AsyncSession = Depends(get_db)):
 
 @router.post("/campaigns", status_code=201)
 async def create_campaign(body: EmailCampaignCreate, db: AsyncSession = Depends(get_db)):
+    from services.email_campaign_personalize import render_campaign_text
+
     account = await db.get(EmailAccount, body.account_id)
     if not account:
         raise HTTPException(404, detail="Почтовый аккаунт не найден")
@@ -357,7 +362,16 @@ async def create_campaign(body: EmailCampaignCreate, db: AsyncSession = Depends(
     if not lead_ids:
         raise HTTPException(400, detail="Сегмент не дал лидов с email")
 
-    notes = json.dumps({"segment": body.segment}, ensure_ascii=False) if body.segment else ""
+    notes_payload: dict[str, Any] = {}
+    if body.segment:
+        notes_payload["segment"] = body.segment
+    if body.product_name:
+        notes_payload["product_name"] = body.product_name
+    if body.sender_name:
+        notes_payload["sender_name"] = body.sender_name
+    if body.sender_email:
+        notes_payload["sender_email"] = body.sender_email
+    notes = json.dumps(notes_payload, ensure_ascii=False) if notes_payload else ""
 
     campaign = EmailCampaign(
         account_id=account.id,
@@ -378,11 +392,24 @@ async def create_campaign(body: EmailCampaignCreate, db: AsyncSession = Depends(
         for lead in leads:
             if not lead.email or lead.email.strip() == '—':
                 continue
-            body_text = body.body.replace("{{company}}", lead.company or "").replace("{{contact}}", lead.contact or "")
+            body_text = render_campaign_text(
+                body.body,
+                lead,
+                product=body.product_name or "",
+                sender_name=body.sender_name or "Иван Б.",
+                sender_email=body.sender_email or "ib@agneko.com",
+            )
+            subject_text = render_campaign_text(
+                body.subject,
+                lead,
+                product=body.product_name or "",
+                sender_name=body.sender_name or "Иван Б.",
+                sender_email=body.sender_email or "ib@agneko.com",
+            )
             try:
                 await _send_email_via_smtp(
                     account,
-                    body.subject,
+                    subject_text,
                     body_text,
                     [lead.email],
                     [],
@@ -391,8 +418,8 @@ async def create_campaign(body: EmailCampaignCreate, db: AsyncSession = Depends(
                 thread = EmailThread(
                     account_id=account.id,
                     lead_id=lead.id,
-                    subject=body.subject,
-                    thread_key=body.subject.strip() or 'Без темы',
+                    subject=subject_text,
+                    thread_key=subject_text.strip() or 'Без темы',
                     snippet=body_text[:500],
                     category='campaign',
                     last_message_at=datetime.now(timezone.utc),
@@ -404,7 +431,7 @@ async def create_campaign(body: EmailCampaignCreate, db: AsyncSession = Depends(
                     thread_id=thread.id,
                     lead_id=lead.id,
                     message_id=f"campaign-{campaign.id}-{lead.id}-{int(datetime.now(timezone.utc).timestamp() * 1000)}",
-                    subject=body.subject,
+                    subject=subject_text,
                     sender=account.username,
                     recipients=lead.email,
                     direction='outbound',
@@ -442,6 +469,61 @@ class SegmentPreviewBody(BaseModel):
 async def preview_campaign_segment(body: SegmentPreviewBody, db: AsyncSession = Depends(get_db)):
     ids = await resolve_segment_lead_ids(db, body.segment)
     return {"count": len(ids), "leadIds": ids[:100]}
+
+
+class CampaignPreviewLlmBody(BaseModel):
+    segment: dict[str, Any]
+    product_name: str = "Positive Technologies MaxPatrol VM"
+    sender_name: str = "Иван Б."
+    sender_email: str = "ib@agneko.com"
+    theme_mode: str = "marketer"
+    subject_template: Optional[str] = None
+    body_template: Optional[str] = None
+
+
+@router.post("/campaigns/preview-llm")
+async def campaign_preview_llm(body: CampaignPreviewLlmBody, db: AsyncSession = Depends(get_db)):
+    from services.email_campaign_llm import preview_segment_campaign
+
+    result = await preview_segment_campaign(
+        db,
+        segment=body.segment,
+        product_name=body.product_name,
+        sender_name=body.sender_name,
+        sender_email=body.sender_email,
+        theme_mode=body.theme_mode,
+        subject_template=body.subject_template or "",
+        body_template=body.body_template or "",
+    )
+    if result.get("count", 0) == 0:
+        raise HTTPException(400, detail=result.get("error") or "Сегмент пуст")
+    if body.theme_mode == "marketer" and not result.get("body_template"):
+        raise HTTPException(502, detail="Не удалось сгенерировать шаблон письма")
+    return result
+
+
+class CampaignTestSendBody(BaseModel):
+    account_id: int
+    to_email: str
+    subject: str
+    body: str
+
+
+@router.post("/campaigns/test-send")
+async def campaign_test_send(body: CampaignTestSendBody, db: AsyncSession = Depends(get_db)):
+    from services.email_smtp import send_email_via_smtp
+
+    account = await db.get(EmailAccount, body.account_id)
+    if not account:
+        raise HTTPException(404, detail="Почтовый аккаунт не найден")
+    to = (body.to_email or "").strip()
+    if not to or "@" not in to:
+        raise HTTPException(400, detail="Некорректный email")
+    try:
+        await send_email_via_smtp(account, body.subject, body.body, [to], [], [])
+    except Exception as e:
+        raise HTTPException(502, detail=f"SMTP: {e}") from e
+    return {"status": "ok", "to": to, "subject": body.subject}
 
 
 @router.get("/campaigns")

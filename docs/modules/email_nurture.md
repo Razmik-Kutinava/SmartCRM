@@ -49,8 +49,24 @@ UI: `frontend/src/components/EmailNurturePanel.svelte`
 
 Host в корневом `+layout.svelte` — `fixed` поверх всего UI, без prop-drilling.
 
-## Дальше (план B–D)
+## Этап B — массовая рассылка (сегмент) ✅
 
-- B: массовый сегмент + апрув 3 примеров
+Вкладка **«Массовая (сегмент)»** на `/email`:
+
+| Шаг | API |
+|-----|-----|
+| Счётчик сегмента | `POST /campaigns/segment-preview` |
+| 3 примера (маркетолог + RAG) | `POST /campaigns/preview-llm` |
+| Тест ib@ | `POST /campaigns/test-send` |
+| Отправить | `POST /campaigns` + `send_now: true` |
+| История | `GET /campaigns` |
+
+UI: `EmailCampaignPanel.svelte` · логика: `campaignSegmentLogic.js`
+
+Фильтры: stage, score, industry, city, search. Апрув чекбокс после 3 примеров.
+
+## Дальше (план C–D)
+
+- B: ~~массовый сегмент + апрув 3 примеров~~ → см. § этап B
 - C: тип цепочки new/cross/upsell + `products_owned`
 - D: справочник отраслей
