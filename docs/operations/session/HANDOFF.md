@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** Ф3 Self-improvement — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-15:** nurture live на ib@agneko.com (тестовый лид); персонализация company/contact; start-segment API; `smoke_email_nurture_live.py`; pytest 14; acceptance §Nurture. **Коммит:** см. SESSION_STATE.
+**2026-06-15:** nurture live на ib@agneko.com (тестовый лид); персонализация company/contact; start-segment API; `smoke_email_nurture_live.py`; pytest 14; acceptance §Nurture. **Коммит:** `1a2edd7`.
 
 **2026-06-15:** me@+ib@ live; FAQ real (ib@→me@ прайс); UI DevTools OK; fix `/email` threads 500. **Коммит:** `82a5803`.
 

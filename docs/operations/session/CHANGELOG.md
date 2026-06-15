@@ -4,7 +4,7 @@
 
 ## 2026-06-15 — Nurture 20 касаний live + персонализация
 
-**Сделано:** `email_nurture_plan.py` (шаблоны маркетолога, `{{company}}`/`{{contact}}`); `start-segment`, `process-due`; `smoke_email_nurture_live.py` — лид → 1-е письмо на ib@; pytest 14 passed; acceptance §Nurture. **Коммит:** см. ops после code commit.
+**Сделано:** `email_nurture_plan.py` (шаблоны маркетолога, `{{company}}`/`{{contact}}`); `start-segment`, `process-due`; `smoke_email_nurture_live.py` — лид → 1-е письмо на ib@; pytest 14 passed; acceptance §Nurture. **Коммит:** `1a2edd7`.
 
 ## 2026-06-15 — Email live полный (FAQ real + UI)
 
