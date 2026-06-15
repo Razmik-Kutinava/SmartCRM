@@ -10,6 +10,20 @@
 
 ---
 
+[2026-06-15] — me@agneko.am: smoke_email_connect HTTP 400
+
+Приоритет: 🟡 | Статус: открыта
+
+Описание: Live connect `me@agneko.am` — HTTP 400 «Ошибка синхронизации почты». `ib@agneko.com` OK.
+
+Влияние: второй ящик не синкается; один аккаунт в фоне.
+
+Решение: проверить `EMAIL_ACCOUNT_1_*` IMAP/SMTP хост и пароль app-specific для agneko.am.
+
+Агент: F3 email live smoke
+
+---
+
 [2026-06-08] — `/leads/tasks`: 500 compile (shadow `createTask`)
 
 Приоритет: 🔴 | Статус: закрыта ✅

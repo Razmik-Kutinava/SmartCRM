@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-15 — Ф3 Email live smoke
+
+**Сделано:** ib@ IMAP+SMTP OK; me@ connect 400; `smoke_email_smtp_send.py`; acceptance §Live. **Коммит:** см. SESSION_STATE.
+
 ## 2026-06-15 — Ф3 Email: автономия
 
 **Сделано:** FAQ autoreply по Ops-правилам; рассылки по сегменту; nurture 20 касаний + scheduler; autolink по домену; pytest 17 passed; `F3_EMAIL_AUTONOMY_ACCEPTANCE.md`; MAP Email `[x]`. **Коммит:** `9a3be09`.
