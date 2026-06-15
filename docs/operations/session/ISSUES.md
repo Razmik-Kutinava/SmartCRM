@@ -10,15 +10,15 @@
 
 ---
 
-[2026-06-15] — me@agneko.am: IMAP Invalid login or password
+[2026-06-13] — me@agneko.am: IMAP Invalid login (после смены пароля)
 
 Приоритет: 🟡 | Статус: открыта
 
-Описание: `mail.agneko.am:993` (insecure SSL) → `Invalid login or password` для `me@agneko.am` и `me`. SMTP 535 auth failed. Код: per-account `EMAIL_ACCOUNT_1_APP_PASSWORD` + `INSECURE_SSL` подключены; `ib@agneko.com` OK. DevTools webmail — не проверен (MCP browser busy).
+Описание: `mail.agneko.am:993` + `EMAIL_ACCOUNT_1_INSECURE_SSL=1` → `Invalid login or password`. SMTP 535. Новый пароль в `.env` (16 символов) — сервер не принимает. Код SmartCRM OK; `ib@` OK. DevTools webmail — browser busy.
 
-Влияние: второй ящик не синкается.
+Влияние: me@ не синкается.
 
-Решение: сброс пароля в cPanel / первый вход webmail `https://mail.agneko.am`; обновить `EMAIL_ACCOUNT_1_APP_PASSWORD` в `.env`.
+Решение: в cPanel → Email Accounts сбросить пароль ящика `me@agneko.am`; проверить вход на `https://mail.agneko.am/webmail`; в `.env` — **пароль ящика cPanel**, не Яндекс app-password.
 
 Агент: F3 email хвост A
 
