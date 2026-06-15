@@ -4,7 +4,7 @@
 
 ## 2026-06-15 — Ф3 Voice: апрув, revise, history
 
-**Сделано:** голос «да/нет» на approve-модалке; «короче» → revise-draft; история на `/ops/voice`; `approval_followup.py`, `revise_draft.py`, `voiceFollowup.js`; pytest 27 passed; `F3_VOICE_APPROVAL_ACCEPTANCE.md`; MAP Voice `[x]`. **Коммит:** см. SESSION_STATE.
+**Сделано:** голос «да/нет» на approve-модалке; «короче» → revise-draft; история на `/ops/voice`; `approval_followup.py`, `revise_draft.py`, `voiceFollowup.js`; pytest 27 passed; `F3_VOICE_APPROVAL_ACCEPTANCE.md`; MAP Voice `[x]`. **Коммит:** `cad831c`.
 
 ## 2026-06-14 — Ф2 §9: enrich голос
 

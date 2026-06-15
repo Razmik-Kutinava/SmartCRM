@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** Ф3 Email (цепочки, FAQ) — [`PRD_MAP.md`](../product/PRD_MAP.md)
 
-**2026-06-15 (Ф3 Voice):** голосовой follow-up да/нет/короче (`voiceFollowup.js` + layout intercept); `POST /api/voice/revise-draft`; `GET /api/ops/voice/history` + UI `/ops/voice`; pytest 27 passed 1 skipped; `F3_VOICE_APPROVAL_ACCEPTANCE.md`; MAP Voice 3 пункта `[x]`. **Коммит:** см. SESSION_STATE.
+**2026-06-15 (Ф3 Voice):** голосовой follow-up да/нет/короче (`voiceFollowup.js` + layout intercept); `POST /api/voice/revise-draft`; `GET /api/ops/voice/history` + UI `/ops/voice`; pytest 27 passed 1 skipped; `F3_VOICE_APPROVAL_ACCEPTANCE.md`; MAP Voice 3 пункта `[x]`. **Коммит:** `cad831c`.
 
 **Следующий `go`:** Ф3 Email или ручной смоук голосового апрува.
 

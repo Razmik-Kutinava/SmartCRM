@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-15 | Действие: Ф3 §Voice: голосовой апрув да/нет, revise «короче», ops history; pytest 27 passed 1 skipped; MAP Voice `[x]`; acceptance F3_VOICE_APPROVAL. | Коммит: `PENDING` | Хвост A: live DevTools смоук approve/revise — не запускали (фронт не поднят) | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф3 Email или ручной смоук голоса. | Статус: done
+2026-06-15 | Действие: Ф3 §Voice: голосовой апрув да/нет, revise «короче», ops history; pytest 27 passed 1 skipped; MAP Voice `[x]`; acceptance F3_VOICE_APPROVAL. | Коммит: `cad831c` | Хвост A: live DevTools смоук approve/revise — не запускали (фронт не поднят) | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф3 Email или ручной смоук голоса. | Статус: done
 
 2026-06-14 | Действие: §9 enrich голос: enrich_lead modal preview+апрув PATCH; pytest 21 passed; DevTools lead-card-enrich; MAP §9 закрыт. | Коммит: `cb0de76` | Хвост A: live voice modal в DevTools — timeout (контракт pytest OK) | Хвост B: нет | Хвост C: нет | Следующий шаг: go §1 Voice Layer или Ф3 gate. | Статус: done
 
