@@ -4,7 +4,7 @@
 
 > **→ Следующий агент:** этап B (массовый сегмент + апрув 3 примеров) — [`email_nurture.md`](../modules/email_nurture.md)
 
-**2026-06-15:** UI `/email` → Касания (1 лид): превью, тест ib@, запуск; API preview/test-send; pytest 18. **Коммит:** см. SESSION_STATE.
+**2026-06-15:** UI `/email` → Касания (1 лид): превью, тест ib@, запуск; API preview/test-send; pytest 18. **Коммит:** `e425c77`.
 
 **2026-06-15:** LLM nurture пилот `da4d49f`; live HOCHLAND→ib@.
 

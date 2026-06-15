@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-15 | Действие: Этап A UI: EmailNurturePanel на /email — превью LLM, тест ib@, запуск цепочки 1/3/20, история; API preview-llm/test-send; RAG строгий; pytest 18. | Хвост A: нет | Хвост B: этапы B–D — BACKLOG/plan | Хвост C: нет | Следующий шаг: go этап B (массовый сегмент) или апрув A. | Статус: in_progress
+2026-06-15 | Действие: Этап A UI: EmailNurturePanel на /email — превью LLM, тест ib@, запуск цепочки 1/3/20, история; API preview-llm/test-send; RAG строгий; pytest 18. | Коммит: `e425c77` | Хвост A: нет | Хвост B: этапы B–D — BACKLOG/plan | Хвост C: нет | Следующий шаг: go этап B (массовый сегмент) или апрув A. | Статус: done
 
 2026-06-15 | Действие: LLM nurture пилот: marketer_nurture + start-llm API + smoke 3 письма MaxPatrol VM на ib@ (lead 3187 HOCHLAND); docs/modules/email_nurture.md; PRD_MAP; pytest 17. | Коммит: `da4d49f` | Хвост A: нет | Хвост B: расширение до 20 LLM касаний — BACKLOG после апрув | Хвост C: нет | Следующий шаг: апрув LLM nurture → go 20 касаний или Self-improvement. | Статус: done
 

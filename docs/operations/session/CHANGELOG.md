@@ -4,7 +4,7 @@
 
 ## 2026-06-15 — Email UI этап A: точечные касания из панели
 
-**Сделано:** `EmailNurturePanel`, API `preview-llm`/`test-send`, RAG строгий, история chains; `email_nurture.md` §A. **Коммит:** см. SESSION_STATE.
+**Сделано:** `EmailNurturePanel`, API `preview-llm`/`test-send`, RAG строгий, история chains; `email_nurture.md` §A. **Коммит:** `e425c77`.
 
 ## 2026-06-15 — LLM nurture: 3 письма под продукт (MaxPatrol VM)
 
