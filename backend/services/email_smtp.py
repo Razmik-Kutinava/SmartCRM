@@ -8,6 +8,7 @@ from typing import List, Optional
 import aiosmtplib
 
 from core.crypto import decrypt
+from core.email_tls import account_insecure_ssl, imap_ssl_context
 from db.models import EmailAccount
 
 logger = logging.getLogger(__name__)
@@ -35,6 +36,7 @@ async def send_email_via_smtp(
         message["References"] = in_reply_to
     message.set_content(body)
 
+    insecure = account_insecure_ssl(account)
     await aiosmtplib.send(
         message,
         hostname=account.smtp_server,
@@ -43,6 +45,6 @@ async def send_email_via_smtp(
         password=decrypt(account.password),
         start_tls=not account.use_ssl,
         use_tls=account.use_ssl,
-        validate_certs=True,
+        validate_certs=not insecure,
         timeout=30,
     )

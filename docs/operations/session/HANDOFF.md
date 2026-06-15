@@ -1,8 +1,10 @@
 # HANDOFF
 
-`Спринт:[Ф3] | Задача:[Email — FAQ, сегменты, nurture, autolink] | Статус: ✅ done`
+`Спринт:[Ф3] | Задача:[Email хвосты A — me@, relink, FAQ] | Статус: ✅ done (me@ blocked на кредах)`
 
-> **→ Следующий агент:** Ф3 Self-improvement или Тендерный агент — [`PRD_MAP.md`](../product/PRD_MAP.md)
+> **→ Следующий агент:** сброс пароля me@ в cPanel → connect; затем Ф3 Self-improvement — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-15 (Ф3 Email хвосты):** per-account password + insecure SSL; relink `limit=100` + индекс; FAQ smoke «прайс»; me@ — сервер `Invalid login or password` (ISSUES 🟡). **Коммит:** см. SESSION_STATE.
 
 **2026-06-15 (Ф3 Email live):** ib@ connect+sync+SMTP OK; me@ connect 400; `smoke_email_smtp_send.py`; acceptance §Live. **Коммит:** `b207622`.
 

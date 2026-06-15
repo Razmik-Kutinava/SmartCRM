@@ -22,19 +22,22 @@ def email_password_from_env() -> str:
     return (os.getenv("EMAIL_APP_PASSWORD") or os.getenv("EMAIL_PASSWORD") or "").strip()
 
 
+def account_password_from_env(index: int, fallback: str | None = None) -> str:
+    """Пароль аккаунта: EMAIL_ACCOUNT_N_APP_PASSWORD / _PASSWORD → общий fallback."""
+    for key in (f"EMAIL_ACCOUNT_{index}_APP_PASSWORD", f"EMAIL_ACCOUNT_{index}_PASSWORD"):
+        val = (os.getenv(key) or "").strip()
+        if val:
+            return val
+    return (fallback or email_password_from_env()).strip()
+
+
 def load_accounts_from_env(
     *,
     only_index: int | None = None,
     max_accounts: int = 2,
 ) -> list[dict[str, Any]]:
     """Список аккаунтов для connect/bootstrap (с паролем — только внутри backend)."""
-    pwd = email_password_from_env()
-    if not pwd:
-        return []
-
-    imap_default = (os.getenv("EMAIL_IMAP_HOST") or DEFAULT_IMAP_HOST).strip()
-    smtp_default = (os.getenv("EMAIL_SMTP_HOST") or DEFAULT_SMTP_HOST).strip()
-    use_ssl = _truthy(os.getenv("EMAIL_USE_SSL"), default=True)
+    pwd_default = email_password_from_env()
 
     only_raw = (os.getenv("EMAIL_CONNECT_ONLY") or "").strip()
     if only_index is not None:
@@ -44,10 +47,23 @@ def load_accounts_from_env(
     else:
         indices = list(range(1, max_accounts + 1))
 
+    if not pwd_default and not any(
+        (os.getenv(f"EMAIL_ACCOUNT_{i}_APP_PASSWORD") or os.getenv(f"EMAIL_ACCOUNT_{i}_PASSWORD"))
+        for i in indices
+    ):
+        return []
+
+    imap_default = (os.getenv("EMAIL_IMAP_HOST") or DEFAULT_IMAP_HOST).strip()
+    smtp_default = (os.getenv("EMAIL_SMTP_HOST") or DEFAULT_SMTP_HOST).strip()
+    use_ssl = _truthy(os.getenv("EMAIL_USE_SSL"), default=True)
+
     out: list[dict[str, Any]] = []
     for i in indices:
         user = (os.getenv(f"EMAIL_ACCOUNT_{i}_USER") or "").strip()
         if not user:
+            continue
+        pwd = account_password_from_env(i, pwd_default)
+        if not pwd:
             continue
         out.append(
             {

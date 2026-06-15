@@ -130,6 +130,49 @@ def test_f3_ui_contracts():
 
 
 @pytest.mark.asyncio
+async def test_build_lead_match_index(db_session):
+    from services.email_lead_match import build_lead_match_index
+
+    db_session.add(Lead(company="DomCo", email="sales@domco.ru", website="https://domco.ru"))
+    await db_session.commit()
+    idx = await build_lead_match_index(db_session)
+    assert idx.get("sales@domco.ru")
+    assert idx.get("domco.ru")
+
+
+@pytest.mark.asyncio
+async def test_relink_orphans_api(client, db_session):
+    from db.models import EmailAccount
+    from services.email_lead_match import relink_orphan_threads
+
+    acc = EmailAccount(
+        name="t", username="t@test.ru", password="x", imap_server="i", smtp_server="s"
+    )
+    db_session.add(acc)
+    lead = Lead(company="RelinkCo", email="buyer@relinkco.ru", website="relinkco.ru")
+    db_session.add(lead)
+    await db_session.flush()
+    thread = EmailThread(account_id=acc.id, subject="Hi", thread_key="Hi")
+    db_session.add(thread)
+    await db_session.flush()
+    db_session.add(
+        EmailMessage(
+            account_id=acc.id,
+            thread_id=thread.id,
+            message_id="r1",
+            subject="Hi",
+            sender="buyer@relinkco.ru",
+            direction="inbound",
+            sent_at=datetime.now(timezone.utc),
+        )
+    )
+    await db_session.commit()
+
+    stats = await relink_orphan_threads(db_session, limit=10)
+    assert stats["threads_linked"] == 1
+
+
+@pytest.mark.asyncio
 async def test_faq_autoreply_mocked(db_session):
     from db.models import EmailAccount
     from services.email_faq_autoreply import try_faq_autoreply

@@ -47,6 +47,8 @@
 | `smoke_email_connect.py` | Live connect из `.env` (`core.email_config`); или `POST /api/email/bootstrap-from-env` |
 | `smoke_email_sync.py` | Live POST `/api/email/sync` — обновить письма без пароля |
 | `smoke_email_smtp_send.py` | Live POST `/api/email/send` — SMTP self-test (ib@) |
+| `smoke_email_faq.py` | FAQ smoke: триггер «прайс» → `try_faq_autoreply` (SMTP mock) |
+| `probe_email_host.py` | Диагностика IMAP/SMTP портов для кастомного хоста (me@) |
 | `smoke_scoring_funnel.py` | Смоук балльной воронки: формула scoreAdvisory + приоритеты |
 | `smoke_whisper_stt.py` | Смоук Groq Whisper STT + опц. live Groq |
 | `smoke_hermes_leads.py` | Смоук Hermes интентов по лидам (CRUD, стадия, задача) |

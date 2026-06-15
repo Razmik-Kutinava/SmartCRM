@@ -50,6 +50,7 @@ async def find_lead_for_email(
     cc: str,
     *,
     own_usernames: set[str] | None = None,
+    lead_index: dict[str, int] | None = None,
 ) -> Lead | None:
     """Exact email, затем домен отправителя ↔ website/email лида."""
     candidates = parse_candidate_emails(sender, recipients, cc)
@@ -59,6 +60,17 @@ async def find_lead_for_email(
     own = {u.strip().lower() for u in (own_usernames or set()) if u}
     external = {c for c in candidates if c not in own}
     if not external:
+        return None
+
+    if lead_index is not None:
+        for em in external:
+            if em in lead_index:
+                return await db.get(Lead, lead_index[em])
+        sender_addrs = parse_candidate_emails(sender, "", "")
+        for a in sender_addrs:
+            dom = email_domain(a)
+            if dom and dom in lead_index:
+                return await db.get(Lead, lead_index[dom])
         return None
 
     result = await db.execute(select(Lead))
@@ -82,12 +94,36 @@ async def find_lead_for_email(
     return None
 
 
-async def relink_orphan_threads(db: AsyncSession, account_id: int | None = None) -> dict[str, int]:
+async def build_lead_match_index(db: AsyncSession) -> dict[str, int]:
+    """email или домен → lead_id (последний выигрывает при коллизии)."""
+    rows = (await db.execute(select(Lead))).scalars().all()
+    idx: dict[str, int] = {}
+    free_mail = {"gmail.com", "mail.ru", "yandex.ru", "outlook.com", "hotmail.com"}
+    for lead in rows:
+        for key in lead_domain_keys(lead):
+            if key in free_mail:
+                continue
+            idx[key] = lead.id
+    return idx
+
+
+async def relink_orphan_threads(
+    db: AsyncSession,
+    account_id: int | None = None,
+    *,
+    limit: int = 100,
+) -> dict[str, int]:
     """Перепривязать треды/письма без lead_id по домену."""
-    q = select(EmailThread).where(EmailThread.lead_id.is_(None))
+    q = (
+        select(EmailThread)
+        .where(EmailThread.lead_id.is_(None))
+        .order_by(EmailThread.last_message_at.desc().nulls_last())
+        .limit(max(1, min(limit, 500)))
+    )
     if account_id:
         q = q.where(EmailThread.account_id == account_id)
     threads = (await db.execute(q)).scalars().all()
+    lead_index = await build_lead_match_index(db)
     linked = 0
     for thread in threads:
         msg_row = await db.execute(
@@ -99,7 +135,9 @@ async def relink_orphan_threads(db: AsyncSession, account_id: int | None = None)
         msg = msg_row.scalars().first()
         if not msg:
             continue
-        lead = await find_lead_for_email(db, msg.sender, msg.recipients, msg.cc or "")
+        lead = await find_lead_for_email(
+            db, msg.sender, msg.recipients, msg.cc or "", lead_index=lead_index
+        )
         if not lead:
             continue
         thread.lead_id = lead.id
@@ -109,4 +147,4 @@ async def relink_orphan_threads(db: AsyncSession, account_id: int | None = None)
             .values(lead_id=lead.id)
         )
         linked += 1
-    return {"threads_linked": linked}
+    return {"threads_linked": linked, "scanned": len(threads)}

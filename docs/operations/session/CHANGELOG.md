@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-15 — Ф3 Email хвосты A (relink, FAQ, me@ диагностика)
+
+**Сделано:** `EMAIL_ACCOUNT_N_APP_PASSWORD`; `email_tls` insecure SSL; relink orphans `limit` + lead index; `smoke_email_faq.py`, `probe_email_host.py`; connect 400 с явным auth hint; pytest 21; me@ — IMAP Invalid login (креды cPanel). **Коммит:** см. SESSION_STATE.
+
 ## 2026-06-15 — Ф3 Email live smoke
 
 **Сделано:** ib@ IMAP+SMTP OK; me@ connect 400; `smoke_email_smtp_send.py`; acceptance §Live. **Коммит:** `b207622`.

@@ -17,6 +17,9 @@ def email_env(monkeypatch):
     monkeypatch.delenv("EMAIL_ACCOUNT_2_IMAP_HOST", raising=False)
     monkeypatch.delenv("EMAIL_ACCOUNT_1_SMTP_HOST", raising=False)
     monkeypatch.delenv("EMAIL_ACCOUNT_2_SMTP_HOST", raising=False)
+    for i in (1, 2):
+        monkeypatch.delenv(f"EMAIL_ACCOUNT_{i}_APP_PASSWORD", raising=False)
+        monkeypatch.delenv(f"EMAIL_ACCOUNT_{i}_PASSWORD", raising=False)
 
 
 def test_load_accounts_from_env(email_env):
@@ -34,10 +37,31 @@ def test_load_accounts_empty_without_password(monkeypatch):
     monkeypatch.delenv("EMAIL_APP_PASSWORD", raising=False)
     monkeypatch.delenv("EMAIL_PASSWORD", raising=False)
     monkeypatch.setenv("EMAIL_ACCOUNT_1_USER", "x@test.com")
+    for i in range(1, 6):
+        monkeypatch.delenv(f"EMAIL_ACCOUNT_{i}_APP_PASSWORD", raising=False)
+        monkeypatch.delenv(f"EMAIL_ACCOUNT_{i}_PASSWORD", raising=False)
 
     from core.email_config import load_accounts_from_env
 
     assert load_accounts_from_env() == []
+
+
+def test_account_password_per_account(monkeypatch):
+    monkeypatch.delenv("EMAIL_APP_PASSWORD", raising=False)
+    monkeypatch.delenv("EMAIL_PASSWORD", raising=False)
+    monkeypatch.setenv("EMAIL_ACCOUNT_1_USER", "me@custom.am")
+    monkeypatch.setenv("EMAIL_ACCOUNT_1_APP_PASSWORD", "secret-one")
+    for i in range(2, 6):
+        monkeypatch.delenv(f"EMAIL_ACCOUNT_{i}_USER", raising=False)
+        monkeypatch.delenv(f"EMAIL_ACCOUNT_{i}_APP_PASSWORD", raising=False)
+
+    from core.email_config import account_password_from_env, load_accounts_from_env
+
+    assert account_password_from_env(1) == "secret-one"
+    accounts = load_accounts_from_env()
+    assert len(accounts) == 1
+    assert accounts[0]["username"] == "me@custom.am"
+    assert accounts[0]["password"] == "secret-one"
 
 
 def test_email_env_status_no_db(email_env):
@@ -66,6 +90,10 @@ async def test_config_status_endpoint(client, email_env):
 async def test_bootstrap_from_env_no_credentials(client, monkeypatch):
     monkeypatch.delenv("EMAIL_APP_PASSWORD", raising=False)
     monkeypatch.delenv("EMAIL_PASSWORD", raising=False)
+    for i in range(1, 6):
+        monkeypatch.delenv(f"EMAIL_ACCOUNT_{i}_APP_PASSWORD", raising=False)
+        monkeypatch.delenv(f"EMAIL_ACCOUNT_{i}_PASSWORD", raising=False)
+        monkeypatch.delenv(f"EMAIL_ACCOUNT_{i}_USER", raising=False)
 
     r = await client.post("/api/email/bootstrap-from-env", json={"sync": False})
     assert r.status_code == 400

@@ -144,8 +144,16 @@ async def connect_email_account(body: EmailAccountCreate, db: AsyncSession = Dep
         row = await upsert_account_from_payload(db, body.model_dump(), run_sync=True)
     except Exception as e:
         await db.rollback()
-        logger.warning("Email sync failed: %s", e)
-        raise HTTPException(status_code=400, detail="Ошибка синхронизации почты. Проверьте учётные данные и настройки сервера.")
+        err = str(e).lower()
+        logger.warning("Email connect/sync failed for %s: %s", body.username, e)
+        if "invalid login" in err or "authentication failed" in err or "535" in err:
+            detail = (
+                "IMAP/SMTP: неверный логин или пароль. "
+                "Проверьте EMAIL_ACCOUNT_*_APP_PASSWORD и первый вход в webmail хостинга."
+            )
+        else:
+            detail = "Ошибка синхронизации почты. Проверьте учётные данные и настройки сервера."
+        raise HTTPException(status_code=400, detail=detail) from e
     return {"account": row["account"], "sync": row["sync"]}
 
 
@@ -471,8 +479,12 @@ async def bind_email_to_lead(body: EmailLeadBindBody, db: AsyncSession = Depends
 
 
 @router.post("/relink-orphans")
-async def relink_orphan_email_threads(account_id: Optional[int] = None, db: AsyncSession = Depends(get_db)):
-    stats = await relink_orphan_threads(db, account_id=account_id)
+async def relink_orphan_email_threads(
+    account_id: Optional[int] = None,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db),
+):
+    stats = await relink_orphan_threads(db, account_id=account_id, limit=limit)
     await db.commit()
     return stats
 

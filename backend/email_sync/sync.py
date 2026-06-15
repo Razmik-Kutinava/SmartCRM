@@ -117,11 +117,18 @@ def _msg_to_item(msg: Any) -> dict[str, Any]:
 def _fetch_imap_by_uids(account: EmailAccount, uids: list[str]) -> dict[str, dict[str, Any]]:
     """Точечный fetch по UID — чинит даты после битого импорта."""
     from imap_tools import MailBox, MailBoxUnencrypted
+    from core.email_tls import account_insecure_ssl, imap_ssl_context
+
     out: dict[str, dict[str, Any]] = {}
     if not uids:
         return out
+    insecure = account_insecure_ssl(account)
+    ssl_ctx = imap_ssl_context(insecure)
     mailbox_cls = MailBox if account.use_ssl else MailBoxUnencrypted
-    with mailbox_cls(host=account.imap_server, port=account.imap_port) as mailbox:
+    kw = {"host": account.imap_server, "port": account.imap_port}
+    if ssl_ctx:
+        kw["ssl_context"] = ssl_ctx
+    with mailbox_cls(**kw) as mailbox:
         mailbox.login(account.username, decrypt(account.password))
         mailbox.folder.set('INBOX')
         chunk = int(os.getenv('EMAIL_IMAP_UID_CHUNK', '20'))
@@ -138,8 +145,15 @@ def _fetch_imap_by_uids(account: EmailAccount, uids: list[str]) -> dict[str, dic
 def _fetch_imap_messages(account: EmailAccount) -> list[dict[str, Any]]:
     messages = []
     from imap_tools import MailBox, MailBoxUnencrypted
+    from core.email_tls import account_insecure_ssl, imap_ssl_context
+
+    insecure = account_insecure_ssl(account)
+    ssl_ctx = imap_ssl_context(insecure)
     mailbox_cls = MailBox if account.use_ssl else MailBoxUnencrypted
-    with mailbox_cls(host=account.imap_server, port=account.imap_port) as mailbox:
+    kw = {"host": account.imap_server, "port": account.imap_port}
+    if ssl_ctx:
+        kw["ssl_context"] = ssl_ctx
+    with mailbox_cls(**kw) as mailbox:
         mailbox.login(account.username, decrypt(account.password))
         mailbox.folder.set("INBOX")
         fetch_limit = int(os.getenv("EMAIL_IMAP_FETCH_LIMIT", "500"))

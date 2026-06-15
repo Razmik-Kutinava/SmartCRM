@@ -10,17 +10,17 @@
 
 ---
 
-[2026-06-15] — me@agneko.am: smoke_email_connect HTTP 400
+[2026-06-15] — me@agneko.am: IMAP Invalid login or password
 
 Приоритет: 🟡 | Статус: открыта
 
-Описание: Live connect `me@agneko.am` — HTTP 400 «Ошибка синхронизации почты». `ib@agneko.com` OK.
+Описание: `mail.agneko.am:993` (insecure SSL) → `Invalid login or password` для `me@agneko.am` и `me`. SMTP 535 auth failed. Код: per-account `EMAIL_ACCOUNT_1_APP_PASSWORD` + `INSECURE_SSL` подключены; `ib@agneko.com` OK. DevTools webmail — не проверен (MCP browser busy).
 
-Влияние: второй ящик не синкается; один аккаунт в фоне.
+Влияние: второй ящик не синкается.
 
-Решение: проверить `EMAIL_ACCOUNT_1_*` IMAP/SMTP хост и пароль app-specific для agneko.am.
+Решение: сброс пароля в cPanel / первый вход webmail `https://mail.agneko.am`; обновить `EMAIL_ACCOUNT_1_APP_PASSWORD` в `.env`.
 
-Агент: F3 email live smoke
+Агент: F3 email хвост A
 
 ---
 

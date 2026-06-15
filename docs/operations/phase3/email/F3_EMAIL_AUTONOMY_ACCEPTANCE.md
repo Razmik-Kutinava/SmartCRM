@@ -32,11 +32,12 @@ python -m pytest tests/email/test_email_f3.py tests/api/test_email_sync_api.py -
 
 | Шаг | Команда | Результат |
 |-----|---------|-----------|
-| Connect | `python scripts/smoke_email_connect.py` | **ib@agneko.com** OK `imported=1 total=50`; **me@agneko.am** FAIL HTTP 400 (синк/креды) |
-| IMAP sync | `python scripts/smoke_email_sync.py` | OK `imported=0 updated=50 total=50` account id=2 |
-| SMTP send | `python scripts/smoke_email_smtp_send.py` | OK self-send → thread 512, message outbound |
-| Relink | `POST /api/email/relink-orphans` | timeout >60s на полной БД — отдельно не блокер IMAP/SMTP |
-| FAQ live | — | не гоняли (нет входящего с триггером в этом прогоне) |
+| Connect | `EMAIL_CONNECT_ONLY=1 python scripts/smoke_email_connect.py` | **me@agneko.am** FAIL — IMAP `Invalid login or password` на `mail.agneko.am` (креды cPanel, не код) |
+| Probe | `python scripts/probe_email_host.py` | SSL mismatch → `EMAIL_ACCOUNT_1_INSECURE_SSL=1`; SMTP 535 auth |
+| IMAP sync | `python scripts/smoke_email_sync.py` | OK ib@ `total=50` |
+| SMTP send | `python scripts/smoke_email_smtp_send.py` | OK ib@ self-send |
+| Relink | `POST /api/email/relink-orphans?limit=100` | OK `scanned=100` ~15s (индекс лидов) |
+| FAQ smoke | `python scripts/smoke_email_faq.py` | OK триггер «прайс» → `faq_auto` outbound (SMTP mock) |
 
 Backend: `uvicorn` :8000, фоновый auto-sync `imported=0 total=50` в логах.
 
