@@ -8,6 +8,7 @@
 	import { handleSendEmailApprove, handleSaveToRagApprove } from '$lib/voice/voiceApproveHandlers.js';
 	import { tryHandleVoiceFollowup, hasVoiceFollowupContext, parseVoiceFollowup } from '$lib/voice/voiceFollowup.js';
 	import VoiceActionHost from '../components/VoiceActionHost.svelte';
+	import LeadMailingHost from '../components/LeadMailingHost.svelte';
 	import { goto } from '$app/navigation';
 
 	let { children } = $props();
@@ -465,4 +466,5 @@
 	{/if}
 
 	<VoiceActionHost />
+	<LeadMailingHost />
 </div>

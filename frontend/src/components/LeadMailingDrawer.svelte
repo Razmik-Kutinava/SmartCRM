@@ -1,30 +1,28 @@
 <script>
 	import EmailNurturePanel from './EmailNurturePanel.svelte';
 	import { fetchEmailAccounts } from '$lib/emailStorage.js';
-	import { portal } from '$lib/ui/portal.js';
+	import {
+		leadMailingLead,
+		leadMailingOpen,
+		closeLeadMailing,
+	} from '$lib/leads/leadMailingUi.js';
 	import {
 		MAILING_TYPE_NURTURE,
 		enabledMailingTypes,
 		emailPanelDeepLink,
 	} from '$lib/leads/leadMailingTypes.js';
 
-	let {
-		open = false,
-		lead = null,
-		accounts = [],
-		onclose = () => {},
-	} = $props();
-
 	let selectedType = $state(null);
 	let error = $state('');
 	let success = $state('');
-	let localAccounts = $state([]);
+	let accounts = $state([]);
 
+	const lead = $derived($leadMailingLead);
+	const open = $derived($leadMailingOpen);
 	const types = $derived(lead ? enabledMailingTypes(lead) : []);
-	const accountList = $derived(localAccounts.length ? localAccounts : accounts);
 
 	function close() {
-		onclose();
+		closeLeadMailing();
 		selectedType = null;
 		error = '';
 		success = '';
@@ -49,11 +47,11 @@
 	});
 
 	$effect(() => {
-		if (!open || localAccounts.length || accounts.length) return;
+		if (!open) return;
 		let cancelled = false;
 		fetchEmailAccounts()
 			.then((rows) => {
-				if (!cancelled) localAccounts = rows ?? [];
+				if (!cancelled) accounts = rows ?? [];
 			})
 			.catch(() => {});
 		return () => {
@@ -65,7 +63,6 @@
 {#if open && lead}
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<div
-		use:portal
 		class="fixed inset-0 z-[100] flex items-stretch justify-end"
 		role="presentation"
 		data-testid="lead-mailing-drawer"
@@ -73,7 +70,7 @@
 	>
 		<button
 			type="button"
-			class="flex-1 cursor-default bg-black/60 border-0 p-0"
+			class="flex-1 cursor-default bg-black/60 border-0 p-0 min-h-0"
 			aria-label="Закрыть"
 			onclick={close}
 		></button>
@@ -134,7 +131,7 @@
 							>← Другой тип рассылки</button>
 						{/if}
 						<EmailNurturePanel
-							accounts={accountList}
+							{accounts}
 							leads={[lead]}
 							initialLeadId={lead.id}
 							lockLead

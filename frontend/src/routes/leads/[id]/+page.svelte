@@ -38,7 +38,7 @@
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 	import { enrichLeadOnCard } from '$lib/search/enrichLeadOnCard.js';
-	import LeadMailingDrawer from '../../../components/LeadMailingDrawer.svelte';
+	import { openLeadMailing } from '$lib/leads/leadMailingUi.js';
 
 	let lead    = $state(null);
 	let notFound = $state(false);
@@ -438,13 +438,7 @@
 	let replyLoading    = $state(false);
 
 	// ─── Рассылка с карточки (nurture и др.) ─────────────────────
-	let mailingOpen = $state(false);
 	let nurtureChainCount = $state(0);
-
-	function openMailingDrawer() {
-		if (!lead) return;
-		mailingOpen = true;
-	}
 
 	async function refreshNurtureChainCount() {
 		if (!lead?.id) {
@@ -598,7 +592,7 @@
 				type="button"
 				data-testid="lead-mailing-open"
 				class="px-3 py-1.5 bg-violet-700 hover:bg-violet-600 text-sm text-white rounded-lg transition-colors relative"
-				onclick={openMailingDrawer}
+				onclick={() => lead && openLeadMailing(lead)}
 			>
 				🔗 Рассылка
 				{#if nurtureChainCount > 0}
@@ -1600,11 +1594,4 @@
 			</div>
 		</div>
 	</div>
-
-	<LeadMailingDrawer
-		open={mailingOpen}
-		onclose={() => { mailingOpen = false; }}
-		{lead}
-		accounts={emailAccounts}
-	/>
 {/if}

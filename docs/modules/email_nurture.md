@@ -39,13 +39,15 @@ UI: `frontend/src/components/EmailNurturePanel.svelte`
 
 | Компонент | Путь |
 |-----------|------|
-| Drawer | `components/LeadMailingDrawer.svelte` |
-| Реестр типов | `lib/leads/leadMailingTypes.js` |
+| Drawer | `components/LeadMailingDrawer.svelte` + **`LeadMailingHost`** в корневом layout |
+| Store | `lib/leads/leadMailingUi.js` — `openLeadMailing(lead)` с любой страницы |
 | Deep link | `/email?lead={id}&panel=nurture` |
 
 Сейчас один тип: **цепочка касаний** (тот же `EmailNurturePanel`, `lockLead` + `compact`). Новые типы — строка в `LEAD_MAILING_TYPES`.
 
-Drawer рендерится через `portal` в `document.body` (не обрезается `overflow-hidden` layout).
+| Реестр типов | `lib/leads/leadMailingTypes.js` |
+
+Host в корневом `+layout.svelte` — `fixed` поверх всего UI, без prop-drilling.
 
 ## Дальше (план B–D)
 
