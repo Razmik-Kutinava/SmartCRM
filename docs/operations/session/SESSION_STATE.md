@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-15 | Действие: Этап B: массовая рассылка — EmailCampaignPanel, фильтры сегмента, preview-llm 3 примера, апрув, test ib@, send_now; API campaigns; pytest 6. | Коммит: `e2257b4` | Хвост A: нет | Хвост B: лимит писем/день — BACKLOG | Хвост C: нет | Следующий шаг: go C или live smoke B. | Статус: done
+
 2026-06-15 | Действие: fix рассылка навсегда: leadMailingUi store + LeadMailingHost в root layout; кнопка openLeadMailing(lead); pytest ui 2. | Коммит: `f47dd70` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: проверить UI. | Статус: done
 
 2026-06-15 | Действие: fix drawer «Рассылка»: portal в body (не обрезался overflow), onclose вместо bindable, z-100; EmailNurturePanel leadId; pytest portal 2. | Коммит: `e440e00` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: проверить UI / go B. | Статус: done
