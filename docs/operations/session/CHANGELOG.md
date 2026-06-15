@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-15 — fix: drawer «Рассылка» не открывался
+
+**Сделано:** `portal.js` → body; `LeadMailingDrawer` z-100 + onclose; pytest portal 2. **Коммит:** `e440e00`.
+
 ## 2026-06-15 — Рассылка касаний с карточки лида
 
 **Сделано:** `LeadMailingDrawer`, реестр `leadMailingTypes.js`, кнопка на `/leads/{id}`, `EmailNurturePanel` lockLead/compact, deep link `/email`; smoke `test_lead_mailing_types.py`. **Коммит:** `14678ac`.
