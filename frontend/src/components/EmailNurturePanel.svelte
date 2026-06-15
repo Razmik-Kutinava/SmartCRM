@@ -13,10 +13,18 @@
 		firstEmailForTest,
 	} from '$lib/email/nurtureTouchLogic.js';
 
-	let { accounts = [], leads = [], error = $bindable(''), success = $bindable('') } = $props();
+	let {
+		accounts = [],
+		leads = [],
+		error = $bindable(''),
+		success = $bindable(''),
+		initialLeadId = null,
+		lockLead = false,
+		compact = false,
+	} = $props();
 
 	let accountId = $state(null);
-	let leadId = $state(null);
+	let leadId = $state(initialLeadId);
 	let touchCount = $state(3);
 	let product = $state(NURTURE_PRODUCT_PRESETS[0]);
 	let productCustom = $state('');
@@ -34,6 +42,12 @@
 	const productValue = $derived(
 		product === '__custom__' ? (productCustom || '').trim() : product
 	);
+
+	const selectedLead = $derived(leads.find((l) => l.id === leadId) ?? null);
+
+	$effect(() => {
+		if (initialLeadId != null) leadId = initialLeadId;
+	});
 
 	async function loadHistory() {
 		try {
@@ -142,10 +156,15 @@
 	});
 </script>
 
-<div class="flex-1 overflow-y-auto min-h-0 px-5 py-4 space-y-5" data-testid="nurture-touch-panel">
-	<div class="grid gap-5 lg:grid-cols-[2fr_1fr]">
+<div
+	class="flex-1 overflow-y-auto min-h-0 {compact ? 'px-4 py-3' : 'px-5 py-4'} space-y-5"
+	data-testid="nurture-touch-panel"
+>
+	<div class="grid gap-5 {compact ? 'grid-cols-1' : 'lg:grid-cols-[2fr_1fr]'}">
 		<div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-3">
-			<p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">Точечные касания · 1 лид</p>
+			<p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">
+				{compact ? 'Касания' : 'Точечные касания · 1 лид'}
+			</p>
 
 			<select bind:value={accountId} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white" data-testid="nurture-account">
 				<option value={null}>Аккаунт отправки…</option>
@@ -154,12 +173,24 @@
 				{/each}
 			</select>
 
-			<select bind:value={leadId} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white" data-testid="nurture-lead">
-				<option value={null}>Лид…</option>
-				{#each leads as l (l.id)}
-					<option value={l.id}>{l.company} · {l.industry || '—'}</option>
-				{/each}
-			</select>
+			{#if lockLead && leadId}
+				<div
+					class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white"
+					data-testid="nurture-lead-locked"
+				>
+					{selectedLead?.company || `Лид #${leadId}`}
+					{#if selectedLead?.industry}
+						<span class="text-gray-500"> · {selectedLead.industry}</span>
+					{/if}
+				</div>
+			{:else}
+				<select bind:value={leadId} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white" data-testid="nurture-lead">
+					<option value={null}>Лид…</option>
+					{#each leads as l (l.id)}
+						<option value={l.id}>{l.company} · {l.industry || '—'}</option>
+					{/each}
+				</select>
+			{/if}
 
 			<div class="grid grid-cols-2 gap-2">
 				<select bind:value={touchCount} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white">
@@ -226,6 +257,7 @@
 		</div>
 	</div>
 
+	{#if !compact}
 	<div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
 		<p class="text-xs text-gray-400 uppercase font-semibold mb-3">История цепочек</p>
 		{#if chains.length}
@@ -246,4 +278,12 @@
 			<p class="text-sm text-gray-500">Нет цепочек</p>
 		{/if}
 	</div>
+	{:else if chains.length}
+		<div class="px-4 pb-3 text-xs text-gray-500" data-testid="nurture-history-compact">
+			Активных цепочек по лиду: {chains.length}
+			{#each chains.slice(0, 3) as c (c.id)}
+				<span class="ml-2 text-gray-400">#{c.id} {c.status} ({c.stepsSent}/{c.stepsTotal})</span>
+			{/each}
+		</div>
+	{/if}
 </div>

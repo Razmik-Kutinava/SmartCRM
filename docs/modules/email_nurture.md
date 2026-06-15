@@ -33,6 +33,18 @@ UI: `frontend/src/components/EmailNurturePanel.svelte`
 
 Настройки: 1/3/20 касаний, продукт, LLM или свои шаблоны, аккаунт, подпись.
 
+## С карточки лида ✅
+
+Кнопка **«Рассылка»** на `/leads/{id}` → drawer с реестром типов (`leadMailingTypes.js`).
+
+| Компонент | Путь |
+|-----------|------|
+| Drawer | `components/LeadMailingDrawer.svelte` |
+| Реестр типов | `lib/leads/leadMailingTypes.js` |
+| Deep link | `/email?lead={id}&panel=nurture` |
+
+Сейчас один тип: **цепочка касаний** (тот же `EmailNurturePanel`, `lockLead` + `compact`). Новые типы — строка в `LEAD_MAILING_TYPES`.
+
 ## Дальше (план B–D)
 
 - B: массовый сегмент + апрув 3 примеров

@@ -79,6 +79,7 @@
 
     let error   = $state('');
     let success = $state('');
+    let nurtureInitialLeadId = $state(null);
 
     const folders = EMAIL_FOLDERS;
 
@@ -116,6 +117,17 @@
             if (subject) composeSubject = subject;
             if (body) composeBody = body;
             if (to) composeTo = to;
+        }
+        const panel = params.get('panel');
+        const leadParam = params.get('lead');
+        if (panel === 'nurture' || panel === 'nurture_touch') {
+            activeFolder = 'nurture_touch';
+            error = '';
+            success = '';
+        }
+        if (leadParam) {
+            const lid = parseInt(leadParam, 10);
+            if (!Number.isNaN(lid)) nurtureInitialLeadId = lid;
         }
         const unsubVoice = voiceEmailContext.subscribe((ctx) => {
             if (!ctx) return;
@@ -516,7 +528,7 @@
         {/if}
 
         {#if activeFolder === 'nurture_touch'}
-            <EmailNurturePanel {accounts} {leads} bind:error bind:success />
+            <EmailNurturePanel {accounts} {leads} bind:error bind:success initialLeadId={nurtureInitialLeadId} />
         {/if}
 
         <!-- ════ УПРАВЛЕНИЕ КАМПАНИЯМИ ════ -->

@@ -17,7 +17,7 @@
 		leadPriorityTier,
 		priorityTierBadgeClass,
 	} from '$lib/crmStages.js';
-	import { fetchEmailAccounts, fetchEmailThreads } from '$lib/emailStorage.js';
+	import { fetchEmailAccounts, fetchEmailThreads, fetchNurtureChains } from '$lib/emailStorage.js';
 	import {
 		APPROVAL_KEYS,
 		APPROVAL_LABELS_RU,
@@ -38,6 +38,7 @@
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 	import { enrichLeadOnCard } from '$lib/search/enrichLeadOnCard.js';
+	import LeadMailingDrawer from '../../../components/LeadMailingDrawer.svelte';
 
 	let lead    = $state(null);
 	let notFound = $state(false);
@@ -436,6 +437,40 @@
 	let replyBody       = $state('');
 	let replyLoading    = $state(false);
 
+	// ─── Рассылка с карточки (nurture и др.) ─────────────────────
+	let mailingOpen = $state(false);
+	let nurtureChainCount = $state(0);
+
+	async function openMailingDrawer() {
+		if (!lead) return;
+		mailingOpen = true;
+		try {
+			if (!emailAccounts.length) {
+				emailAccounts = await fetchEmailAccounts();
+			}
+			await refreshNurtureChainCount();
+		} catch {
+			nurtureChainCount = 0;
+		}
+	}
+
+	async function refreshNurtureChainCount() {
+		if (!lead?.id) {
+			nurtureChainCount = 0;
+			return;
+		}
+		try {
+			const chains = await fetchNurtureChains(lead.id);
+			nurtureChainCount = chains?.length ?? 0;
+		} catch {
+			nurtureChainCount = 0;
+		}
+	}
+
+	$effect(() => {
+		if (lead?.id) refreshNurtureChainCount();
+	});
+
 	// Загружаем письма только когда переходим на таб
 	async function loadEmails() {
 		if (emailsLoaded || !lead) return;
@@ -567,6 +602,17 @@
 				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
 				onclick={() => { onTabChange('emails'); openCompose(lead.email, ''); }}
 			>✉️ Написать</button>
+			<button
+				type="button"
+				data-testid="lead-mailing-open"
+				class="px-3 py-1.5 bg-violet-700 hover:bg-violet-600 text-sm text-white rounded-lg transition-colors relative"
+				onclick={openMailingDrawer}
+			>
+				🔗 Рассылка
+				{#if nurtureChainCount > 0}
+					<span class="absolute -top-1 -right-1 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-indigo-500 text-[10px] leading-[1.1rem] text-center font-bold">{nurtureChainCount}</span>
+				{/if}
+			</button>
 			<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">📊 Анализ</button>
 			<button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">🎙 Голос</button>
 		</div>
@@ -1562,4 +1608,6 @@
 			</div>
 		</div>
 	</div>
+
+	<LeadMailingDrawer bind:open={mailingOpen} {lead} accounts={emailAccounts} />
 {/if}

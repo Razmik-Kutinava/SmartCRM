@@ -466,7 +466,7 @@
 
 - [x] Автоответ FAQ по правилам Ops · [`F3_EMAIL_AUTONOMY_ACCEPTANCE.md`](../operations/phase3/email/F3_EMAIL_AUTONOMY_ACCEPTANCE.md)
 - [x] Рассылки по сегменту лидов · см. acceptance §2
-- [x] Цепочки 20 касаний (автономно) · см. acceptance §3 · LLM под продукт [`email_nurture.md`](../modules/email_nurture.md) · **UI этап A:** `/email` → Касания (1 лид)
+- [x] Цепочки 20 касаний (автономно) · см. acceptance §3 · LLM под продукт [`email_nurture.md`](../modules/email_nurture.md) · **UI:** `/email` + кнопка «Рассылка» на карточке лида
 - [x] Автолинк письмо → лид по домену · см. acceptance §4
 
 ### Self-improvement
