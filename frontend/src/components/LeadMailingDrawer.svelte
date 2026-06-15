@@ -1,21 +1,30 @@
 <script>
 	import EmailNurturePanel from './EmailNurturePanel.svelte';
+	import { fetchEmailAccounts } from '$lib/emailStorage.js';
+	import { portal } from '$lib/ui/portal.js';
 	import {
 		MAILING_TYPE_NURTURE,
 		enabledMailingTypes,
 		emailPanelDeepLink,
 	} from '$lib/leads/leadMailingTypes.js';
 
-	let { open = $bindable(false), lead = null, accounts = [] } = $props();
+	let {
+		open = false,
+		lead = null,
+		accounts = [],
+		onclose = () => {},
+	} = $props();
 
 	let selectedType = $state(null);
 	let error = $state('');
 	let success = $state('');
+	let localAccounts = $state([]);
 
 	const types = $derived(lead ? enabledMailingTypes(lead) : []);
+	const accountList = $derived(localAccounts.length ? localAccounts : accounts);
 
 	function close() {
-		open = false;
+		onclose();
 		selectedType = null;
 		error = '';
 		success = '';
@@ -27,6 +36,10 @@
 		success = '';
 	}
 
+	function onBackdropKeydown(e) {
+		if (e.key === 'Escape') close();
+	}
+
 	$effect(() => {
 		if (!open) {
 			selectedType = null;
@@ -34,18 +47,42 @@
 		}
 		if (types.length === 1) selectedType = types[0].id;
 	});
+
+	$effect(() => {
+		if (!open || localAccounts.length || accounts.length) return;
+		let cancelled = false;
+		fetchEmailAccounts()
+			.then((rows) => {
+				if (!cancelled) localAccounts = rows ?? [];
+			})
+			.catch(() => {});
+		return () => {
+			cancelled = true;
+		};
+	});
 </script>
 
 {#if open && lead}
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<div
-		class="fixed inset-0 z-50 flex items-stretch justify-end bg-black/60"
-		role="dialog"
-		aria-modal="true"
-		aria-labelledby="lead-mailing-title"
+		use:portal
+		class="fixed inset-0 z-[100] flex items-stretch justify-end"
+		role="presentation"
 		data-testid="lead-mailing-drawer"
+		onkeydown={onBackdropKeydown}
 	>
-		<button type="button" class="flex-1 cursor-default" aria-label="Закрыть" onclick={close}></button>
-		<div class="w-full max-w-2xl bg-gray-950 border-l border-gray-800 flex flex-col shadow-2xl">
+		<button
+			type="button"
+			class="flex-1 cursor-default bg-black/60 border-0 p-0"
+			aria-label="Закрыть"
+			onclick={close}
+		></button>
+		<div
+			class="w-full max-w-2xl h-full bg-gray-950 border-l border-gray-800 flex flex-col shadow-2xl"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="lead-mailing-title"
+		>
 			<header class="flex items-center justify-between px-5 py-4 border-b border-gray-800 shrink-0">
 				<div>
 					<h2 id="lead-mailing-title" class="text-sm font-semibold text-white">Рассылка · {lead.company}</h2>
@@ -88,16 +125,16 @@
 						{/each}
 					</div>
 				{:else if selectedType === MAILING_TYPE_NURTURE}
-					<div class="flex-1 min-h-0 flex flex-col">
+					<div class="flex-1 min-h-0 flex flex-col overflow-hidden">
 						{#if types.length > 1}
 							<button
 								type="button"
-								class="mx-5 mt-3 text-xs text-indigo-400 hover:text-indigo-300 text-left"
+								class="mx-5 mt-3 text-xs text-indigo-400 hover:text-indigo-300 text-left shrink-0"
 								onclick={() => { selectedType = null; }}
 							>← Другой тип рассылки</button>
 						{/if}
 						<EmailNurturePanel
-							{accounts}
+							accounts={accountList}
 							leads={[lead]}
 							initialLeadId={lead.id}
 							lockLead

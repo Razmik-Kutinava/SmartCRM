@@ -24,7 +24,7 @@
 	} = $props();
 
 	let accountId = $state(null);
-	let leadId = $state(initialLeadId);
+	let leadId = $state(null);
 	let touchCount = $state(3);
 	let product = $state(NURTURE_PRODUCT_PRESETS[0]);
 	let productCustom = $state('');
@@ -47,6 +47,10 @@
 
 	$effect(() => {
 		if (initialLeadId != null) leadId = initialLeadId;
+	});
+
+	$effect(() => {
+		if (leadId) loadHistory();
 	});
 
 	async function loadHistory() {
@@ -150,10 +154,6 @@
 			busy = '';
 		}
 	}
-
-	$effect(() => {
-		if (leadId) loadHistory();
-	});
 </script>
 
 <div

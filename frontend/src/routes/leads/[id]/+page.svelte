@@ -441,17 +441,9 @@
 	let mailingOpen = $state(false);
 	let nurtureChainCount = $state(0);
 
-	async function openMailingDrawer() {
+	function openMailingDrawer() {
 		if (!lead) return;
 		mailingOpen = true;
-		try {
-			if (!emailAccounts.length) {
-				emailAccounts = await fetchEmailAccounts();
-			}
-			await refreshNurtureChainCount();
-		} catch {
-			nurtureChainCount = 0;
-		}
 	}
 
 	async function refreshNurtureChainCount() {
@@ -1609,5 +1601,10 @@
 		</div>
 	</div>
 
-	<LeadMailingDrawer bind:open={mailingOpen} {lead} accounts={emailAccounts} />
+	<LeadMailingDrawer
+		open={mailingOpen}
+		onclose={() => { mailingOpen = false; }}
+		{lead}
+		accounts={emailAccounts}
+	/>
 {/if}

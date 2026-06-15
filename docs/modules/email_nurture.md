@@ -45,6 +45,8 @@ UI: `frontend/src/components/EmailNurturePanel.svelte`
 
 Сейчас один тип: **цепочка касаний** (тот же `EmailNurturePanel`, `lockLead` + `compact`). Новые типы — строка в `LEAD_MAILING_TYPES`.
 
+Drawer рендерится через `portal` в `document.body` (не обрезается `overflow-hidden` layout).
+
 ## Дальше (план B–D)
 
 - B: массовый сегмент + апрув 3 примеров
