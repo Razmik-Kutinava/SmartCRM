@@ -28,15 +28,18 @@ python -m pytest tests/email/test_email_f3.py tests/api/test_email_sync_api.py -
 - `/ops/email-agents` — правила FAQ + toggle автоответ
 - `/ops/email` — nurture chains + relink
 
-## Live smoke (2026-06-15)
+## Live smoke (2026-06-15, полный прогон)
 
 | Шаг | Команда | Результат |
 |-----|---------|-----------|
-| Connect me@ | `EMAIL_CONNECT_ONLY=1 python scripts/smoke_email_connect.py` | **OK** `imported=50` — хост `imap.yandex.com` (MX Яндекс, не Hostland webmail) |
-| IMAP sync | `python scripts/smoke_email_sync.py` | OK ib@ `total=50` |
-| SMTP send | `python scripts/smoke_email_smtp_send.py` | OK ib@ self-send |
-| Relink | `POST /api/email/relink-orphans?limit=100` | OK `scanned=100` ~15s (индекс лидов) |
-| FAQ smoke | `python scripts/smoke_email_faq.py` | OK триггер «прайс» → `faq_auto` outbound (SMTP mock) |
+| Connect me@ | `EMAIL_CONNECT_ONLY=1 python scripts/smoke_email_connect.py` | **OK** `imported=50` — `imap.yandex.com` |
+| Connect ib@ | `EMAIL_CONNECT_ONLY=2 python scripts/smoke_email_connect.py` | **OK** `total=50` |
+| me@ SMTP live | `python scripts/smoke_email_faq_live.py` | **OK** self-send me@ |
+| FAQ live | `python scripts/smoke_email_faq_live.py` | **OK** ib@→me@ «прайс» → sync `faq_autoreplies=1` + outbound `faq_auto` |
+| IMAP sync | `python scripts/smoke_email_sync.py` | OK |
+| SMTP ib@ | `python scripts/smoke_email_smtp_send.py` | OK |
+| Relink | `POST /api/email/relink-orphans?limit=100` | OK `scanned=100` |
+| DevTools UI | `/email`, `/ops/email`, `/ops/email-agents` | OK: треды «прайс», Relink, FAQ-правила |
 
 Backend: `uvicorn` :8000, фоновый auto-sync `imported=0 total=50` в логах.
 

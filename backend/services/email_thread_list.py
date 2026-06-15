@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from sqlalchemy import func, select
+from sqlalchemy import Integer, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models import EmailMessage, EmailThread
@@ -26,7 +26,10 @@ async def list_email_threads_enriched(
 
     thread_ids = [t.id for t in threads]
     archived_rows = await db.execute(
-        select(EmailMessage.thread_id, func.max(EmailMessage.is_archived))
+        select(
+            EmailMessage.thread_id,
+            func.max(cast(EmailMessage.is_archived, Integer)),
+        )
         .where(EmailMessage.thread_id.in_(thread_ids))
         .group_by(EmailMessage.thread_id)
     )

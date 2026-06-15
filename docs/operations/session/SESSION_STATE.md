@@ -1,4 +1,4 @@
-﻿# SESSION_STATE
+# SESSION_STATE
 
 Краткий прогресс сессии — **обязательно** после каждого действия (1–2 строки). Шаг с изменениями файлов → `git commit` **до** отчёта. Канон: `smartcrm-commit-ops.mdc`.
 
@@ -11,6 +11,8 @@
 **Хвост A/B/C обязателен** в каждой новой записи (`check_agent_step.py`).
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
+
+2026-06-15 | Действие: Email live полный: me@ SMTP, FAQ live ib@→me@, fix threads API max(bool); DevTools /email /ops/email; smoke_email_faq_live.py; pytest 16. | Коммит: `PENDING` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: апрув Email → go Self-improvement. | Статус: done
 
 2026-06-13 | Действие: me@ fix — IMAP/SMTP на imap.yandex.com (MX Яндекс); connect OK imported=50; ib@ regression OK; FAQ on me@; pytest 21; ISSUES me@ закрыта. | Коммит: `6ff7f4e` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф3 Self-improvement. | Статус: done
 

@@ -1,6 +1,10 @@
-﻿# CHANGELOG (операционный)
+# CHANGELOG (операционный)
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
+
+## 2026-06-15 — Email live полный (FAQ real + UI)
+
+**Сделано:** `smoke_email_faq_live.py`; me@ SMTP; FAQ ib@→me@ live; fix `email_thread_list` max(bool); DevTools `/email` `/ops/email` `/ops/email-agents`. **Коммит:** см. SESSION_STATE.
 
 ## 2026-06-13 — me@agneko.am: хост Яндекс (MX)
 
