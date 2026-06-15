@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-15 — Рассылка касаний с карточки лида
+
+**Сделано:** `LeadMailingDrawer`, реестр `leadMailingTypes.js`, кнопка на `/leads/{id}`, `EmailNurturePanel` lockLead/compact, deep link `/email`; smoke `test_lead_mailing_types.py`. **Коммит:** `14678ac`.
+
 ## 2026-06-15 — Email UI этап A: точечные касания из панели
 
 **Сделано:** `EmailNurturePanel`, API `preview-llm`/`test-send`, RAG строгий, история chains; `email_nurture.md` §A. **Коммит:** `e425c77`.
