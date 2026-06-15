@@ -17,6 +17,8 @@ class AgentEmailIntent(Base):
     trigger_keywords: Mapped[str] = mapped_column(String(500), default="")        # "молч,тишина,не отвеч"
     action_template: Mapped[str]  = mapped_column(Text, nullable=False)           # что делать агенту
     priority: Mapped[int]   = mapped_column(Integer, default=0)                   # выше = важнее
+    auto_send: Mapped[bool] = mapped_column(Boolean, default=False)
+    reply_subject: Mapped[str] = mapped_column(String(500), default="")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), default=lambda: datetime.now(timezone.utc)
@@ -34,6 +36,8 @@ class AgentEmailIntent(Base):
             "triggerKeywords":  self.trigger_keywords,
             "actionTemplate":   self.action_template,
             "priority":         self.priority,
+            "autoSend":         self.auto_send,
+            "replySubject":     self.reply_subject,
             "isActive":         self.is_active,
             "created":          self.created_at.strftime("%d.%m.%Y") if self.created_at else "—",
         }

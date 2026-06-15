@@ -4,7 +4,7 @@
     import { get } from 'svelte/store';
     import {
         fetchEmailAccounts, connectEmailAccount, syncAllEmailAccounts, fetchEmailThreads,
-        fetchEmailCampaigns, createCampaign, fetchEmailSyncStatus,
+        fetchEmailCampaigns, createCampaign, fetchEmailSyncStatus, previewCampaignSegment,
         sendEmail, replyToEmail, fetchThreadMessages, analyzeEmailThread
     } from '$lib/emailStorage.js';
     import {
@@ -66,6 +66,10 @@
     let campaignSubject   = $state('');
     let campaignBody      = $state('');
     let campaignLeadIds   = $state([]);
+    let campaignUseSegment = $state(false);
+    let campaignStage     = $state('all');
+    let campaignMinScore  = $state(50);
+    let campaignSegmentCount = $state(null);
     let campaignLoading   = $state(false);
     let bindAccountId     = $state(null);
     let bindLeadId        = $state(null);
@@ -278,16 +282,43 @@
     }
 
     // ─── кампания ────────────────────────────────────────────────
+    async function previewSegment() {
+        try {
+            const seg = { stage: campaignStage === 'all' ? '' : campaignStage, min_score: Number(campaignMinScore) };
+            const r = await previewCampaignSegment(seg);
+            campaignSegmentCount = r.count;
+        } catch (e) { error = `❌ ${e.message}`; }
+    }
+
     async function createNewCampaign() {
-        if (!selectedAccountId || !campaignName || !campaignSubject || campaignLeadIds.length === 0) {
-            error = '❌ Заполни все поля'; return;
+        if (!selectedAccountId || !campaignName || !campaignSubject) {
+            error = '❌ Заполни название и тему'; return;
+        }
+        if (!campaignUseSegment && campaignLeadIds.length === 0) {
+            error = '❌ Выбери лидов или сегмент'; return;
         }
         error = ''; success = ''; campaignLoading = true;
         try {
-            await createCampaign({ account_id: selectedAccountId, name: campaignName, subject: campaignSubject, body: campaignBody, lead_ids: campaignLeadIds, send_now: false });
+            const payload = {
+                account_id: selectedAccountId,
+                name: campaignName,
+                subject: campaignSubject,
+                body: campaignBody,
+                send_now: false,
+            };
+            if (campaignUseSegment) {
+                payload.segment = {
+                    stage: campaignStage === 'all' ? '' : campaignStage,
+                    min_score: Number(campaignMinScore),
+                };
+            } else {
+                payload.lead_ids = campaignLeadIds;
+            }
+            await createCampaign(payload);
             campaigns = await fetchEmailCampaigns();
             success   = `✅ Кампания "${campaignName}" создана.`;
             campaignName = ''; campaignSubject = ''; campaignBody = ''; campaignLeadIds = [];
+            campaignSegmentCount = null;
         } catch (e) { error = `❌ ${e.message}`; }
         finally { campaignLoading = false; }
     }
@@ -486,7 +517,26 @@
                         </select>
                         <input bind:value={campaignName}    class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white" placeholder="Название кампании" />
                         <input bind:value={campaignSubject} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white" placeholder="Тема письма" />
-                        <textarea bind:value={campaignBody} class="w-full h-28 rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white resize-none" placeholder="Текст письма..."></textarea>
+                        <textarea bind:value={campaignBody} class="w-full h-28 rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white resize-none" placeholder="Текст письма... {{company}} {{contact}}"></textarea>
+                        <label class="flex items-center gap-2 text-sm text-gray-300">
+                            <input type="checkbox" bind:checked={campaignUseSegment} data-testid="campaign-use-segment" class="accent-indigo-500" />
+                            Рассылка по сегменту (stage + min score)
+                        </label>
+                        {#if campaignUseSegment}
+                            <div class="grid grid-cols-2 gap-2">
+                                <select bind:value={campaignStage} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white">
+                                    <option value="all">Все этапы</option>
+                                    <option value="Новый">Новый</option>
+                                    <option value="Квалифицирован">Квалифицирован</option>
+                                    <option value="Переговоры">Переговоры</option>
+                                </select>
+                                <input type="number" bind:value={campaignMinScore} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Min score" />
+                            </div>
+                            <button type="button" onclick={previewSegment} class="text-xs text-indigo-400 hover:underline">Предпросмотр сегмента</button>
+                            {#if campaignSegmentCount != null}
+                                <p class="text-xs text-gray-500" data-testid="campaign-segment-count">Лидов в сегменте: {campaignSegmentCount}</p>
+                            {/if}
+                        {/if}
                         <button onclick={createNewCampaign} disabled={campaignLoading}
                             class="w-full rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-500 disabled:bg-gray-700 transition-colors">
                             {campaignLoading ? 'Создание...' : 'Создать черновик кампании'}

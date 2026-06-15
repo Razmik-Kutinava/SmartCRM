@@ -22,6 +22,8 @@
     let formKeywords   = $state('');
     let formAction     = $state('');
     let formPriority   = $state(0);
+    let formAutoSend   = $state(false);
+    let formReplySubj  = $state('');
     let formSaving     = $state(false);
 
     // ─── редактирование ──────────────────────────────────────────
@@ -60,7 +62,7 @@
     // ─── создать / обновить ──────────────────────────────────────
     function openCreate() {
         editId = null; formAgent = 'marketer'; formIntentName = '';
-        formKeywords = ''; formAction = ''; formPriority = 0;
+        formKeywords = ''; formAction = ''; formPriority = 0; formAutoSend = false; formReplySubj = '';
         showForm = true;
     }
 
@@ -71,6 +73,8 @@
         formKeywords   = intent.triggerKeywords;
         formAction     = intent.actionTemplate;
         formPriority   = intent.priority;
+        formAutoSend   = !!intent.autoSend;
+        formReplySubj  = intent.replySubject || '';
         showForm       = true;
     }
 
@@ -84,6 +88,8 @@
                 trigger_keywords: formKeywords,
                 action_template:  formAction,
                 priority:         Number(formPriority),
+                auto_send:        formAutoSend,
+                reply_subject:    formReplySubj,
                 is_active:        true,
             };
             const url    = editId ? `/api/agents/email-intents/${editId}` : '/api/agents/email-intents';
@@ -496,6 +502,16 @@
                     <label class="text-xs text-gray-500 block mb-1">Приоритет <span class="text-gray-600">(выше = важнее)</span></label>
                     <input type="number" bind:value={formPriority} class="w-32 rounded-xl bg-gray-900 border border-gray-700 px-4 py-2.5 text-sm text-white" />
                 </div>
+                <label class="flex items-center gap-2 text-sm text-gray-300">
+                    <input type="checkbox" bind:checked={formAutoSend} class="accent-indigo-500" data-testid="faq-auto-send" />
+                    Автоответ FAQ (без апрува) при совпадении триггеров
+                </label>
+                {#if formAutoSend}
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-1">Тема автоответа</label>
+                        <input bind:value={formReplySubj} class="w-full rounded-xl bg-gray-900 border border-gray-700 px-4 py-2.5 text-sm text-white" placeholder="Re: ваш вопрос" />
+                    </div>
+                {/if}
             </div>
             <div class="px-6 pb-5 flex gap-3">
                 <button onclick={() => showForm = false} class="flex-1 rounded-xl bg-gray-800 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors">Отмена</button>

@@ -46,8 +46,13 @@ def write_sync_state(patch: dict[str, Any]) -> None:
 
 async def run_background_inbox_sync() -> dict[str, Any]:
     """Один проход фонового синка — все аккаунты из БД."""
+    from services.email_nurture import process_due_nurture_steps
+
     async with get_db_session() as db:
         summary = await sync_all_email_accounts(db)
+        nurture = await process_due_nurture_steps(db)
+        await db.commit()
+    summary["nurture"] = nurture
     if summary.get("empty"):
         return {"skipped": True, "reason": "нет подключённых аккаунтов"}
 

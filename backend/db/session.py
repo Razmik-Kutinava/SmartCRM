@@ -84,6 +84,7 @@ async def init_db():
     from db.models.email import EmailAccount, EmailThread, EmailMessage, EmailCampaign  # noqa: F401
     from db.models.eval_scenario import EvalScenario  # noqa: F401
     from db.models.training_dataset import TrainingDataset, TrainingRecord  # noqa: F401
+    from db.models.email_nurture import EmailNurtureChain, EmailNurtureStep  # noqa: F401
     from db.models.tender_saved import TenderSaved  # noqa: F401
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -105,6 +106,8 @@ async def init_db():
             "ALTER TABLE lead_field_audits ADD COLUMN IF NOT EXISTS event_type VARCHAR(64) DEFAULT 'field_change'",
             "ALTER TABLE lead_field_audits ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb",
             "ALTER TABLE tender_saved ADD COLUMN IF NOT EXISTS linked_lead_id INTEGER",
+            "ALTER TABLE agent_email_intents ADD COLUMN IF NOT EXISTS auto_send BOOLEAN DEFAULT FALSE",
+            "ALTER TABLE agent_email_intents ADD COLUMN IF NOT EXISTS reply_subject VARCHAR(500) DEFAULT ''",
         ]
         for sql in migrations:
             try:

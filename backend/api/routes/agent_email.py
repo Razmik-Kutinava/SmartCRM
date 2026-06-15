@@ -33,6 +33,8 @@ class IntentCreate(BaseModel):
     trigger_keywords: str = ""
     action_template: str
     priority: int = 0
+    auto_send: bool = False
+    reply_subject: str = ""
     is_active: bool = True
 
 
@@ -42,6 +44,8 @@ class IntentUpdate(BaseModel):
     trigger_keywords: Optional[str] = None
     action_template: Optional[str] = None
     priority: Optional[int] = None
+    auto_send: Optional[bool] = None
+    reply_subject: Optional[str] = None
     is_active: Optional[bool] = None
 
 

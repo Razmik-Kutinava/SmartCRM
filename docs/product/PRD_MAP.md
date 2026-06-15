@@ -464,10 +464,10 @@
 
 ### Email
 
-- [ ] Автоответ FAQ по правилам Ops
-- [ ] Рассылки по сегменту лидов
-- [ ] Цепочки 20 касаний (автономно)
-- [ ] Автолинк письмо → лид по домену
+- [x] Автоответ FAQ по правилам Ops · [`F3_EMAIL_AUTONOMY_ACCEPTANCE.md`](../operations/phase3/email/F3_EMAIL_AUTONOMY_ACCEPTANCE.md)
+- [x] Рассылки по сегменту лидов · см. acceptance §2
+- [x] Цепочки 20 касаний (автономно) · см. acceptance §3
+- [x] Автолинк письмо → лид по домену · см. acceptance §4
 
 ### Self-improvement
 

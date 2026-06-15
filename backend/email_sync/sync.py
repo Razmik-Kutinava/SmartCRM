@@ -12,6 +12,9 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models import EmailAccount, EmailThread, EmailMessage, Lead
+from services.email_lead_match import find_lead_for_email
+from services.email_faq_autoreply import try_faq_autoreply
+from services.email_nurture import pause_chain_on_inbound
 
 
 SUBJECT_CLEAN_RE = re.compile(r'^(re:|fwd:|fw:)+\s*', re.IGNORECASE)
@@ -250,6 +253,7 @@ async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict
     imported = 0
     updated = 0
     touched_threads: set[int] = set()
+    new_inbound: list[EmailMessage] = []
     for item in raw_messages:
         if not item['message_id']:
             continue
@@ -260,7 +264,10 @@ async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict
                 touched_threads.add(repaired.thread_id)
             continue
 
-        lead = await _find_lead_for_email(db, item['sender'], item['recipients'], item['cc'])
+        lead = await find_lead_for_email(
+            db, item['sender'], item['recipients'], item['cc'],
+            own_usernames={account.username},
+        )
         thread = await _get_or_create_thread(db, account.id, lead.id if lead else None, item)
         email = EmailMessage(
             account_id=account.id,
@@ -281,6 +288,7 @@ async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict
         )
         db.add(email)
         imported += 1
+        new_inbound.append(email)
         touched_threads.add(thread.id)
         thread.snippet = email.snippet
         thread.last_message_at = email.sent_at or datetime.now(timezone.utc)
@@ -291,6 +299,16 @@ async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict
 
     since = _imap_since_date(account)
     account.last_synced_at = datetime.now(timezone.utc)
+    await db.flush()
+
+    faq_sent = 0
+    for msg in new_inbound:
+        await db.refresh(msg)
+        if await try_faq_autoreply(db, account, msg):
+            faq_sent += 1
+        if msg.thread_id:
+            await pause_chain_on_inbound(db, msg.thread_id)
+
     await db.commit()
     return {
         'imported': imported,
@@ -299,29 +317,8 @@ async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict
         'threads_fixed': threads_fixed,
         'total': len(raw_messages),
         'since': since.isoformat() if since else None,
+        'faq_autoreplies': faq_sent,
     }
-
-
-async def _find_lead_for_email(db: AsyncSession, sender: str, recipients: str, cc: str) -> Lead | None:
-    candidate_emails = set()
-    if sender:
-        candidate_emails.update([addr.strip('<> ') for _, addr in getaddresses([sender]) if addr])
-    if recipients:
-        candidate_emails.update([addr.strip('<> ') for _, addr in getaddresses([recipients]) if addr])
-    if cc:
-        candidate_emails.update([addr.strip('<> ') for _, addr in getaddresses([cc]) if addr])
-
-    if not candidate_emails:
-        return None
-
-    q = select(Lead)
-    result = await db.execute(q)
-    for lead in result.scalars().all():
-        lead_email = (lead.email or '').strip().lower()
-        if lead_email and lead_email in candidate_emails:
-            return lead
-    return None
-
 
 async def _get_or_create_thread(db: AsyncSession, account_id: int, lead_id: int | None, item: dict[str, Any]) -> EmailThread:
     q = select(EmailThread).where(EmailThread.account_id == account_id, EmailThread.thread_key == item['thread_key'])

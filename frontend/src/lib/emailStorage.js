@@ -65,6 +65,32 @@ export async function createCampaign(body) {
 	});
 }
 
+export async function previewCampaignSegment(segment) {
+	return emailJson('/campaigns/segment-preview', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ segment }),
+	});
+}
+
+export async function startNurtureChain(leadId, accountId) {
+	return emailJson('/nurture/start', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ lead_id: leadId, account_id: accountId }),
+	});
+}
+
+export async function fetchNurtureChains(leadId) {
+	const q = leadId ? `?lead_id=${leadId}` : '';
+	return emailJson(`/nurture/chains${q}`);
+}
+
+export async function relinkOrphanEmails(accountId) {
+	const q = accountId ? `?account_id=${accountId}` : '';
+	return emailJson(`/relink-orphans${q}`, { method: 'POST' });
+}
+
 export async function fetchEmailCampaigns() {
 	return emailJson('/campaigns');
 }

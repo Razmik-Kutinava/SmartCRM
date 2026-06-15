@@ -1,27 +1,30 @@
 """
 REST API для почтового интегратора.
 """
+import json
 import logging
 from datetime import datetime, timezone
-from email.message import EmailMessage as MimeEmailMessage
-from typing import List, Optional
+from typing import Any, List, Optional
 
-import aiosmtplib
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator, model_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import get_db
-from core.crypto import decrypt
 from core.email_config import email_env_status
 from db.models import EmailAccount, EmailCampaign, EmailMessage, EmailThread, Lead, Task
+from db.models.email_nurture import EmailNurtureChain, EmailNurtureStep
 from email_sync.sync import sync_account_messages
 from email_sync.sync_all import sync_all_email_accounts
 from email_sync.background import email_sync_status_payload
 from services.email_bootstrap import bootstrap_accounts_from_env, upsert_account_from_payload
 from services.email_thread_list import list_email_threads_enriched
 from services.email_thread_analyze import analyze_email_thread
+from services.email_smtp import send_email_via_smtp as _send_email_via_smtp
+from services.lead_segment_query import resolve_segment_lead_ids
+from services.email_lead_match import relink_orphan_threads
+from services.email_nurture import start_nurture_chain
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/email", tags=["email"])
@@ -78,52 +81,19 @@ class EmailCampaignCreate(BaseModel):
     name: str
     subject: str
     body: str
-    lead_ids: List[int]
+    lead_ids: List[int] = []
+    segment: Optional[dict[str, Any]] = None
     send_now: bool = False
 
-    @field_validator("lead_ids")
-    @classmethod
-    def lead_ids_not_empty(cls, value: List[int]) -> List[int]:
-        if not value:
-            raise ValueError("Список лидов не может быть пустым")
-        return value
+    @model_validator(mode="after")
+    def lead_ids_or_segment(self):
+        if not self.lead_ids and not self.segment:
+            raise ValueError("Укажите lead_ids или segment")
+        return self
 
 
 def _format_address_list(addresses: List[str]) -> str:
     return "; ".join(addresses)
-
-
-async def _send_email_via_smtp(account: EmailAccount, subject: str, body: str, to: List[str], cc: List[str], bcc: List[str], in_reply_to: Optional[str] = None) -> None:
-    message = MimeEmailMessage()
-    message["From"] = account.username
-    message["To"] = ", ".join(to)
-    if cc:
-        message["Cc"] = ", ".join(cc)
-    if bcc:
-        message["Bcc"] = ", ".join(bcc)
-    message["Subject"] = subject
-    if in_reply_to:
-        message["In-Reply-To"] = in_reply_to
-        message["References"] = in_reply_to
-    message.set_content(body)
-
-    try:
-        await aiosmtplib.send(
-            message,
-            hostname=account.smtp_server,
-            port=account.smtp_port,
-            username=account.username,
-            password=decrypt(account.password),
-            start_tls=not account.use_ssl,
-            use_tls=account.use_ssl,
-            validate_certs=True,
-            timeout=30,
-        )
-    except Exception as e:
-        # SMTP-исключения иногда содержат отголоски сессии — не пробрасываем
-        # оригинал в HTTP, чтобы не вытащить пароль/команды AUTH в трейсбек.
-        logger.warning("SMTP send failed (%s): %s", type(e).__name__, account.smtp_server)
-        raise RuntimeError(f"SMTP-отправка не удалась: {type(e).__name__}") from None
 
 
 @router.get("/accounts")
@@ -373,29 +343,39 @@ async def create_campaign(body: EmailCampaignCreate, db: AsyncSession = Depends(
     if not account:
         raise HTTPException(404, detail="Почтовый аккаунт не найден")
 
+    lead_ids = list(body.lead_ids)
+    if body.segment:
+        lead_ids = await resolve_segment_lead_ids(db, body.segment)
+    if not lead_ids:
+        raise HTTPException(400, detail="Сегмент не дал лидов с email")
+
+    notes = json.dumps({"segment": body.segment}, ensure_ascii=False) if body.segment else ""
+
     campaign = EmailCampaign(
         account_id=account.id,
         name=body.name,
         subject=body.subject,
         body=body.body,
-        lead_ids=','.join(str(i) for i in body.lead_ids),
+        lead_ids=','.join(str(i) for i in lead_ids),
         status='sent' if body.send_now else 'draft',
+        notes=notes,
     )
     db.add(campaign)
     await db.flush()
 
     sent_count = 0
     if body.send_now:
-        result = await db.execute(select(Lead).where(Lead.id.in_(body.lead_ids)))
+        result = await db.execute(select(Lead).where(Lead.id.in_(lead_ids)))
         leads = result.scalars().all()
         for lead in leads:
             if not lead.email or lead.email.strip() == '—':
                 continue
+            body_text = body.body.replace("{{company}}", lead.company or "").replace("{{contact}}", lead.contact or "")
             try:
                 await _send_email_via_smtp(
                     account,
                     body.subject,
-                    body.body,
+                    body_text,
                     [lead.email],
                     [],
                     [],
@@ -405,7 +385,7 @@ async def create_campaign(body: EmailCampaignCreate, db: AsyncSession = Depends(
                     lead_id=lead.id,
                     subject=body.subject,
                     thread_key=body.subject.strip() or 'Без темы',
-                    snippet=body.body[:500],
+                    snippet=body_text[:500],
                     category='campaign',
                     last_message_at=datetime.now(timezone.utc),
                 )
@@ -421,8 +401,8 @@ async def create_campaign(body: EmailCampaignCreate, db: AsyncSession = Depends(
                     recipients=lead.email,
                     direction='outbound',
                     category='campaign',
-                    snippet=body.body[:400],
-                    body=body.body,
+                    snippet=body_text[:400],
+                    body=body_text,
                     sent_at=datetime.now(timezone.utc),
                 )
                 db.add(message)
@@ -443,7 +423,17 @@ async def create_campaign(body: EmailCampaignCreate, db: AsyncSession = Depends(
 
     await db.commit()
     await db.refresh(campaign)
-    return {"campaign": campaign.to_dict(), "sentCount": campaign.sent_count}
+    return {"campaign": campaign.to_dict(), "sentCount": campaign.sent_count, "leadIds": lead_ids}
+
+
+class SegmentPreviewBody(BaseModel):
+    segment: dict[str, Any]
+
+
+@router.post("/campaigns/segment-preview")
+async def preview_campaign_segment(body: SegmentPreviewBody, db: AsyncSession = Depends(get_db)):
+    ids = await resolve_segment_lead_ids(db, body.segment)
+    return {"count": len(ids), "leadIds": ids[:100]}
 
 
 @router.get("/campaigns")
@@ -454,25 +444,78 @@ async def list_campaigns(db: AsyncSession = Depends(get_db)):
 
 @router.post("/bind-lead", status_code=200)
 async def bind_email_to_lead(body: EmailLeadBindBody, db: AsyncSession = Depends(get_db)):
-    """Привяжи почтовый аккаунт к лиду для автоматической фильтрации писем."""
+    """Привязать переписку аккаунта к лиду + relink сирот по домену."""
     account = await db.get(EmailAccount, body.account_id)
     if not account:
         raise HTTPException(404, detail="Почтовый аккаунт не найден")
-    
+
     lead = await db.get(Lead, body.lead_id)
     if not lead:
         raise HTTPException(404, detail="Лид не найден")
-    
-    # Сохранить связь в поле lead_id EmailAccount (если поддерживается)
-    # или создать отдельную таблицу связей в будущем
-    logger.info(f"Email {account.username} привязана к лиду {lead.company}")
-    
+
+    await db.execute(
+        EmailThread.__table__.update()
+        .where(EmailThread.account_id == account.id, EmailThread.lead_id.is_(None))
+        .values(lead_id=lead.id)
+    )
+    stats = await relink_orphan_threads(db, account_id=account.id)
+    await db.commit()
+
     return {
         "status": "success",
-        "message": f"Email {account.username} привязана к лиду {lead.company}",
+        "message": f"Переписка {account.username} привязана к {lead.company}",
+        "relink": stats,
         "account": account.to_dict(),
-        "lead": lead.to_dict()
+        "lead": lead.to_dict(),
     }
+
+
+@router.post("/relink-orphans")
+async def relink_orphan_email_threads(account_id: Optional[int] = None, db: AsyncSession = Depends(get_db)):
+    stats = await relink_orphan_threads(db, account_id=account_id)
+    await db.commit()
+    return stats
+
+
+class NurtureStartBody(BaseModel):
+    lead_id: int
+    account_id: int
+
+
+@router.post("/nurture/start", status_code=201)
+async def nurture_start(body: NurtureStartBody, db: AsyncSession = Depends(get_db)):
+    try:
+        chain = await start_nurture_chain(db, lead_id=body.lead_id, account_id=body.account_id)
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e)) from e
+    await db.commit()
+    await db.refresh(chain)
+    steps = (
+        await db.execute(
+            select(EmailNurtureStep).where(EmailNurtureStep.chain_id == chain.id).order_by(EmailNurtureStep.step_index)
+        )
+    ).scalars().all()
+    return {"chain": chain.to_dict(), "steps": [s.to_dict() for s in steps]}
+
+
+@router.get("/nurture/chains")
+async def nurture_list(lead_id: Optional[int] = None, db: AsyncSession = Depends(get_db)):
+    q = select(EmailNurtureChain).order_by(EmailNurtureChain.created_at.desc())
+    if lead_id:
+        q = q.where(EmailNurtureChain.lead_id == lead_id)
+    chains = (await db.execute(q)).scalars().all()
+    return [c.to_dict() for c in chains]
+
+
+@router.post("/nurture/{chain_id}/pause")
+async def nurture_pause(chain_id: int, db: AsyncSession = Depends(get_db)):
+    chain = await db.get(EmailNurtureChain, chain_id)
+    if not chain:
+        raise HTTPException(404, detail="Цепочка не найдена")
+    chain.status = "paused"
+    chain.paused_at = datetime.now(timezone.utc)
+    await db.commit()
+    return chain.to_dict()
 
 @router.get("/threads/{thread_id}/messages")
 async def list_thread_messages(thread_id: int, db: AsyncSession = Depends(get_db)):

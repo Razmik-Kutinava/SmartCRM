@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-15 — Ф3 Email: автономия
+
+**Сделано:** FAQ autoreply по Ops-правилам; рассылки по сегменту; nurture 20 касаний + scheduler; autolink по домену; pytest 17 passed; `F3_EMAIL_AUTONOMY_ACCEPTANCE.md`; MAP Email `[x]`. **Коммит:** см. SESSION_STATE.
+
 ## 2026-06-15 — Ф3 Voice: апрув, revise, history
 
 **Сделано:** голос «да/нет» на approve-модалке; «короче» → revise-draft; история на `/ops/voice`; `approval_followup.py`, `revise_draft.py`, `voiceFollowup.js`; pytest 27 passed; `F3_VOICE_APPROVAL_ACCEPTANCE.md`; MAP Voice `[x]`. **Коммит:** `cad831c`.

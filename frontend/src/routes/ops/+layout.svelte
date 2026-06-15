@@ -13,6 +13,7 @@
 		{ href: '/ops/voice',    label: '🎙 Голос' },
 		{ href: '/ops/agents',       label: '🤖 Агенты'     },
 		{ href: '/ops/email-agents', label: '📧 Агенты почты' },
+		{ href: '/ops/email',       label: '📬 Email Ф3' },
 		{ href: '/ops/search',   label: '🔍 Поиск' },
 		{ href: '/ops/queue',    label: 'Очередь' },
 		{ href: '/ops/stats',    label: 'Статистика' },
