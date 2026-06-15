@@ -4,7 +4,7 @@
 
 ## 2026-06-15 — Email live полный (FAQ real + UI)
 
-**Сделано:** `smoke_email_faq_live.py`; me@ SMTP; FAQ ib@→me@ live; fix `email_thread_list` max(bool); DevTools `/email` `/ops/email` `/ops/email-agents`. **Коммит:** см. SESSION_STATE.
+**Сделано:** `smoke_email_faq_live.py`; me@ SMTP; FAQ ib@→me@ live; fix `email_thread_list` max(bool); DevTools `/email` `/ops/email` `/ops/email-agents`. **Коммит:** `82a5803`.
 
 ## 2026-06-13 — me@agneko.am: хост Яндекс (MX)
 
