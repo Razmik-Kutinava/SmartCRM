@@ -1,6 +1,6 @@
 /** Отрасль лида — справочник и проверка пустоты */
 
-import { apiFetch } from './api.js';
+import { apiFetch } from '$lib/api.js';
 
 const EMPTY = new Set(['', '—', '-', 'null', 'undefined']);
 
@@ -28,14 +28,14 @@ export async function fetchLeadIndustryCatalog() {
 export async function saveLeadIndustry(leadId, { industry, industryVerified = true }) {
 	const ind = String(industry || '').trim();
 	if (!ind) throw new Error('Выбери отрасль');
-	const { apiUpdateLead, fetchLeadById, fetchLeads, writeLeadsCache } = await import('./leadsStorage.js');
+	const { apiUpdateLead, fetchLeadById, fetchLeads, writeLeadsCache } = await import('$lib/leadsStorage.js');
 	await apiUpdateLead(leadId, { industry: ind, industry_verified: Boolean(industryVerified) });
 	await fetchLeadById(leadId);
 	const fresh = await fetchLeads();
 	writeLeadsCache(fresh);
 	const updated = fresh.find((l) => l.id === leadId) || { id: leadId, industry: ind, industryVerified };
 	try {
-		const { leadMailingLead } = await import('./leadMailingUi.js');
+		const { leadMailingLead } = await import('$lib/leads/leadMailingUi.js');
 		leadMailingLead.update((cur) => (cur?.id === leadId ? { ...cur, ...updated } : cur));
 	} catch {
 		/* store optional */

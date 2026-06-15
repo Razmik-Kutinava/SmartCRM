@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-13 | Действие: Массовая рассылка — чекбоксы отраслей (мультивыбор), счётчики лидов в /industries, фильтр industries[] + без отрасли; pytest 16. | Коммит: `e88a41f` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go этап C. | Статус: done
+2026-06-13 | Действие: fix 500 — industryCatalog.js неверные импорты (`$lib/api.js`, `$lib/leadsStorage.js`); build OK. | Коммит: `PLACEHOLDER` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go этап C. | Статус: done
 
 2026-06-15 | Действие: fix рассылка навсегда: leadMailingUi store + LeadMailingHost в root layout; кнопка openLeadMailing(lead); pytest ui 2. | Коммит: `f47dd70` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: проверить UI. | Статус: done
 

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — fix: 500 industryCatalog (неверные импорты)
+
+**Сделано:** `$lib/api.js`, `$lib/leadsStorage.js`, `$lib/leads/leadMailingUi.js` в `industryCatalog.js`; npm build OK. **Коммит:** `PLACEHOLDER`.
+
 ## 2026-06-13 — D+: чекбоксы отраслей в массовой рассылке
 
 **Сделано:** мультивыбор `industries[]`, счётчики в API, чекбокс «без отрасли»; pytest 16. **Коммит:** `e88a41f`.
