@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[рассылка с карточки — store + host] | Статус: ✅ done`
+
+**2026-06-15:** `leadMailingUi.js` store + `LeadMailingHost` в root layout; кнопка → `openLeadMailing(lead)`. **Коммит:** `f47dd70`.
+
+**2026-06-15:** portal fix drawer. **Коммит:** `e440e00`.
+
+**Следующий `go`:** апрув UI / этап B.
+
+---
+
 `Спринт:[Ф3] | Задача:[fix drawer рассылки с карточки] | Статус: ✅ done`
 
 **2026-06-15:** portal в body, drawer виден; **Коммит:** `e440e00`.

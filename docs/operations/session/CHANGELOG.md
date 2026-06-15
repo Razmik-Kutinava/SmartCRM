@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-15 — fix навсегда: store + LeadMailingHost в layout
+
+**Сделано:** `leadMailingUi.js`, host в `+layout.svelte`, кнопка `openLeadMailing(lead)`; pytest 2. **Коммит:** `f47dd70`.
+
 ## 2026-06-15 — fix: drawer «Рассылка» не открывался
 
 **Сделано:** `portal.js` → body; `LeadMailingDrawer` z-100 + onclose; pytest portal 2. **Коммит:** `e440e00`.
