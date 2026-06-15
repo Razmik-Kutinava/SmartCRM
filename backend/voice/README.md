@@ -9,6 +9,8 @@
 | `synthesis.py` | Синтез fanout → блок `payload.synthesis` для modal |
 | `lead_context.py` | История лида (audit/comments/comms) для `lead_history` |
 | `enrich_context.py` | Preview enrich-lead для `enrich_lead` (апрув перед PATCH) |
+| `approval_followup.py` | Ф3: парсинг «да» / «нет» / «короче» (backend mirror фронта) |
+| `revise_draft.py` | Ф3: сокращение черновика письма через LLM |
 | `rag_context.py` | Ответ из RAG (Chroma) для `ask_rag` |
 | `whisper.py` | Распознавание речи (Groq Whisper / локально) |
 | `audio_preprocess.py` | Нормализация аудио перед Whisper |

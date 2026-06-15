@@ -458,9 +458,9 @@
 
 ### Voice
 
-- [ ] Подтверждение голосом («да, отправляй» / «нет»)
-- [ ] «Переделай короче» голосом
-- [ ] История команд Ops → Voice
+- [x] Подтверждение голосом («да, отправляй» / «нет») · [`F3_VOICE_APPROVAL_ACCEPTANCE.md`](../operations/phase3/voice/F3_VOICE_APPROVAL_ACCEPTANCE.md)
+- [x] «Переделай короче» голосом · см. acceptance §2
+- [x] История команд Ops → Voice · см. acceptance §3
 
 ### Email
 

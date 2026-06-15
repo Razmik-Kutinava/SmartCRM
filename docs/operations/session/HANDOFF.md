@@ -1,5 +1,15 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Voice — апрув, revise, history] | Статус: ✅ done`
+
+> **→ Следующий агент:** Ф3 Email (цепочки, FAQ) — [`PRD_MAP.md`](../product/PRD_MAP.md)
+
+**2026-06-15 (Ф3 Voice):** голосовой follow-up да/нет/короче (`voiceFollowup.js` + layout intercept); `POST /api/voice/revise-draft`; `GET /api/ops/voice/history` + UI `/ops/voice`; pytest 27 passed 1 skipped; `F3_VOICE_APPROVAL_ACCEPTANCE.md`; MAP Voice 3 пункта `[x]`. **Коммит:** см. SESSION_STATE.
+
+**Следующий `go`:** Ф3 Email или ручной смоук голосового апрува.
+
+---
+
 `Спринт:[Ф2] | Задача:[§9 Лиды enrich голос] | Статус: ✅ done`
 
 > **→ Следующий агент:** §1 Voice Layer или Ф3 gate tuning — [`PRD_MAP.md`](../product/PRD_MAP.md)

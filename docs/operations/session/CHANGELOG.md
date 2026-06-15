@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-15 — Ф3 Voice: апрув, revise, history
+
+**Сделано:** голос «да/нет» на approve-модалке; «короче» → revise-draft; история на `/ops/voice`; `approval_followup.py`, `revise_draft.py`, `voiceFollowup.js`; pytest 27 passed; `F3_VOICE_APPROVAL_ACCEPTANCE.md`; MAP Voice `[x]`. **Коммит:** см. SESSION_STATE.
+
 ## 2026-06-14 — Ф2 §9: enrich голос
 
 **Сделано:** `enrich_lead` voice — rescue, `fetch_enrich_preview`, modal `apply/reject`, `voiceEnrichApply.js`; pytest 21 passed; `LEADS_ENRICH_VOICE_ACCEPTANCE.md`; MAP §9 п.2 `[x]`. **Коммит:** `cb0de76`.

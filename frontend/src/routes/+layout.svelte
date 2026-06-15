@@ -6,6 +6,7 @@
 	import { getApiUrl, connect, sendText, sendAudio, sendFixtureAudio, onMessage } from '$lib/websocket.js';
 	import { handleVoiceAction, registerVoiceApproveHandler, voiceToast, voiceHighlight } from '$lib/voice/voiceAction.js';
 	import { handleSendEmailApprove, handleSaveToRagApprove } from '$lib/voice/voiceApproveHandlers.js';
+	import { tryHandleVoiceFollowup, hasVoiceFollowupContext, parseVoiceFollowup } from '$lib/voice/voiceFollowup.js';
 	import VoiceActionHost from '../components/VoiceActionHost.svelte';
 	import { goto } from '$app/navigation';
 
@@ -54,6 +55,7 @@
 	let voice_traceId    = $state(null);
 	let voice_feedback   = $state(null);
 	let voice_fanout     = $state(false);
+	let voice_skip_intent = $state(false);
 	let mediaRecorder    = null;
 	let audioChunks      = [];
 
@@ -122,11 +124,35 @@
 				voice_transcript = data.text;
 				voice_status = 'processing';
 				voice_fanout = voiceLooksFanout(data.text);
+				if (hasVoiceFollowupContext()) {
+					const fu = parseVoiceFollowup(data.text);
+					if (fu) {
+						voice_skip_intent = true;
+						tryHandleVoiceFollowup(data.text).then((handled) => {
+							if (handled) {
+								voice_processing = false;
+								voice_status = 'done';
+								voice_reply = 'Голосовая команда принята';
+								setTimeout(() => {
+									voice_status = 'idle';
+									voice_reply = '';
+									voice_transcript = '';
+								}, 4000);
+							} else {
+								voice_skip_intent = false;
+							}
+						});
+					}
+				}
 			}
 			if (data.type === 'voice_action') {
 				handleVoiceAction(data, { goto });
 			}
 			if (data.type === 'intent') {
+				if (voice_skip_intent) {
+					voice_skip_intent = false;
+					return;
+				}
 				voice_processing = false;
 				voice_status = 'done';
 				voice_reply = data.reply || '';
@@ -220,6 +246,20 @@
 		if (!voice_text.trim() || voice_processing) return;
 		const t = voice_text.trim();
 		voice_text = '';
+		if (hasVoiceFollowupContext()) {
+			const handled = await tryHandleVoiceFollowup(t);
+			if (handled) {
+				voice_transcript = t;
+				voice_status = 'done';
+				voice_reply = 'Голосовая команда принята';
+				setTimeout(() => {
+					voice_status = 'idle';
+					voice_reply = '';
+					voice_transcript = '';
+				}, 4000);
+				return;
+			}
+		}
 		voice_transcript = t;
 		voice_status = 'processing'; voice_processing = true;
 		voice_fanout = voiceLooksFanout(t);

@@ -88,10 +88,13 @@
 
 {#if $voiceApprove}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true">
-		<div class="w-full max-w-md rounded-xl border border-amber-800/60 bg-gray-900 p-5 shadow-xl">
+		<div class="w-full max-w-md rounded-xl border border-amber-800/60 bg-gray-900 p-5 shadow-xl" data-testid="voice-approve-modal">
 			<h2 class="text-base font-semibold text-amber-200 mb-2">
 				{$voiceApprove.title || 'Подтверждение'}
 			</h2>
+			<p class="text-xs text-gray-500 mb-2" data-testid="voice-approve-hint">
+				Скажите «да, отправляй» / «нет» или нажмите кнопку ниже.
+			</p>
 			<p class="text-sm text-gray-300 mb-4">
 				{$voiceApprove.payload?.message || $voiceApprove.reply || 'Подтвердите действие'}
 			</p>
@@ -321,6 +324,9 @@
 
 			{#if $voiceModal.payload?.draft_email}
 				<section class="mb-4">
+					<p class="text-xs text-gray-500 mb-2" data-testid="voice-revise-hint">
+						Скажите «переделай короче» — черновик сократится без закрытия окна.
+					</p>
 					<h3 class="text-xs uppercase text-gray-500 mb-1">Черновик письма</h3>
 					<div class="text-sm text-gray-200 bg-gray-950/80 rounded-lg p-3 space-y-2">
 						<div><span class="text-gray-500">Тема:</span> {$voiceModal.payload.draft_email.subject || '—'}</div>

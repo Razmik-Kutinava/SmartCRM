@@ -30,3 +30,29 @@ async def delete_whisper_settings():
 
     cleared = voice_settings.clear_settings_file()
     return {"ok": True, "cleared": cleared, "effective": voice_settings.get_resolved_whisper_params()}
+
+
+@router.get("/voice/history")
+async def voice_command_history(limit: int = 40):
+    """Ф3: последние голосовые/текстовые команды (из traces)."""
+    from core import traces
+
+    rows = traces.get_traces(limit=min(max(limit, 1), 100))
+    return {
+        "items": [
+            {
+                "id": t.get("id"),
+                "text": t.get("text"),
+                "intent": t.get("intent"),
+                "reply": t.get("reply"),
+                "source": t.get("source"),
+                "duration_ms": t.get("duration_ms"),
+                "model": t.get("model"),
+                "feedback": t.get("feedback"),
+                "error": t.get("error"),
+                "ts": t.get("ts"),
+            }
+            for t in rows
+        ],
+        "total": len(rows),
+    }

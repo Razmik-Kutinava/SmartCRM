@@ -23,6 +23,34 @@
 	let testBusy = $state(false);
 	let testResult = $state('');
 
+	let historyLoading = $state(false);
+	let historyItems = $state([]);
+	let historyErr = $state('');
+
+	function fmtTs(ts) {
+		if (ts == null) return '—';
+		try {
+			return new Date(ts * 1000).toLocaleString('ru-RU');
+		} catch {
+			return String(ts);
+		}
+	}
+
+	async function loadHistory() {
+		historyErr = '';
+		historyLoading = true;
+		try {
+			const r = await fetch(`${API}/api/ops/voice/history?limit=30`);
+			if (!r.ok) throw new Error(await r.text());
+			const d = await r.json();
+			historyItems = d.items || [];
+		} catch (e) {
+			historyErr = e instanceof Error ? e.message : String(e);
+		} finally {
+			historyLoading = false;
+		}
+	}
+
 	function fmtUpdated(ts) {
 		if (ts == null || ts === undefined) return '';
 		try {
@@ -131,7 +159,10 @@
 		}
 	}
 
-	onMount(load);
+	onMount(() => {
+		load();
+		loadHistory();
+	});
 </script>
 
 <div class="px-6 py-8 max-w-3xl">
@@ -245,6 +276,57 @@
 				<pre class="mt-3 overflow-x-auto text-xs text-gray-500">{JSON.stringify(defaults_from_env, null, 2)}</pre>
 			</details>
 		{/if}
+
+		<div class="mt-8 rounded-xl border border-gray-800 bg-gray-900/50 p-6">
+			<div class="flex items-center justify-between gap-2 mb-3">
+				<h3 class="text-sm font-medium text-white">История голосовых команд</h3>
+				<button
+					type="button"
+					data-testid="voice-history-refresh"
+					onclick={loadHistory}
+					disabled={historyLoading}
+					class="rounded-lg border border-gray-600 px-3 py-1 text-xs text-gray-300 hover:bg-gray-800 disabled:opacity-50"
+				>
+					{historyLoading ? '…' : 'Обновить'}
+				</button>
+			</div>
+			<p class="text-xs text-gray-500 mb-3">
+				Последние команды из voice traces (текст, интент, ответ, длительность).
+			</p>
+			{#if historyErr}
+				<div class="mb-3 rounded border border-red-900/50 bg-red-950/40 px-3 py-2 text-xs text-red-200">{historyErr}</div>
+			{/if}
+			{#if historyLoading && !historyItems.length}
+				<p class="text-sm text-gray-500">Загрузка…</p>
+			{:else if !historyItems.length}
+				<p class="text-sm text-gray-500" data-testid="voice-history-empty">Пока нет записей</p>
+			{:else}
+				<div class="overflow-x-auto" data-testid="voice-history-table">
+					<table class="w-full text-left text-xs text-gray-300">
+						<thead class="text-gray-500 uppercase tracking-wide">
+							<tr>
+								<th class="pb-2 pr-3">Время</th>
+								<th class="pb-2 pr-3">Команда</th>
+								<th class="pb-2 pr-3">Интент</th>
+								<th class="pb-2 pr-3">Источник</th>
+								<th class="pb-2">мс</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each historyItems as row}
+								<tr class="border-t border-gray-800/80">
+									<td class="py-2 pr-3 text-gray-500 whitespace-nowrap">{fmtTs(row.ts)}</td>
+									<td class="py-2 pr-3 max-w-xs truncate" title={row.text}>{row.text || '—'}</td>
+									<td class="py-2 pr-3 text-indigo-300">{row.intent || '—'}</td>
+									<td class="py-2 pr-3 text-gray-500">{row.source || '—'}</td>
+									<td class="py-2 text-gray-500">{row.duration_ms ?? '—'}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			{/if}
+		</div>
 
 		<div class="mt-8 rounded-xl border border-gray-800 bg-gray-900/50 p-6">
 			<h3 class="text-sm font-medium text-white mb-2">Проверка транскрипции</h3>

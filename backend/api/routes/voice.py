@@ -40,6 +40,26 @@ class TextCommand(BaseModel):
     text: str
 
 
+class ReviseDraftBody(BaseModel):
+    subject: str = ""
+    body: str = ""
+
+
+@router.post("/api/voice/revise-draft")
+async def revise_draft(body: ReviseDraftBody):
+    """Ф3: сократить черновик письма / ответа."""
+    from voice.revise_draft import revise_email_draft
+
+    try:
+        out = await revise_email_draft(body.subject, body.body)
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e)) from e
+    except Exception as e:
+        logger.warning("revise-draft: %s", e)
+        raise HTTPException(503, detail="Не удалось сократить черновик") from e
+    return {"ok": True, **out}
+
+
 @router.post("/api/voice/command")
 async def text_command(body: TextCommand):
     """
