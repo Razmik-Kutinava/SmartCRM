@@ -4,7 +4,7 @@
 
 ## 2026-06-16 — Live UI smoke B (массовая рассылка)
 
-**Сделано:** Playwright `smoke_campaign_mass_ui.py` — `/email` → Массовая → отрасли → счётчик → 3 LLM → test ib@ PASS; pytest testids. MCP DevTools недоступен.
+**Сделано:** Playwright `smoke_campaign_mass_ui.py` — `/email` → Массовая → отрасли → счётчик → 3 LLM → test ib@ PASS; pytest testids. MCP DevTools недоступен. **Коммит:** `f968fbe`.
 
 ## 2026-06-16 — ops: этап C SESSION_STATE + README routes
 

@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-16 | Действие: Live UI smoke B (Playwright): /email Массовая — чекбоксы, счётчик, 3 LLM, test ib@ PASS; скрипт + pytest testids. | Коммит: `f968fbe` | Хвост A: нет | Хвост B: лимит писем/день — BACKLOG (не в scope) | Хвост C: MCP DevTools errored — Playwright | Следующий шаг: апрув «ок» B/C/D. | Статус: done
+
 2026-06-16 | Действие: docs README routes — chain_type, products_owned, campaign API; CHANGELOG ops. | Коммит: `f8a557b` | Хвост A: UI DevTools массовой — не гоняли (API smoke OK) | Хвост B: нет | Хвост C: нет | Следующий шаг: апрув «ок» B/C/D. | Статус: done
 
 2026-06-16 | Действие: Этап C — products_owned, chain_type new/cross/upsell, nurture UI; smoke B API (industries+segment); pytest email 25; BACKLOG лимит/день. | Коммит: `78c66d4` | Хвост A: UI DevTools массовой — не гоняли (API smoke OK) | Хвост B: лимит писем/день → BACKLOG | Хвост C: нет | Следующий шаг: апрув «ок» B/C/D. | Статус: done
