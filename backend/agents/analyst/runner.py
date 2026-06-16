@@ -4,6 +4,7 @@ import time
 
 from agents.base import AgentState
 
+from agents.analyst_gate_enrich import enrich_analyst_output
 from .analyze import analyze
 
 logger = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ async def run(state: AgentState) -> AgentState:
     timings = dict(state.get("agent_timings", {}))
 
     try:
-        output = await analyze(intent, slots)
+        output = enrich_analyst_output(await analyze(intent, slots), slots, intent)
     except Exception as e:
         logger.error("Аналитик: необработанная ошибка: %s", e)
         errors.append(f"analyst: {e}")

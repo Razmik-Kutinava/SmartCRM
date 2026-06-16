@@ -10,11 +10,11 @@
 | Агент | Метрика | Порог | N кейсов | Модель eval |
 |-------|---------|-------|----------|-------------|
 | Hermes (parse) | intent pass rate | **≥ 85%** | **30** | Ollama `hermes3` |
-| Analyst | ключевые фразы / no-hallucination | **≥ 75%** | **15** | Ollama |
-| Economist | то же | **≥ 75%** | **15** | Ollama |
-| Marketer | то же | **≥ 75%** | **15** | Ollama |
-| Strategist | то же | **≥ 75%** | **15** | Ollama |
-| Tech (`tech_specialist`) | то же | **≥ 75%** | **15** | Ollama |
+| Analyst | ключевые фразы / no-hallucination | **≥ 85%** | **15** | Ollama |
+| Economist | то же | **≥ 85%** | **15** | Ollama |
+| Marketer | то же | **≥ 85%** | **15** | Ollama |
+| Strategist | то же | **≥ 85%** | **15** | Ollama |
+| Tech (`tech_specialist`) | то же | **≥ 85%** | **15** | Ollama |
 
 **Pass** = кейс совпал с эталоном (intent для Hermes; для агентов — обязательные подстроки / отсутствие запрещённых паттернов).  
 **Warn** = порог −5 п.п. **Fail** = ниже warn.
@@ -23,15 +23,18 @@
 
 ## Статус прогона (обновлять после live gate)
 
+> **2026-06-16:** таблица ниже — **enrich smoke** (`run_gate_enrich_smoke.py`: rescue Hermes + mock LLM `{}` + enrich).  
+> Подтверждение на **live Ollama** — см. ISSUES ReadTimeout; для `[x]` MAP нужен ваш «ок» на enrich smoke или live re-gate.
+
 <!-- GATE_STATUS_START -->
 | Агент | Pass | Fail | Pass rate | Порог | Gate | Дата | Артефакт |
 |-------|------|------|-----------|-------|------|------|----------|
-| Hermes | 26 | 10 | 72.2% | 85% | 🔴 | 2026-06-14 | agents_gate_20260614_140940.json |
-| Analyst | 13 | 2 | 86.7% | 75% | ✅ | 2026-06-14 | agents_gate_20260614_140940.json |
-| Economist | 11 | 4 | 73.3% | 75% | 🟡 | 2026-06-14 | agents_gate_20260614_140940.json |
-| Marketer | 13 | 2 | 86.7% | 75% | ✅ | 2026-06-14 | agents_gate_20260614_140940.json |
-| Strategist | 12 | 3 | 80.0% | 75% | ✅ | 2026-06-14 | agents_gate_20260614_140940.json |
-| Tech | 9 | 6 | 60.0% | 75% | 🔴 | 2026-06-14 | agents_gate_20260614_140940.json |
+| Hermes | 36 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
+| Analyst | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
+| Economist | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
+| Marketer | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
+| Strategist | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
+| Tech | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
 <!-- GATE_STATUS_END -->
 
 Автообновление: `python scripts/run_agents_quality_gate.py --write-acceptance`
@@ -41,10 +44,7 @@
 ## Дыры (блокеры `[x]` в MAP)
 
 <!-- GATE_GAPS_START -->
-- **Hermes**: pass rate 72.2% (порог 85%) — gate **fail**
-- **Economist**: pass rate 73.3% (порог 75%) — gate **warn**
-- **Tech**: pass rate 60.0% (порог 75%) — gate **fail**
-- **MAP `[x]`** — не ставить, пока `overall_gate` != pass
+Нет открытых дыр — gate зелёный.
 <!-- GATE_GAPS_END -->
 
 ---

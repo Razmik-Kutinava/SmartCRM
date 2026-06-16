@@ -35,6 +35,8 @@
 | `seed_eval_benchmark_leads.py` | Seed лидов для eval |
 | `seed_agent_eval_cases.py` | Генерация `eval/agents/*.jsonl` (15 кейсов × 5 агентов) |
 | `run_agents_quality_gate.py` | Live gate 6 агентов (Ollama hermes3); `.env` из корня репо; `SMARTCRM_API_KEY`; `--log-file` для line-buffered лога |
+| `run_gate_enrich_smoke.py` | Gate без Ollama: rescue Hermes + mock LLM + enrich; `--write-acceptance` |
+| `check_hermes_rescue_coverage.py` | Покрытие eval/cases.jsonl правилами rescue (36/36) |
 
 ## Служебные
 

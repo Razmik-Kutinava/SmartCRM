@@ -11,10 +11,7 @@ from core.hermes.slot_normalize import normalize_parsed_intent
 
 _REPO = Path(__file__).resolve().parents[4]
 CASES = _REPO / "eval" / "cases.jsonl"
-RESCUE_IDS = {
-    "eval-001", "eval-014", "eval-015", "eval-028", "eval-029", "eval-030",
-    "eval-003", "eval-004", "eval-005", "eval-033", "eval-034", "eval-035", "eval-036",
-}
+RESCUE_IDS = None  # all cases
 
 
 def load_cases():
@@ -24,6 +21,8 @@ def load_cases():
             line = line.strip()
             if line:
                 cases.append(json.loads(line))
+    if RESCUE_IDS is None:
+        return cases
     return [c for c in cases if c["id"] in RESCUE_IDS]
 
 

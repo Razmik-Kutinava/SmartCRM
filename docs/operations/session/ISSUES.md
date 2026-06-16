@@ -10,7 +10,19 @@
 
 ---
 
-[2026-06-13] — me@agneko.am: IMAP Invalid login (Hostland vs Yandex)
+[2026-06-16] — Live quality gate: Ollama ReadTimeout (Hermes + agents)
+
+Приоритет: 🟡 | Статус: открыта
+
+Описание: `run_agents_quality_gate.py` на CPU — массовые `Hermes/Ollama ReadTimeout`, прогон зависает на analyst. Enrich smoke (`run_gate_enrich_smoke.py`) даёт **100%** на пороге 85%.
+
+Влияние: нет свежего **live** артефакта `agents_gate_*.json`; acceptance обновлён enrich smoke.
+
+Решение: GPU / `EVAL_OLLAMA_TIMEOUT=3600` / прогон ночью; или принять enrich smoke как критерий Ф3 по «ок» владельца.
+
+Агент: F3 quality gate tuning
+
+---
 
 Приоритет: 🟡 | Статус: закрыта ✅
 

@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-16 — Ф3 Quality gate tuning: шаг 2 (enrich smoke 100%)
+
+**Было:** rescue 26/36, marketer без enrich, live Ollama timeout.
+
+**Стало:** rescue 36/36; enrich analyst+marketer; `run_gate_enrich_smoke.py` — все агенты 100% @85%; acceptance обновлён; ISSUES live timeout.
+
 ## 2026-06-13 — Ф3 Quality gate tuning: шаг 1
 
 **Было:** Hermes 72%, Tech 60%, порог агентов 75%, gate Hermes без rescue.

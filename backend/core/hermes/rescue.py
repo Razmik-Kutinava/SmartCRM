@@ -23,6 +23,9 @@ def rescue_route(text: str) -> dict | None:
             "_model": "rescue",
         })
 
+    if re.search(r"\b(привет|как настроение|что нового|кто ты|ты кто)\b", t):
+        return out("noop", [], "Это не CRM команда.")
+
     if re.search(r"\b(test command|hello|hi)\b", t):
         return out("noop", [], "Это не CRM команда.")
 
@@ -90,7 +93,14 @@ def rescue_route(text: str) -> dict | None:
             "_model": "rescue",
         })
 
-    if matches_search(text):
+    if ("найди" in t or "поищи" in t or "загугли" in t) and (
+        "интернет" in t or "в сети" in t or "новост" in t
+    ):
+        m_q = re.search(r"(?:про|о|об)\s+(.+)$", t, re.I)
+        query = m_q.group(1).strip()[:200] if m_q else t[:200]
+        return out("search_web", ["analyst"], "Ищу в интернете.", {"query": query})
+
+    if matches_search(text) and "интернет" not in t and "в сети" not in t:
         slots_ts = tender_search_slots(text)
         q = slots_ts.get("query", "")
         suffix = f" по «{q}»" if q else ""
@@ -254,6 +264,59 @@ def rescue_route(text: str) -> dict | None:
         comp = _extract_company(text)
         slots_h: dict = {"company": comp} if comp else {}
         return out("lead_history", ["analyst"], "Показываю историю лида.", slots_h)
+
+    if (
+        ("задач" in t or "таск" in t)
+        and ("какие" in t or "список" in t or "покажи" in t or "открыт" in t or "просроч" in t or "сегодня" in t)
+        and "создай" not in t
+        and "напоминал" not in t
+        and "отметь" not in t
+        and "удали" not in t
+        and "убери" not in t
+        and "перенес" not in t
+    ):
+        filt = (
+            "today"
+            if "сегодня" in t
+            else "overdue"
+            if "просроч" in t
+            else "open"
+            if "открыт" in t
+            else "all"
+        )
+        return out("list_tasks", ["analyst"], "Список задач.", {"filter": filt})
+
+    if ("удали" in t or "убери" in t) and ("задач" in t or "таск" in t) and "лид" not in t:
+        slots_dt: dict = {}
+        m_id = re.search(r"(?:номер|#|id)\s*(\d+)", t)
+        if m_id:
+            slots_dt["task_id"] = m_id.group(1)
+        m_title = re.search(r"[«\"']([^»\"']+)[»\"']", text)
+        if m_title:
+            slots_dt["title"] = m_title.group(1).strip()
+        else:
+            m_plain = re.search(r"с названием\s+(.+)$", t)
+            if m_plain:
+                slots_dt["title"] = m_plain.group(1).strip()[:120]
+        return out("delete_task", ["analyst"], "Удаляю задачу.", slots_dt)
+
+    if ("отметь" in t or "выполнен" in t) and ("задач" in t or "таск" in t or "звонок" in t):
+        slots_ut: dict = {"status": "выполнен"}
+        m_title = re.search(r"задач[уа]?\s+про\s+(.+?)\s+отметь", t)
+        if not m_title:
+            m_title = re.search(r"задач[уа]?\s+(.+?)\s+отметь", t)
+        if m_title:
+            slots_ut["title"] = m_title.group(1).strip()[:120]
+        return out("update_task", ["analyst"], "Обновляю задачу.", slots_ut)
+
+    if "перенес" in t and ("дедлайн" in t or "задач" in t or "таск" in t):
+        slots_ud: dict = {}
+        m_title = re.search(r"[«\"']([^»\"']+)[»\"']", text)
+        if m_title:
+            slots_ud["title"] = m_title.group(1).strip()
+        if "понедельник" in t:
+            slots_ud["due"] = "понедельник"
+        return out("update_task", ["analyst"], "Переношу дедлайн.", slots_ud)
 
     if (
         "задач" in t

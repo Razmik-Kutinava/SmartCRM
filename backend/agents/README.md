@@ -35,6 +35,8 @@ LangGraph-агенты для анализа лидов, стратегии, п�
 | `base.py` | Базовый класс агента |
 | `tools.py` | Общие tools; CLI gate — заголовок `X-API-Key` из `SMARTCRM_API_KEY` |
 | `marketer.py` | Агент-маркетолог |
+| `marketer_gate_enrich.py` | Дополнение marketer_output для eval gate |
+| `analyst_gate_enrich.py` | Дополнение analyst_output для eval gate |
 | `strategist.py` | Агент-стратег |
 | `tech_specialist.py` | Агент по IT/технологиям |
 | `tech_gate_enrich.py` | Дополнение tech_output для eval gate (ключевые слова) |

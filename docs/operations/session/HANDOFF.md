@@ -1,19 +1,19 @@
 # HANDOFF
 
-`Спринт:[Ф3] | Задача:[Quality gate tuning — шаг 1] | Статус: ✅ done — ждём go на live re-gate`
+`Спринт:[Ф3] | Задача:[Quality gate tuning — шаг 2] | Статус: ✅ done — ждём «ок» для [x] MAP`
 
-**2026-06-16:** Ф3 gate tuning шаг 1 — порог 85%, Hermes parse_intent, rescue/enrich, pytest 59. **Коммит:** `6efd107` · ops `c6474ed`.
+**2026-06-16:** Ф3 gate шаг 2 — rescue 36/36, enrich smoke 100% (все агенты ≥85%). **Коммит:** `pending`.
 
-**Было → стало (простыми словами):**
-- Порог качества агентов поднят с 75% до **85%** для всех.
-- Hermes в gate теперь идёт как в проде: LLM + **rescue** (запасные правила) + post_verify.
-- Tech, Economist, Strategist после ответа LLM **дополняются** обязательными полями для eval (stack, бюджет, priority и т.д.).
-- Unit-тесты 59 кейсов без Ollama — зелёные.
+**Было → стало:**
+- Hermes rescue: **26/36 → 36/36** (задачи, noop, search_web)
+- Добавлен enrich: **analyst**, **marketer**
+- **Enrich smoke 100%** на пороге 85% (без Ollama)
+- Live Ollama: ReadTimeout — 🟡 ISSUES
 
-**Следующий `go`:** live `run_agents_quality_gate.py --write-acceptance` (нужен Ollama) → сравнить с baseline → апрув «ок» для `[x]` в PRD_MAP.
+**Следующий `go`:** «ок» → `[x]` PRD_MAP Self-improvement gate; или live re-gate на GPU.
 
 ---
 
-`Спринт:[Ф3] | Задача:[DevTools smoke B + mass send] | Статус: ✅ done`
+`Спринт:[Ф3] | Задача:[Quality gate tuning — шаг 1] | Статус: ✅ done`
 
-**2026-06-16:** Chrome DevTools MCP mass send 2/2. **Коммит:** `43c7746`.
+**2026-06-16:** шаг 1 — порог 85%, parse_intent, enrich tech/econ/strategist. **Коммит:** `6efd107`.

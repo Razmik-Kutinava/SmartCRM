@@ -23,6 +23,21 @@
 
 ---
 
+## Шаг 2 (2026-06-16) — rescue 36/36 + enrich smoke 100%
+
+**Было (после шага 1):** rescue 26/36; marketer без enrich; live Ollama ReadTimeout.
+
+**Стало:**
+- **Hermes rescue 36/36** — list/update/delete task, noop, search_web vs tenders
+- **Enrich:** analyst, marketer + шаг 1 (tech, economist, strategist)
+- **Enrich smoke:** все агенты **100%** при пороге **85%** (`agents_gate_enrich_smoke_20260616_092644.json`)
+- Команда: `python scripts/run_gate_enrich_smoke.py --write-acceptance`
+- **Live Ollama:** ReadTimeout на Hermes/agent LLM — 🟡 ISSUES
+
+**Ещё не сделано:** live re-gate на GPU/большем timeout; `[x]` PRD_MAP после «ок».
+
+---
+
 ## Текущие показатели (baseline)
 
 | Агент | Pass rate | Порог Ф2 | Gate | Δ vs 2026-06-13 | Цель Ф3 |

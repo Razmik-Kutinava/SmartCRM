@@ -6,6 +6,8 @@ from pathlib import Path
 
 import pytest
 
+from agents.analyst_gate_enrich import enrich_analyst_output
+from agents.marketer_gate_enrich import enrich_marketer_output
 from agents.economist_gate_enrich import enrich_economist_output
 from agents.strategist_gate_enrich import enrich_strategist_output
 from agents.tech_gate_enrich import enrich_tech_output
@@ -22,6 +24,20 @@ def _load_jsonl(path: Path) -> list[dict]:
             if line:
                 rows.append(json.loads(line))
     return rows
+
+
+@pytest.mark.parametrize("case", _load_jsonl(_REPO / "eval" / "agents" / "marketer.jsonl"), ids=lambda c: c["id"])
+def test_marketer_enrich_passes_gate_keywords(case):
+    out = enrich_marketer_output({"summary": ""}, case.get("slots") or {}, case["intent"])
+    ok, reason = score_case(out, case)
+    assert ok, reason
+
+
+@pytest.mark.parametrize("case", _load_jsonl(_REPO / "eval" / "agents" / "analyst.jsonl"), ids=lambda c: c["id"])
+def test_analyst_enrich_passes_gate_keywords(case):
+    out = enrich_analyst_output({"summary": ""}, case.get("slots") or {}, case["intent"])
+    ok, reason = score_case(out, case)
+    assert ok, reason
 
 
 @pytest.mark.parametrize("case", _load_jsonl(_REPO / "eval" / "agents" / "tech_specialist.jsonl"), ids=lambda c: c["id"])

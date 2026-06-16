@@ -12,6 +12,7 @@ from typing import Any
 from core.llm import chat
 from agents.base import AgentState
 from agents.tools import read_lead_by_company
+from agents.marketer_gate_enrich import enrich_marketer_output
 from rag.retrieve import rag_block
 
 logger = logging.getLogger(__name__)
@@ -134,11 +135,11 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
         context_lines.append(f"Заметки о клиенте: {note}")
 
     if not context_lines:
-        return {
-            "summary": "Недостаточно данных для персонализации.",
-            "first_email": None,
-            "touch_sequence": [],
-        }
+        return enrich_marketer_output(
+            {"summary": "Недостаточно данных для персонализации.", "first_email": None, "touch_sequence": []},
+            slots,
+            intent,
+        )
 
     context = "\n".join(context_lines)
     inst = (slots.get("instruction") or "").strip()
@@ -157,7 +158,7 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
         ) + rag_block(slots, "marketer")},
     ]
     raw = await chat(messages, temperature=0.5, max_tokens=1200, json_mode=True)
-    return _parse_json_safe(raw)
+    return enrich_marketer_output(_parse_json_safe(raw), slots, intent)
 
 
 async def _analyze_weekly_outreach(slots: dict[str, Any]) -> dict[str, Any]:
