@@ -2,6 +2,8 @@
 
 `Спринт:[Ф3] | Задача:[этап C + smoke B] | Статус: ✅ done — ждём апрув «ок»`
 
+**2026-06-16:** docs README routes (chain_type, campaign). **Коммит:** `f8a557b`.
+
 **2026-06-16:** `products_owned`, `chain_type` new/cross/upsell, nurture UI; API smoke массовой B; BACKLOG лимит/день. **Коммит:** `78c66d4` · ops `3a87e7b`.
 
 **Следующий `go`:** апрув B/C/D в чате или следующий пункт PRD_MAP.
