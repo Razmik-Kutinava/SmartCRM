@@ -14,6 +14,7 @@
 | `email_thread_list.py` | Enriched список тредов для UI (`isArchived`, `previewFrom`) |
 | `email_thread_analyze.py` | Анализ треда: тип письма + черновик маркетолога |
 | `industry_catalog.py` | Справочник отраслей (фикс + CRM) и статистика сегмента |
+| `lead_products_owned.py` | Нормализация списка «уже купили» на лиде |
 | `lead_segment_query.py` | Фильтр лидов по сегменту для рассылок |
 
 Кэш ответов: `data/moy_zakupki_cache/`.  

@@ -8,6 +8,7 @@
 	import {
 		NURTURE_TOUCH_COUNTS,
 		NURTURE_PRODUCT_PRESETS,
+		NURTURE_CHAIN_TYPES,
 		DEFAULT_TEST_EMAIL,
 		nurturePayloadBase,
 		firstEmailForTest,
@@ -28,6 +29,7 @@
 	let accountId = $state(null);
 	let leadId = $state(null);
 	let touchCount = $state(3);
+	let chainType = $state('new');
 	let product = $state(NURTURE_PRODUCT_PRESETS[0]);
 	let productCustom = $state('');
 	let themeMode = $state('marketer');
@@ -100,6 +102,7 @@
 					leadId,
 					product: productValue,
 					touchCount,
+					chainType,
 					senderName,
 					senderEmail,
 					themeMode,
@@ -159,6 +162,7 @@
 				leadId,
 				product: productValue,
 				touchCount,
+				chainType,
 				senderName,
 				senderEmail,
 				themeMode,
@@ -214,6 +218,9 @@
 					{:else}
 						<span class="text-amber-500 text-xs"> · укажи отрасль</span>
 					{/if}
+					{#if selectedLead?.productsOwned?.length}
+						<span class="block text-[11px] text-gray-500 mt-1">Уже купили: {selectedLead.productsOwned.join(', ')}</span>
+					{/if}
 				</div>
 			{:else}
 				<select bind:value={leadId} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white" data-testid="nurture-lead">
@@ -236,6 +243,12 @@
 			{#if product === '__custom__'}
 				<input bind:value={productCustom} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2 text-sm text-white" placeholder="Название продукта" />
 			{/if}
+
+			<select bind:value={chainType} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2 text-sm text-white" data-testid="nurture-chain-type">
+				{#each NURTURE_CHAIN_TYPES as t (t.id)}
+					<option value={t.id}>{t.label} — {t.hint}</option>
+				{/each}
+			</select>
 
 			<div class="flex gap-4 text-sm text-gray-300">
 				<label class="flex items-center gap-2"><input type="radio" bind:group={themeMode} value="marketer" class="accent-indigo-500" /> Маркетолог (LLM)</label>

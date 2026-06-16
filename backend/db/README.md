@@ -19,7 +19,7 @@ PostgreSQL через SQLAlchemy async. Схема создаётся при с�
 
 | Файл | Таблица / сущность |
 |------|-------------------|
-| `lead.py` | Лид CRM (стадия, скор, отрасль + `industry_verified`) |
+| `lead.py` | Лид CRM (стадия, скор, отрасль, `products_owned` JSON) |
 | `task.py` | Задачи по лиду |
 | `user.py` | Пользователи |
 | `email.py` | Настройки почты |

@@ -36,6 +36,19 @@ JSON (строго):
 }"""
 
 
+CHAIN_TYPE_HINTS: dict[str, str] = {
+    "new": "Тип цепочки: NEW — первый контакт, продукт клиенту ещё не продавали.",
+    "cross": (
+        "Тип цепочки: CROSS-SELL — у клиента уже есть продукты из списка «Уже купили». "
+        "Предлагай дополняющий продукт, не дублируй то, что уже есть."
+    ),
+    "upsell": (
+        "Тип цепочки: UPSELL — у клиента уже есть продукты из списка «Уже купили». "
+        "Предлагай расширение лицензий/модулей или апгрейд линейки."
+    ),
+}
+
+
 async def analyze_product_nurture(slots: dict[str, Any]) -> dict[str, Any]:
     """LLM: анализ клиента + N писем под product_name."""
     product = (slots.get("product_name") or slots.get("product") or "продукт").strip()
@@ -55,6 +68,14 @@ async def analyze_product_nurture(slots: dict[str, Any]) -> dict[str, Any]:
         val = (slots.get(key) or "").strip()
         if val and val != "—":
             context_lines.append(f"{label}: {val}")
+
+    owned = slots.get("products_owned") or []
+    if owned:
+        context_lines.append("Уже купили: " + ", ".join(str(x) for x in owned))
+
+    chain_type = str(slots.get("chain_type") or "new").strip().lower() or "new"
+    hint = CHAIN_TYPE_HINTS.get(chain_type, CHAIN_TYPE_HINTS["new"])
+    context_lines.append(hint)
 
     note = (slots.get("note") or slots.get("instruction") or "").strip()
     if note:

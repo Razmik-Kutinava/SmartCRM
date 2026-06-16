@@ -736,6 +736,16 @@
 							<input bind:value={detailsDraft.nextCall} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
 						</label>
 						<label class="block">
+							<span class="text-gray-500 text-xs">Уже купили (по строке)</span>
+							<textarea
+								bind:value={detailsDraft.productsOwnedText}
+								rows="2"
+								class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm resize-y"
+								placeholder="MaxPatrol VM&#10;OpManager"
+								data-testid="lead-card-products-owned"
+							></textarea>
+						</label>
+						<label class="block">
 							<span class="text-gray-500 text-xs">Описание / заметка</span>
 							<textarea bind:value={detailsDraft.description} rows="3" class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm resize-y"></textarea>
 						</label>

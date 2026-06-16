@@ -7,6 +7,12 @@ export const NURTURE_PRODUCT_PRESETS = [
 	'Positive Technologies MaxPatrol SIEM',
 ];
 
+export const NURTURE_CHAIN_TYPES = [
+	{ id: 'new', label: 'Новый продукт', hint: 'Первый контакт' },
+	{ id: 'cross', label: 'Cross-sell', hint: 'Дополняющий продукт' },
+	{ id: 'upsell', label: 'Upsell', hint: 'Расширение / апгрейд' },
+];
+
 export const DEFAULT_TEST_EMAIL = 'ib@agneko.com';
 
 export function nurturePayloadBase(state) {
@@ -14,6 +20,7 @@ export function nurturePayloadBase(state) {
 		lead_id: state.leadId,
 		product_name: state.product,
 		email_count: state.touchCount,
+		chain_type: state.chainType || 'new',
 		sender_name: state.senderName,
 		sender_email: state.senderEmail,
 		theme_mode: state.themeMode,

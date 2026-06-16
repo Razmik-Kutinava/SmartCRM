@@ -19,6 +19,8 @@ class EmailNurtureChain(Base):
     status: Mapped[str] = mapped_column(String(32), default="active")  # active|paused|done
     steps_total: Mapped[int] = mapped_column(Integer, default=20)
     steps_sent: Mapped[int] = mapped_column(Integer, default=0)
+    chain_type: Mapped[str] = mapped_column(String(32), default="new")  # new|cross|upsell
+    product_name: Mapped[str] = mapped_column(String(255), default="")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), default=lambda: datetime.now(timezone.utc)
     )
@@ -33,6 +35,8 @@ class EmailNurtureChain(Base):
             "status": self.status,
             "stepsTotal": self.steps_total,
             "stepsSent": self.steps_sent,
+            "chainType": self.chain_type or "new",
+            "productName": self.product_name or "",
             "createdAt": self.created_at.isoformat() if self.created_at else None,
             "pausedAt": self.paused_at.isoformat() if self.paused_at else None,
         }

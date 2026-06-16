@@ -592,6 +592,7 @@ class NurtureLlmStartBody(BaseModel):
     lead_id: Optional[int] = None
     product_name: str = "Positive Technologies MaxPatrol VM"
     email_count: int = 3
+    chain_type: str = "new"  # new | cross | upsell
     sender_name: str = "Иван Б."
     sender_email: str = "ib@agneko.com"
     client_email: Optional[str] = None
@@ -606,6 +607,7 @@ class NurturePreviewBody(BaseModel):
     lead_id: int
     product_name: str = "Positive Technologies MaxPatrol VM"
     email_count: int = 3
+    chain_type: str = "new"
     sender_name: str = "Иван Б."
     sender_email: str = "ib@agneko.com"
     theme_mode: str = "marketer"
@@ -631,6 +633,7 @@ async def _nurture_slots_from_body(db: AsyncSession, lead_id: int, body: Any) ->
         lead,
         product_name=body.product_name,
         email_count=body.email_count,
+        chain_type=getattr(body, "chain_type", "new"),
         sender_name=body.sender_name,
         sender_email=body.sender_email,
         theme_mode=getattr(body, "theme_mode", "marketer"),
@@ -709,6 +712,7 @@ async def nurture_start_llm(body: NurtureLlmStartBody, db: AsyncSession = Depend
             llm_result=llm_result,
             product_name=body.product_name,
             live_all_now=body.send_now,
+            chain_type=body.chain_type,
         )
     except ValueError as e:
         lead.email = client_email_saved

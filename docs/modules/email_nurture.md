@@ -77,6 +77,17 @@ UI: `EmailCampaignPanel.svelte` · логика: `campaignSegmentLogic.js`
 
 UI: `industryCatalog.js`, `leadIndustryUi.js`, карточка `/leads/{id}` — datalist + «Указать отрасль».
 
-## Дальше (план C)
+## Дальше
 
-- C: тип цепочки new/cross/upsell + `products_owned`
+- Лимит писем/день — см. `BACKLOG.md` (отдельный шаг)
+
+## Этап C — products_owned и типы цепочек ✅
+
+| Что | Где |
+|-----|-----|
+| `products_owned` | JSON на лиде, textarea на карточке (по строке) |
+| `chain_type` | `new` / `cross` / `upsell` на `email_nurture_chains` |
+| UI nurture | select типа в `EmailNurturePanel` |
+| Маркетолог | `marketer_nurture.py` — подсказки по типу + «Уже купили» |
+
+API: `chain_type` в `POST /nurture/preview-llm` и `/nurture/start-llm`.

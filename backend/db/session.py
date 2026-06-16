@@ -107,6 +107,9 @@ async def init_db():
             "ALTER TABLE lead_field_audits ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb",
             "ALTER TABLE tender_saved ADD COLUMN IF NOT EXISTS linked_lead_id INTEGER",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS industry_verified BOOLEAN DEFAULT FALSE",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS products_owned JSONB",
+            "ALTER TABLE email_nurture_chains ADD COLUMN IF NOT EXISTS chain_type VARCHAR(32) DEFAULT 'new'",
+            "ALTER TABLE email_nurture_chains ADD COLUMN IF NOT EXISTS product_name VARCHAR(255) DEFAULT ''",
             "ALTER TABLE agent_email_intents ADD COLUMN IF NOT EXISTS reply_subject VARCHAR(500) DEFAULT ''",
         ]
         for sql in migrations:

@@ -78,6 +78,10 @@ async def update_lead(
     if not lead:
         raise HTTPException(404, detail="Лид не найден")
     data = body.model_dump(exclude_unset=True, exclude_none=False)
+    if "products_owned" in data:
+        from services.lead_products_owned import normalize_products_owned
+
+        data["products_owned"] = normalize_products_owned(data["products_owned"])
     patch_for_merge: dict = {}
     for field, value in data.items():
         if field == "approvals":

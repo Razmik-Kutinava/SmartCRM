@@ -7,6 +7,13 @@ function normDisplay(v) {
 	return s === DASH ? '' : s;
 }
 
+function productsOwnedToText(lead) {
+	const raw = lead?.productsOwned ?? lead?.products_owned;
+	if (!raw) return '';
+	if (Array.isArray(raw)) return raw.filter(Boolean).join('\n');
+	return String(raw).trim();
+}
+
 /** @param {Record<string, unknown> | null | undefined} lead */
 export function detailsDraftFromLead(lead) {
 	if (!lead) {
@@ -24,6 +31,7 @@ export function detailsDraftFromLead(lead) {
 			nextCall: '',
 			scoreStr: '',
 			description: '',
+			productsOwnedText: '',
 		};
 	}
 	return {
@@ -40,7 +48,15 @@ export function detailsDraftFromLead(lead) {
 		nextCall: normDisplay(lead.nextCall ?? lead.next_call),
 		scoreStr: lead.score != null && lead.score !== '' ? String(lead.score) : '',
 		description: String(lead.description ?? '').trim(),
+		productsOwnedText: productsOwnedToText(lead),
 	};
+}
+
+function parseProductsOwnedText(text) {
+	return String(text || '')
+		.split(/\r?\n/)
+		.map((s) => s.trim())
+		.filter(Boolean);
 }
 
 /** @param {ReturnType<typeof detailsDraftFromLead>} draft */
@@ -73,6 +89,7 @@ export function patchFromDetailsDraft(draft) {
 		budget: draft.budget.trim() || DASH,
 		next_call: draft.nextCall.trim() || DASH,
 		description: draft.description.trim(),
+		products_owned: parseProductsOwnedText(draft.productsOwnedText),
 	};
 	if (score !== undefined) patch.score = score;
 	return patch;

@@ -71,6 +71,9 @@ async def pick_nurture_lead(db: AsyncSession, *, exclude_prefix: str = "Nurture 
 
 
 async def build_marketer_slots(db: AsyncSession, lead: Lead, **extra: Any) -> dict[str, Any]:
+    from services.lead_products_owned import normalize_products_owned
+
+    products = normalize_products_owned(getattr(lead, "products_owned", None))
     slots = {
         "company": lead.company or "",
         "contact": lead.contact or "",
@@ -78,6 +81,8 @@ async def build_marketer_slots(db: AsyncSession, lead: Lead, **extra: Any) -> di
         "city": lead.city or "",
         "stage": lead.stage or "",
         "description": lead.description or "",
+        "products_owned": products,
+        "chain_type": str(extra.get("chain_type") or "new").strip().lower() or "new",
         **extra,
     }
     return await attach_product_rag(slots)
@@ -147,6 +152,7 @@ async def run_llm_nurture_chain(
     llm_result: dict[str, Any],
     product_name: str,
     live_all_now: bool = False,
+    chain_type: str = "new",
 ) -> tuple[EmailNurtureChain, dict[str, Any]]:
     plan = llm_emails_to_plan(llm_result, live_all_now=live_all_now)
     if not plan:
@@ -178,6 +184,7 @@ async def run_llm_nurture_chain(
         plan=plan,
         product=product_name,
         chain_label=f"{len(plan)} касаний · {product_name} · {lead.company}",
+        chain_type=chain_type,
     )
 
     if live_all_now:

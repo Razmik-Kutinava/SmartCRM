@@ -33,6 +33,7 @@ class Lead(Base):
     employees: Mapped[str] = mapped_column(String(100), default="—")
     industry: Mapped[str] = mapped_column(String(255), default="—")
     industry_verified: Mapped[bool] = mapped_column(default=False)
+    products_owned: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
     city: Mapped[str] = mapped_column(String(255), default="—")
     responsible: Mapped[str] = mapped_column(String(255), default="Я")
     next_call: Mapped[str] = mapped_column(String(100), default="—")
@@ -110,6 +111,7 @@ class Lead(Base):
             "employees": self.employees,
             "industry": self.industry,
             "industryVerified": bool(getattr(self, "industry_verified", False)),
+            "productsOwned": list(getattr(self, "products_owned", None) or []),
             "city": self.city,
             "responsible": self.responsible,
             "nextCall": self.next_call,

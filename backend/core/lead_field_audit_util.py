@@ -25,6 +25,7 @@ TRACKED_ORM_FIELDS: tuple[str, ...] = (
     "employees",
     "industry",
     "industry_verified",
+    "products_owned",
     "city",
     "responsible",
     "next_call",
@@ -42,7 +43,7 @@ def _serialize_audit_value(val: Any) -> str:
         return ""
     if isinstance(val, Decimal):
         return str(val)
-    if isinstance(val, dict):
+    if isinstance(val, (dict, list)):
         try:
             return json.dumps(val, ensure_ascii=False, sort_keys=True)
         except Exception:
