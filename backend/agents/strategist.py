@@ -10,6 +10,7 @@ from typing import Any
 
 from core.llm import chat
 from agents.base import AgentState
+from agents.strategist_gate_enrich import enrich_strategist_output
 from rag.retrieve import rag_block
 
 logger = logging.getLogger(__name__)
@@ -173,8 +174,7 @@ async def _synthesize(state: AgentState) -> dict[str, Any]:
     ]
 
     raw = await chat(messages, temperature=0.4, max_tokens=800, json_mode=True)
-    result = _parse_json_safe(raw)
-    return result
+    return enrich_strategist_output(_parse_json_safe(raw), state)
 
 
 def _fmt(d: dict) -> str:

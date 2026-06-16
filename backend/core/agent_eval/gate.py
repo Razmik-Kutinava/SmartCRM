@@ -29,7 +29,6 @@ from core.agent_eval.gate_config import (
 )
 from core.agent_eval.ollama_check import HERMES_MODEL, check_ollama_ready, warmup_ollama
 from core.agent_eval.score import score_case
-from core.eval_runner import eval_one_case
 
 _REPO = Path(__file__).resolve().parents[3]
 ARTIFACTS_DIR = _REPO / "backend" / "data" / "artifacts" / "eval"
@@ -80,23 +79,36 @@ def _summarize(rows: list[dict[str, Any]], threshold: float) -> dict[str, Any]:
 
 
 async def run_hermes_gate(*, limit: int = 0) -> dict[str, Any]:
+    from core.hermes import parse_intent
+    from core.hermes import config as hermes_config
+
     cases = load_hermes_cases()
     if limit > 0:
         cases = cases[:limit]
     rows: list[dict[str, Any]] = []
     for case in cases:
+        hermes_config._intent_cache.clear()
         text = case["text"]
         expected = case.get("expected_intent")
-        result = await eval_one_case(text, expected, "hermes3")
-        ok = result.get("correct") is True and "error" not in result
+        t0 = time.monotonic()
+        try:
+            parsed = await parse_intent(text)
+            got = parsed.get("intent")
+            ok = got == expected
+            err = None
+        except Exception as e:
+            got = None
+            ok = False
+            err = str(e)[:200]
+        duration_ms = round((time.monotonic() - t0) * 1000)
         rows.append({
             "id": case.get("id"),
             "text": text[:120],
             "expected_intent": expected,
-            "actual_intent": result.get("intent"),
+            "actual_intent": got,
             "passed": ok,
-            "error": result.get("error"),
-            "duration_ms": result.get("duration_ms"),
+            "error": err,
+            "duration_ms": duration_ms,
         })
     summary = _summarize(rows, HERMES_THRESHOLD_PCT)
     summary["min_cases"] = HERMES_MIN_CASES

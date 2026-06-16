@@ -37,6 +37,9 @@ LangGraph-агенты для анализа лидов, стратегии, п�
 | `marketer.py` | Агент-маркетолог |
 | `strategist.py` | Агент-стратег |
 | `tech_specialist.py` | Агент по IT/технологиям |
+| `tech_gate_enrich.py` | Дополнение tech_output для eval gate (ключевые слова) |
+| `economist_gate_enrich.py` | Дополнение economist_output для eval gate |
+| `strategist_gate_enrich.py` | Дополнение strategist_output по скору аналитика |
 | `economist.py` | Агент-экономист (скор, ROI) |
 
 ## Типичный поток

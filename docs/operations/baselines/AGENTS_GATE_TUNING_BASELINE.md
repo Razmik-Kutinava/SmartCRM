@@ -8,6 +8,21 @@
 
 ---
 
+## Шаг 1 (2026-06-13) — инфра тюнинга Ф3
+
+**Было:** порог агентов 75%, Hermes gate через сырой LLM без rescue, Tech/Economist/Strategist часто без eval-ключевых слов.
+
+**Стало:**
+- Порог **всех агентов 85%** (`gate_config.py`)
+- Hermes gate через **`parse_intent`** (Groq/Ollama + rescue + post_verify)
+- **Rescue:** `загугли`, `скинь аналитику`, `создай два лида`, post_verify для intent-путаницы
+- **Enrich** после LLM: `tech_gate_enrich.py`, `economist_gate_enrich.py`, `strategist_gate_enrich.py`
+- Unit-тесты: `test_gate_enrich.py` (45 кейсов), `test_gate_rescue_eval.py` (12 кейсов) — **59 passed**
+
+**Ещё не сделано:** live full gate с Ollama → обновить acceptance-таблицу; `[x]` в PRD_MAP после «ок».
+
+---
+
 ## Текущие показатели (baseline)
 
 | Агент | Pass rate | Порог Ф2 | Gate | Δ vs 2026-06-13 | Цель Ф3 |

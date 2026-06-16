@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 HERMES_THRESHOLD_PCT = 85
-AGENT_THRESHOLD_PCT = 75
+AGENT_THRESHOLD_PCT = 85
 WARN_DELTA_PCT = 5
 
 AGENT_OUTPUT_KEYS: dict[str, str] = {

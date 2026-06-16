@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-13 — Ф3 Quality gate tuning: шаг 1
+
+**Было:** Hermes 72%, Tech 60%, порог агентов 75%, gate Hermes без rescue.
+
+**Стало:** порог 85% для всех агентов; Hermes gate через `parse_intent`; rescue/post_verify; enrich Tech/Economist/Strategist; pytest 59 (enrich + rescue). Live re-gate — следующий шаг.
+
 ## 2026-06-16 — DevTools MCP: массовая рассылка send 2/2
 
 **Сделано:** Chrome DevTools MCP — полный цикл B + live send 2 писем (сегмент «без отрасли», me@). Acceptance + `email_nurture.md`. **Коммит:** `43c7746`.

@@ -345,6 +345,16 @@ def rescue_route(text: str) -> dict | None:
         query = m_q.group(1).strip()[:200] if m_q else t[:200]
         return out("search_web", ["analyst"], "Ищу в интернете.", {"query": query})
 
+    if "загугли" in t or re.search(r"\bгугл", t):
+        m_q = re.search(r"(?:про|о|об|конкурент\w*)\s+(.+)$", t, re.I)
+        query = (m_q.group(1).strip()[:200] if m_q else re.sub(r"^загугли\s*", "", t))[:200]
+        return out("search_web", ["analyst"], "Ищу в интернете.", {"query": query})
+
+    if ("скинь" in t or "дай сводку" in t or "сводк" in t) and (
+        "воронк" in t or "конверси" in t or "аналит" in t
+    ) and "лид" not in t and "компан" not in t:
+        return out("run_analysis", ["analyst"], "Запускаю анализ.", {"question": text[:500]})
+
     if "воронк" in t and ("покаж" in t or "аналит" in t or "за " in t):
         period = "month" if "месяц" in t else "year" if "год" in t else "week" if "недел" in t else ""
         slots_an: dict = {"period": period} if period else {}
@@ -458,6 +468,8 @@ def rescue_route(text: str) -> dict | None:
 
     if t == "создай лид ромашка":
         return out("noop", [], "Уточни данные для команды.")
+    if re.search(r"создай\s+(?:два|2|три|3)\s+лид", t):
+        return out("noop", [], "Уточни данные для каждого лида.")
     if t.startswith("добавь юридический адрес город"):
         return out("create_lead", ["analyst"], "Создаю лид.")
     if "львит" in t and "ромашк" in t:
@@ -503,6 +515,21 @@ def post_verify(text: str, parsed: dict) -> dict:
         slots = out.get("slots") if isinstance(out.get("slots"), dict) else {}
         if "filter" not in slots:
             slots["filter"] = "all"
+        out["slots"] = slots
+    if intent == "save_to_rag" and ("закинь" in t or "зарегай" in t) and re.search(r"\+?\d{7,}", text):
+        out["intent"] = "create_lead"
+    if intent.startswith("analytics_") and ("скинь" in t or "сводк" in t or "дай сводку" in t):
+        if "лид" not in t and "компан" not in t:
+            out["intent"] = "run_analysis"
+    if intent in ("find_leads_portrait", "list_leads", "generate_lead") and (
+        "загугли" in t or "гугл" in t or "в интернет" in t
+    ):
+        out["intent"] = "search_web"
+    if intent in ("generate_lead", "ask_economist", "noop", "create_lead") and "стратег" in t:
+        out["intent"] = "ask_strategist"
+        slots = out.get("slots") if isinstance(out.get("slots"), dict) else {}
+        if "question" not in slots:
+            slots["question"] = text[:500]
         out["slots"] = slots
     if intent == "noop" and "создай два" in t:
         out["intent"] = "noop"

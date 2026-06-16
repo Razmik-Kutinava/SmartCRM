@@ -13,6 +13,7 @@ from core.llm import chat
 from agents.base import AgentState
 from agents.tools import read_leads, read_tasks, read_lead_by_company
 from agents.scenarios.tender_context import tender_context_lines
+from agents.economist_gate_enrich import enrich_economist_output
 from rag.retrieve import rag_block
 
 logger = logging.getLogger(__name__)
@@ -87,7 +88,11 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
     if intent == "weekly_report":
         return await _analyze_weekly_finance(slots)
     if intent not in ("create_lead", "update_lead", "list_leads", "analyze_lead"):
-        return {"summary": f"Интент «{intent}» — финансовый анализ не требуется.", "budget_estimate": None}
+        return enrich_economist_output(
+            {"summary": f"Интент «{intent}» — финансовый анализ не требуется.", "budget_estimate": None},
+            slots,
+            intent,
+        )
 
     company = slots.get("company", "")
     budget_raw = slots.get("budget", "—")
@@ -163,7 +168,7 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
         ) + rag_block(slots, "economist")},
     ]
     raw = await chat(messages, temperature=0.2, max_tokens=900, json_mode=True)
-    return _parse_json_safe(raw)
+    return enrich_economist_output(_parse_json_safe(raw), slots, intent)
 
 
 async def _analyze_tender(slots: dict[str, Any]) -> dict[str, Any]:

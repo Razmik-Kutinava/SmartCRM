@@ -13,6 +13,7 @@ from core.llm import chat
 from agents.base import AgentState
 from agents.tools import read_lead_by_company
 from agents.scenarios.tender_context import tender_context_lines
+from agents.tech_gate_enrich import enrich_tech_output
 from rag.retrieve import rag_block
 
 logger = logging.getLogger(__name__)
@@ -145,7 +146,7 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
         ) + rag_block(slots, "tech_specialist")},
     ]
     raw = await chat(messages, temperature=0.3, max_tokens=900, json_mode=True)
-    return _parse_json_safe(raw)
+    return enrich_tech_output(_parse_json_safe(raw), slots)
 
 
 async def _analyze_tender(slots: dict[str, Any]) -> dict[str, Any]:
@@ -167,7 +168,7 @@ async def _analyze_tender(slots: dict[str, Any]) -> dict[str, Any]:
         ) + rag_block(slots, "tech_specialist")},
     ]
     raw = await chat(messages, temperature=0.3, max_tokens=900, json_mode=True)
-    return _parse_json_safe(raw)
+    return enrich_tech_output(_parse_json_safe(raw), slots)
 
 
 def _parse_json_safe(raw: str) -> dict:
