@@ -4,7 +4,7 @@
 
 ## 2026-06-16 — DevTools MCP: массовая рассылка send 2/2
 
-**Сделано:** Chrome DevTools MCP — полный цикл B + live send 2 писем (сегмент «без отрасли», me@). Acceptance + `email_nurture.md`.
+**Сделано:** Chrome DevTools MCP — полный цикл B + live send 2 писем (сегмент «без отрасли», me@). Acceptance + `email_nurture.md`. **Коммит:** `43c7746`.
 
 ## 2026-06-16 — Live UI smoke B (массовая рассылка)
 
