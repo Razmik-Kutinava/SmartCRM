@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[UI smoke B — массовая] | Статус: ✅ done — ждём апрув «ок»`
+
+**2026-06-16:** Live UI smoke B (Playwright): `/email` → Массовая → «С лидами» → счётчик → 3 LLM → test ib@ PASS. MCP Chrome DevTools недоступен (errored).
+
+**Следующий `go`:** апрув B/C/D в чате → `[x]` PRD_MAP.
+
+---
+
 `Спринт:[Ф3] | Задача:[этап C + smoke B] | Статус: ✅ done — ждём апрув «ок»`
 
 **2026-06-16:** ops HANDOFF sync HEAD. **Коммит:** `c00fa73`.

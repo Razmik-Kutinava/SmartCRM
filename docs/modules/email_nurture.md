@@ -65,6 +65,9 @@ UI: `EmailCampaignPanel.svelte` · логика: `campaignSegmentLogic.js`
 
 Фильтры: stage, score, industry (справочник), city, search, `industry_verified`. Апрув чекбокс после 3 примеров.
 
+**Live UI smoke (Playwright):** `python scripts/smoke_campaign_mass_ui.py` (`SMOKE_UI=1` + frontend `:5173`).  
+Прогон: `/email` → Массовая → «С лидами» → счётчик → 3 примера LLM → test ib@ (без mass send).
+
 ## Этап D — отрасль (справочник и дозаполнение) ✅
 
 | Что | Где |

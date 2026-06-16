@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-16 — Live UI smoke B (массовая рассылка)
+
+**Сделано:** Playwright `smoke_campaign_mass_ui.py` — `/email` → Массовая → отрасли → счётчик → 3 LLM → test ib@ PASS; pytest testids. MCP DevTools недоступен.
+
 ## 2026-06-16 — ops: этап C SESSION_STATE + README routes
 
 **Сделано:** ops после `78c66d4`; README `email.py` chain_type/campaign; `crud.py` products_owned. **Коммит:** `3a87e7b`.

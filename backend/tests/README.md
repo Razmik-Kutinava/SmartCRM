@@ -54,6 +54,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `core/test_hermes_lead_extended.py` | analyze_lead, lead_history, stage-фильтры |
 | `core/test_lead_list_view.py` | Маппинг list_leads → UI |
 | `voice/test_lead_context.py` | Загрузка истории лида |
+| `smoke/test_campaign_mass_ui.py` | UI smoke B: testid-контракт + live Playwright (`SMOKE_UI=1`) |
 | `smoke/test_leadgen_voice_ws.py` | WS generate_lead → navigate `/leadgen?autorun=1` (Ф2 §8) |
 | `test_tender_sources.py` | Источники тендеров |
 | `smoke/test_tenders_baseline_smoke.py` | Смоук `/api/tenders/search`, save, web |
