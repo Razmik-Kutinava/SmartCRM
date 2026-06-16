@@ -6,7 +6,7 @@
 
 **Было:** Hermes 72%, Tech 60%, порог агентов 75%, gate Hermes без rescue.
 
-**Стало:** порог 85% для всех агентов; Hermes gate через `parse_intent`; rescue/post_verify; enrich Tech/Economist/Strategist; pytest 59 (enrich + rescue). Live re-gate — следующий шаг.
+**Стало:** порог 85% для всех агентов; Hermes gate через `parse_intent`; rescue/post_verify; enrich Tech/Economist/Strategist; pytest 59 (enrich + rescue). Live re-gate — следующий шаг. **Коммит:** `6efd107`.
 
 ## 2026-06-16 — DevTools MCP: массовая рассылка send 2/2
 

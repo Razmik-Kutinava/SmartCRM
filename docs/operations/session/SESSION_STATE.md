@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-13 | Действие: Ф3 gate tuning шаг 1 — порог 85%, Hermes parse_intent, rescue/post_verify, enrich Tech/Economist/Strategist; pytest gate 59 PASS (WSL). | Коммит: `6efd107` | Хвост A: live full gate с Ollama — не гоняли | Хвост B: нет | Хвост C: нет | Следующий шаг: go live re-gate + acceptance. | Статус: done
+
 2026-06-16 | Действие: DevTools MCP smoke B — массовая send 2/2 live (me@, сегмент без отрасли); acceptance F3. | Коммит: `43c7746` | Хвост A: нет | Хвост B: лимит писем/день — BACKLOG | Хвост C: нет | Следующий шаг: апрув «ок» B/C/D. | Статус: done
 
 2026-06-16 | Действие: Live UI smoke B (Playwright): /email Массовая — чекбоксы, счётчик, 3 LLM, test ib@ PASS; скрипт + pytest testids. | Коммит: `f968fbe` | Хвост A: нет | Хвост B: лимит писем/день — BACKLOG (не в scope) | Хвост C: MCP DevTools errored — Playwright | Следующий шаг: апрув «ок» B/C/D. | Статус: done

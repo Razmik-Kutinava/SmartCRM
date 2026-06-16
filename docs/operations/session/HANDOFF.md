@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[Quality gate tuning — шаг 1] | Статус: ✅ done — ждём go на live re-gate`
 
-**2026-06-13:** Ф3 gate tuning шаг 1 — порог 85%, Hermes parse_intent, rescue/enrich, pytest 59. **Коммит:** `pending`.
+**2026-06-13:** Ф3 gate tuning шаг 1 — порог 85%, Hermes parse_intent, rescue/enrich, pytest 59. **Коммит:** `6efd107`.
 
 **Было → стало (простыми словами):**
 - Порог качества агентов поднят с 75% до **85%** для всех.
