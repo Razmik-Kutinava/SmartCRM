@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[DevTools smoke B + mass send] | Статус: ✅ done — ждём апрув «ок»`
+
+**2026-06-16:** Chrome DevTools MCP: `/email` → Массовая → «без отрасли» (2) → 3 LLM → test ib@ → **send 2/2** (`DevTools mass smoke 2026-06-16`, me@). **Коммит:** `pending`.
+
+**Следующий `go`:** апрув B/C/D → `[x]` PRD_MAP.
+
+---
+
 `Спринт:[Ф3] | Задача:[UI smoke B — массовая] | Статус: ✅ done — ждём апрув «ок»`
 
 **2026-06-16:** ops UI smoke B SESSION_STATE. **Коммит:** `2a48180`.

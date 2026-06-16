@@ -54,6 +54,8 @@ Live 2026-06-15: лид HOCHLAND (3187) → 3 письма на ib@, `emails_sen
 | Фильтры + 3 примера + апрув + send | `EmailCampaignPanel.svelte` |
 | API | `preview-llm`, `test-send`, `campaigns` send_now |
 
+**Live DevTools MCP 2026-06-16:** `/email` → Массовая → «без отрасли» (2 лида) → 3 LLM → test ib@ → **send 2/2** (`DevTools mass smoke 2026-06-16`, me@agneko.am).
+
 ## ENV (nurture)
 
 - `NURTURE_TEST_CLIENT_EMAIL` — email тестового «клиента» для live smoke (иначе `EMAIL_ACCOUNT_2_USER`)
@@ -82,6 +84,7 @@ Live 2026-06-15: лид HOCHLAND (3187) → 3 письма на ib@, `emails_sen
 | Nurture API | `GET /api/email/nurture/chains` | **OK** active chains в UI |
 | DevTools `/ops/email` | nurture table | **OK** таблица `nurture-chains-table`: ID, лид, active, шаги 1/20 (vite proxy + `PUBLIC_SMARTCRM_API_KEY`) |
 | LLM nurture 3 | `python scripts/smoke_email_nurture_llm_live.py` | **OK** lead 3187 HOCHLAND → 3 emails ib@, MaxPatrol VM |
+| Mass campaign UI | Chrome DevTools MCP `/email` Массовая | **OK** 2026-06-16: 2/2 sent, кампания в истории |
 
 ## ENV
 

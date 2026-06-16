@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-16 — DevTools MCP: массовая рассылка send 2/2
+
+**Сделано:** Chrome DevTools MCP — полный цикл B + live send 2 писем (сегмент «без отрасли», me@). Acceptance + `email_nurture.md`.
+
 ## 2026-06-16 — Live UI smoke B (массовая рассылка)
 
 **Сделано:** Playwright `smoke_campaign_mass_ui.py` — `/email` → Массовая → отрасли → счётчик → 3 LLM → test ib@ PASS; pytest testids. MCP DevTools недоступен. **Коммит:** `f968fbe`.
