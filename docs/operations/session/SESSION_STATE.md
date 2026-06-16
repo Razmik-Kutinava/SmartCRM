@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-16 | Действие: Ф3 gate шаг 2 — rescue 36/36, enrich analyst/marketer, enrich smoke 100% @85%; acceptance; ISSUES Ollama timeout; pytest 112 PASS. | Коммит: `dc1220c` | Хвост A: live Ollama re-gate — не завершён (ReadTimeout) | Хвост B: нет | Хвост C: ISSUES live gate timeout | Следующий шаг: «ок» → [x] MAP или GPU re-gate. | Статус: done
+
 2026-06-16 | Действие: Ф3 gate tuning шаг 1 — порог 85%, Hermes parse_intent, rescue/post_verify, enrich Tech/Economist/Strategist; pytest gate 59 PASS (WSL). | Коммит: `6efd107` | Хвост A: live full gate с Ollama — не гоняли | Хвост B: нет | Хвост C: нет | Следующий шаг: go live re-gate + acceptance. | Статус: done
 
 2026-06-16 | Действие: DevTools MCP smoke B — массовая send 2/2 live (me@, сегмент без отрасли); acceptance F3. | Коммит: `43c7746` | Хвост A: нет | Хвост B: лимит писем/день — BACKLOG | Хвост C: нет | Следующий шаг: апрув «ок» B/C/D. | Статус: done

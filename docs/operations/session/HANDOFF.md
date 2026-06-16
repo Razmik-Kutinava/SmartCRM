@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[Quality gate tuning — шаг 2] | Статус: ✅ done — ждём «ок» для [x] MAP`
 
-**2026-06-16:** Ф3 gate шаг 2 — rescue 36/36, enrich smoke 100% (все агенты ≥85%). **Коммит:** `pending`.
+**2026-06-16:** Ф3 gate шаг 2 — rescue 36/36, enrich smoke 100%. **Коммит:** `dc1220c`.
 
 **Было → стало:**
 - Hermes rescue: **26/36 → 36/36** (задачи, noop, search_web)
