@@ -2,6 +2,8 @@
 
 `Спринт:[Ф3] | Задача:[этап C + smoke B] | Статус: ✅ done — ждём апрув «ок»`
 
+**2026-06-16:** ops HANDOFF sync HEAD. **Коммит:** `c00fa73`.
+
 **2026-06-16:** ops SESSION_STATE после docs routes. **Коммит:** `4924281`.
 
 **2026-06-16:** docs README routes (chain_type, campaign). **Коммит:** `f8a557b`.
