@@ -2,6 +2,8 @@
 
 `Спринт:[Ф3] | Задача:[UI smoke B — массовая] | Статус: ✅ done — ждём апрув «ок»`
 
+**2026-06-16:** ops UI smoke B SESSION_STATE. **Коммит:** `2a48180`.
+
 **2026-06-16:** Live UI smoke B (Playwright): `/email` → Массовая → «С лидами» → счётчик → 3 LLM → test ib@ PASS. MCP Chrome DevTools недоступен (errored). **Коммит:** `f968fbe`.
 
 **Следующий `go`:** апрув B/C/D в чате → `[x]` PRD_MAP.
