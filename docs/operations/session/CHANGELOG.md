@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-16 — ops: этап C SESSION_STATE + README routes
+
+**Сделано:** ops после `78c66d4`; README `email.py` chain_type/campaign; `crud.py` products_owned. **Коммит:** `3a87e7b`.
+
 ## 2026-06-16 — Этап C: products_owned + chain_type; smoke B API
 
 **Сделано:** поле `products_owned`, типы цепочек new/cross/upsell, nurture UI; API smoke массовой; pytest 25 (email зона). **Коммит:** `78c66d4`.

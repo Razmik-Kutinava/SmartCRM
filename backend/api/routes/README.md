@@ -13,7 +13,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | Файл | За что |
 |------|--------|
 | `__init__.py` | Сборка роутера |
-| `crud.py` | Список, создать, lookalike-import, справочник отраслей `/industries`, прочитать, обновить, удалить лид |
+| `crud.py` | Список, создать, lookalike-import, справочник отраслей `/industries`, прочитать, обновить (`products_owned`), удалить лид |
 | `analytics_routes.py` | Сводка KPI и CSV `/analytics/summary`, `/analytics/export` — query `period`, `source` |
 | `engagement.py` | Комментарии, логи связи, аудит полей, стадии |
 | `bitrix_routes.py` | Импорт лидов из Битрикс24, статус синка |
@@ -72,7 +72,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `webhooks_bitrix.py` | `/api/webhooks/bitrix` | Исходящие события Битрикс24 (ONCRMLEADADD) |
 | `leads/` | `/api/leads` | См. пакет выше |
 | `tasks.py` | `/api/tasks` | Задачи по лидам, SLA, фильтр `lead_id` |
-| `email.py` | `/api/email` | IMAP/SMTP, nurture: `/nurture/start`, `/start-segment`, `/start-llm`, `/process-due`, `GET /nurture/chains` |
+| `email.py` | `/api/email` | IMAP/SMTP; nurture: `/nurture/preview-llm`, `/start-llm` (`chain_type`: new/cross/upsell), `/start`, `/start-segment`, `/process-due`, `GET /nurture/chains`; кампании: `/campaign/preview-llm`, `/test-send`, `send_now` (фильтр `industries[]`) |
 | `agent_email.py` | `/api/agent-email` | AI-черновики писем по лиду |
 | `search.py` | `/api/search` | Поиск компаний; `enrich-lead` + кэш enrich; `auto-ingest-rag` |
 | `rag.py` | `/api/rag` | Загрузка документов, `ingest-dialogue` (факты из диалога агента) |
