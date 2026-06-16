@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[этап C + smoke B] | Статус: ✅ done — ждём апрув «ок»`
+
+**2026-06-16:** `products_owned`, `chain_type` new/cross/upsell, nurture UI; API smoke массовой B; BACKLOG лимит/день. **Коммит:** `78c66d4` · ops pending.
+
+**Следующий `go`:** апрув B/C/D в чате или следующий пункт PRD_MAP.
+
+---
+
 `Спринт:[Ф3] | Задача:[fix industryCatalog imports] | Статус: ✅ done`
 
 **2026-06-13:** 500 на `/email` — `industryCatalog.js` импортировал несуществующий `./api.js`. **Коммит:** `3eba285`.

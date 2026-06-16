@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-16 — Этап C: products_owned + chain_type; smoke B API
+
+**Сделано:** поле `products_owned`, типы цепочек new/cross/upsell, nurture UI; API smoke массовой; pytest 25 (email зона). **Коммит:** `78c66d4`.
+
 ## 2026-06-13 — fix: 500 industryCatalog (неверные импорты)
 
 **Сделано:** `$lib/api.js`, `$lib/leadsStorage.js`, `$lib/leads/leadMailingUi.js` в `industryCatalog.js`; npm build OK. **Коммит:** `3eba285`.
