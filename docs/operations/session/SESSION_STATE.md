@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: vendor crawl шаг2 — assess_crawl_text, quality_rejected stats, UI; pytest 23 PASS. | Коммит: `PENDING` | Хвост A: шаг3 live+PDF keys | Хвост B: нет | Хвост C: нет | Следующий шаг: шаг3 live прогон. | Статус: done
+
 2026-06-17 | Действие: vendor crawl шаг1 — PDF search site:домен, max_pdf_pages, vendor_crawl_pdf*; UI; pytest 18 PASS; live search 0 без API keys. | Коммит: `1e4691e` | Хвост A: шаг2 фильтр мусора PDF | Хвост B: нет | Хвост C: Brave/Tavily keys для live PDF search | Следующий шаг: шаг 2 фильтр. | Статус: done
 
 2026-06-17 | Действие: vendor crawl v2 — doc_urls, фильтр мусора, PDF, sitemap, приоритет; UI textarea; live 80/80 стр 582 чанка; pytest 13 PASS. | Коммит: `a319702` | Хвост A: Playwright SPA, голос doc_urls — BACKLOG | Хвост B: нет | Хвост C: PDF 0 на ME/PT (код готов) | Следующий шаг: «ок» MAP crawl; A/B промптов. | Статус: done

@@ -19,6 +19,7 @@ from rag.vendor_crawl_config import (
 )
 from rag.vendor_crawl_pdf import ingest_vendor_pdf, is_pdf_bytes, stable_source_id
 from rag.vendor_crawl_pdf_search import discover_pdf_urls_via_search
+from rag.vendor_crawl_quality import assess_crawl_text
 from rag.vendor_crawl_sitemap import fetch_sitemap_urls
 from rag.vendor_crawl_urls import (
     extract_page_links,
@@ -31,8 +32,21 @@ from rag.vendor_crawl_urls import (
 
 logger = logging.getLogger(__name__)
 
-_MIN_TEXT_CHARS = 120
-_UA = "SmartCRM-vendor-crawl/2.1"
+_UA = "SmartCRM-vendor-crawl/2.2"
+
+def _record_ingest_fail(
+    stats: dict[str, int],
+    pages: list[dict[str, Any]],
+    *,
+    url: str,
+    kind: str,
+    reason: str,
+) -> None:
+    if reason.startswith("quality:"):
+        stats["quality_rejected"] += 1
+    else:
+        stats["pages_failed"] += 1
+    pages.append({"url": url, "ok": False, "kind": kind, "reason": reason})
 
 
 def _empty_stats() -> dict[str, int]:
@@ -45,6 +59,7 @@ def _empty_stats() -> dict[str, int]:
         "budget_used": 0,
         "pdf_search_found": 0,
         "pdf_budget_used": 0,
+        "quality_rejected": 0,
     }
 
 
@@ -124,13 +139,12 @@ async def _process_pdf(
         return 0
     ing = ingest_vendor_pdf(final_url or url, data, vendor, dry_run=dry_run)
     if int(ing.get("chunks") or 0) == 0:
-        stats["pages_failed"] += 1
-        pages.append({
-            "url": final_url or url,
-            "ok": False,
-            "kind": "pdf",
-            "reason": ing.get("error") or "pdf_empty",
-        })
+        _record_ingest_fail(
+            stats, pages,
+            url=final_url or url,
+            kind="pdf",
+            reason=str(ing.get("error") or "pdf_empty"),
+        )
         return 0
     chunks = int(ing.get("chunks") or 0)
     stats["pages_pdf_ok"] += 1
@@ -253,22 +267,29 @@ async def crawl_vendor(vendor: VendorCrawlEntry, *, dry_run: bool = False) -> di
                         "discovered_as": "redirect_bytes",
                     })
                 else:
-                    stats["pages_failed"] += 1
-                    pages.append({
-                        "url": final_b or key,
-                        "ok": False,
-                        "kind": "pdf",
-                        "reason": ing.get("error") or "pdf_empty",
-                    })
+                    _record_ingest_fail(
+                        stats, pages,
+                        url=final_b or key,
+                        kind="pdf",
+                        reason=str(ing.get("error") or "pdf_empty"),
+                    )
                 continue
             stats["pages_failed"] += 1
             pages.append({"url": key, "ok": False, "kind": "html", "reason": "fetch_failed"})
             continue
 
         text = _html_to_text(html, limit=12000)
-        if len(text) < _MIN_TEXT_CHARS:
-            stats["text_too_short"] += 1
-            pages.append({"url": final_url or key, "ok": False, "kind": "html", "reason": "text_too_short"})
+        ok, q_reason = assess_crawl_text(text, kind="html")
+        if not ok:
+            stats["quality_rejected"] += 1
+            if q_reason == "too_short":
+                stats["text_too_short"] += 1
+            pages.append({
+                "url": final_url or key,
+                "ok": False,
+                "kind": "html",
+                "reason": f"quality:{q_reason}",
+            })
             continue
 
         ing = ingest_vendor_page(final_url or key, text, vendor, dry_run=dry_run)

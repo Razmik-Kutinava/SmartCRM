@@ -8,9 +8,8 @@ from rag import parsers
 from rag.chroma_store import delete_by_source_id
 from rag.ingest import _ingest_plain_text
 from rag.vendor_crawl_config import VendorCrawlEntry
+from rag.vendor_crawl_quality import assess_crawl_text
 from rag.vendor_crawl_urls import is_pdf_url
-
-_MIN_PDF_CHARS = 80
 
 
 def is_pdf_bytes(data: bytes) -> bool:
@@ -38,8 +37,9 @@ def ingest_vendor_pdf(url: str, data: bytes, vendor: VendorCrawlEntry, *, dry_ru
         text = parsers.parse_pdf(data)
     except Exception as e:
         return {"chunks": 0, "error": str(e), "source_id": sid}
-    if len(text.strip()) < _MIN_PDF_CHARS:
-        return {"chunks": 0, "error": "pdf_too_short", "source_id": sid}
+    ok, reason = assess_crawl_text(text, kind="pdf")
+    if not ok:
+        return {"chunks": 0, "error": f"quality:{reason}", "source_id": sid}
     path = urlparse(url).path or "/doc.pdf"
     title = f"{vendor.name}: {path[-120:]}"
     return _ingest_plain_text(

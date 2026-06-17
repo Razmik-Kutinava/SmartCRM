@@ -60,7 +60,7 @@
 			const report = await runVendorCrawl({ vendorId, dryRun });
 			const st = report.stats || {};
 			msg = dryRun
-				? `Dry-run: ${report.total_chunks} чанков (HTML ${st.pages_html_ok || 0}, PDF ${st.pages_pdf_ok || 0}, поиск PDF ${st.pdf_search_found || 0})`
+				? `Dry-run: ${report.total_chunks} чанков (HTML ${st.pages_html_ok || 0}, PDF ${st.pages_pdf_ok || 0}, отбр. качество ${st.quality_rejected || 0})`
 				: `Готово: ${report.total_chunks} чанков (HTML ${st.pages_html_ok || 0}, PDF ${st.pages_pdf_ok || 0})`;
 			status = await fetchVendorCrawlStatus();
 		} catch (e) {
@@ -223,8 +223,9 @@
 				{#if status.last_run.stats}
 					<p class="text-xs text-gray-500 mt-1">
 						HTML OK: {status.last_run.stats.pages_html_ok} · PDF OK: {status.last_run.stats.pages_pdf_ok} ·
-						поиск PDF нашёл: {status.last_run.stats.pdf_search_found ?? 0} ·
-						мусор: {status.last_run.stats.filtered_junk}
+						поиск PDF: {status.last_run.stats.pdf_search_found ?? 0} ·
+						отбр. качество: {status.last_run.stats.quality_rejected ?? 0} ·
+						мусор URL: {status.last_run.stats.filtered_junk}
 					</p>
 				{/if}
 			</section>

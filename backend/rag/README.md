@@ -40,6 +40,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `parsers.py` | Парсинг PDF/HTML для ingest |
 | `vendor_crawl_config.py` | Конфиг URL вендоров (JSON в `data/`) |
 | `vendor_crawl_urls.py` | Фильтр мусора, приоритет ссылок |
+| `vendor_crawl_quality.py` | Фильтр мусорного текста до чанков |
 | `vendor_crawl_pdf_search.py` | Web search `site:домен filetype:pdf` |
 | `vendor_crawl_pdf.py` | Скачивание и ingest PDF |
 | `vendor_crawl_sitemap.py` | Опционально sitemap.xml → URL |

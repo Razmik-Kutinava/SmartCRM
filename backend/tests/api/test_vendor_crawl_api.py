@@ -68,12 +68,20 @@ async def test_vendor_crawl_status_includes_scheduler(client, isolated_vendor_co
 
 @pytest.mark.asyncio
 async def test_vendor_crawl_run_dry_run(client, isolated_chroma, isolated_vendor_config, monkeypatch):
-    sample = "<html><body><p>" + ("Positive Technologies firewall " * 25) + "</p></body></html>"
+    sample = "<html><body><p>" + (
+        "Positive Technologies firewall documentation product overview service "
+        "enterprise deployment architecture integration guide specifications "
+    ) * 10 + "</p></body></html>"
 
     async def fake_fetch(_url: str):
         return sample, "https://example.com/docs"
 
     monkeypatch.setattr("rag.vendor_crawl._fetch_html", fake_fetch)
+
+    async def empty_pdf_search(*_a, **_k):
+        return []
+
+    monkeypatch.setattr("rag.vendor_crawl.discover_pdf_urls_via_search", empty_pdf_search)
 
     r = await client.post(
         "/api/rag/vendor-crawl/run",

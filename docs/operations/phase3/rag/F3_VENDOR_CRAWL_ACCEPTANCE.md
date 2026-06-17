@@ -15,6 +15,7 @@
 | 7 | Фон по расписанию | `auto_crawl_enabled` + `vendor_crawl_poll_loop` в lifespan |
 | 8 | Поле doc_urls + фильтр мусора + PDF | `vendor_crawl_urls.py`, UI textarea, stats в отчёте |
 | 9 | Автопоиск PDF `site:домен filetype:pdf` | `search_pdfs` + `max_pdf_pages`; Brave/Tavily в `.env` |
+| 10 | Фильтр качества до чанков | `vendor_crawl_quality.py`, `quality_rejected` в stats |
 
 ## Конфиг
 
@@ -24,7 +25,7 @@
 
 ```bash
 cd backend
-python -m pytest tests/rag/test_vendor_crawl_urls.py tests/rag/test_vendor_crawl_pdf.py tests/rag/test_vendor_crawl_pdf_search.py tests/rag/test_vendor_crawl.py tests/api/test_vendor_crawl_api.py -q
+python -m pytest tests/rag/test_vendor_crawl_quality.py tests/rag/test_vendor_crawl_urls.py tests/rag/test_vendor_crawl_pdf.py tests/rag/test_vendor_crawl_pdf_search.py tests/rag/test_vendor_crawl.py tests/api/test_vendor_crawl_api.py -q
 ```
 
 Dry-run (без записи в Chroma):
@@ -86,8 +87,21 @@ curl -X POST http://127.0.0.1:8000/api/rag/vendor-crawl/run \
 
 **Live:** без ключей Brave/Tavily поиск вернул 0 URL — нужен `.env` провайдера; код и тесты с mock OK.
 
+## Шаг 2 — фильтр качества (2026-06-17)
+
+**Было:** весь текст → чанки без проверки.
+
+**Стало:** `vendor_crawl_quality.py` — отсев до ingest:
+- слишком короткий
+- кракозябры (`\ufffd`)
+- мало уникальных слов
+- одинаковое слово >45% текста
+- мало букв/цифр
+
+Статистика: `quality_rejected` в отчёте и UI. pytest **23 PASS**.
+
 ## Не в scope (BACKLOG)
 
-- **Шаг 2:** фильтр мусора в PDF до чанков
+- **Шаг 3:** live-прогон с API-ключами, проверка PDF в RAG
 - Playwright/JS-render для SPA
 - Голосом «добавь ссылку на доки» (интент → API)

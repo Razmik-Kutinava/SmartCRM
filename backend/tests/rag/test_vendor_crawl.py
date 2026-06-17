@@ -6,6 +6,15 @@ import pytest
 from rag.vendor_crawl import extract_same_domain_links, stable_source_id
 
 
+def _rich_body() -> str:
+    text = (
+        "ManageEngine endpoint security firewall documentation product overview "
+        "identity access management service desk operations monitoring enterprise "
+        "deployment architecture integration guide specifications technical "
+    ) * 8
+    return f"<html><body><p>{text}</p></body></html>"
+
+
 def test_stable_source_id_deterministic():
     a = stable_source_id("https://example.com/docs")
     b = stable_source_id("https://example.com/docs")
@@ -35,7 +44,7 @@ async def test_crawl_vendor_dry_run(monkeypatch, tmp_path):
     monkeypatch.setattr(vcfg, "CONFIG_PATH", tmp_path / "cfg.json")
     monkeypatch.setattr(vcfg, "STATE_PATH", tmp_path / "state.json")
 
-    sample_html = "<html><body><p>" + ("ManageEngine endpoint security " * 20) + "</p></body></html>"
+    sample_html = _rich_body()
 
     async def fake_fetch(url: str):
         return sample_html, url
@@ -76,7 +85,7 @@ async def test_crawl_doc_urls_seeds(monkeypatch, tmp_path):
     chroma_store._client = None
     monkeypatch.setenv("CHROMA_PERSIST_DIR", str(tmp_path / "chroma"))
 
-    good_html = "<html><body><p>" + ("Product documentation firewall " * 20) + "</p></body></html>"
+    good_html = _rich_body().replace("ManageEngine", "Product")
     fetched: list[str] = []
 
     async def fake_fetch(url: str):

@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф3 Vendor crawl шаг 2: фильтр качества до чанков
+
+**Было:** любой распарсенный текст шёл в RAG; мусор мог засорять базу.
+
+**Стало:** `assess_crawl_text` — too_short, garbled, few_words, repetitive, low_letters; `quality_rejected` в отчёте; pytest 23 PASS.
+
 ## 2026-06-17 — Ф3 Vendor crawl шаг 1: автопоиск PDF
 
 **Было:** PDF только из HTML-ссылок; 0 PDF в live v2.

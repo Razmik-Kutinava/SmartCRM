@@ -1,10 +1,16 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Vendor crawl — шаг 2 фильтр качества] | Статус: ✅ done`
+
+**2026-06-17:** `vendor_crawl_quality.py` — отсев мусорного текста до чанков; `quality_rejected` в отчёте; pytest 23 PASS.
+
+**Следующий шаг:** **Шаг 3** — live-прогон с API-ключами (PDF search) + проверка RAG.
+
+---
+
 `Спринт:[Ф3] | Задача:[Vendor crawl — шаг 1 PDF автопоиск] | Статус: ✅ done`
 
-**2026-06-17:** `site:домен filetype:pdf` через `search_for_rag`; `max_pdf_pages`; ingest по `%PDF`; UI чекбокс; pytest 18 PASS. Live search 0 без API-ключей.
-
-**Следующий шаг:** **Шаг 2** — фильтр мусора в PDF/HTML до чанков (не заливать пустое/кракозябры).
+**2026-06-17:** `site:домен filetype:pdf`; `max_pdf_pages`; ingest `%PDF`; pytest 18 PASS.
 
 ---
 
