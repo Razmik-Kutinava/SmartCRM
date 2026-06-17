@@ -1,6 +1,7 @@
 """Краулинг URL вендоров → чанки RAG tech_specialist."""
 from __future__ import annotations
 
+import asyncio
 import heapq
 import logging
 from datetime import datetime, timezone
@@ -19,6 +20,10 @@ from rag.vendor_crawl_config import (
 )
 from rag.vendor_crawl_pdf import ingest_vendor_pdf, is_pdf_bytes, stable_source_id
 from rag.vendor_crawl_pdf_search import discover_pdf_urls_via_search
+from rag.vendor_crawl_playwright import (
+    discover_pdf_urls_playwright,
+    fetch_pdf_bytes_playwright,
+)
 from rag.vendor_crawl_quality import assess_crawl_text
 from rag.vendor_crawl_sitemap import fetch_sitemap_urls
 from rag.vendor_crawl_urls import (
@@ -60,6 +65,7 @@ def _empty_stats() -> dict[str, int]:
         "pdf_search_found": 0,
         "pdf_budget_used": 0,
         "quality_rejected": 0,
+        "playwright_pdf_found": 0,
     }
 
 
@@ -135,6 +141,10 @@ async def _process_pdf(
     pages: list[dict[str, Any]],
 ) -> int:
     data, final_url = await _fetch_bytes(url)
+    via_playwright = False
+    if (not data or not is_pdf_bytes(data)) and vendor.use_playwright:
+        data, final_url = await asyncio.to_thread(fetch_pdf_bytes_playwright, url)
+        via_playwright = bool(data)
     if not data:
         stats["pages_failed"] += 1
         pages.append({"url": url, "ok": False, "kind": "pdf", "reason": "fetch_failed"})
@@ -150,21 +160,25 @@ async def _process_pdf(
         return 0
     chunks = int(ing.get("chunks") or 0)
     stats["pages_pdf_ok"] += 1
-    pages.append({
+    entry: dict[str, Any] = {
         "url": final_url or url,
         "ok": True,
         "kind": "pdf",
         "chunks": chunks,
         "source_id": ing.get("source_id"),
         "dry_run": dry_run,
-    })
+    }
+    if via_playwright:
+        entry["discovered_as"] = "playwright_fetch"
+    pages.append(entry)
     return chunks
 
 
-async def _build_seed_queue(vendor: VendorCrawlEntry) -> tuple[list[tuple[int, int, str]], int]:
+async def _build_seed_queue(vendor: VendorCrawlEntry) -> tuple[list[tuple[int, int, str]], int, int]:
     items: list[tuple[int, int, str]] = []
     seen: set[str] = set()
     pdf_search_found = 0
+    playwright_pdf_found = 0
 
     def add(url: str, depth: int, *, from_doc: bool) -> None:
         u = normalize_url(url)
@@ -192,11 +206,23 @@ async def _build_seed_queue(vendor: VendorCrawlEntry) -> tuple[list[tuple[int, i
         for u in pdf_urls:
             add(u, 0, from_doc=True)
 
+    if vendor.use_playwright and vendor.max_pdf_pages > 0 and vendor.seed_url.strip():
+        visit = [vendor.seed_url.strip(), *(vendor.doc_urls or [])]
+        pw_urls = await asyncio.to_thread(
+            discover_pdf_urls_playwright,
+            vendor.seed_url,
+            visit,
+            max_urls=vendor.max_pdf_pages,
+        )
+        playwright_pdf_found = len(pw_urls)
+        for u in pw_urls:
+            add(u, 0, from_doc=True)
+
     if vendor.use_sitemap and vendor.seed_url.strip():
         for u in await fetch_sitemap_urls(vendor.seed_url, max_urls=min(vendor.max_pages, 50)):
             add(u, 0, from_doc=True)
 
-    return items, pdf_search_found
+    return items, pdf_search_found, playwright_pdf_found
 
 
 async def crawl_vendor(vendor: VendorCrawlEntry, *, dry_run: bool = False) -> dict[str, Any]:
@@ -204,11 +230,12 @@ async def crawl_vendor(vendor: VendorCrawlEntry, *, dry_run: bool = False) -> di
     if not seed.startswith("http") and not (vendor.doc_urls or []):
         return {"vendor_id": vendor.id, "error": "invalid seed_url", "pages": [], "stats": _empty_stats()}
 
-    queue, pdf_search_found = await _build_seed_queue(vendor)
+    queue, pdf_search_found, playwright_pdf_found = await _build_seed_queue(vendor)
     visited: set[str] = set()
     pages: list[dict[str, Any]] = []
     stats = _empty_stats()
     stats["pdf_search_found"] = pdf_search_found
+    stats["playwright_pdf_found"] = playwright_pdf_found
     total_chunks = 0
     html_budget = 0
     pdf_budget = 0
@@ -347,7 +374,10 @@ async def run_vendor_crawl(
     for vendor in targets:
         if not vendor_id and not vendor.enabled:
             continue
-        logger.info("vendor crawl: %s seeds=%s search_pdfs=%s", vendor.id, vendor.seed_url, vendor.search_pdfs)
+        logger.info(
+            "vendor crawl: %s search_pdfs=%s playwright=%s",
+            vendor.id, vendor.search_pdfs, vendor.use_playwright,
+        )
         results.append(await crawl_vendor(vendor, dry_run=dry_run))
 
     for r in results:

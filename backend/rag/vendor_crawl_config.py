@@ -23,6 +23,7 @@ class VendorCrawlEntry(BaseModel):
     enabled: bool = True
     use_sitemap: bool = False
     search_pdfs: bool = True
+    use_playwright: bool = False
     max_pdf_pages: int = Field(default=15, ge=0, le=50)
     max_pages: int = Field(default=30, ge=0, le=200)
     max_depth: int = Field(default=2, ge=0, le=4)

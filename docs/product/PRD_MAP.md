@@ -472,7 +472,7 @@
 ### Self-improvement
 
 - [x] **Quality gate tuning:** все агенты ≥85% (baseline 2026-06-14: Hermes 72.2%, Tech 60%) → [`AGENTS_GATE_TUNING_BASELINE.md`](../operations/baselines/AGENTS_GATE_TUNING_BASELINE.md) · [`F3_GATE_TUNING_ACCEPTANCE.md`](../operations/phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md) — **A+B+C ✅ 2026-06-17**, апрув «ок»
-- [ ] Краулинг URL вендоров → RAG тех. спеца · **live 871 чанк, 10 PDF** · шаг1–3 ✅ [`F3_VENDOR_CRAWL_ACCEPTANCE.md`](../operations/phase3/rag/F3_VENDOR_CRAWL_ACCEPTANCE.md) · `[x]` после «ок»
+- [ ] Краулинг URL вендоров → RAG тех. спеца · **live 871 чанк, 10 PDF** · шаг1–4 ✅ [`F3_VENDOR_CRAWL_ACCEPTANCE.md`](../operations/phase3/rag/F3_VENDOR_CRAWL_ACCEPTANCE.md) · `[x]` после «ок»
 - [ ] A/B промптов по трейсам
 - [ ] Авто-суфлёр Стратега
 

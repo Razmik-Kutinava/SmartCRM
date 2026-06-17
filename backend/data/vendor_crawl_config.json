@@ -13,6 +13,7 @@
       "enabled": true,
       "use_sitemap": true,
       "search_pdfs": true,
+      "use_playwright": false,
       "max_pdf_pages": 15,
       "max_pages": 40,
       "max_depth": 2
@@ -29,6 +30,7 @@
       "enabled": true,
       "use_sitemap": false,
       "search_pdfs": true,
+      "use_playwright": true,
       "max_pdf_pages": 15,
       "max_pages": 40,
       "max_depth": 2
@@ -41,6 +43,7 @@
       "enabled": false,
       "use_sitemap": false,
       "search_pdfs": true,
+      "use_playwright": false,
       "max_pdf_pages": 5,
       "max_pages": 3,
       "max_depth": 1

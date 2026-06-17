@@ -16,16 +16,17 @@
 | 8 | Поле doc_urls + фильтр мусора + PDF | `vendor_crawl_urls.py`, UI textarea, stats в отчёте |
 | 9 | Автопоиск PDF `site:домен filetype:pdf` | `search_pdfs` + `max_pdf_pages`; Brave/Tavily в `.env` |
 | 10 | Фильтр качества до чанков | `vendor_crawl_quality.py`, `quality_rejected` в stats |
+| 11 | Playwright SPA PDF | `use_playwright`; `playwright_pdf_found`; fallback fetch |
 
 ## Конфиг
 
-`backend/data/vendor_crawl_config.json` — вендор: `seed_url`, **`doc_urls`**, **`search_pdfs`**, **`max_pdf_pages`**, `max_pages`, `max_depth`, `use_sitemap`, `enabled`.
+`backend/data/vendor_crawl_config.json` — вендор: `seed_url`, **`doc_urls`**, **`search_pdfs`**, **`use_playwright`**, **`max_pdf_pages`**, `max_pages`, `max_depth`, `use_sitemap`, `enabled`.
 
 ## Команды
 
 ```bash
 cd backend
-python -m pytest tests/rag/test_vendor_crawl_quality.py tests/rag/test_vendor_crawl_urls.py tests/rag/test_vendor_crawl_pdf.py tests/rag/test_vendor_crawl_pdf_search.py tests/rag/test_vendor_crawl.py tests/api/test_vendor_crawl_api.py -q
+python -m pytest tests/rag/test_vendor_crawl_quality.py tests/rag/test_vendor_crawl_urls.py tests/rag/test_vendor_crawl_pdf.py tests/rag/test_vendor_crawl_pdf_search.py tests/rag/test_vendor_crawl_playwright.py tests/rag/test_vendor_crawl.py tests/api/test_vendor_crawl_api.py -q
 ```
 
 Dry-run (без записи в Chroma):
@@ -50,6 +51,7 @@ curl -X POST http://127.0.0.1:8000/api/rag/vendor-crawl/run \
 - `rag/vendor_crawl_sitemap.py` — sitemap.xml
 - `rag/vendor_crawl_pdf_search.py` — web search PDF
 - `rag/vendor_crawl_pdf.py` — ingest PDF байтов
+- `rag/vendor_crawl_playwright.py` — Chromium SPA PDF
 - `rag/vendor_crawl_config.py` — конфиг и state
 - `api/routes/rag.py` — HTTP API
 
@@ -114,7 +116,19 @@ curl -X POST http://127.0.0.1:8000/api/rag/vendor-crawl/run \
 
 Артефакт: `backend/data/artifacts/rag/vendor_crawl_step3_20260617.json`.
 
+## Шаг 4 — Playwright SPA PDF (2026-06-17)
+
+**Было:** PDF только из HTML/поиска; ссылки за JS на SPA (PT и др.) не попадали в очередь.
+
+**Стало:**
+- `vendor_crawl_playwright.py` — Chromium headless, `networkidle`, сбор `a[href]` / `data-href` / `data-url`
+- `use_playwright` в конфиге; PT включён
+- Fallback `fetch_pdf_bytes_playwright` если httpx не скачал PDF
+- Статистика `playwright_pdf_found`; UI чекбокс «Playwright SPA»
+- `playwright install chromium` перед live
+
+**Live smoke:** discover на PT seed/doc_urls — 0 новых PDF (шаг 3 search уже дал 10); инфра и fallback готовы.
+
 ## Не в scope (BACKLOG)
 
-- **Шаг 4:** Playwright для PDF за JS
 - Голосом «добавь ссылку на доки» (интент → API)

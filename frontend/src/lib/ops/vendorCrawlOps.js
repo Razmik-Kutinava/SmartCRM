@@ -12,6 +12,7 @@ export function emptyVendor() {
 		enabled: false,
 		use_sitemap: false,
 		search_pdfs: true,
+		use_playwright: false,
 		max_pdf_pages: 15,
 		max_pages: 30,
 		max_depth: 2

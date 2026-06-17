@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Vendor crawl — шаг 4 Playwright SPA] | Статус: ✅ done`
+
+**2026-06-17:** `vendor_crawl_playwright.py`; `use_playwright` (PT on); fallback fetch; UI; pytest **29 PASS**. Live discover на PT seed — 0 новых PDF (уже через search); инфра готова.
+
+**Следующий шаг:** «ок» MAP crawl → A/B промптов.
+
+---
+
 `Спринт:[Ф3] | Задача:[Vendor crawl — шаг 3 live PDF+RAG] | Статус: ✅ done`
 
 **2026-06-17:** live ME+PT — **10 PDF → RAG**, **871 чанк**; фикс `_fetch_bytes`; RAG tech_specialist видит PDF. Tavily 432 (Brave/Serper OK).

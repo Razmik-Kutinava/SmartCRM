@@ -184,6 +184,10 @@
 							<input type="checkbox" bind:checked={v.search_pdfs} />
 							поиск PDF (site:домен)
 						</label>
+						<label class="flex items-center gap-1 text-xs" title="Chromium: PDF за JS-кнопками на SPA">
+							<input type="checkbox" bind:checked={v.use_playwright} />
+							Playwright SPA
+						</label>
 						<button
 							type="button"
 							disabled={running}
@@ -224,6 +228,7 @@
 					<p class="text-xs text-gray-500 mt-1">
 						HTML OK: {status.last_run.stats.pages_html_ok} · PDF OK: {status.last_run.stats.pages_pdf_ok} ·
 						поиск PDF: {status.last_run.stats.pdf_search_found ?? 0} ·
+						Playwright: {status.last_run.stats.playwright_pdf_found ?? 0} ·
 						отбр. качество: {status.last_run.stats.quality_rejected ?? 0} ·
 						мусор URL: {status.last_run.stats.filtered_junk}
 					</p>

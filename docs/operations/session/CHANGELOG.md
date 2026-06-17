@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф3 Vendor crawl шаг 4: Playwright SPA PDF
+
+**Было:** PDF только из HTML и web search; ссылки за JS на SPA не попадали в очередь.
+
+**Стало:** `vendor_crawl_playwright.py` — Chromium discover + fallback fetch; `use_playwright` (PT on); UI; pytest 29 PASS.
+
 ## 2026-06-17 — Ф3 Vendor crawl шаг 3: live PDF + RAG
 
 **Было:** PDF search находил URL, но `fetch_failed` — `_is_fetchable_url` блокировал `.pdf`.
