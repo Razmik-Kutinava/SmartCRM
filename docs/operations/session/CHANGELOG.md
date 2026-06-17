@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф3 Quality gate tuning: шаг 3 (live gate фон)
+
+**Сделано:** проверка Ollama + `hermes3:latest`; backend :8000; запуск live full gate с `EVAL_OLLAMA_TIMEOUT=3600`, лог `gate_live_20260617_152400.log`. ISSUES → в работе. **Найдено:** конфликт `Tee-Object` + `--log-file` — в RUNBOOK только `--log-file`. **Не сделано:** прогон ещё идёт; prompt/rescue фиксы — по мере fail в логе. **Коммит:** см. SESSION_STATE.
+
 ## 2026-06-16 — Ф3 Quality gate tuning: шаг 2 (enrich smoke 100%)
 
 **Было:** rescue 26/36, marketer без enrich, live Ollama timeout.

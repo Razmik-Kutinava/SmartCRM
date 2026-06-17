@@ -12,15 +12,17 @@
 
 [2026-06-16] — Live quality gate: Ollama ReadTimeout (Hermes + agents)
 
-Приоритет: 🟡 | Статус: открыта
+Приоритет: 🟡 | Статус: **в работе** (перезапуск 2026-06-17)
 
-Описание: `run_agents_quality_gate.py` на CPU — массовые `Hermes/Ollama ReadTimeout`, прогон зависает на analyst. Enrich smoke (`run_gate_enrich_smoke.py`) даёт **100%** на пороге 85%.
+Описание: `run_agents_quality_gate.py` на CPU — ранее массовые `Hermes/Ollama ReadTimeout`. Enrich smoke (`run_gate_enrich_smoke.py`) — **100%** @85% (не заменяет live).
 
-Влияние: нет свежего **live** артефакта `agents_gate_*.json`; acceptance обновлён enrich smoke.
+**2026-06-17:** запущен live full gate фоном: `EVAL_OLLAMA_TIMEOUT=3600`, `hermes3:latest`, backend :8000 + `SMARTCRM_API_KEY` OK. Лог: `backend/data/artifacts/eval/gate_live_20260617_152400.log`. Первая попытка упала: `Tee-Object` + `--log-file` на один файл → file lock (исправлено: только `--log-file`).
 
-Решение: GPU / `EVAL_OLLAMA_TIMEOUT=3600` / прогон ночью; или принять enrich smoke как критерий Ф3 по «ок» владельца.
+Влияние: артефакт `agents_gate_*.json` появится после завершения прогона.
 
-Агент: F3 quality gate tuning
+Решение: дождаться прогона → gaps → prompt/rescue (не enrich) → повтор; `[x]` MAP только после «ок» владельца.
+
+Агент: F3 quality gate tuning шаг 3
 
 ---
 

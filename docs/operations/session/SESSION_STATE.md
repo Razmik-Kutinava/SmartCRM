@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: Ф3 live gate шаг 3 — старт фонового прогона Ollama hermes3, timeout 3600; backend :8000 OK; лог `gate_live_20260617_152400.log`; первая попытка (Tee+log-file) — file lock, перезапуск OK. | Коммит: `pending` | Хвост A: прогон в работе — фиксы prompt/rescue по логу после fail | Хвост B: нет | Хвост C: Tee-Object+--log-file конфликт — задокументировано в RUNBOOK | Следующий шаг: дочитать лог → fix+commit пакетами; `[x]` MAP после «ок». | Статус: in_progress
+
 2026-06-16 | Действие: Ф3 gate шаг 2 — rescue 36/36, enrich analyst/marketer, enrich smoke 100% @85%; acceptance; ISSUES Ollama timeout; pytest 112 PASS. | Коммит: `dc1220c` | Хвост A: live Ollama re-gate — не завершён (ReadTimeout) | Хвост B: нет | Хвост C: ISSUES live gate timeout | Следующий шаг: «ок» → [x] MAP или GPU re-gate. | Статус: done
 
 2026-06-16 | Действие: Ф3 gate tuning шаг 1 — порог 85%, Hermes parse_intent, rescue/post_verify, enrich Tech/Economist/Strategist; pytest gate 59 PASS (WSL). | Коммит: `6efd107` | Хвост A: live full gate с Ollama — не гоняли | Хвост B: нет | Хвост C: нет | Следующий шаг: go live re-gate + acceptance. | Статус: done

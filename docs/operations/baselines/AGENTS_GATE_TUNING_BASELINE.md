@@ -38,6 +38,20 @@
 
 ---
 
+## Шаг 3 (2026-06-17) — live full gate фон
+
+**Старт:** `run_agents_quality_gate.py --write-acceptance`, `EVAL_OLLAMA_TIMEOUT=3600`, `hermes3:latest`.
+
+| | |
+|---|---|
+| Лог | `backend/data/artifacts/eval/gate_live_20260617_152400.log` |
+| Backend | `:8000`, `SMARTCRM_API_KEY` OK |
+| Сбой старта | `Tee-Object` + `--log-file` → file lock; перезапуск без Tee |
+
+**Статус:** прогон в работе. Fail-кейсы → prompt/rescue (не enrich) → commit+ops → повтор.
+
+---
+
 ## Текущие показатели (baseline)
 
 | Агент | Pass rate | Порог Ф2 | Gate | Δ vs 2026-06-13 | Цель Ф3 |
