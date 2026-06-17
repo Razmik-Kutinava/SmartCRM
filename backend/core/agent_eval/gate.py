@@ -193,9 +193,16 @@ async def run_agents_quality_gate(
 ) -> dict[str, Any]:
     force_ollama_env()
     ollama = await check_ollama_ready()
-    _gate_logger("[gate] warmup Ollama (first call may take minutes on CPU)...")
-    await warmup_ollama()
-    _gate_logger("[gate] warmup OK")
+    if os.getenv("GATE_SKIP_WARMUP", "").strip().lower() in ("1", "true", "yes"):
+        _gate_logger("[gate] warmup skipped (GATE_SKIP_WARMUP)")
+    else:
+        _gate_logger("[gate] warmup Ollama (first call may take minutes on CPU)...")
+        if skip_hermes and not skip_agents:
+            agent_model = os.getenv("GATE_AGENT_MODEL", "qwen2.5:3b")
+            await warmup_ollama(agent_model)
+        else:
+            await warmup_ollama()
+        _gate_logger("[gate] warmup OK")
     report: dict[str, Any] = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "ollama": ollama,

@@ -56,8 +56,11 @@ python -u scripts/run_agents_quality_gate.py `
 Только агенты (Hermes уже прогнан):
 
 ```powershell
+$env:GATE_SKIP_WARMUP = "1"
 python -u scripts/run_agents_quality_gate.py --agents-only --log-file data/artifacts/eval/gate_live_agents.log --write-acceptance
 ```
+
+> Перед gate на слабом CPU: `ollama ps` — если >1 модель в RAM, перезапустите `ollama serve`.
 
 > **Не** дублировать вывод в тот же файл через `Tee-Object` — скрипт сам пишет в `--log-file`, иначе file lock на Windows.
 

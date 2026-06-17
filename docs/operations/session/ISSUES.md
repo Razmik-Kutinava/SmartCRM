@@ -16,9 +16,11 @@
 
 Описание: `run_agents_quality_gate.py` на CPU — ранее массовые `Hermes/Ollama ReadTimeout`. Enrich smoke (`run_gate_enrich_smoke.py`) — **100%** @85% (не заменяет live).
 
-**2026-06-17:** уровень **B закрыт** — live Hermes 36/36. Уровень **C** — agents-only с `GATE_CPU_PROFILE=1`, лог `gate_live_agents_20260617_153500.log`. Первый full gate оборван на analyst (7b модель, >10 мин на кейс).
+**2026-06-17:** уровень **B закрыт** — live Hermes 36/36. Уровень **C** — agents-only (`GATE_CPU_PROFILE`, `GATE_SKIP_WARMUP`), лог `gate_live_agents_20260617_154500.log`.
 
-Влияние: `[x]` MAP ждёт C или «ок» на A+B.
+**Найдено 2026-06-17:** Ollama держит **3 модели** в RAM (hermes3 + qwen2.5-coder:7b + qwen2.5:3b) → >5 мин на кейс агента на CPU. Рекомендация: перезапуск `ollama serve` или один keep_alive перед gate.
+
+Влияние: `[x]` MAP — A+B готовы; C идёт фоном или «ок» на A+B.
 
 Решение: см. [`F3_GATE_TUNING_ACCEPTANCE.md`](../phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md).
 
