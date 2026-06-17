@@ -74,8 +74,9 @@ def _ingest_plain_text(
     extra_base_meta: dict[str, Any] | None = None,
     steps_pre: list[dict[str, Any]] | None = None,
     dry_run: bool = False,
+    source_id: str | None = None,
 ) -> dict[str, Any]:
-    source_id = str(uuid.uuid4())
+    source_id = (source_id or "").strip() or str(uuid.uuid4())
     for_agent = normalize_for_agent(for_agent)
     base: dict[str, Any] = {
         "source_id": source_id,

@@ -261,3 +261,57 @@ async def rag_sources():
 async def rag_delete_source(source_id: str):
     await asyncio.to_thread(delete_by_source_id, source_id)
     return {"ok": True, "source_id": source_id}
+
+
+class VendorCrawlRunBody(BaseModel):
+    vendor_id: str | None = None
+    dry_run: bool = False
+
+
+class VendorCrawlConfigBody(BaseModel):
+    vendors: list[dict[str, Any]]
+
+
+@router.get("/vendor-crawl/config")
+async def vendor_crawl_get_config():
+    from rag.vendor_crawl_config import load_config
+
+    cfg = load_config()
+    return {"ok": True, "config": cfg.model_dump()}
+
+
+@router.put("/vendor-crawl/config")
+async def vendor_crawl_put_config(body: VendorCrawlConfigBody):
+    from rag.vendor_crawl_config import VendorCrawlConfig, save_config
+
+    try:
+        cfg = VendorCrawlConfig.model_validate({"vendors": body.vendors})
+    except Exception as e:
+        raise HTTPException(400, detail=str(e)) from e
+    save_config(cfg)
+    return {"ok": True, "config": cfg.model_dump()}
+
+
+@router.get("/vendor-crawl/status")
+async def vendor_crawl_status():
+    from rag.vendor_crawl_config import load_state
+
+    state = load_state()
+    runs = state.get("runs") or []
+    last = runs[0] if runs else None
+    return {"ok": True, "last_run": last, "history_count": len(runs)}
+
+
+@router.post("/vendor-crawl/run")
+async def vendor_crawl_run(body: VendorCrawlRunBody):
+    """Краулинг URL вендора → RAG tech_specialist."""
+    from rag.vendor_crawl import run_vendor_crawl
+
+    try:
+        report = await run_vendor_crawl(vendor_id=body.vendor_id, dry_run=body.dry_run)
+    except Exception as e:
+        logger.exception("vendor-crawl run")
+        raise HTTPException(500, detail=str(e)) from e
+    if not report.get("ok"):
+        raise HTTPException(400, detail=report.get("error", "crawl failed"))
+    return report

@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Vendor crawl → RAG tec] | Статус: 🔄 API done — UI/расписание BACKLOG`
+
+**2026-06-17:** краулинг URL вендоров — `vendor_crawl.py`, API `/api/rag/vendor-crawl/*`, тесты 5 PASS. Acceptance: `F3_VENDOR_CRAWL_ACCEPTANCE.md`. `[x]` MAP после «ок».
+
+---
+
 `Спринт:[Ф3] | Задача:[Quality gate tuning — шаг 3] | Статус: 🔄 in_progress`
 
 **2026-06-17 шаг 3:**

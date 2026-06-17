@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф3 Vendor crawl → RAG tech_specialist (API)
+
+**Сделано:** `vendor_crawl.py` + config JSON + API `/api/rag/vendor-crawl/*`; дедуп source_id по URL; pytest 5 PASS; acceptance `F3_VENDOR_CRAWL_ACCEPTANCE.md`. **Не сделано:** UI Ops, cron — BACKLOG. **Коммит:** см. SESSION_STATE.
+
 ## 2026-06-17 — Ф3 Quality gate tuning: шаг 3 (live Hermes 36/36 + CPU profile)
 
 **Сделано:** live Hermes **36/36** (100%) через parse_intent+rescue; enrich smoke **100%**; `GATE_CPU_PROFILE` (qwen2.5:3b, fast Hermes timeout); enrich-on-LLM-error у 5 агентов; `F3_GATE_TUNING_ACCEPTANCE.md`; agents-only фон. **Не сделано:** live agents C — в прогоне. **Коммит:** см. SESSION_STATE.

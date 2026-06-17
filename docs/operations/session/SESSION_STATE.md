@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: Ф3 vendor crawl — config+crawl+API tech_specialist RAG; pytest 5 PASS; acceptance F3_VENDOR_CRAWL. | Коммит: `pending` | Хвост A: UI Ops + cron расписание | Хвост B: BACKLOG UI/cron | Хвост C: gate C фон | Следующий шаг: «ок» MAP crawl; UI или gate. | Статус: done
+
 2026-06-17 | Действие: перезапуск agents-only live gate (C) — GATE_CPU_PROFILE + SKIP_WARMUP; лог `gate_live_agents_20260617_*.log` (см. терминал); старый зависший убит. | Коммит: `9347802` | Хвост A: C в фоне | Хвост B: нет | Хвост C: нет | Следующий шаг: апрув → след. задача; дочитать лог. | Статус: in_progress
 
 2026-06-17 | Действие: gate fix — agents-only warmup qwen2.5:3b, GATE_SKIP_WARMUP; Ollama 3 models RAM → медленно; agents фон 154500.log. | Коммит: `16dade2` | Хвост A: live agents C фон | Хвост B: нет | Хвост C: Ollama RAM — ISSUES | Статус: in_progress

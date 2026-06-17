@@ -38,5 +38,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `retrieve.py` | Получение чанков по запросу |
 | `chunking.py` | Разбиение текста на чанки |
 | `parsers.py` | Парсинг PDF/HTML для ingest |
+| `vendor_crawl_config.py` | Конфиг URL вендоров (JSON в `data/`) |
+| `vendor_crawl.py` | Краулинг сайта вендора → RAG `tech_specialist` |
 
-Эндпоинты: `api/routes/rag.py`, `api/routes/search.py`.
+Эндпоинты: `api/routes/rag.py` (`/vendor-crawl/*`), `api/routes/search.py`.
