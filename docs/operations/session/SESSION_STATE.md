@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: перезапуск agents-only live gate (C) — GATE_CPU_PROFILE + SKIP_WARMUP; лог `gate_live_agents_20260617_*.log` (см. терминал); старый зависший убит. | Коммит: `pending` | Хвост A: C в фоне | Хвост B: нет | Хвост C: нет | Следующий шаг: апрув → след. задача; дочитать лог. | Статус: in_progress
+
 2026-06-17 | Действие: gate fix — agents-only warmup qwen2.5:3b, GATE_SKIP_WARMUP; Ollama 3 models RAM → медленно; agents фон 154500.log. | Коммит: `16dade2` | Хвост A: live agents C фон | Хвост B: нет | Хвост C: Ollama RAM — ISSUES | Статус: in_progress
 
 2026-06-17 | Действие: Ф3 gate шаг 3 — live Hermes 36/36; enrich smoke 100%; GATE_CPU_PROFILE; agents-only фон; F3_GATE_TUNING_ACCEPTANCE; enrich-on-error агенты. | Коммит: `05302f1` | Хвост A: live agents C — фон gate_live_agents_*.log | Хвост B: нет | Хвост C: pytest starlette env FAIL — smoke python OK | Следующий шаг: дочитать agents лог → fix; `[x]` после «ок». | Статус: in_progress
