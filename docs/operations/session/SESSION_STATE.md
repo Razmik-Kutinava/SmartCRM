@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-17 | Действие: vendor crawl шаг4 — Playwright SPA PDF (discover+fetch); use_playwright PT; UI; pytest 29 PASS; live discover PT 0 (PDF уже search). | Коммит: `pending` | Хвост A: нет | Хвост B: нет | Хвост C: live discover 0 на PT seed — search покрывает | Следующий шаг: «ок» MAP crawl. | Статус: done
+2026-06-17 | Действие: vendor crawl шаг4 — Playwright SPA PDF (discover+fetch); use_playwright PT; UI; pytest 29 PASS; live discover PT 0 (PDF уже search). | Коммит: `36fbaa4` | Хвост A: нет | Хвост B: нет | Хвост C: live discover 0 на PT seed — search покрывает | Следующий шаг: «ок» MAP crawl. | Статус: done
 
 2026-06-17 | Действие: vendor crawl шаг3 — live ME+PT; фикс PDF fetch; 10 PDF/871 чанк; RAG tech_specialist OK; pytest 24 PASS. | Коммит: `dc5af2e` | Хвост A: Playwright шаг4 | Хвост B: нет | Хвост C: Tavily 432 | Следующий шаг: «ок» MAP или шаг4. | Статус: done
 
