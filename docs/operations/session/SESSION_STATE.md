@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-17 | Действие: Ф3 vendor crawl — config+crawl+API tech_specialist RAG; pytest 5 PASS; acceptance F3_VENDOR_CRAWL. | Коммит: `pending` | Хвост A: UI Ops + cron расписание | Хвост B: BACKLOG UI/cron | Хвост C: gate C фон | Следующий шаг: «ок» MAP crawl; UI или gate. | Статус: done
+2026-06-17 | Действие: Ф3 vendor crawl — config+crawl+API tech_specialist RAG; pytest 5 PASS; acceptance F3_VENDOR_CRAWL. | Коммит: `8bb5192` | Хвост A: UI Ops + cron расписание | Хвост B: BACKLOG UI/cron | Хвост C: gate C фон | Следующий шаг: «ок» MAP crawl; UI или gate. | Статус: done
 
 2026-06-17 | Действие: перезапуск agents-only live gate (C) — GATE_CPU_PROFILE + SKIP_WARMUP; лог `gate_live_agents_20260617_*.log` (см. терминал); старый зависший убит. | Коммит: `9347802` | Хвост A: C в фоне | Хвост B: нет | Хвост C: нет | Следующий шаг: апрув → след. задача; дочитать лог. | Статус: in_progress
 
