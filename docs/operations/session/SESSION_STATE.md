@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-17 | Действие: vendor crawl v2 — doc_urls, фильтр мусора, PDF, sitemap, приоритет; UI textarea; live 80/80 стр 582 чанка; pytest 13 PASS. | Коммит: `PENDING` | Хвост A: Playwright SPA, голос doc_urls — BACKLOG | Хвост B: нет | Хвост C: PDF 0 на ME/PT (код готов) | Следующий шаг: «ок» MAP crawl; A/B промптов. | Статус: done
+2026-06-17 | Действие: vendor crawl v2 — doc_urls, фильтр мусора, PDF, sitemap, приоритет; UI textarea; live 80/80 стр 582 чанка; pytest 13 PASS. | Коммит: `a319702` | Хвост A: Playwright SPA, голос doc_urls — BACKLOG | Хвост B: нет | Хвост C: PDF 0 на ME/PT (код готов) | Следующий шаг: «ок» MAP crawl; A/B промптов. | Статус: done
 
 2026-06-17 | Действие: gate acceptance live table agents_gate_20260617_124414.json. | Коммит: `dfa1866` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP crawl. | Статус: done
 
