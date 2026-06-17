@@ -87,7 +87,9 @@ async def _fetch_html(url: str) -> tuple[str, str]:
 
 
 async def _fetch_bytes(url: str) -> tuple[bytes, str]:
-    if not _is_fetchable_url(url):
+    """Скачивание байтов (PDF и прочее). Не использовать _is_fetchable_url — там .pdf запрещены."""
+    u = (url or "").strip()
+    if not u.startswith("http"):
         return b"", ""
     async with httpx.AsyncClient(
         timeout=45.0,

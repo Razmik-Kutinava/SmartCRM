@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф3 Vendor crawl шаг 3: live PDF + RAG
+
+**Было:** PDF search находил URL, но `fetch_failed` — `_is_fetchable_url` блокировал `.pdf`.
+
+**Стало:** фикс fetch; live ME+PT — **10 PDF OK**, **871 чанк**, RAG tech_specialist видит PDF (ServiceDesk, NGFW и др.).
+
 ## 2026-06-17 — Ф3 Vendor crawl шаг 2: фильтр качества до чанков
 
 **Было:** любой распарсенный текст шёл в RAG; мусор мог засорять базу.

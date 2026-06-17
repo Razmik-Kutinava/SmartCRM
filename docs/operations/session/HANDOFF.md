@@ -1,10 +1,16 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Vendor crawl — шаг 3 live PDF+RAG] | Статус: ✅ done`
+
+**2026-06-17:** live ME+PT — **10 PDF → RAG**, **871 чанк**; фикс `_fetch_bytes`; RAG tech_specialist видит PDF. Tavily 432 (Brave/Serper OK).
+
+**Следующий шаг:** «ок» MAP crawl **или** шаг 4 Playwright.
+
+---
+
 `Спринт:[Ф3] | Задача:[Vendor crawl — шаг 2 фильтр качества] | Статус: ✅ done`
 
-**2026-06-17:** `vendor_crawl_quality.py` — отсев мусорного текста до чанков; `quality_rejected` в отчёте; pytest 23 PASS.
-
-**Следующий шаг:** **Шаг 3** — live-прогон с API-ключами (PDF search) + проверка RAG.
+**2026-06-17:** `vendor_crawl_quality.py`; pytest 23 PASS.
 
 ---
 

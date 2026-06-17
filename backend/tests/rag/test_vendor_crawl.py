@@ -121,6 +121,33 @@ async def test_crawl_doc_urls_seeds(monkeypatch, tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_fetch_bytes_allows_pdf_url(monkeypatch):
+    pdf_url = "https://example.com/docs/manual.pdf"
+    seen: list[str] = []
+
+    async def fake_get(self, req_url, **kwargs):
+        seen.append(req_url)
+
+        class R:
+            status_code = 200
+            content = b"%PDF-1.4 test content padding " * 20
+            headers = {"content-type": "application/pdf"}
+            url = req_url
+
+        return R()
+
+    import httpx
+
+    monkeypatch.setattr(httpx.AsyncClient, "get", fake_get)
+    from rag.vendor_crawl import _fetch_bytes
+
+    data, final = await _fetch_bytes(pdf_url)
+    assert seen == [pdf_url]
+    assert data.startswith(b"%PDF")
+    assert final == pdf_url
+
+
+@pytest.mark.asyncio
 async def test_crawl_ingests_pdf_from_search(monkeypatch, tmp_path):
     import rag.chroma_store as chroma_store
 

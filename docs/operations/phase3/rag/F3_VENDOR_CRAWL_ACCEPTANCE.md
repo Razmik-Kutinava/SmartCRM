@@ -100,8 +100,21 @@ curl -X POST http://127.0.0.1:8000/api/rag/vendor-crawl/run \
 
 Статистика: `quality_rejected` в отчёте и UI. pytest **23 PASS**.
 
+## Шаг 3 — live PDF + RAG (2026-06-17)
+
+| Метрика | Значение |
+|---------|----------|
+| HTML OK | 80 |
+| **PDF OK** | **10** (1 отброшен quality:too_short) |
+| PDF search нашёл | 11 |
+| **Всего чанков** | **871** |
+| RAG tech_specialist | ✅ фрагменты из PDF (ServiceDesk, NGFW, datasheet) |
+
+Фикс: `_fetch_bytes` не использует `_is_fetchable_url` (там `.pdf` запрещены).
+
+Артефакт: `backend/data/artifacts/rag/vendor_crawl_step3_20260617.json`.
+
 ## Не в scope (BACKLOG)
 
-- **Шаг 3:** live-прогон с API-ключами, проверка PDF в RAG
-- Playwright/JS-render для SPA
+- **Шаг 4:** Playwright для PDF за JS
 - Голосом «добавь ссылку на доки» (интент → API)

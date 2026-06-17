@@ -44,7 +44,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `vendor_crawl_pdf_search.py` | Web search `site:домен filetype:pdf` |
 | `vendor_crawl_pdf.py` | Скачивание и ingest PDF |
 | `vendor_crawl_sitemap.py` | Опционально sitemap.xml → URL |
-| `vendor_crawl.py` | Краулинг сайта вендора → RAG `tech_specialist` |
+| `vendor_crawl.py` | Краулинг; `_fetch_bytes` для PDF (без блока .pdf) |
 | `vendor_crawl_background.py` | Фоновый планировщик (интервал из конфига) |
 
 Эндпоинты: `api/routes/rag.py` (`/vendor-crawl/*`), UI `/ops/vendor-crawl`.
