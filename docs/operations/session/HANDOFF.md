@@ -1,24 +1,24 @@
 # HANDOFF
 
-`Спринт:[Ф3] | Задача:[Vendor crawl → RAG tec] | Статус: ✅ done — ждём «ок» для [x] MAP`
+`Спринт:[Ф3] | Задача:[Vendor crawl live + gate close] | Статус: ✅ done`
 
-**2026-06-17:** API + UI `/ops/vendor-crawl` + фон `vendor_crawl_background` (интервал в конфиге). Тесты 11 PASS.
+**2026-06-17:**
+- **Quality gate tuning** — `[x]` MAP: A+B+C + апрув «ок»; Economist 93.3%, остальные 100%.
+- **Vendor crawl live:** ManageEngine (33 чанка) + PT Security (18) → **51** в RAG `tech_specialist`. Конфиг в `vendor_crawl_config.json`. `[x]` MAP crawl — после вашего «ок».
+
+**Следующий шаг Ф3 Self-improvement:** A/B промптов по трейсам · авто-суфлёр Стратега.
 
 ---
 
-`Спринт:[Ф3] | Задача:[Quality gate tuning — шаг 3] | Статус: 🔄 in_progress`
+`Спринт:[Ф3] | Задача:[Vendor crawl → RAG tec] | Статус: ✅ done`
 
-**2026-06-17 шаг 3:**
+**2026-06-17:** API + UI `/ops/vendor-crawl` + фон + **live** на manageengine.com/ru и ptsecurity.com.
 
-| Уровень | Статус |
-|---------|--------|
-| **A** enrich smoke | ✅ **100%** все агенты (`agents_gate_enrich_smoke_20260617_113107.json`) |
-| **B** live Hermes | ✅ **36/36** (`gate_live_20260617_152400.log`, parse_intent→rescue) |
-| **C** live 5 агентов | 🔄 фон `--agents-only` + `GATE_CPU_PROFILE=1` → `gate_live_agents_20260617_153500.log` |
+---
 
-**Код:** `GATE_CPU_PROFILE` (qwen2.5:3b, Hermes timeout 6s), enrich на ошибке LLM у агентов, acceptance [`F3_GATE_TUNING_ACCEPTANCE.md`](../phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md).
+`Спринт:[Ф3] | Задача:[Quality gate tuning] | Статус: ✅ done — [x] MAP`
 
-**`[x]` MAP** — после зелёного C или вашего «ок» на A+B.
+**2026-06-17:** A+B+C зелёные; acceptance [`F3_GATE_TUNING_ACCEPTANCE.md`](../phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md).
 
 ---
 

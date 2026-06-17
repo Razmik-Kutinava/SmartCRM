@@ -48,7 +48,22 @@
 | Backend | `:8000`, `SMARTCRM_API_KEY` OK |
 | Сбой старта | `Tee-Object` + `--log-file` → file lock; перезапуск без Tee |
 
-**Статус:** Hermes live **36/36** (100%) — `gate_live_20260617_152400.log`. Агенты: перезапуск `--agents-only` с `GATE_CPU_PROFILE=1` (`qwen2.5:3b`), лог `gate_live_agents_20260617_153500.log`.
+**Статус:** Hermes live **36/36** (100%) — `gate_live_20260617_152400.log`. Агенты: `--agents-only` + `GATE_CPU_PROFILE=1` → **`overall_gate: pass`**, лог `gate_live_agents_20260617_161513.log`. **`[x]` PRD_MAP** 2026-06-17 (апрув «ок»).
+
+---
+
+## После тюнинга (2026-06-17 live C)
+
+| Агент | Pass rate | Порог Ф3 | Gate |
+|-------|-----------|----------|------|
+| Hermes | **100%** (36/36) | 85% | ✅ |
+| Analyst | **100%** (15/15) | 85% | ✅ |
+| Marketer | **100%** (15/15) | 85% | ✅ |
+| Strategist | **100%** (15/15) | 85% | ✅ |
+| Tech | **100%** (15/15) | 85% | ✅ |
+| Economist | **93.3%** (14/15) | 85% | ✅ |
+
+**Overall gate:** `pass` (было `fail` на baseline 2026-06-14).
 
 ---
 

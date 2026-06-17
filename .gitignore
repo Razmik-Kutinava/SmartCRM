@@ -15,6 +15,7 @@ backend/.venv_wsl/
 # Runtime artifacts (скрипты, бенчмарки) — не в корне и не в git
 backend/data/artifacts/*
 !backend/data/artifacts/.gitkeep
+backend/data/vendor_crawl_state.json
 backend/data/moy_zakupki_cache/
 backend/data/bitrix_sync_state.json
 backend/server.log

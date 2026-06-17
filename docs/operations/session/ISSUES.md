@@ -12,17 +12,15 @@
 
 [2026-06-16] — Live quality gate: Ollama ReadTimeout (Hermes + agents)
 
-Приоритет: 🟡 | Статус: **в работе** (перезапуск 2026-06-17)
+Приоритет: 🟡 | Статус: **закрыта** ✅ (MAP gate — апрув 2026-06-17)
 
-Описание: `run_agents_quality_gate.py` на CPU — ранее массовые `Hermes/Ollama ReadTimeout`. Enrich smoke (`run_gate_enrich_smoke.py`) — **100%** @85% (не заменяет live).
+Описание: `run_agents_quality_gate.py` на CPU — ранее массовые `Hermes/Ollama ReadTimeout`. Enrich smoke — **100%** @85%.
 
-**2026-06-17:** уровень **B закрыт** — live Hermes 36/36. Уровень **C** — agents-only (`GATE_CPU_PROFILE`, `GATE_SKIP_WARMUP`), лог `gate_live_agents_20260617_154500.log`.
+**2026-06-17:** A+B+C закрыты — Hermes 36/36; agents `overall_gate: pass` (Economist 93.3%); лог `gate_live_agents_20260617_161513.log`. Ollama 3 модели в RAM → медленно; enrich/rescue спасали кейсы.
 
-**Найдено 2026-06-17:** Ollama держит **3 модели** в RAM (hermes3 + qwen2.5-coder:7b + qwen2.5:3b) → >5 мин на кейс агента на CPU. Рекомендация: перезапуск `ollama serve` или один keep_alive перед gate.
+Влияние: `[x]` MAP quality gate tuning.
 
-Влияние: `[x]` MAP — A+B готовы; C идёт фоном или «ок» на A+B.
-
-Решение: см. [`F3_GATE_TUNING_ACCEPTANCE.md`](../phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md).
+Решение: при re-gate на GPU — перезапуск `ollama serve`, один keep_alive; опционально фикс `economist-005` («финансов»).
 
 Агент: F3 quality gate tuning шаг 3
 

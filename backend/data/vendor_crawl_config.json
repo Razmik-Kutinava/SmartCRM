@@ -1,0 +1,30 @@
+{
+  "vendors": [
+    {
+      "id": "manageengine",
+      "name": "ManageEngine",
+      "seed_url": "https://www.manageengine.com/ru/",
+      "enabled": true,
+      "max_pages": 8,
+      "max_depth": 1
+    },
+    {
+      "id": "ptsecurity",
+      "name": "Positive Technologies",
+      "seed_url": "https://ptsecurity.com/",
+      "enabled": true,
+      "max_pages": 8,
+      "max_depth": 1
+    },
+    {
+      "id": "demo_vendor",
+      "name": "Demo (выключен)",
+      "seed_url": "https://example.com/docs",
+      "enabled": false,
+      "max_pages": 3,
+      "max_depth": 1
+    }
+  ],
+  "auto_crawl_enabled": false,
+  "auto_crawl_interval_hours": 168
+}

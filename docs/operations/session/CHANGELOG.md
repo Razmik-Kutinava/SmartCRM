@@ -2,6 +2,17 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф3: gate `[x]` MAP + live vendor crawl
+
+**Было:** gate A+B ✅, C в фоне; crawl только код/API/UI, без реальных сайтов.
+
+**Стало:**
+- Quality gate tuning — **`[x]` PRD_MAP** (апрув «ок»): live agents `overall_gate: pass`, Economist 93.3%, остальные 100%.
+- Live crawl ManageEngine RU + PT Security → **51 чанк** в RAG tech_specialist; конфиг `vendor_crawl_config.json`.
+- ISSUES live Ollama timeout → закрыта (enrich/rescue на CPU).
+
+**Не сделано:** `[x]` MAP crawl (ждём «ок»); фильтр `.woff2` в краулере; economist-005.
+
 ## 2026-06-17 — Ф3 Vendor crawl: UI Ops + фоновый планировщик
 
 **Сделано:** `/ops/vendor-crawl`, `vendor_crawl_background.py`, lifespan в `main.py`; auto_crawl в конфиге; pytest 11 PASS. **Коммит:** см. SESSION_STATE.

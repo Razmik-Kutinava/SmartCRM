@@ -47,8 +47,30 @@ curl -X POST http://127.0.0.1:8000/api/rag/vendor-crawl/run \
 - `rag/vendor_crawl_config.py` — конфиг и state
 - `api/routes/rag.py` — HTTP API
 
+## Live-прогон (2026-06-17)
+
+Конфиг: `backend/data/vendor_crawl_config.json` — ManageEngine RU + Positive Technologies.
+
+| Вендор | Seed | Страниц OK | Чанков RAG |
+|--------|------|------------|------------|
+| ManageEngine | https://www.manageengine.com/ru/ | 7/8 | 33 |
+| Positive Technologies | https://ptsecurity.com/ | 3/8 | 18 |
+| **Итого** | | **10/16** | **51** |
+
+Артефакт (локально, gitignore): `backend/data/artifacts/rag/vendor_crawl_live_20260617.json` · state: `vendor_crawl_state.json`.
+
+Провалы ожидаемы: `favicon.ico`, шрифты `.woff2` на Next.js-сайте PT — не HTML.
+
+Команда прогона:
+
+```powershell
+cd backend
+python -c "import asyncio; from rag.vendor_crawl import run_vendor_crawl; asyncio.run(run_vendor_crawl(dry_run=False))"
+```
+
 ## Не в scope (BACKLOG)
 
 - PDF по ссылкам, логин на порталы
+- Фильтр ссылок: не ходить на `/_next/static/`, `.woff2`
 - UI: `/ops/vendor-crawl` ✅
 - Фон: `vendor_crawl_background.py` + lifespan в `main.py` ✅
