@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: gate acceptance live table agents_gate_20260617_124414.json. | Коммит: `dfa1866` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP crawl. | Статус: done
+
 2026-06-17 | Действие: gate `[x]` MAP (апрув «ок» A+B+C); live vendor crawl ManageEngine+PT → 51 чанк RAG; конфиг vendor_crawl_config.json; ops acceptance/baseline/ISSUES. | Коммит: `57ccb65` | Хвост A: нет | Хвост B: фильтр woff2/next static — BACKLOG | Хвост C: economist-005 — опционально | Следующий шаг: «ок» MAP crawl; A/B промптов. | Статус: done
 
 2026-06-17 | Действие: vendor crawl UI /ops/vendor-crawl + фон vendor_crawl_background; pytest 11 PASS; BACKLOG UI/cron закрыт. | Коммит: `880ea30` | Хвост A: нет | Хвост B: нет | Хвост C: gate C фон | Следующий шаг: «ок» MAP crawl. | Статус: done

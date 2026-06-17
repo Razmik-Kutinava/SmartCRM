@@ -3,7 +3,7 @@
 `Спринт:[Ф3] | Задача:[Vendor crawl live + gate close] | Статус: ✅ done`
 
 **2026-06-17:**
-- **Quality gate tuning** — `[x]` MAP: A+B+C + апрув «ок»; Economist 93.3%, остальные 100%.
+- **Quality gate tuning** — `[x]` MAP: A+B+C + апрув «ок»; Economist 93.3%, остальные 100%. Таблица: `AGENTS_QUALITY_GATE_ACCEPTANCE.md`.
 - **Vendor crawl live:** ManageEngine (33 чанка) + PT Security (18) → **51** в RAG `tech_specialist`. Конфиг в `vendor_crawl_config.json`. `[x]` MAP crawl — после вашего «ок».
 
 **Следующий шаг Ф3 Self-improvement:** A/B промптов по трейсам · авто-суфлёр Стратега.
