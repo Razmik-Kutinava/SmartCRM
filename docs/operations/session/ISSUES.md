@@ -16,11 +16,11 @@
 
 Описание: `run_agents_quality_gate.py` на CPU — ранее массовые `Hermes/Ollama ReadTimeout`. Enrich smoke (`run_gate_enrich_smoke.py`) — **100%** @85% (не заменяет live).
 
-**2026-06-17:** запущен live full gate фоном: `EVAL_OLLAMA_TIMEOUT=3600`, `hermes3:latest`, backend :8000 + `SMARTCRM_API_KEY` OK. Лог: `backend/data/artifacts/eval/gate_live_20260617_152400.log`. Первая попытка упала: `Tee-Object` + `--log-file` на один файл → file lock (исправлено: только `--log-file`).
+**2026-06-17:** уровень **B закрыт** — live Hermes 36/36. Уровень **C** — agents-only с `GATE_CPU_PROFILE=1`, лог `gate_live_agents_20260617_153500.log`. Первый full gate оборван на analyst (7b модель, >10 мин на кейс).
 
-Влияние: артефакт `agents_gate_*.json` появится после завершения прогона.
+Влияние: `[x]` MAP ждёт C или «ок» на A+B.
 
-Решение: дождаться прогона → gaps → prompt/rescue (не enrich) → повтор; `[x]` MAP только после «ок» владельца.
+Решение: см. [`F3_GATE_TUNING_ACCEPTANCE.md`](../phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md).
 
 Агент: F3 quality gate tuning шаг 3
 

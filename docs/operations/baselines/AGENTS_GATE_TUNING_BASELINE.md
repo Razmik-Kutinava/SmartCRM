@@ -48,11 +48,22 @@
 | Backend | `:8000`, `SMARTCRM_API_KEY` OK |
 | Сбой старта | `Tee-Object` + `--log-file` → file lock; перезапуск без Tee |
 
-**Статус:** прогон в работе. Fail-кейсы → prompt/rescue (не enrich) → commit+ops → повтор.
+**Статус:** Hermes live **36/36** (100%) — `gate_live_20260617_152400.log`. Агенты: перезапуск `--agents-only` с `GATE_CPU_PROFILE=1` (`qwen2.5:3b`), лог `gate_live_agents_20260617_153500.log`.
 
 ---
 
-## Текущие показатели (baseline)
+## Live Hermes (шаг 3b, 2026-06-17)
+
+| Метрика | Значение |
+|---------|----------|
+| Кейсы | **36/36 pass** (100%) |
+| Путь | `parse_intent` → Ollama timeout → **rescue** |
+| Лог | `gate_live_20260617_152400.log` |
+| Enrich smoke | **100%** все агенты — `agents_gate_enrich_smoke_20260617_113107.json` |
+
+---
+
+## Текущие показатели (baseline 2026-06-14 live)
 
 | Агент | Pass rate | Порог Ф2 | Gate | Δ vs 2026-06-13 | Цель Ф3 |
 |-------|-----------|----------|------|-----------------|---------|

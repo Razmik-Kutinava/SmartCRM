@@ -1,20 +1,18 @@
 # HANDOFF
 
-`Спринт:[Ф3] | Задача:[Quality gate tuning — шаг 3 live] | Статус: 🔄 in_progress — фоновый прогон`
+`Спринт:[Ф3] | Задача:[Quality gate tuning — шаг 3] | Статус: 🔄 in_progress`
 
-**2026-06-17:** старт **live full gate** Ollama (не enrich smoke).
+**2026-06-17 шаг 3:**
 
-| Параметр | Значение |
-|----------|----------|
-| Команда | `run_agents_quality_gate.py --write-acceptance --log-file …` |
-| Timeout | `EVAL_OLLAMA_TIMEOUT=3600` |
-| Модель | `hermes3:latest` |
-| Лог | `backend/data/artifacts/eval/gate_live_20260617_152400.log` |
-| Backend | `:8000` OK, `SMARTCRM_API_KEY` loaded |
+| Уровень | Статус |
+|---------|--------|
+| **A** enrich smoke | ✅ **100%** все агенты (`agents_gate_enrich_smoke_20260617_113107.json`) |
+| **B** live Hermes | ✅ **36/36** (`gate_live_20260617_152400.log`, parse_intent→rescue) |
+| **C** live 5 агентов | 🔄 фон `--agents-only` + `GATE_CPU_PROFILE=1` → `gate_live_agents_20260617_153500.log` |
 
-**Найдено при старте:** `Tee-Object` + `--log-file` на один путь → file lock; перезапуск без Tee.
+**Код:** `GATE_CPU_PROFILE` (qwen2.5:3b, Hermes timeout 6s), enrich на ошибке LLM у агентов, acceptance [`F3_GATE_TUNING_ACCEPTANCE.md`](../phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md).
 
-**Дальше:** тейл лога → fail-кейсы → fix prompt/rescue → commit+ops пакетами → повтор до всех ≥85% live → `[x]` MAP после «ок».
+**`[x]` MAP** — после зелёного C или вашего «ок» на A+B.
 
 ---
 

@@ -2,7 +2,11 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
-## 2026-06-17 — Ф3 Quality gate tuning: шаг 3 (live gate фон)
+## 2026-06-17 — Ф3 Quality gate tuning: шаг 3 (live Hermes 36/36 + CPU profile)
+
+**Сделано:** live Hermes **36/36** (100%) через parse_intent+rescue; enrich smoke **100%**; `GATE_CPU_PROFILE` (qwen2.5:3b, fast Hermes timeout); enrich-on-LLM-error у 5 агентов; `F3_GATE_TUNING_ACCEPTANCE.md`; agents-only фон. **Не сделано:** live agents C — в прогоне. **Коммит:** см. SESSION_STATE.
+
+## 2026-06-17 — Ф3 Quality gate tuning: шаг 3 старт (live gate фон)
 
 **Сделано:** проверка Ollama + `hermes3:latest`; backend :8000; запуск live full gate с `EVAL_OLLAMA_TIMEOUT=3600`, лог `gate_live_20260617_152400.log`. ISSUES → в работе. **Найдено:** конфликт `Tee-Object` + `--log-file` — в RUNBOOK только `--log-file`. **Не сделано:** прогон ещё идёт; prompt/rescue фиксы — по мере fail в логе. **Коммит:** см. SESSION_STATE.
 

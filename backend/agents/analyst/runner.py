@@ -24,7 +24,11 @@ async def run(state: AgentState) -> AgentState:
     except Exception as e:
         logger.error("Аналитик: необработанная ошибка: %s", e)
         errors.append(f"analyst: {e}")
-        output = {"error": str(e), "summary": "Аналитик не смог завершить анализ."}
+        output = enrich_analyst_output(
+            {"error": str(e), "summary": "Аналитик: ответ после ошибки LLM."},
+            slots,
+            intent,
+        )
 
     elapsed = round((time.monotonic() - t0) * 1000)
     timings["analyst"] = elapsed

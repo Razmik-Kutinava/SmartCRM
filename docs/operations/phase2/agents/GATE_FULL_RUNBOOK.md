@@ -44,10 +44,19 @@ cd c:\Tools\workarea\SmartCRM\backend
 $env:EVAL_OLLAMA_TIMEOUT = "3600"
 $env:OLLAMA_CHAT_TIMEOUT = "3600"
 $env:GROQ_API_KEY = ""
+$env:GATE_CPU_PROFILE = "1"
 $log = "data/artifacts/eval/gate_live_$(Get-Date -Format yyyyMMdd_HHmmss).log"
 python -u scripts/run_agents_quality_gate.py `
   --log-file $log `
   --write-acceptance
+```
+
+Профиль CPU (`GATE_CPU_PROFILE=1`, по умолчанию): агенты `qwen2.5:3b`, `GATE_AGENT_MAX_TOKENS=500`, Hermes timeout 6 с → быстрый rescue.
+
+Только агенты (Hermes уже прогнан):
+
+```powershell
+python -u scripts/run_agents_quality_gate.py --agents-only --log-file data/artifacts/eval/gate_live_agents.log --write-acceptance
 ```
 
 > **Не** дублировать вывод в тот же файл через `Tee-Object` — скрипт сам пишет в `--log-file`, иначе file lock на Windows.

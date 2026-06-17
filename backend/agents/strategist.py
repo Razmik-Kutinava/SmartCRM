@@ -59,11 +59,10 @@ async def run(state: AgentState) -> AgentState:
     except Exception as e:
         logger.error("Стратег: необработанная ошибка: %s", e)
         errors.append(f"strategist: {e}")
-        output = {
-            "decision": "Ошибка стратега",
-            "final_reply": state.get("slots", {}).get("_base_reply", "Выполнено."),
-            "priority": "medium",
-        }
+        output = enrich_strategist_output(
+            {"error": str(e), "summary": "Стратег: ответ после ошибки LLM.", "final_reply": "Выполнено."},
+            state,
+        )
 
     elapsed = round((time.monotonic() - t0) * 1000)
     timings["strategist"] = elapsed

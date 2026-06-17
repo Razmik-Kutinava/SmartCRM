@@ -54,14 +54,45 @@ _RUNNERS = {
 }
 
 
+def _apply_gate_cpu_profile() -> None:
+    """Профиль для слабого CPU: быстрый fallback Hermes→rescue, лёгкая модель агентов."""
+    if os.getenv("GATE_CPU_PROFILE", "1").strip().lower() in ("0", "false", "no"):
+        return
+    os.environ.setdefault("GATE_AGENT_MODEL", "qwen2.5:3b")
+    os.environ.setdefault("GATE_AGENT_MAX_TOKENS", "500")
+    os.environ.setdefault("HERMES_OLLAMA_TIMEOUT_SEC", "5")
+    os.environ.setdefault("HERMES_OLLAMA_TOTAL_TIMEOUT_SEC", "6")
+    os.environ.setdefault("HERMES_ENABLE_OLLAMA_PRELOAD", "0")
+
+
 def force_ollama_env() -> None:
     os.environ["GROQ_API_KEY"] = ""
-    os.environ["OLLAMA_MODEL"] = os.getenv("HERMES_MODEL", HERMES_MODEL)
+    _apply_gate_cpu_profile()
+    hermes_model = os.getenv("HERMES_MODEL", HERMES_MODEL)
+    agent_model = os.getenv("GATE_AGENT_MODEL", "qwen2.5:3b")
+    os.environ["OLLAMA_MODEL"] = agent_model
+    os.environ.setdefault("HERMES_MODEL", hermes_model)
     import core.llm as llm_mod
+    import core.hermes.config as hermes_config
 
     llm_mod.GROQ_API_KEY = ""
+    llm_mod.OLLAMA_MODEL = agent_model
     llm_mod._groq_available = False
     llm_mod._groq_client = None
+    hermes_config.HERMES_OLLAMA_TIMEOUT_SEC = float(os.environ["HERMES_OLLAMA_TIMEOUT_SEC"])
+    hermes_config.HERMES_OLLAMA_TOTAL_TIMEOUT_SEC = float(os.environ["HERMES_OLLAMA_TOTAL_TIMEOUT_SEC"])
+    _patch_gate_agent_chat_cap(llm_mod)
+
+
+def _patch_gate_agent_chat_cap(llm_mod) -> None:
+    """Ограничить num_predict агентов на gate — быстрее на CPU, всё ещё live Ollama."""
+    cap = int(os.getenv("GATE_AGENT_MAX_TOKENS", "500"))
+    orig = llm_mod._ollama_chat
+
+    async def _capped(messages, temperature, max_tokens, json_mode):
+        return await orig(messages, temperature, min(max_tokens, cap), json_mode)
+
+    llm_mod._ollama_chat = _capped
 
 
 def _summarize(rows: list[dict[str, Any]], threshold: float) -> dict[str, Any]:
@@ -110,6 +141,7 @@ async def run_hermes_gate(*, limit: int = 0) -> dict[str, Any]:
             "error": err,
             "duration_ms": duration_ms,
         })
+        _gate_logger(f"[gate] hermes {case.get('id')} {'OK' if ok else 'FAIL'} ({duration_ms}ms)")
     summary = _summarize(rows, HERMES_THRESHOLD_PCT)
     summary["min_cases"] = HERMES_MIN_CASES
     return {"agent": "hermes", "model": HERMES_MODEL, "summary": summary, "results": rows}
@@ -144,6 +176,9 @@ async def run_single_agent_gate(agent_id: str, *, limit: int = 0) -> dict[str, A
             "error": err,
             "duration_ms": duration_ms,
         })
+        _gate_logger(
+            f"[gate] {agent_id} {case['id']} {'OK' if ok else 'FAIL'} ({reason}) {duration_ms}ms"
+        )
     summary = _summarize(rows, AGENT_THRESHOLD_PCT)
     summary["min_cases"] = AGENT_MIN_CASES
     return {"agent": agent_id, "model": os.getenv("OLLAMA_MODEL", HERMES_MODEL), "summary": summary, "results": rows}
