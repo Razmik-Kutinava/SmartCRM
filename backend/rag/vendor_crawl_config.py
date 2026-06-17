@@ -19,9 +19,11 @@ class VendorCrawlEntry(BaseModel):
     id: str
     name: str
     seed_url: str
+    doc_urls: list[str] = Field(default_factory=list)
     enabled: bool = True
-    max_pages: int = Field(default=10, ge=1, le=100)
-    max_depth: int = Field(default=1, ge=0, le=3)
+    use_sitemap: bool = False
+    max_pages: int = Field(default=30, ge=1, le=200)
+    max_depth: int = Field(default=2, ge=0, le=4)
 
 
 class VendorCrawlConfig(BaseModel):

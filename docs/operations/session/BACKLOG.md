@@ -198,6 +198,6 @@
 
 ## Self-improvement (Ф3)
 
-`[2026-06-17] | PRD_MAP: «Краулинг URL вендоров» | Отложено: фильтр ссылок `/_next/static/`, `.woff2` в `extract_same_domain_links` | Причина: live PT — 5/8 страниц шрифты (не критично, 3 OK) | Нужна фаза MAP: 3 | Из шага: live crawl ManageEngine+PT`
+`[2026-06-17] | PRD_MAP: «Краулинг URL вендоров» | Отложено: Playwright для SPA без текста в HTML | Причина: v2 дал 80/80 страниц на ME+PT | Нужна фаза MAP: 3`
 
 `[2026-06-17] | PRD_MAP: «Quality gate tuning» | Отложено: фикс кейса economist-005 (ключевое «финансов») | Причина: 93.3% ≥85%, gate pass | Нужна фаза MAP: 3 | Из шага: live agents C`

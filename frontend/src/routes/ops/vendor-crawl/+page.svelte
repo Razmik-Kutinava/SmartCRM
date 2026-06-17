@@ -1,6 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import {
+		docUrlsFromText,
+		docUrlsToText,
 		emptyVendor,
 		fetchVendorCrawlConfig,
 		fetchVendorCrawlStatus,
@@ -56,9 +58,10 @@
 		err = '';
 		try {
 			const report = await runVendorCrawl({ vendorId, dryRun });
+			const st = report.stats || {};
 			msg = dryRun
-				? `Dry-run: ${report.total_chunks} чанков`
-				: `Готово: ${report.total_chunks} чанков в RAG`;
+				? `Dry-run: ${report.total_chunks} чанков (HTML ${st.pages_html_ok || 0}, PDF ${st.pages_pdf_ok || 0}, мусор ${st.filtered_junk || 0})`
+				: `Готово: ${report.total_chunks} чанков (HTML ${st.pages_html_ok || 0}, PDF ${st.pages_pdf_ok || 0})`;
 			status = await fetchVendorCrawlStatus();
 		} catch (e) {
 			err = e.message;
@@ -154,13 +157,28 @@
 						>Удалить</button>
 					</div>
 					<input
-						placeholder="https://..."
+						placeholder="Главная https://..."
 						bind:value={v.seed_url}
 						class="w-full px-2 py-1 rounded bg-gray-800 border border-gray-700 text-sm"
 					/>
-					<div class="flex gap-4 text-sm">
-						<label>max_pages <input type="number" min="1" max="100" bind:value={v.max_pages} class="w-16 ml-1 px-1 rounded bg-gray-800 border border-gray-700" /></label>
-						<label>глубина <input type="number" min="0" max="3" bind:value={v.max_depth} class="w-12 ml-1 px-1 rounded bg-gray-800 border border-gray-700" /></label>
+					<label class="block text-xs text-gray-400">
+						Ссылки на доки / продукты (по одной на строку)
+						<textarea
+							rows="3"
+							class="mt-1 w-full px-2 py-1 rounded bg-gray-800 border border-gray-700 text-sm font-mono"
+							value={docUrlsToText(v.doc_urls)}
+							oninput={(e) => {
+								v.doc_urls = docUrlsFromText(e.currentTarget.value);
+							}}
+						></textarea>
+					</label>
+					<div class="flex flex-wrap gap-4 text-sm items-center">
+						<label>max_pages <input type="number" min="1" max="200" bind:value={v.max_pages} class="w-16 ml-1 px-1 rounded bg-gray-800 border border-gray-700" /></label>
+						<label>глубина <input type="number" min="0" max="4" bind:value={v.max_depth} class="w-12 ml-1 px-1 rounded bg-gray-800 border border-gray-700" /></label>
+						<label class="flex items-center gap-1 text-xs">
+							<input type="checkbox" bind:checked={v.use_sitemap} />
+							sitemap.xml
+						</label>
 						<button
 							type="button"
 							disabled={running}
@@ -197,6 +215,12 @@
 			<section class="bg-gray-900 border border-gray-800 rounded-lg p-4 text-sm">
 				<h3 class="font-medium text-white mb-2">Последний прогон</h3>
 				<p class="text-gray-400">{status.last_run.generated_at} · чанков: {status.last_run.total_chunks}</p>
+				{#if status.last_run.stats}
+					<p class="text-xs text-gray-500 mt-1">
+						HTML OK: {status.last_run.stats.pages_html_ok} · PDF OK: {status.last_run.stats.pages_pdf_ok} ·
+						мусор отфильтрован: {status.last_run.stats.filtered_junk} · короткий текст: {status.last_run.stats.text_too_short}
+					</p>
+				{/if}
 			</section>
 		{/if}
 	{/if}

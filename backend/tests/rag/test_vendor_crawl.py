@@ -56,3 +56,41 @@ async def test_crawl_vendor_dry_run(monkeypatch, tmp_path):
     assert report["pages_ok"] == 1
     assert report["total_chunks"] >= 1
     assert report["pages"][0]["dry_run"] is True
+    assert "stats" in report
+
+
+@pytest.mark.asyncio
+async def test_crawl_doc_urls_seeds(monkeypatch, tmp_path):
+    import rag.chroma_store as chroma_store
+
+    chroma_store._client = None
+    monkeypatch.setenv("CHROMA_PERSIST_DIR", str(tmp_path / "chroma"))
+
+    good_html = "<html><body><p>" + ("Product documentation firewall " * 20) + "</p></body></html>"
+    fetched: list[str] = []
+
+    async def fake_fetch(url: str):
+        fetched.append(url)
+        return good_html, url
+
+    from rag.vendor_crawl import crawl_vendor
+    from rag.vendor_crawl_config import VendorCrawlEntry
+
+    monkeypatch.setattr("rag.vendor_crawl._fetch_html", fake_fetch)
+
+    async def empty_sitemap(*_a, **_k):
+        return []
+
+    monkeypatch.setattr("rag.vendor_crawl.fetch_sitemap_urls", empty_sitemap)
+    vendor = VendorCrawlEntry(
+        id="t2",
+        name="T",
+        seed_url="https://example.com/",
+        doc_urls=["https://example.com/products/manual"],
+        enabled=True,
+        max_pages=3,
+        max_depth=0,
+    )
+    report = await crawl_vendor(vendor, dry_run=True)
+    assert report["pages_ok"] >= 2
+    assert "https://example.com/products/manual" in fetched

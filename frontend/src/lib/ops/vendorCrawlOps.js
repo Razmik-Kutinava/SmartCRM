@@ -8,10 +8,24 @@ export function emptyVendor() {
 		id: '',
 		name: '',
 		seed_url: 'https://',
+		doc_urls: [],
 		enabled: false,
-		max_pages: 10,
-		max_depth: 1
+		use_sitemap: false,
+		max_pages: 30,
+		max_depth: 2
 	};
+}
+
+/** doc_urls в UI — многострочное поле ↔ массив */
+export function docUrlsToText(urls) {
+	return (urls || []).join('\n');
+}
+
+export function docUrlsFromText(text) {
+	return (text || '')
+		.split('\n')
+		.map((s) => s.trim())
+		.filter((s) => s.startsWith('http'));
 }
 
 export async function fetchVendorCrawlConfig() {

@@ -13,16 +13,17 @@
 | 5 | Статус последнего прогона | `GET /api/rag/vendor-crawl/status` |
 | 6 | UI Ops | `/ops/vendor-crawl` — конфиг, запуск, автозапуск |
 | 7 | Фон по расписанию | `auto_crawl_enabled` + `vendor_crawl_poll_loop` в lifespan |
+| 8 | Поле doc_urls + фильтр мусора + PDF | `vendor_crawl_urls.py`, UI textarea, stats в отчёте |
 
 ## Конфиг
 
-`backend/data/vendor_crawl_config.json` — список вендоров: `seed_url`, `max_pages`, `max_depth`, `enabled`.
+`backend/data/vendor_crawl_config.json` — вендор: `seed_url`, **`doc_urls`** (ссылки на доки), `max_pages`, `max_depth`, `use_sitemap`, `enabled`.
 
 ## Команды
 
 ```bash
 cd backend
-python -m pytest tests/rag/test_vendor_crawl.py tests/api/test_vendor_crawl_api.py -q
+python -m pytest tests/rag/test_vendor_crawl_urls.py tests/rag/test_vendor_crawl.py tests/api/test_vendor_crawl_api.py -q
 ```
 
 Dry-run (без записи в Chroma):
@@ -43,23 +44,31 @@ curl -X POST http://127.0.0.1:8000/api/rag/vendor-crawl/run \
 
 ## Файлы
 
-- `rag/vendor_crawl.py` — обход страниц, ingest
+- `rag/vendor_crawl_urls.py` — фильтр мусора, приоритет ссылок
+- `rag/vendor_crawl_sitemap.py` — sitemap.xml
+- `rag/vendor_crawl.py` — обход, HTML+PDF ingest
 - `rag/vendor_crawl_config.py` — конфиг и state
 - `api/routes/rag.py` — HTTP API
 
-## Live-прогон (2026-06-17)
+## Live-прогон v1 (2026-06-17, до улучшений)
 
-Конфиг: `backend/data/vendor_crawl_config.json` — ManageEngine RU + Positive Technologies.
+| Вендор | Страниц OK | Чанков |
+|--------|------------|--------|
+| ManageEngine | 7/8 | 33 |
+| PT | 3/8 | 18 |
+| **Итого** | 10/16 | **51** |
 
-| Вендор | Seed | Страниц OK | Чанков RAG |
-|--------|------|------------|------------|
-| ManageEngine | https://www.manageengine.com/ru/ | 7/8 | 33 |
-| Positive Technologies | https://ptsecurity.com/ | 3/8 | 18 |
-| **Итого** | | **10/16** | **51** |
+## Live-прогон v2 (2026-06-17, doc_urls + фильтр + depth 2)
 
-Артефакт (локально, gitignore): `backend/data/artifacts/rag/vendor_crawl_live_20260617.json` · state: `vendor_crawl_state.json`.
+| Вендор | Страниц OK | Чанков | Настройки |
+|--------|------------|--------|-----------|
+| ManageEngine | **40/40** | 239 | doc_urls×4, sitemap, max 40 |
+| PT | **40/40** | 343 | doc_urls×3, max 40, depth 2 |
+| **Итого** | **80/80** | **582** | |
 
-Провалы ожидаемы: `favicon.ico`, шрифты `.woff2` на Next.js-сайте PT — не HTML.
+Артефакт: `backend/data/artifacts/rag/vendor_crawl_v2_20260617.json` (gitignore).
+
+Провалы v1: favicon, woff2 — в v2 отфильтрованы на входе. PDF на этих сайтах в прогоне не встретились (поддержка в коде есть).
 
 Команда прогона:
 
@@ -70,7 +79,5 @@ python -c "import asyncio; from rag.vendor_crawl import run_vendor_crawl; asynci
 
 ## Не в scope (BACKLOG)
 
-- PDF по ссылкам, логин на порталы
-- Фильтр ссылок: не ходить на `/_next/static/`, `.woff2`
-- UI: `/ops/vendor-crawl` ✅
-- Фон: `vendor_crawl_background.py` + lifespan в `main.py` ✅
+- Playwright/JS-render для SPA без текста в HTML
+- Голосом «добавь ссылку на доки» (интент → API)

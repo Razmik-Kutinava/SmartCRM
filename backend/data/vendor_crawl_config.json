@@ -4,23 +4,38 @@
       "id": "manageengine",
       "name": "ManageEngine",
       "seed_url": "https://www.manageengine.com/ru/",
+      "doc_urls": [
+        "https://www.manageengine.com/ru/products.html",
+        "https://www.manageengine.com/ru/identity-access-management.html",
+        "https://www.manageengine.com/ru/service-management.html",
+        "https://www.manageengine.com/ru/it-operations-management.html"
+      ],
       "enabled": true,
-      "max_pages": 8,
-      "max_depth": 1
+      "use_sitemap": true,
+      "max_pages": 40,
+      "max_depth": 2
     },
     {
       "id": "ptsecurity",
       "name": "Positive Technologies",
       "seed_url": "https://ptsecurity.com/",
+      "doc_urls": [
+        "https://ptsecurity.com/products/",
+        "https://ptsecurity.com/services/esc/",
+        "https://ptsecurity.com/about/news/"
+      ],
       "enabled": true,
-      "max_pages": 8,
-      "max_depth": 1
+      "use_sitemap": false,
+      "max_pages": 40,
+      "max_depth": 2
     },
     {
       "id": "demo_vendor",
       "name": "Demo (выключен)",
       "seed_url": "https://example.com/docs",
+      "doc_urls": [],
       "enabled": false,
+      "use_sitemap": false,
       "max_pages": 3,
       "max_depth": 1
     }
