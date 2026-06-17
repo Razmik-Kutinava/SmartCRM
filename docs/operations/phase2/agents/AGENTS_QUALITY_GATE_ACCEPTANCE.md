@@ -29,12 +29,12 @@
 <!-- GATE_STATUS_START -->
 | Агент | Pass | Fail | Pass rate | Порог | Gate | Дата | Артефакт |
 |-------|------|------|-----------|-------|------|------|----------|
-| Hermes | 36 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
-| Analyst | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
-| Economist | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
-| Marketer | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
-| Strategist | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
-| Tech | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-16 | agents_gate_enrich_smoke_20260616_092644.json |
+| Hermes | 36 | 0 | 100.0% | 85% | ✅ | 2026-06-17 | agents_gate_enrich_smoke_20260617_115328.json |
+| Analyst | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-17 | agents_gate_enrich_smoke_20260617_115328.json |
+| Economist | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-17 | agents_gate_enrich_smoke_20260617_115328.json |
+| Marketer | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-17 | agents_gate_enrich_smoke_20260617_115328.json |
+| Strategist | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-17 | agents_gate_enrich_smoke_20260617_115328.json |
+| Tech | 15 | 0 | 100.0% | 85% | ✅ | 2026-06-17 | agents_gate_enrich_smoke_20260617_115328.json |
 <!-- GATE_STATUS_END -->
 
 Автообновление: `python scripts/run_agents_quality_gate.py --write-acceptance`
