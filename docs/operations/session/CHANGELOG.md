@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф3 Vendor crawl шаг 1: автопоиск PDF
+
+**Было:** PDF только из HTML-ссылок; 0 PDF в live v2.
+
+**Стало:** `search_pdfs` + `site:домен filetype:pdf`; лимит `max_pdf_pages`; `%PDF` bytes; UI; pytest 18 PASS.
+
 ## 2026-06-17 — Ф3 Vendor crawl v2 (doc_urls, фильтр, PDF, 582 чанка)
 
 **Было:** 8 стр лимит, 51 чанк, PT 3/8 из‑за woff2 в очереди.

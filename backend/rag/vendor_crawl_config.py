@@ -22,7 +22,9 @@ class VendorCrawlEntry(BaseModel):
     doc_urls: list[str] = Field(default_factory=list)
     enabled: bool = True
     use_sitemap: bool = False
-    max_pages: int = Field(default=30, ge=1, le=200)
+    search_pdfs: bool = True
+    max_pdf_pages: int = Field(default=15, ge=0, le=50)
+    max_pages: int = Field(default=30, ge=0, le=200)
     max_depth: int = Field(default=2, ge=0, le=4)
 
 

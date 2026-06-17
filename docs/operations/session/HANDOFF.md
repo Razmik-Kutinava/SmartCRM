@@ -1,6 +1,14 @@
 # HANDOFF
 
-`Спринт:[Ф3] | Задача:[Vendor crawl v2 — doc_urls, фильтр, PDF] | Статус: ✅ done`
+`Спринт:[Ф3] | Задача:[Vendor crawl — шаг 1 PDF автопоиск] | Статус: ✅ done`
+
+**2026-06-17:** `site:домен filetype:pdf` через `search_for_rag`; `max_pdf_pages`; ingest по `%PDF`; UI чекбокс; pytest 18 PASS. Live search 0 без API-ключей.
+
+**Следующий шаг:** **Шаг 2** — фильтр мусора в PDF/HTML до чанков (не заливать пустое/кракозябры).
+
+---
+
+`Спринт:[Ф3] | Задача:[Vendor crawl v2] | Статус: ✅ done`
 
 **2026-06-17:** doc_urls в конфиге/UI; фильтр мусора; приоритет ссылок; PDF ingest; sitemap; live **80/80 стр, 582 чанка** (было 51). pytest **13 PASS**. `[x]` MAP crawl — после «ок».
 

@@ -37,7 +37,11 @@ def normalize_url(url: str) -> str:
 def is_pdf_url(url: str) -> bool:
     low = url.lower()
     path = urlparse(low).path
-    return path.endswith(".pdf") or ".pdf?" in low
+    if path.endswith(".pdf") or ".pdf?" in low:
+        return True
+    if "/pdf/" in path or path.rstrip("/").endswith("/pdf"):
+        return True
+    return False
 
 
 def is_junk_url(url: str) -> bool:

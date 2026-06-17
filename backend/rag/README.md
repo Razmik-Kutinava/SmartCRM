@@ -39,7 +39,9 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `chunking.py` | Разбиение текста на чанки |
 | `parsers.py` | Парсинг PDF/HTML для ingest |
 | `vendor_crawl_config.py` | Конфиг URL вендоров (JSON в `data/`) |
-| `vendor_crawl_urls.py` | Фильтр мусора, приоритет ссылок, PDF |
+| `vendor_crawl_urls.py` | Фильтр мусора, приоритет ссылок |
+| `vendor_crawl_pdf_search.py` | Web search `site:домен filetype:pdf` |
+| `vendor_crawl_pdf.py` | Скачивание и ingest PDF |
 | `vendor_crawl_sitemap.py` | Опционально sitemap.xml → URL |
 | `vendor_crawl.py` | Краулинг сайта вендора → RAG `tech_specialist` |
 | `vendor_crawl_background.py` | Фоновый планировщик (интервал из конфига) |

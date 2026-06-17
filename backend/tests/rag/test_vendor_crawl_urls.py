@@ -18,6 +18,7 @@ def test_is_junk_url_fonts_and_static():
 
 def test_is_pdf_url():
     assert is_pdf_url("https://vendor.com/docs/manual.pdf")
+    assert is_pdf_url("https://vendor.com/download/pdf/report")
     assert not is_pdf_url("https://vendor.com/docs/page")
 
 

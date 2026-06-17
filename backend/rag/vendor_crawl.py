@@ -1,17 +1,13 @@
 """Краулинг URL вендоров → чанки RAG tech_specialist."""
 from __future__ import annotations
 
-import hashlib
 import heapq
 import logging
 from datetime import datetime, timezone
 from typing import Any
-from urllib.parse import urlparse
 
 import httpx
 
-from rag import parsers
-from rag.chroma_store import delete_by_source_id
 from rag.ingest import _ingest_plain_text
 from rag.search.enrich_sources import _html_to_text, _is_fetchable_url
 from rag.vendor_crawl_config import (
@@ -21,6 +17,8 @@ from rag.vendor_crawl_config import (
     load_state,
     save_state,
 )
+from rag.vendor_crawl_pdf import ingest_vendor_pdf, is_pdf_bytes, stable_source_id
+from rag.vendor_crawl_pdf_search import discover_pdf_urls_via_search
 from rag.vendor_crawl_sitemap import fetch_sitemap_urls
 from rag.vendor_crawl_urls import (
     extract_page_links,
@@ -34,13 +32,7 @@ from rag.vendor_crawl_urls import (
 logger = logging.getLogger(__name__)
 
 _MIN_TEXT_CHARS = 120
-_MIN_PDF_CHARS = 80
-_UA = "SmartCRM-vendor-crawl/2.0"
-
-
-def stable_source_id(url: str) -> str:
-    h = hashlib.sha256(url.strip().lower().encode()).hexdigest()[:24]
-    return f"vendor_{h}"
+_UA = "SmartCRM-vendor-crawl/2.1"
 
 
 def _empty_stats() -> dict[str, int]:
@@ -51,11 +43,12 @@ def _empty_stats() -> dict[str, int]:
         "pages_failed": 0,
         "text_too_short": 0,
         "budget_used": 0,
+        "pdf_search_found": 0,
+        "pdf_budget_used": 0,
     }
 
 
 def extract_same_domain_links(html: str, page_url: str) -> list[str]:
-    """Совместимость с тестами — делегирует в vendor_crawl_urls."""
     return extract_page_links(html, page_url)
 
 
@@ -71,6 +64,8 @@ async def _fetch_html(url: str) -> tuple[str, str]:
         if r.status_code >= 400:
             return "", ""
         ctype = (r.headers.get("content-type") or "").lower()
+        if "pdf" in ctype or is_pdf_bytes(r.content):
+            return "", ""
         if "html" not in ctype and "text" not in ctype:
             return "", ""
         return r.text, str(r.url)
@@ -80,7 +75,7 @@ async def _fetch_bytes(url: str) -> tuple[bytes, str]:
     if not _is_fetchable_url(url):
         return b"", ""
     async with httpx.AsyncClient(
-        timeout=30.0,
+        timeout=45.0,
         follow_redirects=True,
         headers={"User-Agent": _UA},
     ) as client:
@@ -91,8 +86,12 @@ async def _fetch_bytes(url: str) -> tuple[bytes, str]:
 
 
 def ingest_vendor_page(url: str, text: str, vendor: VendorCrawlEntry, *, dry_run: bool) -> dict[str, Any]:
+    from urllib.parse import urlparse
+
     sid = stable_source_id(url)
     if not dry_run:
+        from rag.chroma_store import delete_by_source_id
+
         delete_by_source_id(sid)
     path = urlparse(url).path or "/"
     title = f"{vendor.name}: {path[:120]}"
@@ -110,34 +109,46 @@ def ingest_vendor_page(url: str, text: str, vendor: VendorCrawlEntry, *, dry_run
     )
 
 
-def ingest_vendor_pdf(url: str, data: bytes, vendor: VendorCrawlEntry, *, dry_run: bool) -> dict[str, Any]:
-    sid = stable_source_id(url)
-    if not dry_run:
-        delete_by_source_id(sid)
-    try:
-        text = parsers.parse_pdf(data)
-    except Exception as e:
-        return {"chunks": 0, "error": str(e), "source_id": sid}
-    path = urlparse(url).path or "/doc.pdf"
-    title = f"{vendor.name}: {path[-120:]}"
-    return _ingest_plain_text(
-        text,
-        filename=title,
-        source_type="vendor_crawl_pdf",
-        mime="application/pdf",
-        tags="vendor_crawl,pdf",
-        for_agent="tech_specialist",
-        extra_base_meta={"source_url": url, "vendor_id": vendor.id},
-        steps_pre=[{"stage": "PDF", "url": url, "vendor": vendor.name, "bytes": len(data)}],
-        dry_run=dry_run,
-        source_id=sid,
-    )
+async def _process_pdf(
+    url: str,
+    vendor: VendorCrawlEntry,
+    *,
+    dry_run: bool,
+    stats: dict[str, int],
+    pages: list[dict[str, Any]],
+) -> int:
+    data, final_url = await _fetch_bytes(url)
+    if not data:
+        stats["pages_failed"] += 1
+        pages.append({"url": url, "ok": False, "kind": "pdf", "reason": "fetch_failed"})
+        return 0
+    ing = ingest_vendor_pdf(final_url or url, data, vendor, dry_run=dry_run)
+    if int(ing.get("chunks") or 0) == 0:
+        stats["pages_failed"] += 1
+        pages.append({
+            "url": final_url or url,
+            "ok": False,
+            "kind": "pdf",
+            "reason": ing.get("error") or "pdf_empty",
+        })
+        return 0
+    chunks = int(ing.get("chunks") or 0)
+    stats["pages_pdf_ok"] += 1
+    pages.append({
+        "url": final_url or url,
+        "ok": True,
+        "kind": "pdf",
+        "chunks": chunks,
+        "source_id": ing.get("source_id"),
+        "dry_run": dry_run,
+    })
+    return chunks
 
 
-async def _build_seed_queue(vendor: VendorCrawlEntry) -> list[tuple[int, int, str]]:
-    """(-priority, depth, url) для heapq."""
+async def _build_seed_queue(vendor: VendorCrawlEntry) -> tuple[list[tuple[int, int, str]], int]:
     items: list[tuple[int, int, str]] = []
     seen: set[str] = set()
+    pdf_search_found = 0
 
     def add(url: str, depth: int, *, from_doc: bool) -> None:
         u = normalize_url(url)
@@ -145,6 +156,8 @@ async def _build_seed_queue(vendor: VendorCrawlEntry) -> list[tuple[int, int, st
             return
         seen.add(u)
         pr = seed_priority(u, from_doc_list=from_doc)
+        if is_pdf_url(u):
+            pr += 50
         heapq.heappush(items, (-pr, depth, u))
 
     if vendor.seed_url.strip():
@@ -154,11 +167,20 @@ async def _build_seed_queue(vendor: VendorCrawlEntry) -> list[tuple[int, int, st
         if raw.startswith("http"):
             add(raw, 0, from_doc=True)
 
+    if vendor.search_pdfs and vendor.max_pdf_pages > 0 and vendor.seed_url.strip():
+        pdf_urls = await discover_pdf_urls_via_search(
+            vendor.seed_url,
+            max_results=vendor.max_pdf_pages,
+        )
+        pdf_search_found = len(pdf_urls)
+        for u in pdf_urls:
+            add(u, 0, from_doc=True)
+
     if vendor.use_sitemap and vendor.seed_url.strip():
         for u in await fetch_sitemap_urls(vendor.seed_url, max_urls=min(vendor.max_pages, 50)):
             add(u, 0, from_doc=True)
 
-    return items
+    return items, pdf_search_found
 
 
 async def crawl_vendor(vendor: VendorCrawlEntry, *, dry_run: bool = False) -> dict[str, Any]:
@@ -166,14 +188,18 @@ async def crawl_vendor(vendor: VendorCrawlEntry, *, dry_run: bool = False) -> di
     if not seed.startswith("http") and not (vendor.doc_urls or []):
         return {"vendor_id": vendor.id, "error": "invalid seed_url", "pages": [], "stats": _empty_stats()}
 
-    queue = await _build_seed_queue(vendor)
+    queue, pdf_search_found = await _build_seed_queue(vendor)
     visited: set[str] = set()
     pages: list[dict[str, Any]] = []
     stats = _empty_stats()
+    stats["pdf_search_found"] = pdf_search_found
     total_chunks = 0
-    budget = 0
+    html_budget = 0
+    pdf_budget = 0
 
-    while queue and budget < vendor.max_pages:
+    while queue:
+        if html_budget >= vendor.max_pages and pdf_budget >= vendor.max_pdf_pages:
+            break
         _neg_pr, depth, url = heapq.heappop(queue)
         key = normalize_url(url)
         if key in visited:
@@ -184,40 +210,57 @@ async def crawl_vendor(vendor: VendorCrawlEntry, *, dry_run: bool = False) -> di
             stats["filtered_junk"] += 1
             continue
 
-        budget += 1
-        stats["budget_used"] = budget
+        wants_pdf = is_pdf_url(key)
+        if wants_pdf:
+            if pdf_budget >= vendor.max_pdf_pages:
+                continue
+            pdf_budget += 1
+            stats["pdf_budget_used"] = pdf_budget
+        else:
+            if html_budget >= vendor.max_pages:
+                continue
+            html_budget += 1
+            stats["budget_used"] = html_budget
 
-        if is_pdf_url(key):
-            data, final_url = await _fetch_bytes(key)
-            if not data:
-                stats["pages_failed"] += 1
-                pages.append({"url": key, "ok": False, "kind": "pdf", "reason": "fetch_failed"})
-                continue
-            ing = ingest_vendor_pdf(final_url or key, data, vendor, dry_run=dry_run)
-            if int(ing.get("chunks") or 0) == 0:
-                stats["pages_failed"] += 1
-                pages.append({
-                    "url": final_url or key,
-                    "ok": False,
-                    "kind": "pdf",
-                    "reason": ing.get("error") or "pdf_empty",
-                })
-                continue
-            chunks = int(ing.get("chunks") or 0)
-            total_chunks += chunks
-            stats["pages_pdf_ok"] += 1
-            pages.append({
-                "url": final_url or key,
-                "ok": True,
-                "kind": "pdf",
-                "chunks": chunks,
-                "source_id": ing.get("source_id"),
-                "dry_run": dry_run,
-            })
+        if wants_pdf:
+            total_chunks += await _process_pdf(key, vendor, dry_run=dry_run, stats=stats, pages=pages)
             continue
 
         html, final_url = await _fetch_html(key)
         if not html:
+            data, final_b = await _fetch_bytes(key)
+            if is_pdf_bytes(data):
+                html_budget -= 1
+                stats["budget_used"] = max(0, html_budget)
+                if pdf_budget >= vendor.max_pdf_pages:
+                    stats["pages_failed"] += 1
+                    pages.append({"url": key, "ok": False, "kind": "pdf", "reason": "pdf_budget_exhausted"})
+                    continue
+                pdf_budget += 1
+                stats["pdf_budget_used"] = pdf_budget
+                ing = ingest_vendor_pdf(final_b or key, data, vendor, dry_run=dry_run)
+                if int(ing.get("chunks") or 0) > 0:
+                    c = int(ing["chunks"])
+                    total_chunks += c
+                    stats["pages_pdf_ok"] += 1
+                    pages.append({
+                        "url": final_b or key,
+                        "ok": True,
+                        "kind": "pdf",
+                        "chunks": c,
+                        "source_id": ing.get("source_id"),
+                        "dry_run": dry_run,
+                        "discovered_as": "redirect_bytes",
+                    })
+                else:
+                    stats["pages_failed"] += 1
+                    pages.append({
+                        "url": final_b or key,
+                        "ok": False,
+                        "kind": "pdf",
+                        "reason": ing.get("error") or "pdf_empty",
+                    })
+                continue
             stats["pages_failed"] += 1
             pages.append({"url": key, "ok": False, "kind": "html", "reason": "fetch_failed"})
             continue
@@ -246,8 +289,6 @@ async def crawl_vendor(vendor: VendorCrawlEntry, *, dry_run: bool = False) -> di
                 lk = normalize_url(link)
                 if lk in visited:
                     continue
-                if budget + len(queue) >= vendor.max_pages * 3:
-                    break
                 pr = link_priority(lk)
                 heapq.heappush(queue, (-pr, depth + 1, lk))
 
@@ -283,7 +324,7 @@ async def run_vendor_crawl(
     for vendor in targets:
         if not vendor_id and not vendor.enabled:
             continue
-        logger.info("vendor crawl: %s seeds=%s", vendor.id, vendor.seed_url)
+        logger.info("vendor crawl: %s seeds=%s search_pdfs=%s", vendor.id, vendor.seed_url, vendor.search_pdfs)
         results.append(await crawl_vendor(vendor, dry_run=dry_run))
 
     for r in results:

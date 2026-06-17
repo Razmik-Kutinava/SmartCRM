@@ -60,7 +60,7 @@
 			const report = await runVendorCrawl({ vendorId, dryRun });
 			const st = report.stats || {};
 			msg = dryRun
-				? `Dry-run: ${report.total_chunks} чанков (HTML ${st.pages_html_ok || 0}, PDF ${st.pages_pdf_ok || 0}, мусор ${st.filtered_junk || 0})`
+				? `Dry-run: ${report.total_chunks} чанков (HTML ${st.pages_html_ok || 0}, PDF ${st.pages_pdf_ok || 0}, поиск PDF ${st.pdf_search_found || 0})`
 				: `Готово: ${report.total_chunks} чанков (HTML ${st.pages_html_ok || 0}, PDF ${st.pages_pdf_ok || 0})`;
 			status = await fetchVendorCrawlStatus();
 		} catch (e) {
@@ -173,11 +173,16 @@
 						></textarea>
 					</label>
 					<div class="flex flex-wrap gap-4 text-sm items-center">
-						<label>max_pages <input type="number" min="1" max="200" bind:value={v.max_pages} class="w-16 ml-1 px-1 rounded bg-gray-800 border border-gray-700" /></label>
+						<label>HTML стр. <input type="number" min="0" max="200" bind:value={v.max_pages} class="w-16 ml-1 px-1 rounded bg-gray-800 border border-gray-700" /></label>
+						<label>PDF лимит <input type="number" min="0" max="50" bind:value={v.max_pdf_pages} class="w-14 ml-1 px-1 rounded bg-gray-800 border border-gray-700" /></label>
 						<label>глубина <input type="number" min="0" max="4" bind:value={v.max_depth} class="w-12 ml-1 px-1 rounded bg-gray-800 border border-gray-700" /></label>
 						<label class="flex items-center gap-1 text-xs">
 							<input type="checkbox" bind:checked={v.use_sitemap} />
-							sitemap.xml
+							sitemap
+						</label>
+						<label class="flex items-center gap-1 text-xs">
+							<input type="checkbox" bind:checked={v.search_pdfs} />
+							поиск PDF (site:домен)
 						</label>
 						<button
 							type="button"
@@ -218,7 +223,8 @@
 				{#if status.last_run.stats}
 					<p class="text-xs text-gray-500 mt-1">
 						HTML OK: {status.last_run.stats.pages_html_ok} · PDF OK: {status.last_run.stats.pages_pdf_ok} ·
-						мусор отфильтрован: {status.last_run.stats.filtered_junk} · короткий текст: {status.last_run.stats.text_too_short}
+						поиск PDF нашёл: {status.last_run.stats.pdf_search_found ?? 0} ·
+						мусор: {status.last_run.stats.filtered_junk}
 					</p>
 				{/if}
 			</section>

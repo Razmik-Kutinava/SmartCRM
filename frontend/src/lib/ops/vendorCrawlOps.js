@@ -11,6 +11,8 @@ export function emptyVendor() {
 		doc_urls: [],
 		enabled: false,
 		use_sitemap: false,
+		search_pdfs: true,
+		max_pdf_pages: 15,
 		max_pages: 30,
 		max_depth: 2
 	};

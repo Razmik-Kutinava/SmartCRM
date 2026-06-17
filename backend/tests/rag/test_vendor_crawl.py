@@ -44,6 +44,16 @@ async def test_crawl_vendor_dry_run(monkeypatch, tmp_path):
     from rag.vendor_crawl_config import VendorCrawlEntry
 
     monkeypatch.setattr("rag.vendor_crawl._fetch_html", fake_fetch)
+
+    async def empty_pdf_search(*_a, **_k):
+        return []
+
+    monkeypatch.setattr("rag.vendor_crawl.discover_pdf_urls_via_search", empty_pdf_search)
+
+    async def empty_sitemap(*_a, **_k):
+        return []
+
+    monkeypatch.setattr("rag.vendor_crawl.fetch_sitemap_urls", empty_sitemap)
     vendor = VendorCrawlEntry(
         id="test",
         name="TestVendor",
@@ -78,6 +88,11 @@ async def test_crawl_doc_urls_seeds(monkeypatch, tmp_path):
 
     monkeypatch.setattr("rag.vendor_crawl._fetch_html", fake_fetch)
 
+    async def empty_pdf_search(*_a, **_k):
+        return []
+
+    monkeypatch.setattr("rag.vendor_crawl.discover_pdf_urls_via_search", empty_pdf_search)
+
     async def empty_sitemap(*_a, **_k):
         return []
 
@@ -94,3 +109,50 @@ async def test_crawl_doc_urls_seeds(monkeypatch, tmp_path):
     report = await crawl_vendor(vendor, dry_run=True)
     assert report["pages_ok"] >= 2
     assert "https://example.com/products/manual" in fetched
+
+
+@pytest.mark.asyncio
+async def test_crawl_ingests_pdf_from_search(monkeypatch, tmp_path):
+    import rag.chroma_store as chroma_store
+
+    chroma_store._client = None
+    monkeypatch.setenv("CHROMA_PERSIST_DIR", str(tmp_path / "chroma"))
+
+    pdf_bytes = b"%PDF-1.4\n" + (b"1 0 obj\n<<>>\nendobj\n" * 5)
+    # minimal pdf won't parse well - mock ingest path
+    from rag.vendor_crawl import crawl_vendor
+    from rag.vendor_crawl_config import VendorCrawlEntry
+
+    async def fake_pdf_search(*_a, **_k):
+        return ["https://example.com/whitepaper.pdf"]
+
+    async def fake_bytes(url: str):
+        return pdf_bytes, url
+
+    monkeypatch.setattr("rag.vendor_crawl.discover_pdf_urls_via_search", fake_pdf_search)
+    monkeypatch.setattr("rag.vendor_crawl._fetch_bytes", fake_bytes)
+
+    async def empty_sitemap(*_a, **_k):
+        return []
+
+    monkeypatch.setattr("rag.vendor_crawl.fetch_sitemap_urls", empty_sitemap)
+
+    def fake_ingest(url, data, vendor, *, dry_run):
+        return {"chunks": 3, "source_id": "vendor_test", "dry_run": dry_run}
+
+    monkeypatch.setattr("rag.vendor_crawl.ingest_vendor_pdf", fake_ingest)
+
+    vendor = VendorCrawlEntry(
+        id="tpdf",
+        name="TPDF",
+        seed_url="https://example.com/",
+        enabled=True,
+        max_pages=0,
+        max_pdf_pages=5,
+        max_depth=0,
+        search_pdfs=True,
+    )
+    report = await crawl_vendor(vendor, dry_run=True)
+    assert report["stats"]["pdf_search_found"] == 1
+    assert report["stats"]["pages_pdf_ok"] == 1
+    assert report["total_chunks"] == 3
