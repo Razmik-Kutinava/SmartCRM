@@ -1,8 +1,8 @@
 # HANDOFF
 
-`Спринт:[Ф3] | Задача:[Vendor crawl → RAG tec] | Статус: 🔄 API done — UI/расписание BACKLOG`
+`Спринт:[Ф3] | Задача:[Vendor crawl → RAG tec] | Статус: ✅ done — ждём «ок» для [x] MAP`
 
-**2026-06-17:** краулинг URL вендоров — `vendor_crawl.py`, API `/api/rag/vendor-crawl/*`, тесты 5 PASS. Acceptance: `F3_VENDOR_CRAWL_ACCEPTANCE.md`. `[x]` MAP после «ок».
+**2026-06-17:** API + UI `/ops/vendor-crawl` + фон `vendor_crawl_background` (интервал в конфиге). Тесты 11 PASS.
 
 ---
 

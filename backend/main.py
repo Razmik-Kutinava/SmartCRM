@@ -71,8 +71,21 @@ async def lifespan(app: FastAPI):
             _email_min,
         )
 
+    vendor_crawl_stop = asyncio.Event()
+    from rag.vendor_crawl_background import vendor_crawl_poll_loop
+
+    vendor_crawl_task = asyncio.create_task(vendor_crawl_poll_loop(vendor_crawl_stop))
+    logger.info("Vendor crawl: планировщик в фоне (вкл/интервал в /api/rag/vendor-crawl/config)")
+
     yield
 
+    if vendor_crawl_task is not None:
+        vendor_crawl_stop.set()
+        vendor_crawl_task.cancel()
+        try:
+            await vendor_crawl_task
+        except asyncio.CancelledError:
+            pass
     if email_poll_task is not None:
         email_poll_stop.set()
         email_poll_task.cancel()

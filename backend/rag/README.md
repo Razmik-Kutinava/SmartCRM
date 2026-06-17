@@ -40,5 +40,6 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `parsers.py` | Парсинг PDF/HTML для ingest |
 | `vendor_crawl_config.py` | Конфиг URL вендоров (JSON в `data/`) |
 | `vendor_crawl.py` | Краулинг сайта вендора → RAG `tech_specialist` |
+| `vendor_crawl_background.py` | Фоновый планировщик (интервал из конфига) |
 
-Эндпоинты: `api/routes/rag.py` (`/vendor-crawl/*`), `api/routes/search.py`.
+Эндпоинты: `api/routes/rag.py` (`/vendor-crawl/*`), UI `/ops/vendor-crawl`.

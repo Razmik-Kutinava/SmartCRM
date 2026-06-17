@@ -183,6 +183,7 @@ async def run_vendor_crawl(
     if not dry_run:
         state = load_state()
         runs = list(state.get("runs") or [])
+        report["trigger"] = report.get("trigger") or "manual"
         runs.insert(0, report)
         state["runs"] = runs[:20]
         save_state(state)

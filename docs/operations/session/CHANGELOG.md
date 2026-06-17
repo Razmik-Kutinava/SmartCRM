@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф3 Vendor crawl: UI Ops + фоновый планировщик
+
+**Сделано:** `/ops/vendor-crawl`, `vendor_crawl_background.py`, lifespan в `main.py`; auto_crawl в конфиге; pytest 11 PASS. **Коммит:** см. SESSION_STATE.
+
 ## 2026-06-17 — Ф3 Vendor crawl → RAG tech_specialist (API)
 
 **Сделано:** `vendor_crawl.py` + config JSON + API `/api/rag/vendor-crawl/*`; дедуп source_id по URL; pytest 5 PASS; acceptance `F3_VENDOR_CRAWL_ACCEPTANCE.md`. **Не сделано:** UI Ops, cron — BACKLOG. **Коммит:** см. SESSION_STATE.

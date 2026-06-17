@@ -11,6 +11,8 @@
 | 3 | Чанки в RAG `tech_specialist` | `for_agent=tech_specialist`, `source_type=vendor_crawl` |
 | 4 | Дедуп по URL | повторный crawl → тот же `source_id` (hash URL) |
 | 5 | Статус последнего прогона | `GET /api/rag/vendor-crawl/status` |
+| 6 | UI Ops | `/ops/vendor-crawl` — конфиг, запуск, автозапуск |
+| 7 | Фон по расписанию | `auto_crawl_enabled` + `vendor_crawl_poll_loop` в lifespan |
 
 ## Конфиг
 
@@ -47,6 +49,6 @@ curl -X POST http://127.0.0.1:8000/api/rag/vendor-crawl/run \
 
 ## Не в scope (BACKLOG)
 
-- Расписание cron/фон без HTTP
-- UI Ops
 - PDF по ссылкам, логин на порталы
+- UI: `/ops/vendor-crawl` ✅
+- Фон: `vendor_crawl_background.py` + lifespan в `main.py` ✅

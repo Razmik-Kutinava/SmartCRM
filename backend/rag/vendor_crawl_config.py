@@ -26,6 +26,8 @@ class VendorCrawlEntry(BaseModel):
 
 class VendorCrawlConfig(BaseModel):
     vendors: list[VendorCrawlEntry] = Field(default_factory=list)
+    auto_crawl_enabled: bool = False
+    auto_crawl_interval_hours: int = Field(default=168, ge=1, le=720)
 
 
 def _default_config() -> VendorCrawlConfig:

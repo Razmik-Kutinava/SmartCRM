@@ -270,6 +270,8 @@ class VendorCrawlRunBody(BaseModel):
 
 class VendorCrawlConfigBody(BaseModel):
     vendors: list[dict[str, Any]]
+    auto_crawl_enabled: bool = False
+    auto_crawl_interval_hours: int = 168
 
 
 @router.get("/vendor-crawl/config")
@@ -285,7 +287,7 @@ async def vendor_crawl_put_config(body: VendorCrawlConfigBody):
     from rag.vendor_crawl_config import VendorCrawlConfig, save_config
 
     try:
-        cfg = VendorCrawlConfig.model_validate({"vendors": body.vendors})
+        cfg = VendorCrawlConfig.model_validate(body.model_dump())
     except Exception as e:
         raise HTTPException(400, detail=str(e)) from e
     save_config(cfg)
@@ -294,12 +296,10 @@ async def vendor_crawl_put_config(body: VendorCrawlConfigBody):
 
 @router.get("/vendor-crawl/status")
 async def vendor_crawl_status():
-    from rag.vendor_crawl_config import load_state
+    from rag.vendor_crawl_background import vendor_crawl_status_payload
 
-    state = load_state()
-    runs = state.get("runs") or []
-    last = runs[0] if runs else None
-    return {"ok": True, "last_run": last, "history_count": len(runs)}
+    payload = await vendor_crawl_status_payload()
+    return {"ok": True, **payload}
 
 
 @router.post("/vendor-crawl/run")

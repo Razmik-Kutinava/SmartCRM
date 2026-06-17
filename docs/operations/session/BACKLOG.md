@@ -43,7 +43,7 @@
 
 ## Записи
 
-`[2026-06-17] | PRD_MAP: Ф3 Self-improvement · vendor crawl UI + cron | Отложено: Ops UI список URL, кнопка crawl, фон по расписанию | Причина: шаг 1 — API+core | Нужна фаза MAP: 3 | Из шага: vendor crawl API`
+`[2026-06-17] | PRD_MAP: Ф3 Self-improvement · vendor crawl UI + cron | **✅ сделано** — `/ops/vendor-crawl` + `vendor_crawl_background.py` | Коммит: см. CHANGELOG`
 
 `[2026-06-15] | PRD_MAP: Ф3 Email · этап B массовый сегмент | **✅ сделано** — `EmailCampaignPanel`, preview-llm, send_now | Коммит: см. CHANGELOG`
 

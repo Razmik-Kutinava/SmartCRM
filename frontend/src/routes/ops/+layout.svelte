@@ -15,6 +15,7 @@
 		{ href: '/ops/email-agents', label: '📧 Агенты почты' },
 		{ href: '/ops/email',       label: '📬 Email Ф3' },
 		{ href: '/ops/search',   label: '🔍 Поиск' },
+		{ href: '/ops/vendor-crawl', label: '📚 Вендоры RAG' },
 		{ href: '/ops/queue',    label: 'Очередь' },
 		{ href: '/ops/stats',    label: 'Статистика' },
 		{ href: '/ops/insights', label: 'Инсайты' },

@@ -35,6 +35,38 @@ async def test_vendor_crawl_config_get(client, isolated_vendor_config):
 
 
 @pytest.mark.asyncio
+async def test_vendor_crawl_config_put_schedule(client, isolated_vendor_config):
+    body = {
+        "vendors": [
+            {
+                "id": "pt",
+                "name": "PT",
+                "seed_url": "https://example.com",
+                "enabled": True,
+                "max_pages": 5,
+                "max_depth": 1,
+            }
+        ],
+        "auto_crawl_enabled": True,
+        "auto_crawl_interval_hours": 24,
+    }
+    r = await client.put("/api/rag/vendor-crawl/config", json=body)
+    assert r.status_code == 200
+    data = r.json()
+    assert data["config"]["auto_crawl_enabled"] is True
+    assert data["config"]["auto_crawl_interval_hours"] == 24
+
+
+@pytest.mark.asyncio
+async def test_vendor_crawl_status_includes_scheduler(client, isolated_vendor_config):
+    r = await client.get("/api/rag/vendor-crawl/status")
+    assert r.status_code == 200
+    data = r.json()
+    assert "auto_crawl_enabled" in data
+    assert "scheduler" in data
+
+
+@pytest.mark.asyncio
 async def test_vendor_crawl_run_dry_run(client, isolated_chroma, isolated_vendor_config, monkeypatch):
     sample = "<html><body><p>" + ("Positive Technologies firewall " * 25) + "</p></body></html>"
 
