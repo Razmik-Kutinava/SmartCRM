@@ -24,7 +24,7 @@
 
 ```bash
 cd backend
-python -m pytest tests/services/test_tender_sources.py tests/services/test_tender_monitor.py tests/api/test_tenders_provider_api.py -q
+python -m pytest tests/services/test_tender_provider_layer.py tests/services/test_tender_monitor.py tests/api/test_tenders_provider_api.py -q
 ```
 
 1. `GOSPLAN_USE_PROD=1` → `provider/status` → `gosplan_use_prod: true`
