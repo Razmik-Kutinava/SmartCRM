@@ -205,6 +205,37 @@
 				</div>
 			</div>
 
+			{#if metrics.cohorts?.length}
+				<div
+					class="max-w-3xl"
+					data-testid="analytics-cohorts"
+					class:ring-1={activeView === 'cohorts'}
+					class:ring-indigo-500={activeView === 'cohorts'}
+					class:rounded-xl={activeView === 'cohorts'}
+					class:p-2={activeView === 'cohorts'}
+				>
+					<h2 class="text-sm font-medium text-white mb-3">Когорты по месяцу входа</h2>
+					<p class="text-xs text-gray-500 mb-3">Лиды, пришедшие в месяц → сколько выиграли</p>
+					<div class="space-y-2">
+						{#each metrics.cohorts as row}
+							<div class="flex items-center gap-3 text-sm flex-wrap">
+								<span class="text-gray-300 w-24 shrink-0">{row.label}</span>
+								<div class="flex-1 min-w-[120px] h-2 rounded-full bg-gray-800 overflow-hidden">
+									<div
+										class="h-full bg-emerald-600 rounded-full"
+										style="width: {row.conversionPct}%"
+									></div>
+								</div>
+								<span class="text-green-400 w-14">{row.conversionPct}%</span>
+								<span class="text-gray-500 text-xs">
+									{row.total} лид. · ✓{row.won} · ✗{row.lost} · …{row.active}
+								</span>
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
 			{#if metrics.conversionBySource?.length}
 				<div
 					class="max-w-3xl"

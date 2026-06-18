@@ -5,6 +5,7 @@ from core.analytics_metrics import (
     analytics_to_csv,
     compute_analytics,
     compute_analytics_report,
+    compute_cohorts,
     compute_conversion_by_source,
     filter_leads_by_period,
     lead_amount_rub,
@@ -82,6 +83,37 @@ def test_compute_conversion_by_source():
     assert email["total"] == 2
     assert email["won"] == 1
     assert email["conversionPct"] == 50.0
+
+
+def test_compute_cohorts_by_month():
+    leads = [
+        _lead(stage="Выигран", createdAt="2026-01-15T00:00:00+00:00"),
+        _lead(stage="Новый", createdAt="2026-01-20T00:00:00+00:00"),
+        _lead(stage="Проигран", createdAt="2026-02-01T00:00:00+00:00"),
+        _lead(stage="Выигран", createdAt="2026-02-10T00:00:00+00:00"),
+    ]
+    rows = compute_cohorts(leads, STAGES)
+    assert len(rows) == 2
+    feb = next(r for r in rows if r["cohort"] == "2026-02")
+    assert feb["total"] == 2
+    assert feb["won"] == 1
+    assert feb["lost"] == 1
+    assert feb["conversionPct"] == 50.0
+    assert feb["winRatePct"] == 50.0
+    jan = next(r for r in rows if r["cohort"] == "2026-01")
+    assert jan["active"] == 1
+    assert jan["label"] == "янв 2026"
+
+
+def test_compute_analytics_report_includes_cohorts():
+    leads = [
+        _lead(stage="Выигран", createdAt="2026-03-01T00:00:00+00:00"),
+        _lead(stage="Новый", createdAt="2026-03-05T00:00:00+00:00"),
+    ]
+    report = compute_analytics_report(leads, STAGES)
+    assert len(report["cohorts"]) == 1
+    assert report["cohorts"][0]["conversionPct"] == 50.0
+    assert "cohort,total,won" in analytics_to_csv(report)
 
 
 def test_compute_analytics_report_with_filters():

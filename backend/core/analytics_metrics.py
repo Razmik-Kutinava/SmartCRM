@@ -98,6 +98,40 @@ def lead_source(lead: dict[str, Any]) -> str:
     return str(lead.get("source") or "—").strip() or "—"
 
 
+_COHORT_MONTH_NAMES = (
+    "янв",
+    "фев",
+    "мар",
+    "апр",
+    "май",
+    "июн",
+    "июл",
+    "авг",
+    "сен",
+    "окт",
+    "ноя",
+    "дек",
+)
+
+
+def cohort_month_key(lead: dict[str, Any]) -> str | None:
+    created = parse_created_date(lead)
+    if created is None:
+        return None
+    return created.strftime("%Y-%m")
+
+
+def cohort_month_label(key: str) -> str:
+    try:
+        year, month = key.split("-", 1)
+        idx = int(month) - 1
+        if 0 <= idx < 12:
+            return f"{_COHORT_MONTH_NAMES[idx]} {year}"
+    except (ValueError, IndexError):
+        pass
+    return key
+
+
 def filter_leads_by_period(
     leads: list[dict[str, Any]],
     period: str | None,
@@ -123,6 +157,44 @@ def filter_leads_by_period(
                 out.append(lead)
         elif created >= start:
             out.append(lead)
+    return out
+
+
+def compute_cohorts(
+    leads: list[dict[str, Any]],
+    stages: list[str] | None = None,
+    *,
+    limit: int = 12,
+) -> list[dict[str, Any]]:
+    """Когорты по месяцу входа лида → конверсия в «Выигран»."""
+    sts = stages or DEFAULT_STAGES
+    buckets: dict[str, dict[str, Any]] = {}
+    for lead in leads:
+        key = cohort_month_key(lead)
+        if not key:
+            continue
+        row = buckets.setdefault(
+            key,
+            {"cohort": key, "label": cohort_month_label(key), "total": 0, "won": 0, "lost": 0, "active": 0},
+        )
+        row["total"] += 1
+        st = normalize_stage(lead.get("stage"), sts)
+        if st == WON_STAGE:
+            row["won"] += 1
+        elif st == LOST_STAGE:
+            row["lost"] += 1
+        else:
+            row["active"] += 1
+    out: list[dict[str, Any]] = []
+    for key in sorted(buckets.keys(), reverse=True)[: max(limit, 1)]:
+        row = buckets[key]
+        total = int(row["total"])
+        won = int(row["won"])
+        lost = int(row["lost"])
+        row["conversionPct"] = round(100 * won / total, 1) if total else 0.0
+        closed = won + lost
+        row["winRatePct"] = round(100 * won / closed, 1) if closed else None
+        out.append(row)
     return out
 
 
@@ -229,6 +301,7 @@ def compute_analytics_report(
     filtered = apply_analytics_filters(leads, period=period, source=source)
     metrics = compute_analytics(filtered, sts)
     metrics["conversionBySource"] = compute_conversion_by_source(filtered, sts)
+    metrics["cohorts"] = compute_cohorts(filtered, sts)
     metrics["filters"] = {
         "period": period or "",
         "periodLabel": period_label(period) if period else "",
@@ -258,4 +331,18 @@ def analytics_to_csv(metrics: dict[str, Any]) -> str:
         w.writerow(["source", "total", "won", "conversionPct"])
         for row in by_src:
             w.writerow([row["source"], row["total"], row["won"], row["conversionPct"]])
+    cohorts = metrics.get("cohorts") or []
+    if cohorts:
+        w.writerow([])
+        w.writerow(["cohort", "total", "won", "lost", "active", "conversionPct", "winRatePct"])
+        for row in cohorts:
+            w.writerow([
+                row.get("label") or row.get("cohort"),
+                row["total"],
+                row["won"],
+                row["lost"],
+                row["active"],
+                row["conversionPct"],
+                row.get("winRatePct") if row.get("winRatePct") is not None else "",
+            ])
     return buf.getvalue()

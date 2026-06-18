@@ -31,6 +31,8 @@ async def test_analytics_summary_with_won_leads(client):
     assert body["wonCount"] == 2
     assert body["conversionPct"] == pytest.approx(66.7, abs=0.1)
     assert body["avgDealRub"] == 500000
+    assert "cohorts" in body
+    assert isinstance(body["cohorts"], list)
 
 
 @pytest.mark.asyncio
