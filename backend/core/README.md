@@ -49,6 +49,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 
 | Файл | За что |
 |------|--------|
+| `agent_trace_analytics.py` | Эффективность агентов по трейсам (👍/👎, интенты) |
 | `analytics_metrics.py` | KPI воронки, когорты по месяцу, конверсия по источнику, CSV |
 | `llm.py` | Общий чат с LLM (Groq/Ollama), json_mode |
 | `auth.py` | API-ключ, `require_api_key` |

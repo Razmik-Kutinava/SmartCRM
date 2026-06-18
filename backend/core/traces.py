@@ -114,6 +114,11 @@ def get_traces(limit: int = 50, intent_filter: Optional[str] = None) -> list[dic
     return all_traces[:limit]
 
 
+def get_all_traces() -> list[dict]:
+    """Весь буфер трейсов (до _MAX), от старых к новым."""
+    return list(_traces)
+
+
 def get_stats() -> dict:
     all_traces = list(_traces)
     if not all_traces:

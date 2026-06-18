@@ -28,7 +28,8 @@ CRUD лидов, вовлечённость, Битрикс.
 |------|--------|
 | `__init__.py` | Сборка роутера |
 | `dashboard_routes.py` | Сводка дашборда ops |
-| `traces_routes.py` | История запросов Hermes |
+| `traces_routes.py` | История запросов Hermes, `/stats`, фидбек |
+| `analytics_routes.py` | `GET /analytics/agents` — эффективность агентов по трейсам |
 | `hermes_routes.py` | Hermes: промпт, версии, few-shot, suggest-prompt, **ab-traces** |
 | `voice_routes.py` | Голосовые настройки, история команд (`GET /voice/history`) |
 | `eval_routes.py` | Прогон eval Hermes; статус Ollama |

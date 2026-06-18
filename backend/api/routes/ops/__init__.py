@@ -6,6 +6,7 @@ from fastapi import APIRouter
 
 from . import (
     agents_routes,
+    analytics_routes,
     crm_routes,
     dashboard_routes,
     eval_gate_routes,
@@ -20,6 +21,7 @@ from . import (
 router = APIRouter(prefix="/api/ops", tags=["ops"])
 
 router.include_router(traces_routes.router)
+router.include_router(analytics_routes.router)
 router.include_router(dashboard_routes.router)
 router.include_router(hermes_routes.router)
 router.include_router(voice_routes.router)

@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Аналитика v2 — агенты по трейсам] | Статус: ✅ done`
+
+**2026-06-17:** `agent_trace_analytics`, `GET /api/ops/analytics/agents`, UI `/ops/stats`, ссылки улучшения; pytest **5 PASS**.
+
+**Следующий шаг:** «ок» MAP п.2 · п.3 воронка по источнику.
+
+---
+
 `Спринт:[Ф3] | Задача:[Аналитика v2 — когорты] | Статус: ✅ done`
 
 **2026-06-17:** `compute_cohorts`, API `cohorts`, UI `/leads/analytics`, pytest **15 PASS** зона.

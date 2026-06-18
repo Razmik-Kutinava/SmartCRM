@@ -488,7 +488,7 @@
 ### Аналитика v2
 
 - [x] Когортный анализ · [`F3_ANALYTICS_V2_COHORT_ACCEPTANCE.md`](../operations/phase3/analytics/F3_ANALYTICS_V2_COHORT_ACCEPTANCE.md)
-- [ ] Эффективность агентов по трейсам
+- [x] Эффективность агентов по трейсам · [`F3_ANALYTICS_V2_AGENT_TRACES_ACCEPTANCE.md`](../operations/phase3/analytics/F3_ANALYTICS_V2_AGENT_TRACES_ACCEPTANCE.md)
 - [ ] Воронка по источнику
 - [ ] Прогноз закрытия (Экономист)
 

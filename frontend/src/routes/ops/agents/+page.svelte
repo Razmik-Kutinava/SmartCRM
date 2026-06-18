@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { getApiUrl } from '$lib/websocket.js';
 	import PromptVersionPanel from '../../../components/ops/PromptVersionPanel.svelte';
 
@@ -266,7 +267,14 @@
 		return agent.source === 'override' ? 'override' : 'встроенный';
 	}
 
-	onMount(loadAgents);
+	onMount(async () => {
+		await loadAgents();
+		const pick = $page.url.searchParams.get('agent');
+		if (pick) {
+			const agent = agents.find((a) => a.id === pick);
+			if (agent) await selectAgent(agent);
+		}
+	});
 </script>
 
 <div class="px-6 py-6 max-w-6xl">
