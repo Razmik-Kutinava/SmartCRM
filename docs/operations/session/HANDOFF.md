@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[Платформа — CSV импорт/экспорт лидов] | Статус: ✅ done`
 
-**2026-06-17:** `crm_sync/csv_adapter`, `POST /import-csv`, `GET /export?format=csv`, UI `/leads/list`; pytest **8 PASS**. Следующий шаг MAP: **Битрикс push (шаг 2)**.
+**2026-06-17:** `crm_sync/csv_adapter`, `POST /import-csv`, `GET /export?format=csv`, UI `/leads/list`; pytest **8 PASS**. Коммит: `0c49729`. Следующий шаг MAP: **Битрикс push (шаг 2)**.
 
 ---
 
