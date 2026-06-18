@@ -58,6 +58,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `stats.py` | Счётчики вызовов внешних API |
 | `eval_runner.py` | Прогон eval-сценариев; опц. `system_prompt` |
 | `prompt_ab_traces.py` | A/B промптов на 👎 трейсах |
+| `strategist_suggester.py` | Авто-суфлёр: слабые ответы → правки промптов |
 | `agent_eval/` | Gate Ollama, загрузка кейсов, скоринг, sync acceptance-таблицы |
 | `training_import.py` | Импорт training-датасетов |
 | `ops_store.py` | Снимки ops-очереди |

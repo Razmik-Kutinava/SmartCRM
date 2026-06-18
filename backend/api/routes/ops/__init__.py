@@ -12,6 +12,7 @@ from . import (
     eval_routes,
     hermes_routes,
     logs_routes,
+    strategist_routes,
     traces_routes,
     voice_routes,
 )
@@ -25,5 +26,6 @@ router.include_router(voice_routes.router)
 router.include_router(eval_routes.router)
 router.include_router(eval_gate_routes.router)
 router.include_router(agents_routes.router)
+router.include_router(strategist_routes.router)
 router.include_router(logs_routes.router)
 router.include_router(crm_routes.router)

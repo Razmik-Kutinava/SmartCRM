@@ -473,8 +473,8 @@
 
 - [x] **Quality gate tuning:** все агенты ≥85% (baseline 2026-06-14: Hermes 72.2%, Tech 60%) → [`AGENTS_GATE_TUNING_BASELINE.md`](../operations/baselines/AGENTS_GATE_TUNING_BASELINE.md) · [`F3_GATE_TUNING_ACCEPTANCE.md`](../operations/phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md) — **A+B+C ✅ 2026-06-17**, апрув «ок»
 - [x] Краулинг URL вендоров → RAG тех. спеца · **live 871 чанк, 10 PDF** · шаг1–4 ✅ [`F3_VENDOR_CRAWL_ACCEPTANCE.md`](../operations/phase3/rag/F3_VENDOR_CRAWL_ACCEPTANCE.md) · тюнинг → **Ф4** · апрув «ок» 2026-06-17
-- [ ] A/B промптов по трейсам · [`F3_PROMPT_AB_TRACES_ACCEPTANCE.md`](../operations/phase3/agents/F3_PROMPT_AB_TRACES_ACCEPTANCE.md) · `[x]` после «ок»
-- [ ] Авто-суфлёр Стратега
+- [x] A/B промптов по трейсам · [`F3_PROMPT_AB_TRACES_ACCEPTANCE.md`](../operations/phase3/agents/F3_PROMPT_AB_TRACES_ACCEPTANCE.md) · апрув «ок» 2026-06-17
+- [ ] Авто-суфлёр Стратега · [`F3_STRATEGIST_SUGGESTER_ACCEPTANCE.md`](../operations/phase3/agents/F3_STRATEGIST_SUGGESTER_ACCEPTANCE.md) · `[x]` после «ок»
 
 ### Тендерный агент
 

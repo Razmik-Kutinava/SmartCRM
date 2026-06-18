@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: авто-суфлёр Стратега — strategist_suggester, API, UI /ops/agents; MAP A/B [x]; pytest 8 PASS. | Коммит: `pending` | Хвост A: runtime агентов читает override — Ф4 | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP суфлёр. | Статус: done
+
 2026-06-17 | Действие: Ф4 A/B промптов tuning — чеклист 8 пунктов phase4/agents + BACKLOG + PRD_MAP. | Коммит: `be8c154` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP A/B; суфлёр Стратега. | Статус: done
 
 2026-06-17 | Действие: A/B промптов по трейсам — prompt_ab_traces, API ab-traces, UI improve; MAP crawl [x]; pytest 5 PASS. | Коммит: `2230dc0` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP A/B; суфлёр Стратега. | Статус: done

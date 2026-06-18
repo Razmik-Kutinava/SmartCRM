@@ -70,6 +70,18 @@ class PromptAbTracesBody(BaseModel):
     models: list[str] = Field(default_factory=lambda: ["hermes3"])
 
 
+class StrategistSuggestBody(BaseModel):
+    max_hermes_traces: int = Field(default=8, ge=0, le=30)
+    max_agent_runs: int = Field(default=12, ge=0, le=50)
+    max_gate_failures: int = Field(default=12, ge=0, le=50)
+    max_suggestions: int = Field(default=5, ge=1, le=10)
+
+
+class StrategistApplyBody(BaseModel):
+    agent_id: str
+    prompt_append: str
+
+
 class AgentPromptBody(BaseModel):
     prompt: str
 

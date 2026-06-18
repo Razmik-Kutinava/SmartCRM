@@ -40,6 +40,63 @@
 	let testAdvanced = $state(false);
 	let versionPanelKey = $state(0);
 
+	let sugLoading = $state(false);
+	let sugErr = $state('');
+	let sugReport = $state(null);
+	let applyingId = $state('');
+
+	async function runStrategistSuggest() {
+		sugLoading = true;
+		sugErr = '';
+		sugReport = null;
+		try {
+			const r = await fetch(`${API}/api/ops/strategist/suggest-prompts`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({})
+			});
+			const j = await r.json();
+			if (!r.ok) {
+				sugErr = j.detail || j.message || JSON.stringify(j);
+				return;
+			}
+			if (!j.has_suggestions) {
+				sugErr = j.message || 'Нет предложений — добавьте 👎 на трейсах или агентах';
+				sugReport = j;
+				return;
+			}
+			sugReport = j;
+		} catch (e) {
+			sugErr = e instanceof Error ? e.message : String(e);
+		} finally {
+			sugLoading = false;
+		}
+	}
+
+	async function applySuggestion(s) {
+		if (!confirm(`Применить правку к ${s.agent_id}?`)) return;
+		applyingId = s.agent_id;
+		sugErr = '';
+		try {
+			const r = await fetch(`${API}/api/ops/strategist/apply-suggestion`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ agent_id: s.agent_id, prompt_append: s.prompt_append })
+			});
+			const j = await r.json();
+			if (!r.ok) throw new Error(j.detail || 'apply failed');
+			promptMsg = `✓ Применено к ${s.agent_id}`;
+			versionPanelKey += 1;
+			await loadAgents();
+			const agent = agents.find((a) => a.id === s.agent_id);
+			if (agent) await selectAgent(agent);
+		} catch (e) {
+			sugErr = e instanceof Error ? e.message : String(e);
+		} finally {
+			applyingId = '';
+		}
+	}
+
 	async function reloadPromptAfterRestore() {
 		if (!selectedAgent) return;
 		try {
@@ -225,6 +282,53 @@
 	{#if err}
 		<div class="mb-4 rounded-lg border border-red-900/50 bg-red-950/40 px-4 py-2 text-sm text-red-200">{err}</div>
 	{/if}
+
+	<section class="mb-6 rounded-xl border border-violet-900/40 bg-gray-900/80 p-4">
+		<div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+			<div>
+				<h3 class="text-sm font-semibold text-white">🧠 Авто-суфлёр Стратега</h3>
+				<p class="text-xs text-gray-400 mt-0.5">
+					Анализ 👎 трейсов, gate-fail и плохих запусков агентов → предложение правки промпта (вы апрувите).
+				</p>
+			</div>
+			<button
+				type="button"
+				onclick={runStrategistSuggest}
+				disabled={sugLoading}
+				class="px-4 py-2 bg-violet-700 hover:bg-violet-600 disabled:opacity-50 text-white text-sm rounded-lg"
+			>
+				{sugLoading ? 'Анализ…' : '✦ Предложить правки'}
+			</button>
+		</div>
+		{#if sugErr}
+			<p class="text-sm text-amber-400">{sugErr}</p>
+		{/if}
+		{#if sugReport?.summary}
+			<p class="text-sm text-gray-300 mt-2">{sugReport.summary}</p>
+		{/if}
+		{#if sugReport?.suggestions?.length}
+			<div class="mt-3 space-y-2">
+				{#each sugReport.suggestions as s}
+					<div class="rounded-lg border border-gray-800 bg-gray-950/60 p-3 text-sm">
+						<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+							<span class="font-medium text-white">{AGENT_LABELS[s.agent_id]?.label || s.agent_id}</span>
+							<span class="text-xs text-gray-500">{s.priority}</span>
+						</div>
+						<p class="text-xs text-gray-400">{s.explanation}</p>
+						<pre class="mt-2 text-xs text-gray-500 whitespace-pre-wrap font-mono max-h-24 overflow-y-auto">{s.prompt_append}</pre>
+						<button
+							type="button"
+							disabled={applyingId === s.agent_id}
+							onclick={() => applySuggestion(s)}
+							class="mt-2 text-xs text-emerald-400 hover:text-emerald-300 disabled:opacity-50"
+						>
+							{applyingId === s.agent_id ? '…' : '✓ Применить к промпту'}
+						</button>
+					</div>
+				{/each}
+			</div>
+		{/if}
+	</section>
 
 	<div class="grid gap-6 lg:grid-cols-[280px,1fr]">
 		<!-- Список агентов -->

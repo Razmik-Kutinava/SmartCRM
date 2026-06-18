@@ -1,5 +1,19 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Авто-суфлёр Стратега] | Статус: ✅ done`
+
+**2026-06-17:** `strategist_suggester.py` + API suggest/apply + UI `/ops/agents`; pytest **8 PASS**. MAP A/B `[x]`.
+
+**Следующий шаг:** «ок» MAP суфлёр · дальше по Ф3/Ф4.
+
+---
+
+`Спринт:[Ф3] | Задача:[A/B промптов — MAP апрув] | Статус: ✅ done`
+
+**2026-06-17:** `[x]` MAP строка 476.
+
+---
+
 `Спринт:[Ф3] | Задача:[A/B промптов по трейсам] | Статус: ✅ done`
 
 **2026-06-17:** `prompt_ab_traces.py` + API `ab-traces` + UI improve; pytest **5 PASS**. MAP crawl `[x]`.
