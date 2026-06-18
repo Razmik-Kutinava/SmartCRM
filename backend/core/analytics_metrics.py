@@ -329,6 +329,9 @@ def compute_analytics_report(
     metrics["conversionBySource"] = compute_conversion_by_source(filtered, sts)
     metrics["funnelBySource"] = compute_funnel_by_source(filtered, sts)
     metrics["cohorts"] = compute_cohorts(filtered, sts)
+    from core.lead_close_forecast import compute_closure_forecast
+
+    metrics["closureForecast"] = compute_closure_forecast(filtered, sts)
     metrics["filters"] = {
         "period": period or "",
         "periodLabel": period_label(period) if period else "",
@@ -379,4 +382,17 @@ def analytics_to_csv(metrics: dict[str, Any]) -> str:
         for block in funnels:
             for row in block.get("funnel") or []:
                 w.writerow([block["source"], row["stage"], row["count"], row["pct"]])
+    forecast = metrics.get("closureForecast") or {}
+    top = forecast.get("topOpportunities") or []
+    if top:
+        w.writerow([])
+        w.writerow(["company", "stage", "score", "closeProbabilityPct", "expectedRub"])
+        for row in top:
+            w.writerow([
+                row.get("company"),
+                row.get("stage"),
+                row.get("score"),
+                row.get("closeProbabilityPct"),
+                row.get("expectedRub") or "",
+            ])
     return buf.getvalue()

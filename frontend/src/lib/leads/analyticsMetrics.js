@@ -133,6 +133,7 @@ export function computeAnalyticsReport(leads, stages, filters = {}) {
 		...metrics,
 		conversionBySource: computeConversionBySource(filtered, stages),
 		funnelBySource: computeFunnelBySource(filtered, stages),
+		closureForecast: computeClosureForecast(filtered, stages),
 		filters: {
 			period: filters.period || '',
 			periodLabel: filters.period ? PERIOD_LABELS[filters.period] || filters.period : '',
@@ -208,4 +209,75 @@ export function formatRub(value) {
 		currency: 'RUB',
 		maximumFractionDigits: 0,
 	}).format(value);
+}
+
+const STAGE_CLOSE_BASE = {
+	Новый: 8,
+	Квалифицирован: 18,
+	'КП отправлено': 35,
+	Переговоры: 58,
+	Выигран: 100,
+	Проигран: 0,
+};
+
+function forecastTier(pct) {
+	if (pct >= 55) return 'high';
+	if (pct >= 25) return 'medium';
+	return 'low';
+}
+
+/** @param {object} lead @param {string[]} stages */
+export function forecastLeadClose(lead, stages) {
+	const st = normalizeStage(lead.stage, stages);
+	const score = Math.max(0, Math.min(100, Number(lead.score) || 50));
+	let prob;
+	if (st === WON_STAGE) prob = 100;
+	else if (st === LOST_STAGE) prob = 0;
+	else {
+		const base = STAGE_CLOSE_BASE[st] ?? 10;
+		prob = Math.round((base * 0.55 + score * 0.45) * 10) / 10;
+		prob = Math.max(1, Math.min(95, prob));
+	}
+	const amount = leadAmountRub(lead);
+	return {
+		leadId: lead.id,
+		company: lead.company || '—',
+		stage: st,
+		score,
+		closeProbabilityPct: prob,
+		tier: forecastTier(prob),
+		expectedRub: amount != null ? Math.round((amount * prob) / 100) : null,
+	};
+}
+
+/** @param {object[]} leads @param {string[]} stages */
+export function computeClosureForecast(leads, stages, topLimit = 15) {
+	const active = leads
+		.filter((l) => {
+			const st = normalizeStage(l.stage, stages);
+			return st !== WON_STAGE && st !== LOST_STAGE;
+		})
+		.map((l) => forecastLeadClose(l, stages));
+	if (!active.length) {
+		return { activeLeads: 0, avgProbabilityPct: 0, expectedPipelineRub: 0, tiers: {}, topOpportunities: [] };
+	}
+	const tiers = { high: 0, medium: 0, low: 0 };
+	let probSum = 0;
+	let expected = 0;
+	for (const row of active) {
+		tiers[row.tier] = (tiers[row.tier] || 0) + 1;
+		probSum += row.closeProbabilityPct;
+		if (row.expectedRub) expected += row.expectedRub;
+	}
+	const ranked = [...active].sort(
+		(a, b) => (b.expectedRub || 0) - (a.expectedRub || 0) || b.closeProbabilityPct - a.closeProbabilityPct,
+	);
+	return {
+		activeLeads: active.length,
+		avgProbabilityPct: Math.round((probSum / active.length) * 10) / 10,
+		expectedPipelineRub: expected,
+		tiers,
+		topOpportunities: ranked.slice(0, topLimit),
+		method: 'economist_heuristic',
+	};
 }

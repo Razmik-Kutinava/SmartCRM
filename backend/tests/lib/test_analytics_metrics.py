@@ -136,6 +136,18 @@ def test_compute_analytics_report_includes_funnel_by_source():
     assert "source,stage,count,pct" in analytics_to_csv(report)
 
 
+def test_compute_analytics_report_includes_closure_forecast():
+    leads = [
+        _lead(stage="Переговоры", score=75, amountRub=200000, company="Big Co"),
+        _lead(stage="Выигран", score=90),
+    ]
+    report = compute_analytics_report(leads, STAGES)
+    fc = report["closureForecast"]
+    assert fc["activeLeads"] == 1
+    assert fc["topOpportunities"][0]["company"] == "Big Co"
+    assert "company,stage,score" in analytics_to_csv(report)
+
+
 def test_compute_analytics_report_includes_cohorts():
     leads = [
         _lead(stage="Выигран", createdAt="2026-03-01T00:00:00+00:00"),

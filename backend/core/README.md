@@ -49,6 +49,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 
 | Файл | За что |
 |------|--------|
+| `lead_close_forecast.py` | Прогноз закрытия сделки по стадии и баллу (Экономист) |
 | `agent_trace_analytics.py` | Эффективность агентов по трейсам (👍/👎, интенты) |
 | `analytics_metrics.py` | KPI воронки, когорты, воронка по источнику, CSV |
 | `llm.py` | Общий чат с LLM (Groq/Ollama), json_mode |

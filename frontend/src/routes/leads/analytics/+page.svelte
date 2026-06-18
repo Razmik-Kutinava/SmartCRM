@@ -296,6 +296,72 @@
 				</div>
 			{/if}
 
+			{#if metrics.closureForecast}
+				{@const fc = metrics.closureForecast}
+				<div
+					class="max-w-4xl"
+					data-testid="analytics-closure-forecast"
+					class:ring-1={activeView === 'forecast'}
+					class:ring-indigo-500={activeView === 'forecast'}
+					class:rounded-xl={activeView === 'forecast'}
+					class:p-2={activeView === 'forecast'}
+				>
+					<h2 class="text-sm font-medium text-white mb-1">Прогноз закрытия (Экономист)</h2>
+					<p class="text-xs text-gray-500 mb-4">Вероятность по стадии и баллу лида · без LLM</p>
+					<div class="grid sm:grid-cols-3 gap-3 mb-4">
+						<div class="rounded-xl border border-gray-800 bg-gray-900/80 p-4">
+							<div class="text-xs text-gray-500">Активных сделок</div>
+							<div class="text-2xl font-bold text-white">{fc.activeLeads}</div>
+						</div>
+						<div class="rounded-xl border border-gray-800 bg-gray-900/80 p-4">
+							<div class="text-xs text-gray-500">Средняя вероятность</div>
+							<div class="text-2xl font-bold text-emerald-400">{fc.avgProbabilityPct}%</div>
+						</div>
+						<div class="rounded-xl border border-gray-800 bg-gray-900/80 p-4">
+							<div class="text-xs text-gray-500">Ожидаемая воронка</div>
+							<div class="text-xl font-bold text-indigo-300">{formatRub(fc.expectedPipelineRub)}</div>
+						</div>
+					</div>
+					{#if fc.tiers}
+						<div class="flex gap-4 text-xs text-gray-500 mb-4">
+							<span class="text-emerald-400">● высокий: {fc.tiers.high ?? 0}</span>
+							<span class="text-amber-400">● средний: {fc.tiers.medium ?? 0}</span>
+							<span class="text-gray-500">● низкий: {fc.tiers.low ?? 0}</span>
+						</div>
+					{/if}
+					{#if fc.topOpportunities?.length}
+						<div class="overflow-x-auto">
+							<table class="w-full text-sm text-left">
+								<thead class="text-xs text-gray-500 uppercase">
+									<tr>
+										<th class="pb-2 pr-4">Компания</th>
+										<th class="pb-2 pr-4">Стадия</th>
+										<th class="pb-2 pr-4">Балл</th>
+										<th class="pb-2 pr-4">Шанс</th>
+										<th class="pb-2">Ожид. ₽</th>
+									</tr>
+								</thead>
+								<tbody>
+									{#each fc.topOpportunities as row}
+										<tr class="border-t border-gray-800/80">
+											<td class="py-2 pr-4 text-gray-200">{row.company}</td>
+											<td class="py-2 pr-4 text-gray-400">{row.stage}</td>
+											<td class="py-2 pr-4 text-gray-400">{row.score}</td>
+											<td class="py-2 pr-4 {row.tier === 'high' ? 'text-emerald-400' : row.tier === 'medium' ? 'text-amber-400' : 'text-gray-500'}">
+												{row.closeProbabilityPct}%
+											</td>
+											<td class="py-2 text-indigo-300">{formatRub(row.expectedRub)}</td>
+										</tr>
+									{/each}
+								</tbody>
+							</table>
+						</div>
+					{:else if fc.activeLeads === 0}
+						<p class="text-xs text-gray-600">Нет активных лидов в воронке для прогноза.</p>
+					{/if}
+				</div>
+			{/if}
+
 			{#if metrics.conversionBySource?.length}
 				<div
 					class="max-w-3xl"

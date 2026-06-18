@@ -34,6 +34,8 @@ async def test_analytics_summary_with_won_leads(client):
     assert "cohorts" in body
     assert "funnelBySource" in body
     assert isinstance(body["funnelBySource"], list)
+    assert "closureForecast" in body
+    assert body["closureForecast"]["method"] == "economist_heuristic"
 
 
 @pytest.mark.asyncio
