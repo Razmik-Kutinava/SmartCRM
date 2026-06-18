@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[Платформа — экспорт Excel/PDF] | Статус: ✅ done`
 
-**2026-06-17:** `export_reports.py` (openpyxl + fpdf2); API analytics `format=csv|xlsx|pdf`, `GET /api/leads/{id}/export`, `GET /api/tenders/saved/export`; UI analytics/карточка/тендеры; pytest **16 PASS**; Telegram → BACKLOG.
+**2026-06-17:** `export_reports.py` (openpyxl + fpdf2); API analytics `format=csv|xlsx|pdf`, `GET /api/leads/{id}/export`, `GET /api/tenders/saved/export`; UI analytics/карточка/тендеры; pytest **16 PASS**; Telegram → BACKLOG. Коммит: `2bf1adf`.
 
 **Следующий шаг:** «ок» MAP экспорт · Платформа (импорт CRM) / Ф4 по go.
 
