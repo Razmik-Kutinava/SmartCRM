@@ -6,6 +6,8 @@
 		apiUpdateLead,
 		apiDeleteLead,
 		apiImportBitrix,
+		apiImportLeadsCsv,
+		downloadLeadsCsvExport,
 		fetchBitrixImportStats,
 		readLeadsCache,
 		writeLeadsCache,
@@ -47,6 +49,9 @@
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
 	let apiError = $state(false); // флаг недоступности API
 	let bitrixImporting = $state(false);
+	let csvImporting = $state(false);
+	let csvExporting = $state(false);
+	let csvInput = $state(null);
 	/** @type {{ bitrix_total: number | null, local_bitrix_leads_count: number, date_from?: string } | null} */
 	let bitrixStats = $state(null);
 
@@ -149,6 +154,44 @@
 			notify(`Импорт Битрикс24: ${e.message}`, 'error');
 		} finally {
 			bitrixImporting = false;
+		}
+	}
+
+	async function runCsvImport(file) {
+		if (!file || csvImporting) return;
+		csvImporting = true;
+		try {
+			const res = await apiImportLeadsCsv(file, 'upsert');
+			const fresh = await fetchLeads();
+			leads = fresh;
+			writeLeadsCache(leads);
+			notify(
+				`CSV: +${res.imported} новых, обновлено ${res.updated}, пропущено ${res.skipped}`,
+				'success',
+			);
+		} catch (e) {
+			notify(`CSV импорт: ${e?.message || e}`, 'error');
+		} finally {
+			csvImporting = false;
+			if (csvInput) csvInput.value = '';
+		}
+	}
+
+	function onCsvFileChange(e) {
+		const file = e.currentTarget?.files?.[0];
+		if (file) runCsvImport(file);
+	}
+
+	async function runCsvExport() {
+		if (csvExporting) return;
+		csvExporting = true;
+		try {
+			await downloadLeadsCsvExport();
+			notify('CSV экспорт готов', 'success');
+		} catch (e) {
+			notify(`CSV экспорт: ${e?.message || e}`, 'error');
+		} finally {
+			csvExporting = false;
 		}
 	}
 
@@ -535,7 +578,28 @@
 			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
 			title="Нужен BITRIX24_WEBHOOK_URL на сервере"
 		>{bitrixImporting ? '⏳ Битрикс24…' : '📤 Битрикс24'}</button>
-		<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg">📥 Экспорт</button>
+		<input
+			bind:this={csvInput}
+			type="file"
+			accept=".csv,text/csv"
+			class="hidden"
+			data-testid="leads-csv-input"
+			onchange={onCsvFileChange}
+		/>
+		<button
+			type="button"
+			disabled={csvImporting}
+			onclick={() => csvInput?.click()}
+			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
+			data-testid="leads-csv-import"
+		>{csvImporting ? '⏳ CSV…' : '📥 Импорт CSV'}</button>
+		<button
+			type="button"
+			disabled={csvExporting || leads.length === 0}
+			onclick={runCsvExport}
+			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
+			data-testid="leads-csv-export"
+		>{csvExporting ? '⏳…' : '📤 Экспорт CSV'}</button>
 		<button
 			onclick={() => {
 				const name = prompt('Компания:');

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Платформа: CSV импорт/экспорт лидов (шаг 1 CRM sync)
+
+`crm_sync/csv_adapter`, API import-csv + export, UI `/leads/list`; Amo/HubSpot → BACKLOG.
+
 ## 2026-06-17 — Платформа: экспорт Excel/PDF
 
 Воронка (csv/xlsx/pdf), карточка лида (pdf), списки тендеров (xlsx/pdf). `export_reports.py`, UI кнопки. Telegram-бот → BACKLOG.

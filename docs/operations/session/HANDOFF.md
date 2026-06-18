@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — CSV импорт/экспорт лидов] | Статус: ✅ done`
+
+**2026-06-17:** `crm_sync/csv_adapter`, `POST /import-csv`, `GET /export?format=csv`, UI `/leads/list`; pytest **8 PASS**. Следующий шаг MAP: **Битрикс push (шаг 2)**.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — экспорт Excel/PDF] | Статус: ✅ done`
 
 **2026-06-17:** `export_reports.py` (openpyxl + fpdf2); API analytics `format=csv|xlsx|pdf`, `GET /api/leads/{id}/export`, `GET /api/tenders/saved/export`; UI analytics/карточка/тендеры; pytest **16 PASS**; Telegram → BACKLOG. Коммит: `2bf1adf`.

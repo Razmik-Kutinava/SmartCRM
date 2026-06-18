@@ -496,7 +496,7 @@
 
 - [ ] Telegram-бот · отложено → [`BACKLOG.md`](../operations/session/BACKLOG.md)
 - [x] Экспорт Excel/PDF (воронка, карточка, тендеры) · [`F3_PLATFORM_EXPORT_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_EXPORT_ACCEPTANCE.md)
-- [ ] Импорт/экспорт Битрикс24, AmoCRM, HubSpot, CSV
+- [ ] Импорт/экспорт Битрикс24, AmoCRM, HubSpot, CSV · CSV: [`F3_PLATFORM_CSV_SYNC_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_CSV_SYNC_ACCEPTANCE.md) · далее: Битрикс push, Amo, HubSpot
 - [ ] Автономный поиск новых лидов агентами
 
 ### Баллы P3 (остаток)

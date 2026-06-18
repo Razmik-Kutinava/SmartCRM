@@ -213,6 +213,48 @@ export async function apiImportBitrix(options = {}) {
 	return body;
 }
 
+/** Импорт лидов из CSV (mode: upsert | skip). */
+export async function apiImportLeadsCsv(file, mode = 'upsert') {
+	const url = `${API()}/import-csv?mode=${encodeURIComponent(mode)}`;
+	const fd = new FormData();
+	fd.append('file', file);
+	const r = await fetch(url, { method: 'POST', body: fd });
+	const text = await r.text().catch(() => '');
+	let body;
+	try {
+		body = text ? JSON.parse(text) : {};
+	} catch {
+		body = { detail: text };
+	}
+	if (!r.ok) {
+		const d = body?.detail;
+		const msg =
+			typeof d === 'string'
+				? d
+				: Array.isArray(d)
+					? d.map((x) => x.msg || x).join('; ')
+					: d
+						? JSON.stringify(d)
+						: text || `HTTP ${r.status}`;
+		throw new Error(msg);
+	}
+	return body;
+}
+
+/** Скачать все лиды CSV. */
+export async function downloadLeadsCsvExport() {
+	const url = `${API()}/export?format=csv`;
+	const r = await fetch(url);
+	if (!r.ok) throw new Error(`Экспорт CSV: HTTP ${r.status}`);
+	const blob = await r.blob();
+	const href = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = href;
+	a.download = `leads-${new Date().toISOString().slice(0, 10)}.csv`;
+	a.click();
+	URL.revokeObjectURL(href);
+}
+
 // ── Кэш-совместимые синхронные функции (для SSR-guard) ─────────────
 
 /** Вернуть список из кэша или демо-данные — вызов синхронный, данные могут быть устаревшими */
