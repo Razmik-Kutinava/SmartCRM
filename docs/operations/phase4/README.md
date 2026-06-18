@@ -8,5 +8,6 @@
 | A/B промптов по трейсам (Hermes / агенты) | [`agents/F4_PROMPT_AB_TUNING.md`](agents/F4_PROMPT_AB_TUNING.md) |
 | Авто-суфлёр Стратега (все агенты + Hermes) | [`agents/F4_STRATEGIST_SUGGESTER_TUNING.md`](agents/F4_STRATEGIST_SUGGESTER_TUNING.md) |
 | Контур.Закупки API (gate) | [`tenders/F4_KONTUR_GATE.md`](tenders/F4_KONTUR_GATE.md) |
+| Тех. спец — тендеры (автоматизация, матрица ТЗ, eval) | [`tenders/F4_TECH_TENDER_TUNING.md`](tenders/F4_TECH_TENDER_TUNING.md) |
 
 Новые acceptance Ф4 → `phase4/{домен}/`.

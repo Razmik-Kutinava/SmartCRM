@@ -552,6 +552,16 @@
 - [ ] Адаптер `tender_sources/kontur.py` + `TENDER_PROVIDER=kontur`
 - [ ] Smoke: search / monitor / карточка без смены UI
 
+### Тех. спец — тендеры (тюнинг Ф4)
+
+Детали: [`F4_TECH_TENDER_TUNING.md`](../operations/phase4/tenders/F4_TECH_TENDER_TUNING.md)
+
+- [ ] Автопайплайн: мониторинг → скачать доки → оценка → пуш с вердиктом
+- [ ] Автозагрузка ТЗ/PDF с площадки (кэш по external_id)
+- [ ] UI: матрица «ТЗ ↔ продукты» (ok / gap / risk)
+- [ ] Мониторинг → задача/лид в CRM по вердикту + напоминания
+- [ ] Eval/gate качества тендерного тех. разбора (15–20 кейсов)
+
 ---
 
 ## Сводка модулей
