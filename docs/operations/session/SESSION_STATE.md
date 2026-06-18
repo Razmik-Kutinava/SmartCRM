@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: Ф4 docs — F4_TECH_TENDER_TUNING; PRD_MAP §Ф4 + phase4 README. | Коммит: `f93cf96` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф4 автопайплайн или Аналитика v2. | Статус: done
+
 2026-06-17 | Действие: MAP п.3 sources [x] апрув; п.4 вердикт участия — tender_participation, API participation, UI вкладка Вердикт, snapshot; pytest 29 PASS зона. | Коммит: `11711c5` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP п.4 · Аналитика v2 по go. | Статус: done
 
 2026-06-17 | Действие: MAP п.2 [x]; tender_sources + Gosplan prod + фильтры + DataNewton UI; Контур→Ф4 gate-doc; pytest 35 PASS зона. | Коммит: `f58477e` | Хвост A: п.4 участвовать — не трогали | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP п.3. | Статус: done
