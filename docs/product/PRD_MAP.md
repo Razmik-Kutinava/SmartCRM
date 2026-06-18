@@ -474,7 +474,7 @@
 - [x] **Quality gate tuning:** все агенты ≥85% (baseline 2026-06-14: Hermes 72.2%, Tech 60%) → [`AGENTS_GATE_TUNING_BASELINE.md`](../operations/baselines/AGENTS_GATE_TUNING_BASELINE.md) · [`F3_GATE_TUNING_ACCEPTANCE.md`](../operations/phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md) — **A+B+C ✅ 2026-06-17**, апрув «ок»
 - [x] Краулинг URL вендоров → RAG тех. спеца · **live 871 чанк, 10 PDF** · шаг1–4 ✅ [`F3_VENDOR_CRAWL_ACCEPTANCE.md`](../operations/phase3/rag/F3_VENDOR_CRAWL_ACCEPTANCE.md) · тюнинг → **Ф4** · апрув «ок» 2026-06-17
 - [x] A/B промптов по трейсам · [`F3_PROMPT_AB_TRACES_ACCEPTANCE.md`](../operations/phase3/agents/F3_PROMPT_AB_TRACES_ACCEPTANCE.md) · апрув «ок» 2026-06-17
-- [ ] Авто-суфлёр Стратега · [`F3_STRATEGIST_SUGGESTER_ACCEPTANCE.md`](../operations/phase3/agents/F3_STRATEGIST_SUGGESTER_ACCEPTANCE.md) · `[x]` после «ок»
+- [x] Авто-суфлёр Стратега · [`F3_STRATEGIST_SUGGESTER_ACCEPTANCE.md`](../operations/phase3/agents/F3_STRATEGIST_SUGGESTER_ACCEPTANCE.md) · тюнинг → **Ф4** · апрув «ок» 2026-06-17
 
 ### Тендерный агент
 
@@ -528,6 +528,19 @@
 - [ ] Suggest-prompt → сразу A/B
 - [ ] История отчётов A/B в Ops
 - [ ] Dr. QA / KPI-gate в UI
+
+### Авто-суфлёр Стратега (тюнинг)
+
+Детали: [`F4_STRATEGIST_SUGGESTER_TUNING.md`](../operations/phase4/agents/F4_STRATEGIST_SUGGESTER_TUNING.md)
+
+- [ ] Runtime агентов читает `agent_prompt_*.txt`
+- [ ] 👎 с ожидаемым ответом / intent
+- [ ] Больше сигналов + агрегация по агенту
+- [ ] После apply → gate / A/B
+- [ ] История предложений суфлёра
+- [ ] Периодический запуск / очередь Ops
+- [ ] Цепочка Hermes: suggest → A/B → apply
+- [ ] Суфлёр по одному агенту в UI
 
 ---
 

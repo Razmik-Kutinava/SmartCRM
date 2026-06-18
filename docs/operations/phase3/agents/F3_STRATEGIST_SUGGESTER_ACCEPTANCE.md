@@ -26,6 +26,10 @@ python -m pytest tests/core/test_strategist_suggester.py tests/api/test_strategi
 3. `/ops/agents` → **Предложить правки**
 4. Оператор **Применить** → промпт обновлён (override + версия)
 
+## Тюнинг → Фаза 4
+
+См. [`F4_STRATEGIST_SUGGESTER_TUNING.md`](../../phase4/agents/F4_STRATEGIST_SUGGESTER_TUNING.md) — runtime override, 👎 с эталоном, apply→gate, история, cron.
+
 ## Файлы
 
 - `core/strategist_suggester.py`
