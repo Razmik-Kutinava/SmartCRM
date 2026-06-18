@@ -77,8 +77,21 @@ async def lifespan(app: FastAPI):
     vendor_crawl_task = asyncio.create_task(vendor_crawl_poll_loop(vendor_crawl_stop))
     logger.info("Vendor crawl: планировщик в фоне (вкл/интервал в /api/rag/vendor-crawl/config)")
 
+    tender_monitor_stop = asyncio.Event()
+    from services.tender_monitor_background import tender_monitor_poll_loop
+
+    tender_monitor_task = asyncio.create_task(tender_monitor_poll_loop(tender_monitor_stop))
+    logger.info("Tender monitor: планировщик в фоне (вкл в /api/tenders/monitor/config)")
+
     yield
 
+    if tender_monitor_task is not None:
+        tender_monitor_stop.set()
+        tender_monitor_task.cancel()
+        try:
+            await tender_monitor_task
+        except asyncio.CancelledError:
+            pass
     if vendor_crawl_task is not None:
         vendor_crawl_stop.set()
         vendor_crawl_task.cancel()

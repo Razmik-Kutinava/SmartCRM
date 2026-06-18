@@ -8,6 +8,7 @@ from . import (
     document_routes,
     evaluate_routes,
     lead_link_routes,
+    monitor_routes,
     plans_routes,
     saved_routes,
     search_routes,
@@ -32,6 +33,7 @@ router.include_router(document_routes.router)
 router.include_router(plans_routes.router)
 router.include_router(classifiers_routes.router)
 router.include_router(detail_routes.router)
+router.include_router(monitor_routes.router)
 
 __all__ = [
     "router",

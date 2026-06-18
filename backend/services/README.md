@@ -7,6 +7,9 @@
 | `moy_zakupki.py` | API «Мои закупки» |
 | `gosplan.py` | Госплан / ЕИС |
 | `tenderguru.py` | TenderGuru |
+| `tender_monitor_config.py` | Конфиг правил мониторинга (слова, ОКПД2) |
+| `tender_monitor.py` | Поиск, дедуп, очередь Ops |
+| `tender_monitor_background.py` | Фоновый планировщик мониторинга |
 | `datanewton.py` | DataNewton (контракты, компании) |
 | `zakupki_parser.py` | Парсер zakupki.gov.ru |
 | `lookalike_import.py` | Batch-импорт lookalike-кандидатов в CRM (`source: lookalike`) |

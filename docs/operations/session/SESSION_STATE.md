@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: Тех. спец мониторинг тендеров — tender_monitor, API, фон, UI /ops/tender-monitor; MAP переименование; pytest 9 PASS. | Коммит: `pending` | Хвост A: нет | Хвост B: нет | Хвост C: pytest.ini StarletteDeprecationWarning — локально -c NUL | Следующий шаг: «ок» MAP п.1. | Статус: done
+
 2026-06-17 | Действие: Ф4 суфлёр tuning + MAP [x] апрув суфлёр. | Коммит: `c18920b` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: Ф3 тендеры / Ф4. | Статус: done
 
 2026-06-17 | Действие: авто-суфлёр Стратега — strategist_suggester, API, UI /ops/agents; MAP A/B [x]; pytest 8 PASS. | Коммит: `3c9523d` | Хвост A: runtime агентов читает override — Ф4 | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP суфлёр. | Статус: done
