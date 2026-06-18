@@ -59,6 +59,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `plans_routes.py` | Планы закупок |
 | `classifiers_routes.py` | Классификаторы ОКПД/ОКВЭД |
 | `monitor_routes.py` | `GET/PUT /monitor/config`, `/status`, `POST /run` — фоновый мониторинг 24/7 |
+| `calendar_routes.py` | `/notifications`, `/calendar/month`, scan-deadlines |
 | `helpers.py` | Фильтры, релевантность, нормализация для UI |
 | `config.py` | Конфиг источников тендеров |
 

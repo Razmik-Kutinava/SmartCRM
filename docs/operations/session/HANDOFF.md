@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[MAP мониторинг + уведомления/календарь] | Статус: ✅ done`
+
+**2026-06-17:** MAP п.1 мониторинг `[x]`; п.2 — уведомления + календарь (`/tenders/notifications`, `/tenders/calendar`); pytest **16 PASS**.
+
+**Следующий шаг:** «ок» MAP п.2 · Контур API / решение участвовать.
+
+---
+
 `Спринт:[Ф3] | Задача:[pytest.ini filterwarnings] | Статус: ✅ done`
 
 **2026-06-17:** убран битый `StarletteDeprecationWarning` из `pytest.ini` (Starlette 0.46+); `tests/test_pytest_config.py` — 2 PASS; обычный `pytest` без `-c NUL`.

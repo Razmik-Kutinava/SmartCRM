@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: MAP мониторинг [x]; уведомления+календарь тендеров; pytest 16 PASS. | Коммит: `pending` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP п.2. | Статус: done
+
 2026-06-17 | Действие: pytest.ini — убран битый StarletteDeprecationWarning; test_pytest_config 2 PASS. | Коммит: `5840750` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP мониторинг п.1. | Статус: done
 
 2026-06-17 | Действие: Тех. спец мониторинг тендеров — tender_monitor, API, фон, UI /ops/tender-monitor; MAP переименование; pytest 9 PASS. | Коммит: `9f13868` | Хвост A: нет | Хвост B: нет | Хвост C: pytest.ini StarletteDeprecationWarning — локально -c NUL | Следующий шаг: «ок» MAP п.1. | Статус: done

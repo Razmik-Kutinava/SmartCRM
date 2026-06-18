@@ -3,6 +3,7 @@ from fastapi import APIRouter
 
 from . import (
     analyze_routes,
+    calendar_routes,
     classifiers_routes,
     detail_routes,
     document_routes,
@@ -32,8 +33,9 @@ router.include_router(lead_link_routes.router)
 router.include_router(document_routes.router)
 router.include_router(plans_routes.router)
 router.include_router(classifiers_routes.router)
-router.include_router(detail_routes.router)
 router.include_router(monitor_routes.router)
+router.include_router(calendar_routes.router)
+router.include_router(detail_routes.router)
 
 __all__ = [
     "router",

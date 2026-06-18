@@ -15,6 +15,7 @@ from api.routes.tenders.helpers import (
 from core import ops_store
 from core.stats import track_api
 from services.gosplan import GosplanAPI
+from services.tender_notifications import add_notification
 from services.tender_monitor_config import (
     TenderMonitorConfig,
     TenderWatchEntry,
@@ -227,6 +228,20 @@ def push_new_to_queue(
         )
         open_auto.add(qid)
         added += 1
+        add_notification(
+            kind="tender_new",
+            title=f"Новый тендер: {title}",
+            detail=detail,
+            dedupe_key=f"new:{fp}",
+            tender={
+                "title": title,
+                "url": url,
+                "budget": item.get("budget"),
+                "deadline": item.get("deadline"),
+                "source": item.get("source"),
+                "watch_id": watch.id,
+            },
+        )
     if added:
         ops_store.save_queue(existing)
     return added
@@ -252,6 +267,9 @@ async def run_watch(
     queued = 0
     if not dry_run:
         queued = push_new_to_queue(watch, new_items, notify=notify_ops_queue)
+        from services.tender_tracked import register_tracked
+
+        register_tracked(new_items, watch.id)
     return {
         "watch_id": watch.id,
         "name": watch.name,

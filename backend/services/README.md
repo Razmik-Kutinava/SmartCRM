@@ -10,6 +10,9 @@
 | `tender_monitor_config.py` | Конфиг правил мониторинга (слова, ОКПД2) |
 | `tender_monitor.py` | Поиск, дедуп, очередь Ops |
 | `tender_monitor_background.py` | Фоновый планировщик мониторинга |
+| `tender_tracked.py` | Tracked тендеры для календаря |
+| `tender_notifications.py` | In-app уведомления |
+| `tender_calendar.py` | Календарь дедлайнов и скан напоминаний |
 | `datanewton.py` | DataNewton (контракты, компании) |
 | `zakupki_parser.py` | Парсер zakupki.gov.ru |
 | `lookalike_import.py` | Batch-импорт lookalike-кандидатов в CRM (`source: lookalike`) |

@@ -15,6 +15,7 @@
 		sourceLabel,
 		tenderExternalId,
 	} from '$lib/tenders/tenderApi.js';
+	import { fetchTenderNotifications } from '$lib/tenders/tenderCalendarOps.js';
 	import { voiceTenderContext } from '$lib/voice/voiceAction.js';
 	const API = getApiUrl();
 
@@ -25,6 +26,7 @@
 		{ id: 'archive',  label: 'Архив',             icon: '◈' },
 	];
 	let tab = $state('search');
+	let tenderUnread = $state(0);
 
 	// ── Фильтры поиска ────────────────────────────────────────────────────────
 	let search_mode = $state('tenders'); // tenders | plans
@@ -88,6 +90,9 @@
 		});
 		const unsubPage = page.subscribe(() => applyRouteParams());
 		loadSavedLists();
+		fetchTenderNotifications(true)
+			.then((d) => (tenderUnread = d.unread || 0))
+			.catch(() => {});
 		return () => {
 			unsubVoice();
 			unsubPage();
@@ -425,7 +430,21 @@
 			<h1 class="text-lg font-semibold text-white">Тендерный специалист</h1>
 			<p class="text-xs text-gray-500 mt-0.5">Поиск, анализ и сопровождение тендеров 44-ФЗ / 223-ФЗ</p>
 		</div>
-		<div class="flex gap-1 bg-gray-900 rounded-lg p-1">
+		<div class="flex items-center gap-3">
+			<a
+				href="/tenders/notifications"
+				class="text-xs text-gray-400 hover:text-white relative"
+			>
+				🔔
+				{#if tenderUnread > 0}
+					<span
+						class="absolute -top-1 -right-2 bg-red-500 text-white text-[9px] rounded-full px-1"
+						>{tenderUnread}</span
+					>
+				{/if}
+			</a>
+			<a href="/tenders/calendar" class="text-xs text-gray-400 hover:text-white">📅 Календарь</a>
+			<div class="flex gap-1 bg-gray-900 rounded-lg p-1">
 			{#each TABS as t}
 				<button
 					onclick={() => tab = t.id}
@@ -435,6 +454,7 @@
 					<span class="mr-1.5 opacity-70">{t.icon}</span>{t.label}
 				</button>
 			{/each}
+			</div>
 		</div>
 		{#if voiceCtx?.title || voiceCtx?.query}
 			<p class="text-xs text-indigo-400 mt-2 px-1" data-testid="voice-tender-context">

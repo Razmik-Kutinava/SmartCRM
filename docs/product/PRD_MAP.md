@@ -480,8 +480,8 @@
 
 > Один агент: RAG вендоров + мониторинг закупок + разбор ТЗ. Не отдельный «тендерный агент».
 
-- [ ] Мониторинг ключевых слов / ОКПД2 24/7 · [`F3_TECH_TENDER_MONITOR_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_MONITOR_ACCEPTANCE.md)
-- [ ] Уведомления + календарь дедлайнов
+- [x] Мониторинг ключевых слов / ОКПД2 24/7 · [`F3_TECH_TENDER_MONITOR_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_MONITOR_ACCEPTANCE.md) · апрув «ок» 2026-06-17
+- [ ] Уведомления + календарь дедлайнов · [`F3_TECH_TENDER_NOTIFY_CALENDAR_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_NOTIFY_CALENDAR_ACCEPTANCE.md)
 - [ ] Контур.Закупки API (после окупаемости)
 - [ ] Решение участвовать/нет с обоснованием (Тех. спец + Экономист → Стратег)
 

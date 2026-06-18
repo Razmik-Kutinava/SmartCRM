@@ -32,6 +32,7 @@ class TenderMonitorConfig(BaseModel):
     monitor_enabled: bool = False
     monitor_interval_hours: int = Field(default=6, ge=1, le=168)
     notify_ops_queue: bool = True
+    deadline_scan_interval_hours: int = Field(default=6, ge=1, le=168)
 
 
 def _default_config() -> TenderMonitorConfig:

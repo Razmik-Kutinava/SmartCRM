@@ -57,6 +57,37 @@ async def run_scheduled_tender_monitor() -> dict[str, Any]:
     return report
 
 
+def deadline_scheduler_due(interval_hours: int) -> bool:
+    state = load_state()
+    sched = state.get("deadline_scheduler") or {}
+    last = _parse_iso(sched.get("last_scan_at"))
+    if last is None:
+        return True
+    elapsed_h = (datetime.now(timezone.utc) - last).total_seconds() / 3600
+    return elapsed_h >= interval_hours
+
+
+def mark_deadline_scan(result: dict[str, Any] | None, *, error: str | None = None) -> None:
+    state = load_state()
+    state["deadline_scheduler"] = {
+        "last_scan_at": datetime.now(timezone.utc).isoformat(),
+        "last_ok": error is None,
+        "last_error": error,
+        "last_created": int((result or {}).get("notifications_created") or 0),
+    }
+    save_state(state)
+
+
+async def run_scheduled_deadline_scan() -> dict[str, Any]:
+    from db.session import get_db_session
+    from services.tender_calendar import scan_deadline_notifications
+
+    async with get_db_session() as db:
+        result = await scan_deadline_notifications(db)
+    mark_deadline_scan(result)
+    return result
+
+
 async def tender_monitor_poll_loop(stop: asyncio.Event) -> None:
     logger.info("Tender monitor: фоновый планировщик стартовал")
     await asyncio.sleep(120)
@@ -79,6 +110,17 @@ async def tender_monitor_poll_loop(stop: asyncio.Event) -> None:
             except Exception:
                 logger.exception("Tender monitor auto failed")
                 mark_auto_run(None, error="exception")
+        if deadline_scheduler_due(cfg.deadline_scan_interval_hours):
+            try:
+                dr = await run_scheduled_deadline_scan()
+                logger.info(
+                    "Tender deadline scan: created=%s ops=%s",
+                    dr.get("notifications_created"),
+                    dr.get("ops_queued"),
+                )
+            except Exception:
+                logger.exception("Tender deadline scan failed")
+                mark_deadline_scan(None, error="exception")
         try:
             await asyncio.wait_for(stop.wait(), timeout=1800)
         except asyncio.TimeoutError:
@@ -99,4 +141,7 @@ async def tender_monitor_status_payload() -> dict[str, Any]:
         "last_run": runs[0] if runs else None,
         "history_count": len(runs),
         "enabled_watches": sum(1 for w in cfg.watches if w.enabled),
+        "deadline_scan_interval_hours": cfg.deadline_scan_interval_hours,
+        "deadline_scheduler": (state.get("deadline_scheduler") or {}),
+        "tracked_count": len(state.get("tracked") or []),
     }
