@@ -74,7 +74,10 @@ export async function linkTenderLead(savedId, leadId) {
 	return parseJson(r);
 }
 
-export async function createLeadFromTender(savedId) {
+export async function enrichTenderCustomer(inn) {
+	const r = await apiFetch(`/api/tenders/enrich/${encodeURIComponent(inn)}`);
+	return parseJson(r);
+}
 	const r = await apiFetch(`/api/tenders/saved/${savedId}/create-lead`, {
 		method: 'POST',
 	});

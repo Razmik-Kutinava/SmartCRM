@@ -8,6 +8,7 @@
 		createLeadFromTender,
 		evaluateTenderFull,
 		extractTenderDocument,
+		enrichTenderCustomer,
 		fetchSavedTenders,
 		linkTenderLead,
 		patchTenderSaved,
@@ -70,6 +71,9 @@
 	let full_evaluation = $state(null);
 	let link_lead_id    = $state('');
 	let link_notice     = $state('');
+	let customer_enrich = $state(null);
+	let enrich_loading  = $state(false);
+	let enrich_err      = $state('');
 	let voiceCtx        = $state(null);
 
 	function applyRouteParams() {
@@ -210,6 +214,32 @@
 		tech_analysis = t.tech_analysis ?? null;
 		uploaded_files = [];
 		save_notice = '';
+		customer_enrich = t.enrichment ?? null;
+		enrich_err = '';
+	}
+
+	function tenderInn(t) {
+		const inn = String(t?.customer_inn || t?.customerInn || '').trim();
+		return inn.length >= 10 ? inn : '';
+	}
+
+	async function loadCustomerEnrich() {
+		const inn = tenderInn(selected);
+		if (!inn) {
+			enrich_err = 'Нет ИНН заказчика';
+			return;
+		}
+		enrich_loading = true;
+		enrich_err = '';
+		try {
+			const res = await enrichTenderCustomer(inn);
+			customer_enrich = res.summary || res;
+			if (selected) selected.enrichment = customer_enrich;
+		} catch (e) {
+			enrich_err = e.message || 'Ошибка обогащения';
+		} finally {
+			enrich_loading = false;
+		}
 	}
 
 	async function saveCurrentTender() {
@@ -726,6 +756,35 @@
 						<div class="flex-1 min-w-0">
 							<div class="text-sm font-medium text-white leading-snug mb-1">{selected.title}</div>
 							<div class="text-xs text-gray-400">{selected.customer}</div>
+							{#if tenderInn(selected) || customer_enrich}
+								<div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+									{#if tenderInn(selected)}
+										<span class="text-gray-500">ИНН {tenderInn(selected)}</span>
+										<button
+											type="button"
+											disabled={enrich_loading}
+											onclick={loadCustomerEnrich}
+											class="px-2 py-0.5 rounded bg-gray-800 text-gray-300 hover:text-white"
+										>
+											{enrich_loading ? '…' : 'DataNewton'}
+										</button>
+									{/if}
+									{#if enrich_err}<span class="text-red-400">{enrich_err}</span>{/if}
+								</div>
+								{#if customer_enrich}
+									<div class="mt-2 text-xs text-gray-400 space-y-0.5">
+										{#if customer_enrich.customer_short_name || customer_enrich.customer_full_name}
+											<div>{customer_enrich.customer_short_name || customer_enrich.customer_full_name}</div>
+										{/if}
+										{#if customer_enrich.risk_level}
+											<div>Риск: {customer_enrich.risk_level}</div>
+										{/if}
+										{#if customer_enrich.scoring_grade}
+											<div>Скоринг: {customer_enrich.scoring_grade}</div>
+										{/if}
+									</div>
+								{/if}
+							{/if}
 						</div>
 						<div class="flex gap-2 shrink-0 items-center">
 							{#if save_notice}

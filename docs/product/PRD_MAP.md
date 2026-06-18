@@ -481,8 +481,8 @@
 > Один агент: RAG вендоров + мониторинг закупок + разбор ТЗ. Не отдельный «тендерный агент».
 
 - [x] Мониторинг ключевых слов / ОКПД2 24/7 · [`F3_TECH_TENDER_MONITOR_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_MONITOR_ACCEPTANCE.md) · апрув «ок» 2026-06-17
-- [ ] Уведомления + календарь дедлайнов · [`F3_TECH_TENDER_NOTIFY_CALENDAR_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_NOTIFY_CALENDAR_ACCEPTANCE.md)
-- [ ] Контур.Закупки API (после окупаемости)
+- [x] Уведомления + календарь дедлайнов · [`F3_TECH_TENDER_NOTIFY_CALENDAR_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_NOTIFY_CALENDAR_ACCEPTANCE.md) · апрув «ок» 2026-06-17
+- [ ] Дожать бесплатные источники (Gosplan prod, TenderGuru, мониторинг, DataNewton, доки) · [`F3_TECH_TENDER_SOURCES_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_SOURCES_ACCEPTANCE.md) · Контур → **Ф4**
 - [ ] Решение участвовать/нет с обоснованием (Тех. спец + Экономист → Стратег)
 
 ### Аналитика v2
@@ -543,6 +543,14 @@
 - [ ] Периодический запуск / очередь Ops
 - [ ] Цепочка Hermes: suggest → A/B → apply
 - [ ] Суфлёр по одному агенту в UI
+
+### Контур.Закупки (после gate)
+
+Детали: [`F4_KONTUR_GATE.md`](../operations/phase4/tenders/F4_KONTUR_GATE.md)
+
+- [ ] Gate: первая тендерная сделка + go оператора
+- [ ] Адаптер `tender_sources/kontur.py` + `TENDER_PROVIDER=kontur`
+- [ ] Smoke: search / monitor / карточка без смены UI
 
 ---
 

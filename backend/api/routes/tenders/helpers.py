@@ -123,8 +123,9 @@ def _normalize_item_for_ui(item: dict) -> dict:
         out["deadline"] = out.get("date_end") or out.get("DateEnd")
     if not out.get("published"):
         out["published"] = out.get("published_date") or out.get("Date")
+    if not out.get("customer_inn"):
+        out["customer_inn"] = out.get("customerInn")
     if not out.get("okpd"):
         out["okpd"] = out.get("okpd2") or out.get("Okpd2")
     return out
-
 

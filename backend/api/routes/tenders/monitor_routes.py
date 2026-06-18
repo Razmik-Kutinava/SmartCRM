@@ -27,6 +27,13 @@ class TenderMonitorConfigBody(BaseModel):
     notify_ops_queue: bool = True
 
 
+@router.get("/provider/status")
+async def tender_provider_status() -> dict:
+    from services.tender_sources import provider_status
+
+    return provider_status()
+
+
 @router.get("/monitor/config")
 async def tender_monitor_get_config() -> dict[str, Any]:
     cfg = load_config()

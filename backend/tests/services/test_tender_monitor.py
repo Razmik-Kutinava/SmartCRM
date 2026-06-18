@@ -13,9 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from services.tender_monitor import (
     push_new_to_queue,
     run_watch,
-    search_watch,
     tender_fingerprint,
-    _matches_okpd,
 )
 from services.tender_monitor_config import (
     TenderMonitorConfig,
@@ -33,25 +31,15 @@ def test_tender_fingerprint_prefers_id():
     assert tender_fingerprint(item) == "gosplan:123"
 
 
-def test_matches_okpd_in_description():
-    item = {"description": "Поставка ПО по ОКПД 62.01.11.000"}
-    assert _matches_okpd(item, ["62.01.11"])
-    assert not _matches_okpd(item, ["21.20"])
-
-
 def test_filter_watch_items_keywords(tmp_path, monkeypatch):
-    monkeypatch.setattr(
-        "services.tender_monitor_config.CONFIG_PATH",
-        tmp_path / "cfg.json",
-    )
-    watch = TenderWatchEntry(id="w1", name="SIEM", keywords="SIEM", enabled=True)
+    from services.tender_sources.legacy import filter_tender_items
+
+    watch_kw = "SIEM"
     raw = [
         {"title": "Поставка SIEM", "source": "gosplan", "id": "1"},
         {"title": "Мебель офисная", "source": "gosplan", "id": "2"},
     ]
-    from services.tender_monitor import _filter_watch_items
-
-    out = _filter_watch_items(watch, raw)
+    out = filter_tender_items(raw, keywords=watch_kw, okpd_codes=[], region=None, price_min=None, price_max=None, min_relevance=0)
     assert len(out) == 1
     assert "SIEM" in out[0]["title"]
 

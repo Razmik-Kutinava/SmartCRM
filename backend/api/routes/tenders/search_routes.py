@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from core.stats import track_api
 from services.datanewton import DataNewtonClient
 from services.gosplan import GosplanAPI
+from services.tender_sources.config import gosplan_use_prod, search_min_relevance
 from services.tenderguru import TenderGuruClient
 from services.zakupki_parser import ZakupkiParser
 
@@ -39,6 +40,7 @@ async def search_tenders(
     page: int = Query(1, ge=1, description="Номер страницы"),
     sort: str = Query("by_date_end", description="Сортировка"),
     okpd: str = Query(None, description="Код ОКПД-2 для подсказки из Мои-Закупки (опционально)"),
+    min_relevance: int | None = Query(None, ge=0, le=99, description="Мин. релевантность (фильтр шума)"),
 ) -> dict:
     """
     Поиск тендеров по ключевым словам и фильтрам
@@ -71,7 +73,7 @@ async def search_tenders(
             gosplan_laws = ["44"]
 
         # Создаём асинхронные задачи для всех источников
-        gosplan = GosplanAPI(use_prod=False)  # тестовый сервер
+        gosplan = GosplanAPI(use_prod=gosplan_use_prod())
         client = TenderGuruClient(TENDERGURU_API_KEY)
 
         # Запускаем поиски в параллель
@@ -258,7 +260,11 @@ async def search_tenders(
         # Сортируем по релевантности
         formatted_tenders.sort(key=lambda x: x.get("relevance", 0), reverse=True)
 
-        # 4. Обогащение через DataNewton: тянем информацию о заказчике
+        rel_floor = search_min_relevance() if min_relevance is None else min_relevance
+        if rel_floor > 0:
+            formatted_tenders = [t for t in formatted_tenders if int(t.get("relevance") or 0) >= rel_floor]
+
+        # 4. Обогащение через DataNewton
         #    (ЕГРЮЛ, риски, скоринг, статистика госконтрактов) для топ-N
         #    самых релевантных карточек. Работает в параллель, не блокирует
         #    выдачу при фейле (любые ошибки заглушены внутри клиента).
@@ -316,6 +322,11 @@ async def search_tenders(
             "total": len(formatted_tenders),
             "tenders": formatted_tenders,
             "page": page,
+            "provider": {
+                "mode": "legacy",
+                "gosplan_prod": gosplan_use_prod(),
+                "min_relevance": rel_floor,
+            },
             "sources": {
                 "gosplan": {
                     "count": gosplan_count,

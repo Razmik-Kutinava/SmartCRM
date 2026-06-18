@@ -6,15 +6,7 @@ import time
 from datetime import datetime, timezone
 from typing import Any
 
-from api.routes.tenders.config import TENDERGURU_API_KEY
-from api.routes.tenders.helpers import (
-    _normalize_item_for_ui,
-    _passes_local_filters,
-    _query_hits,
-)
 from core import ops_store
-from core.stats import track_api
-from services.gosplan import GosplanAPI
 from services.tender_notifications import add_notification
 from services.tender_monitor_config import (
     TenderMonitorConfig,
@@ -23,7 +15,7 @@ from services.tender_monitor_config import (
     load_state,
     save_state,
 )
-from services.tenderguru import TenderGuruClient
+from services.tender_sources import search_for_monitor
 
 logger = logging.getLogger(__name__)
 
@@ -42,123 +34,22 @@ def tender_fingerprint(item: dict[str, Any]) -> str:
     return f"title:{title}"
 
 
-def _matches_okpd(item: dict[str, Any], codes: list[str]) -> bool:
-    if not codes:
-        return True
-    hay = " ".join(
-        str(item.get(k) or "")
-        for k in ("okpd", "okpd2", "Okpd2", "description", "title", "name")
-    ).lower()
-    for code in codes:
-        c = (code or "").strip()
-        if c and c.lower() in hay:
-            return True
-    return False
-
-
-def _gosplan_laws(law: str) -> list[str]:
-    if law == "all":
-        return ["44", "223"]
-    if law in {"44", "223", "615"}:
-        return [law]
-    return ["44"]
-
-
-async def _fetch_gosplan(keywords: str, law: str, limit: int = 30) -> list[dict[str, Any]]:
-    gosplan = GosplanAPI(use_prod=False)
-    out: list[dict[str, Any]] = []
-    for fz in _gosplan_laws(law):
-        track_api("gosplan")
-        try:
-            data = await gosplan.search_purchases(kwords=keywords, fz=fz, limit=limit)
-        except Exception as e:
-            logger.warning("tender monitor gosplan %s: %s", fz, e)
-            track_api("gosplan", count=0, error=True)
-            continue
-        if isinstance(data, dict) and data.get("error"):
-            track_api("gosplan", count=0, error=True)
-            continue
-        purchases = data.get("purchases", []) if isinstance(data, dict) else []
-        for p in purchases:
-            if isinstance(p, dict):
-                out.append(GosplanAPI.format_purchase(p))
-    return out
-
-
-async def _fetch_tenderguru(
+async def search_watch(
     watch: TenderWatchEntry,
     *,
-    okpd_code: str | None = None,
+    min_relevance: int | None = None,
 ) -> list[dict[str, Any]]:
-    if not TENDERGURU_API_KEY:
-        return []
-    client = TenderGuruClient(TENDERGURU_API_KEY)
-    try:
-        if okpd_code:
-            data = await client.search_by_products(okpd_code=okpd_code, page=1)
-            items = data.get("tenders") or data.get("items") or []
-        else:
-            items = await client.search_tenders(
-                kwords=watch.keywords or "закупка",
-                fz=None if watch.law == "all" else watch.law,
-                region=watch.region,
-                price_min=watch.price_min,
-                price_max=watch.price_max,
-                page=1,
-            )
-    except Exception as e:
-        logger.warning("tender monitor tenderguru: %s", e)
-        return []
-    if not isinstance(items, list):
-        return []
-    return [x for x in items if isinstance(x, dict)]
-
-
-def _filter_watch_items(watch: TenderWatchEntry, raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    q = watch.keywords.strip()
-    codes = [c.strip() for c in (watch.okpd_codes or []) if (c or "").strip()]
-    out: list[dict[str, Any]] = []
-    for item in raw:
-        norm = _normalize_item_for_ui(item)
-        if not _passes_local_filters(
-            norm,
-            watch.region,
-            watch.price_min,
-            watch.price_max,
-            None,
-            None,
-        ):
-            continue
-        if codes and not _matches_okpd(norm, codes):
-            continue
-        if q:
-            text = " ".join(
-                str(norm.get(k) or "")
-                for k in ("title", "name", "description", "customer")
-            )
-            if _query_hits(q, text) == 0:
-                continue
-        out.append(norm)
-    return out
-
-
-async def search_watch(watch: TenderWatchEntry) -> list[dict[str, Any]]:
-    """Поиск по одному правилу мониторинга."""
-    keywords = (watch.keywords or "").strip()
-    codes = [c.strip() for c in (watch.okpd_codes or []) if (c or "").strip()]
-    if not keywords and not codes:
-        return []
-
-    raw: list[dict[str, Any]] = []
-    if keywords:
-        raw.extend(await _fetch_gosplan(keywords, watch.law))
-        raw.extend(await _fetch_tenderguru(watch))
-    for code in codes:
-        raw.extend(await _fetch_tenderguru(watch, okpd_code=code))
-        if not keywords:
-            raw.extend(await _fetch_gosplan(code, watch.law, limit=20))
-
-    return _filter_watch_items(watch, raw)
+    cfg = load_config()
+    floor = cfg.search_min_relevance if min_relevance is None else min_relevance
+    return await search_for_monitor(
+        keywords=watch.keywords,
+        okpd_codes=watch.okpd_codes or [],
+        law=watch.law,
+        region=watch.region,
+        price_min=watch.price_min,
+        price_max=watch.price_max,
+        min_relevance=floor,
+    )
 
 
 def _load_seen(watch_id: str) -> set[str]:

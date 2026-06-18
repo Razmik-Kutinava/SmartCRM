@@ -10,6 +10,7 @@
 | `tender_monitor_config.py` | Конфиг правил мониторинга (слова, ОКПД2) |
 | `tender_monitor.py` | Поиск, дедуп, очередь Ops |
 | `tender_monitor_background.py` | Фоновый планировщик мониторинга |
+| `tender_sources/` | Провайдер поиска: legacy (Gosplan+TG), kontur-stub (Ф4) |
 | `tender_tracked.py` | Tracked тендеры для календаря |
 | `tender_notifications.py` | In-app уведомления |
 | `tender_calendar.py` | Календарь дедлайнов и скан напоминаний |
