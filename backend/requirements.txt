@@ -20,6 +20,7 @@ email-validator
 pypdf
 python-docx
 openpyxl
+fpdf2
 aiosmtplib
 imap-tools
 beautifulsoup4

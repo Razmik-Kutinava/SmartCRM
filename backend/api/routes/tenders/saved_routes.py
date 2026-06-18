@@ -4,10 +4,12 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.export_reports import tenders_to_pdf, tenders_to_xlsx
 from db.models.tender_saved import TenderSaved
 from db.session import get_db
 
@@ -77,6 +79,38 @@ async def upsert_saved(body: TenderSavedBody, db: AsyncSession = Depends(get_db)
     await db.commit()
     await db.refresh(row)
     return {"ok": True, "item": row.to_dict(), "persisted": True}
+
+
+@router.get("/saved/export")
+async def export_saved_tenders(
+    status: str = Query("saved", description="saved | archived"),
+    format: str = Query("xlsx", description="xlsx | pdf"),
+    db: AsyncSession = Depends(get_db),
+):
+    st = status if status in ("saved", "archived") else "saved"
+    rows = (
+        await db.execute(
+            select(TenderSaved).where(TenderSaved.status == st).order_by(TenderSaved.updated_at.desc())
+        )
+    ).scalars().all()
+    items = [r.to_dict() for r in rows]
+    fmt = format.lower()
+    if fmt == "xlsx":
+        content = tenders_to_xlsx(items)
+        media = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        name = f"tenders-{st}.xlsx"
+    elif fmt == "pdf":
+        content = tenders_to_pdf(items)
+        media = "application/pdf"
+        name = f"tenders-{st}.pdf"
+    else:
+        raise HTTPException(400, detail="format: xlsx | pdf")
+
+    return Response(
+        content=content,
+        media_type=media,
+        headers={"Content-Disposition": f'attachment; filename="{name}"'},
+    )
 
 
 @router.patch("/saved/{item_id}")

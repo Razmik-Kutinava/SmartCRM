@@ -15,6 +15,7 @@
 	let loading = $state(true);
 	let err = $state('');
 	let exporting = $state(false);
+	let exportFormat = $state('csv');
 	let voiceCtx = $state(null);
 	let activeView = $state('');
 	let selectedFunnelSource = $state('');
@@ -87,15 +88,16 @@
 			const q = new URLSearchParams();
 			if (filters.period) q.set('period', filters.period);
 			if (filters.source) q.set('source', filters.source);
-			const qs = q.toString();
-			const path = qs ? `/api/leads/analytics/export?${qs}` : '/api/leads/analytics/export';
+			q.set('format', exportFormat);
+			const path = `/api/leads/analytics/export?${q.toString()}`;
 			const r = await apiFetch(path);
 			if (!r.ok) throw new Error(`Экспорт: HTTP ${r.status}`);
 			const blob = await r.blob();
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = `analytics-${new Date().toISOString().slice(0, 10)}.csv`;
+			const ext = exportFormat === 'xlsx' ? 'xlsx' : exportFormat === 'pdf' ? 'pdf' : 'csv';
+			a.download = `analytics-${new Date().toISOString().slice(0, 10)}.${ext}`;
 			a.click();
 			URL.revokeObjectURL(url);
 		} catch (e) {
@@ -135,14 +137,26 @@
 				</p>
 			{/if}
 		</div>
-		<button
-			type="button"
-			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
-			disabled={loading || exporting || !metrics}
-			onclick={exportReport}
-		>
-			{exporting ? 'Экспорт…' : '📥 Экспорт отчёта'}
-		</button>
+		<div class="flex items-center gap-2">
+			<select
+				bind:value={exportFormat}
+				class="px-2 py-1.5 bg-gray-800 text-sm text-gray-300 rounded-lg border border-gray-700"
+				data-testid="analytics-export-format"
+			>
+				<option value="csv">CSV</option>
+				<option value="xlsx">Excel</option>
+				<option value="pdf">PDF</option>
+			</select>
+			<button
+				type="button"
+				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+				disabled={loading || exporting || !metrics}
+				onclick={exportReport}
+				data-testid="analytics-export-btn"
+			>
+				{exporting ? 'Экспорт…' : '📥 Экспорт'}
+			</button>
+		</div>
 	</div>
 	<div class="flex-1 overflow-y-auto p-6 space-y-6">
 		{#if loading}

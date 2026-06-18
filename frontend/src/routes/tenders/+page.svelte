@@ -10,6 +10,7 @@
 		extractTenderDocument,
 		enrichTenderCustomer,
 		fetchSavedTenders,
+		downloadSavedTendersExport,
 		linkTenderLead,
 		patchTenderSaved,
 		saveTender,
@@ -76,6 +77,7 @@
 	let enrich_loading  = $state(false);
 	let enrich_err      = $state('');
 	let voiceCtx        = $state(null);
+	let exportTendersLoading = $state(false);
 
 	function applyRouteParams() {
 		const params = $page.url.searchParams;
@@ -115,6 +117,20 @@
 		} catch {
 			my_items = [];
 			archive_items = [];
+		}
+	}
+
+	async function exportTendersList(status, format) {
+		if (exportTendersLoading) return;
+		exportTendersLoading = true;
+		save_notice = '';
+		try {
+			await downloadSavedTendersExport(status, format);
+			save_notice = `Экспорт ${format.toUpperCase()} готов`;
+		} catch (e) {
+			save_notice = e?.message || String(e);
+		} finally {
+			exportTendersLoading = false;
 		}
 	}
 
@@ -1130,7 +1146,24 @@
 
 	<!-- ── Мои тендеры ── -->
 	{:else if tab === 'my'}
-		<div class="flex flex-1 overflow-hidden">
+		<div class="flex flex-1 overflow-hidden flex-col">
+			<div class="px-4 py-2 border-b border-gray-800 flex gap-2 shrink-0">
+				<button
+					type="button"
+					disabled={exportTendersLoading || my_items.length === 0}
+					class="px-3 py-1 text-xs bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-lg text-gray-300"
+					data-testid="tenders-export-xlsx"
+					onclick={() => exportTendersList('saved', 'xlsx')}
+				>📥 Excel</button>
+				<button
+					type="button"
+					disabled={exportTendersLoading || my_items.length === 0}
+					class="px-3 py-1 text-xs bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-lg text-gray-300"
+					data-testid="tenders-export-pdf"
+					onclick={() => exportTendersList('saved', 'pdf')}
+				>📄 PDF</button>
+			</div>
+			<div class="flex flex-1 overflow-hidden">
 			<div class="w-96 border-r border-gray-800 overflow-y-auto divide-y divide-gray-800/60">
 				{#if my_items.length === 0}
 					<div class="p-8 text-center text-sm text-gray-500">Нет сохранённых тендеров. Найдите в поиске и нажмите «Сохранить».</div>
@@ -1145,11 +1178,27 @@
 				{/if}
 			</div>
 			<div class="flex-1 flex items-center justify-center text-gray-500 text-sm">Выберите тендер слева или в поиске</div>
+			</div>
 		</div>
 
 	<!-- ── Архив ── -->
 	{:else if tab === 'archive'}
-		<div class="flex flex-1 overflow-hidden">
+		<div class="flex flex-1 overflow-hidden flex-col">
+			<div class="px-4 py-2 border-b border-gray-800 flex gap-2 shrink-0">
+				<button
+					type="button"
+					disabled={exportTendersLoading || archive_items.length === 0}
+					class="px-3 py-1 text-xs bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-lg text-gray-300"
+					onclick={() => exportTendersList('archived', 'xlsx')}
+				>📥 Excel</button>
+				<button
+					type="button"
+					disabled={exportTendersLoading || archive_items.length === 0}
+					class="px-3 py-1 text-xs bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-lg text-gray-300"
+					onclick={() => exportTendersList('archived', 'pdf')}
+				>📄 PDF</button>
+			</div>
+			<div class="flex flex-1 overflow-hidden">
 			<div class="w-96 border-r border-gray-800 overflow-y-auto divide-y divide-gray-800/60">
 				{#if archive_items.length === 0}
 					<div class="p-8 text-center text-sm text-gray-500">Архив пуст.</div>
@@ -1168,6 +1217,7 @@
 				{/if}
 			</div>
 			<div class="flex-1 flex items-center justify-center text-gray-500 text-sm">Архивные тендеры</div>
+			</div>
 		</div>
 	{/if}
 

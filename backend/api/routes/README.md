@@ -14,7 +14,8 @@ CRUD лидов, вовлечённость, Битрикс.
 |------|--------|
 | `__init__.py` | Сборка роутера |
 | `crud.py` | Список, создать, lookalike-import, справочник отраслей `/industries`, прочитать, обновить (`products_owned`), удалить лид |
-| `analytics_routes.py` | Сводка KPI и CSV `/analytics/summary`, `/analytics/export` — query `period`, `source` |
+| `analytics_routes.py` | Сводка KPI и экспорт `/analytics/summary`, `/analytics/export` — query `period`, `source`, `format=csv|xlsx|pdf` |
+| `export_routes.py` | PDF карточки лида `GET /{lead_id}/export?format=pdf` |
 | `engagement.py` | Комментарии, логи связи, аудит полей, стадии |
 | `bitrix_routes.py` | Импорт лидов из Битрикс24, статус синка |
 | `presenter.py` | Как отдать лид в JSON для API |
@@ -51,7 +52,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `search_routes.py` | Поиск тендеров (Gosplan, TenderGuru, Serper/Tavily) |
 | `web_search.py` | Serper+Tavily → карточки тендеров в `/search` |
 | `detail_routes.py` | Карточка тендера, `POST /save` в БД |
-| `saved_routes.py` | Мои/Архив: `GET/POST/PATCH /saved` |
+| `saved_routes.py` | Мои/Архив: `GET/POST/PATCH /saved`, экспорт `GET /saved/export?format=xlsx|pdf` |
 | `analyze_routes.py` | `POST /analyze` — коммерческий/тех. агент |
 | `evaluate_routes.py` | `POST /evaluate` — fanout tech∥economist→strategist; ответ `participation` (вердикт) |
 | `lead_link_routes.py` | `link-lead` / `create-lead` — связь тендера с лидом CRM |

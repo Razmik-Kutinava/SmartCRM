@@ -1,11 +1,12 @@
 """Сводка и экспорт аналитики CRM по лидам в БД."""
-from fastapi import Depends, Query
-from fastapi.responses import PlainTextResponse
+from fastapi import Depends, HTTPException, Query
+from fastapi.responses import PlainTextResponse, Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import crm_settings_store
-from core.analytics_metrics import analytics_to_csv, compute_analytics_report
+from core.analytics_metrics import compute_analytics_report
+from core.export_reports import analytics_export_bytes
 from db.models import Lead
 from db.session import get_db
 
@@ -28,14 +29,24 @@ async def analytics_summary(
 async def analytics_export(
     period: str | None = Query(None),
     source: str | None = Query(None),
+    format: str = Query("csv", description="csv | xlsx | pdf"),
     db: AsyncSession = Depends(get_db),
 ):
     leads = await _load_leads(db)
     stages = crm_settings_store.load_settings().get("stages") or []
     metrics = compute_analytics_report(leads, stages, period=period, source=source)
-    csv_text = analytics_to_csv(metrics)
-    return PlainTextResponse(
-        content="\ufeff" + csv_text,
-        media_type="text/csv; charset=utf-8",
-        headers={"Content-Disposition": 'attachment; filename="analytics-report.csv"'},
+    try:
+        content, media_type, filename = analytics_export_bytes(metrics, format)
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e)) from e
+    if format.lower() == "csv":
+        return PlainTextResponse(
+            content=content.decode("utf-8-sig"),
+            media_type=media_type,
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+    return Response(
+        content=content,
+        media_type=media_type,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )

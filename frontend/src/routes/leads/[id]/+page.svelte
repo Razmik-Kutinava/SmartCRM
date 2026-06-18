@@ -40,6 +40,7 @@
 	import { enrichLeadOnCard } from '$lib/search/enrichLeadOnCard.js';
 	import { openLeadMailing } from '$lib/leads/leadMailingUi.js';
 	import { openLeadIndustryModal } from '$lib/leads/leadIndustryUi.js';
+	import { apiFetch } from '$lib/api.js';
 	import { fetchLeadIndustries, isIndustryEmpty } from '$lib/leads/industryCatalog.js';
 
 	let lead    = $state(null);
@@ -104,6 +105,7 @@
 	let detailsSaving = $state(false);
 	let enrichRunning = $state(false);
 	let enrichMsg = $state('');
+	let exportPdfLoading = $state(false);
 	let industryOptions = $state([]);
 
 	async function loadIndustryOptions() {
@@ -146,6 +148,26 @@
 			enrichMsg = e?.message || String(e);
 		} finally {
 			enrichRunning = false;
+		}
+	}
+
+	async function exportLeadPdf() {
+		if (!lead || exportPdfLoading) return;
+		exportPdfLoading = true;
+		try {
+			const r = await apiFetch(`/api/leads/${lead.id}/export?format=pdf`);
+			if (!r.ok) throw new Error(`Экспорт: HTTP ${r.status}`);
+			const blob = await r.blob();
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `lead-${lead.id}.pdf`;
+			a.click();
+			URL.revokeObjectURL(url);
+		} catch (e) {
+			enrichMsg = e?.message || String(e);
+		} finally {
+			exportPdfLoading = false;
 		}
 	}
 
@@ -621,6 +643,13 @@
 					<span class="absolute -top-1 -right-1 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-indigo-500 text-[10px] leading-[1.1rem] text-center font-bold">{nurtureChainCount}</span>
 				{/if}
 			</button>
+			<button
+				type="button"
+				data-testid="lead-export-pdf"
+				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg transition-colors"
+				disabled={exportPdfLoading}
+				onclick={exportLeadPdf}
+			>{exportPdfLoading ? 'PDF…' : '📄 PDF'}</button>
 			<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">📊 Анализ</button>
 			<button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">🎙 Голос</button>
 		</div>

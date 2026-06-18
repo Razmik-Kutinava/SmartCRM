@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — экспорт Excel/PDF] | Статус: ✅ done`
+
+**2026-06-17:** `export_reports.py` (openpyxl + fpdf2); API analytics `format=csv|xlsx|pdf`, `GET /api/leads/{id}/export`, `GET /api/tenders/saved/export`; UI analytics/карточка/тендеры; pytest **16 PASS**; Telegram → BACKLOG.
+
+**Следующий шаг:** «ок» MAP экспорт · Платформа (импорт CRM) / Ф4 по go.
+
+---
+
 `Спринт:[Ф4 docs] | Задача:[Аналитика v2 — план тюнинга] | Статус: ✅ done`
 
 **2026-06-17:** `F4_ANALYTICS_V2_TUNING.md` + пункты в PRD_MAP §Ф4 (прогноз на лиде, калибровка, агенты, квартал).

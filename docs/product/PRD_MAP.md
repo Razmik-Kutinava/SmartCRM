@@ -494,8 +494,8 @@
 
 ### Платформа
 
-- [ ] Telegram-бот
-- [ ] Экспорт Excel/PDF (воронка, карточка, тендеры)
+- [ ] Telegram-бот · отложено → [`BACKLOG.md`](../operations/session/BACKLOG.md)
+- [x] Экспорт Excel/PDF (воронка, карточка, тендеры) · [`F3_PLATFORM_EXPORT_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_EXPORT_ACCEPTANCE.md)
 - [ ] Импорт/экспорт Битрикс24, AmoCRM, HubSpot, CSV
 - [ ] Автономный поиск новых лидов агентами
 

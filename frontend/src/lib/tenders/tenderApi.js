@@ -19,6 +19,19 @@ export async function fetchSavedTenders(status = 'saved') {
 	return parseJson(r);
 }
 
+/** Скачать список сохранённых тендеров (xlsx | pdf). */
+export async function downloadSavedTendersExport(status = 'saved', format = 'xlsx') {
+	const r = await apiFetch(`/api/tenders/saved/export?status=${status}&format=${format}`);
+	if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || `HTTP ${r.status}`);
+	const blob = await r.blob();
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = `tenders-${status}.${format}`;
+	a.click();
+	URL.revokeObjectURL(url);
+}
+
 export async function saveTender(payload) {
 	const r = await apiFetch('/api/tenders/saved', {
 		method: 'POST',
