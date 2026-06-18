@@ -64,6 +64,12 @@ class SuggestPromptBody(BaseModel):
     max_bad_traces: int = 10
 
 
+class PromptAbTracesBody(BaseModel):
+    variant_prompt: str
+    max_bad_traces: int = Field(default=15, ge=1, le=30)
+    models: list[str] = Field(default_factory=lambda: ["hermes3"])
+
+
 class AgentPromptBody(BaseModel):
     prompt: str
 

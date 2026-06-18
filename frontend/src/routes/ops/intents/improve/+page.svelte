@@ -22,6 +22,11 @@
 	let applying = $state(false);
 	let versionPanelKey = $state(0);
 
+	// A/B по плохим трейсам
+	let abRunning = $state(false);
+	let abErr = $state('');
+	let abReport = $state(null);
+
 	async function load() {
 		loading = true;
 		try {
@@ -131,6 +136,33 @@
 		}
 		suggestion = null;
 		selectedExamples = [];
+	}
+
+	async function runAbTraces() {
+		abRunning = true;
+		abErr = '';
+		abReport = null;
+		try {
+			const r = await fetch(`${API}/api/ops/hermes/prompt/ab-traces`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					variant_prompt: promptText,
+					max_bad_traces: 15,
+					models: ['hermes3']
+				})
+			});
+			const j = await r.json();
+			if (!r.ok) {
+				abErr = j.detail || JSON.stringify(j);
+				return;
+			}
+			abReport = j;
+		} catch (e) {
+			abErr = String(e?.message || e);
+		} finally {
+			abRunning = false;
+		}
 	}
 
 	onMount(load);
@@ -267,6 +299,60 @@
 						</div>
 					{:else}
 						<p class="text-sm text-gray-400">Groq не сгенерировал конкретных примеров. Попробуй ещё раз с большим количеством трейсов.</p>
+					{/if}
+				</div>
+			{/if}
+		</section>
+
+		<!-- ── A/B по плохим трейсам ───────────────────────────────── -->
+		<section class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+			<div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+				<div>
+					<h3 class="text-sm font-semibold text-white">A/B по плохим трейсам</h3>
+					<p class="text-xs text-gray-400 mt-0.5">
+						Сравнение: <strong class="text-gray-300">сохранённый</strong> промпт vs <strong class="text-gray-300">текст в редакторе</strong> (hermes3, 👎 фразы).
+					</p>
+				</div>
+				<button
+					type="button"
+					onclick={runAbTraces}
+					disabled={abRunning || promptText.length < 80}
+					class="px-4 py-2 bg-violet-700 hover:bg-violet-600 disabled:opacity-50 text-white text-sm rounded-lg"
+				>
+					{abRunning ? 'Прогон…' : '▶ A/B по трейсам'}
+				</button>
+			</div>
+			{#if abErr}
+				<p class="text-sm text-amber-400">{abErr}</p>
+			{/if}
+			{#if abReport}
+				<div class="text-sm space-y-2 mt-2">
+					<p class="text-gray-300">
+						Кейсов: {abReport.cases_count} · с эталоном: {abReport.cases_with_expected} ·
+						Δ accuracy: <span class="{abReport.delta.accuracy_pp >= 0 ? 'text-emerald-400' : 'text-red-400'}">{abReport.delta.accuracy_pp} pp</span>
+						· фиксов: {abReport.delta.fixes} · регрессий: {abReport.delta.regressions}
+					</p>
+					<div class="grid sm:grid-cols-2 gap-2 text-xs">
+						<div class="bg-gray-950 rounded-lg p-3 border border-gray-800">
+							<div class="text-gray-500 mb-1">Baseline</div>
+							<div class="text-white">{abReport.baseline?.accuracy_pct ?? 0}% · {abReport.baseline?.avg_ms ?? 0} ms</div>
+						</div>
+						<div class="bg-gray-950 rounded-lg p-3 border border-violet-900/50">
+							<div class="text-gray-500 mb-1">Вариант (редактор)</div>
+							<div class="text-white">{abReport.variant?.accuracy_pct ?? 0}% · {abReport.variant?.avg_ms ?? 0} ms</div>
+						</div>
+					</div>
+					{#if abReport.per_case?.length}
+						<details class="text-xs text-gray-400">
+							<summary class="cursor-pointer text-indigo-400">По фразам ({abReport.per_case.length})</summary>
+							<ul class="mt-2 space-y-1 max-h-48 overflow-y-auto">
+								{#each abReport.per_case as row}
+									<li class="font-mono text-gray-500 truncate" title={row.text}>
+										{row.text.slice(0, 50)}… · {row.baseline_intent} → {row.variant_intent}
+									</li>
+								{/each}
+							</ul>
+						</details>
 					{/if}
 				</div>
 			{/if}

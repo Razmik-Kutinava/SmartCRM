@@ -35,10 +35,17 @@ async def _ollama_eval(messages: list[dict], model: str, timeout: float) -> str:
         return response.json()["message"]["content"]
 
 
-async def eval_one_case(text: str, expected: Optional[str], model_name: str) -> dict[str, Any]:
+async def eval_one_case(
+    text: str,
+    expected: Optional[str],
+    model_name: str,
+    *,
+    system_prompt: Optional[str] = None,
+) -> dict[str, Any]:
     """Один кейс через одну модель."""
+    prompt = system_prompt if system_prompt is not None else get_system_prompt()
     messages = [
-        {"role": "system", "content": get_system_prompt()},
+        {"role": "system", "content": prompt},
         {"role": "user", "content": text},
     ]
     t0 = time.monotonic()
@@ -79,7 +86,12 @@ async def eval_one_case(text: str, expected: Optional[str], model_name: str) -> 
         }
 
 
-async def run_eval_pipeline(cases: list[dict[str, Any]], models: list[str]) -> dict[str, Any]:
+async def run_eval_pipeline(
+    cases: list[dict[str, Any]],
+    models: list[str],
+    *,
+    system_prompt: Optional[str] = None,
+) -> dict[str, Any]:
     """
     cases: элементы с ключами text, expected, опционально scenario_id, scenario_title.
     models: подмножество groq, hermes3, ollama.
@@ -92,14 +104,18 @@ async def run_eval_pipeline(cases: list[dict[str, Any]], models: list[str]) -> d
     if groq_models:
         PAUSE = 2.5
         for idx, case in enumerate(cases):
-            resp = await eval_one_case(case["text"], case.get("expected"), "groq")
+            resp = await eval_one_case(
+                case["text"], case.get("expected"), "groq", system_prompt=system_prompt,
+            )
             all_results[case["text"]]["groq"] = resp
             if idx < len(cases) - 1:
                 await asyncio.sleep(PAUSE)
 
     for model_name in local_models:
         for case in cases:
-            result = await eval_one_case(case["text"], case.get("expected"), model_name)
+            result = await eval_one_case(
+                case["text"], case.get("expected"), model_name, system_prompt=system_prompt,
+            )
             all_results[case["text"]][model_name] = result
 
     results = [

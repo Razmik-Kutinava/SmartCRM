@@ -56,7 +56,8 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `email_config.py` | IMAP/SMTP аккаунты из env (`EMAIL_APP_PASSWORD`, `EMAIL_ACCOUNT_*`) |
 | `traces.py` | Логирование трейсов Hermes |
 | `stats.py` | Счётчики вызовов внешних API |
-| `eval_runner.py` | Прогон eval-сценариев |
+| `eval_runner.py` | Прогон eval-сценариев; опц. `system_prompt` |
+| `prompt_ab_traces.py` | A/B промптов на 👎 трейсах |
 | `agent_eval/` | Gate Ollama, загрузка кейсов, скоринг, sync acceptance-таблицы |
 | `training_import.py` | Импорт training-датасетов |
 | `ops_store.py` | Снимки ops-очереди |

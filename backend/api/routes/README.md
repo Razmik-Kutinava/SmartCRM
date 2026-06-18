@@ -29,7 +29,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `__init__.py` | Сборка роутера |
 | `dashboard_routes.py` | Сводка дашборда ops |
 | `traces_routes.py` | История запросов Hermes |
-| `hermes_routes.py` | Hermes: промпт, версии, few-shot, suggest-prompt |
+| `hermes_routes.py` | Hermes: промпт, версии, few-shot, suggest-prompt, **ab-traces** |
 | `voice_routes.py` | Голосовые настройки, история команд (`GET /voice/history`) |
 | `eval_routes.py` | Прогон eval Hermes; статус Ollama |
 | `eval_gate_routes.py` | Gate: latest+delta, download, run, ensure-dataset, failed→bulk |

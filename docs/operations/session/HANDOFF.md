@@ -1,5 +1,19 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[A/B промптов по трейсам] | Статус: ✅ done`
+
+**2026-06-17:** `prompt_ab_traces.py` + API `ab-traces` + UI improve; pytest **5 PASS**. MAP crawl `[x]`.
+
+**Следующий шаг:** «ок» MAP A/B · авто-суфлёр Стратега.
+
+---
+
+`Спринт:[Ф3] | Задача:[Vendor crawl — MAP закрыт] | Статус: ✅ done`
+
+**2026-06-17:** краулинг `[x]` MAP; тюнинг → Ф4.
+
+---
+
 `Спринт:[Ф3] | Задача:[Vendor crawl — шаг 4 Playwright SPA] | Статус: ✅ done`
 
 **2026-06-17:** `vendor_crawl_playwright.py`; `use_playwright` (PT on); fallback fetch; UI; pytest **29 PASS**. Live discover на PT seed — 0 новых PDF (уже через search); инфра готова.

@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException
 
 from core import ops_store, traces
 
-from .schemas import AddExampleBody, HermesPromptBody, SuggestPromptBody
+from .schemas import AddExampleBody, HermesPromptBody, PromptAbTracesBody, SuggestPromptBody
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -355,3 +355,21 @@ Respond in JSON:
         "few_shot_examples": formatted_examples,
         "raw_few_shot": result.get("few_shot_examples", []),
     }
+
+
+@router.post("/hermes/prompt/ab-traces")
+async def hermes_prompt_ab_traces(body: PromptAbTracesBody):
+    """A/B: текущий промпт vs вариант на фразах из плохих трейсов."""
+    from core.hermes import get_system_prompt
+    from core.prompt_ab_traces import run_prompt_ab_on_traces
+
+    report = await run_prompt_ab_on_traces(
+        body.variant_prompt,
+        max_bad_traces=body.max_bad_traces,
+        models=body.models,
+        baseline_prompt=get_system_prompt(),
+    )
+    if not report.get("ok"):
+        detail = report.get("message") or report.get("error") or "A/B failed"
+        raise HTTPException(400, detail=detail)
+    return report
