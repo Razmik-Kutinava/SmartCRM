@@ -489,7 +489,7 @@
 
 - [x] Когортный анализ · [`F3_ANALYTICS_V2_COHORT_ACCEPTANCE.md`](../operations/phase3/analytics/F3_ANALYTICS_V2_COHORT_ACCEPTANCE.md)
 - [x] Эффективность агентов по трейсам · [`F3_ANALYTICS_V2_AGENT_TRACES_ACCEPTANCE.md`](../operations/phase3/analytics/F3_ANALYTICS_V2_AGENT_TRACES_ACCEPTANCE.md)
-- [ ] Воронка по источнику
+- [x] Воронка по источнику · [`F3_ANALYTICS_V2_FUNNEL_SOURCE_ACCEPTANCE.md`](../operations/phase3/analytics/F3_ANALYTICS_V2_FUNNEL_SOURCE_ACCEPTANCE.md)
 - [ ] Прогноз закрытия (Экономист)
 
 ### Платформа

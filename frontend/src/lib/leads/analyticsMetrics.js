@@ -101,6 +101,30 @@ export function computeConversionBySource(leads, stages) {
 		}));
 }
 
+/** @param {object[]} leads @param {string[]} stages */
+export function computeFunnelBySource(leads, stages, topSources = 8) {
+	const buckets = new Map();
+	for (const lead of leads) {
+		const src = leadSource(lead);
+		if (!buckets.has(src)) buckets.set(src, []);
+		buckets.get(src).push(lead);
+	}
+	return [...buckets.entries()]
+		.sort((a, b) => b[1].length - a[1].length)
+		.slice(0, topSources)
+		.map(([source, srcLeads]) => {
+			const mini = computeAnalytics(srcLeads, stages);
+			return {
+				source,
+				total: mini.total,
+				wonCount: mini.wonCount,
+				lostCount: mini.lostCount,
+				conversionPct: mini.conversionPct,
+				funnel: mini.funnel,
+			};
+		});
+}
+
 /** @param {object[]} leads @param {string[]} stages @param {{ period?: string, source?: string }} [filters] */
 export function computeAnalyticsReport(leads, stages, filters = {}) {
 	const filtered = filterLeadsBySource(filterLeadsByPeriod(leads, filters.period), filters.source);
@@ -108,6 +132,7 @@ export function computeAnalyticsReport(leads, stages, filters = {}) {
 	return {
 		...metrics,
 		conversionBySource: computeConversionBySource(filtered, stages),
+		funnelBySource: computeFunnelBySource(filtered, stages),
 		filters: {
 			period: filters.period || '',
 			periodLabel: filters.period ? PERIOD_LABELS[filters.period] || filters.period : '',

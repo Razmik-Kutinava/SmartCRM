@@ -17,6 +17,7 @@
 	let exporting = $state(false);
 	let voiceCtx = $state(null);
 	let activeView = $state('');
+	let selectedFunnelSource = $state('');
 
 	function readFilters() {
 		const params = $page.url.searchParams;
@@ -44,6 +45,10 @@
 			const r = await apiFetch(summaryQuery(filters));
 			if (r.ok) {
 				metrics = await r.json();
+				const blocks = metrics?.funnelBySource || [];
+				if (blocks.length && !blocks.some((b) => b.source === selectedFunnelSource)) {
+					selectedFunnelSource = blocks[0].source;
+				}
 			} else {
 				const leads = await fetchLeads();
 				metrics = computeAnalyticsReport(leads, CRM_STAGES, filters);
@@ -106,6 +111,12 @@
 			metrics?.filters?.period ||
 			voiceCtx?.periodLabel ||
 			'',
+	);
+
+	const activeFunnelBlock = $derived(
+		(metrics?.funnelBySource || []).find((b) => b.source === selectedFunnelSource) ||
+			metrics?.funnelBySource?.[0] ||
+			null,
 	);
 </script>
 
@@ -233,6 +244,55 @@
 							</div>
 						{/each}
 					</div>
+				</div>
+			{/if}
+
+			{#if metrics.funnelBySource?.length}
+				<div
+					class="max-w-3xl"
+					data-testid="analytics-funnel-by-source"
+					class:ring-1={activeView === 'source_funnel' || activeView === 'source'}
+					class:ring-indigo-500={activeView === 'source_funnel' || activeView === 'source'}
+					class:rounded-xl={activeView === 'source_funnel' || activeView === 'source'}
+					class:p-2={activeView === 'source_funnel' || activeView === 'source'}
+				>
+					<h2 class="text-sm font-medium text-white mb-2">Воронка по источнику</h2>
+					<p class="text-xs text-gray-500 mb-3">Сколько лидов на каждой стадии — отдельно по каналу</p>
+					<div class="flex flex-wrap gap-2 mb-4">
+						{#each metrics.funnelBySource as block}
+							<button
+								type="button"
+								class="px-3 py-1 text-xs rounded-lg border transition-colors
+									{selectedFunnelSource === block.source
+									? 'bg-indigo-600 border-indigo-500 text-white'
+									: 'border-gray-700 text-gray-400 hover:text-white'}"
+								onclick={() => (selectedFunnelSource = block.source)}
+							>
+								{block.source}
+								<span class="opacity-70 ml-1">({block.total})</span>
+							</button>
+						{/each}
+					</div>
+					{#if activeFunnelBlock}
+						<div class="text-xs text-gray-500 mb-2">
+							Конверсия: <span class="text-green-400">{activeFunnelBlock.conversionPct}%</span>
+							· выиграно {activeFunnelBlock.wonCount} / проиграно {activeFunnelBlock.lostCount}
+						</div>
+						<div class="space-y-2">
+							{#each activeFunnelBlock.funnel as item}
+								<div class="flex items-center gap-3">
+									<span class="text-xs text-gray-500 w-36 shrink-0">{item.stage}</span>
+									<div class="flex-1 h-2 rounded-full bg-gray-800 overflow-hidden">
+										<div
+											class="h-full bg-violet-600 rounded-full transition-all"
+											style="width: {item.pct}%"
+										></div>
+									</div>
+									<span class="text-xs text-gray-400 w-12 text-right">{item.count}</span>
+								</div>
+							{/each}
+						</div>
+					{/if}
 				</div>
 			{/if}
 

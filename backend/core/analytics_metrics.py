@@ -238,6 +238,32 @@ def compute_conversion_by_source(
     return out
 
 
+def compute_funnel_by_source(
+    leads: list[dict[str, Any]],
+    stages: list[str] | None = None,
+    *,
+    top_sources: int = 8,
+) -> list[dict[str, Any]]:
+    """Воронка по стадиям для каждого источника лида (топ по объёму)."""
+    sts = stages or DEFAULT_STAGES
+    buckets: dict[str, list[dict[str, Any]]] = {}
+    for lead in leads:
+        buckets.setdefault(lead_source(lead), []).append(lead)
+    ranked = sorted(buckets.items(), key=lambda item: -len(item[1]))[: max(top_sources, 1)]
+    out: list[dict[str, Any]] = []
+    for src, src_leads in ranked:
+        mini = compute_analytics(src_leads, sts)
+        out.append({
+            "source": src,
+            "total": mini["total"],
+            "wonCount": mini["wonCount"],
+            "lostCount": mini["lostCount"],
+            "conversionPct": mini["conversionPct"],
+            "funnel": mini["funnel"],
+        })
+    return out
+
+
 def compute_analytics(leads: list[dict[str, Any]], stages: list[str] | None = None) -> dict[str, Any]:
     sts = stages or DEFAULT_STAGES
     by_stage = {s: 0 for s in sts}
@@ -301,6 +327,7 @@ def compute_analytics_report(
     filtered = apply_analytics_filters(leads, period=period, source=source)
     metrics = compute_analytics(filtered, sts)
     metrics["conversionBySource"] = compute_conversion_by_source(filtered, sts)
+    metrics["funnelBySource"] = compute_funnel_by_source(filtered, sts)
     metrics["cohorts"] = compute_cohorts(filtered, sts)
     metrics["filters"] = {
         "period": period or "",
@@ -345,4 +372,11 @@ def analytics_to_csv(metrics: dict[str, Any]) -> str:
                 row["conversionPct"],
                 row.get("winRatePct") if row.get("winRatePct") is not None else "",
             ])
+    funnels = metrics.get("funnelBySource") or []
+    if funnels:
+        w.writerow([])
+        w.writerow(["source", "stage", "count", "pct"])
+        for block in funnels:
+            for row in block.get("funnel") or []:
+                w.writerow([block["source"], row["stage"], row["count"], row["pct"]])
     return buf.getvalue()

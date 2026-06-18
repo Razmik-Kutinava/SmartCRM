@@ -1,12 +1,15 @@
 """Юнит-тесты compute_analytics и CSV-экспорта."""
 from datetime import datetime, timedelta, timezone
 
+import pytest
+
 from core.analytics_metrics import (
     analytics_to_csv,
     compute_analytics,
     compute_analytics_report,
     compute_cohorts,
     compute_conversion_by_source,
+    compute_funnel_by_source,
     filter_leads_by_period,
     lead_amount_rub,
 )
@@ -103,6 +106,34 @@ def test_compute_cohorts_by_month():
     jan = next(r for r in rows if r["cohort"] == "2026-01")
     assert jan["active"] == 1
     assert jan["label"] == "янв 2026"
+
+
+def test_compute_funnel_by_source_stages():
+    leads = [
+        _lead(stage="Новый", source="Тендер"),
+        _lead(stage="Переговоры", source="Тендер"),
+        _lead(stage="Выигран", source="Тендер"),
+        _lead(stage="Новый", source="email"),
+        _lead(stage="Проигран", source="email"),
+    ]
+    blocks = compute_funnel_by_source(leads, STAGES)
+    tender = next(b for b in blocks if b["source"] == "Тендер")
+    assert tender["total"] == 3
+    assert tender["conversionPct"] == pytest.approx(33.3, abs=0.1)
+    assert len(tender["funnel"]) == 6
+    assert tender["funnel"][0]["stage"] == "Новый"
+    assert tender["funnel"][0]["count"] == 1
+
+
+def test_compute_analytics_report_includes_funnel_by_source():
+    leads = [
+        _lead(stage="Выигран", source="leadgen"),
+        _lead(stage="Новый", source="leadgen"),
+    ]
+    report = compute_analytics_report(leads, STAGES)
+    assert len(report["funnelBySource"]) == 1
+    assert report["funnelBySource"][0]["source"] == "leadgen"
+    assert "source,stage,count,pct" in analytics_to_csv(report)
 
 
 def test_compute_analytics_report_includes_cohorts():

@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Аналитика v2 — воронка по источнику] | Статус: ✅ done`
+
+**2026-06-17:** `funnelBySource`, UI чипы на `/leads/analytics`, CSV; pytest **17 PASS**.
+
+**Следующий шаг:** «ок» MAP п.3 · п.4 прогноз закрытия (Экономист).
+
+---
+
 `Спринт:[Ф3] | Задача:[Аналитика v2 — агенты по трейсам] | Статус: ✅ done`
 
 **2026-06-17:** `agent_trace_analytics`, `GET /api/ops/analytics/agents`, UI `/ops/stats`, ссылки улучшения; pytest **5 PASS**.
