@@ -83,8 +83,21 @@ async def lifespan(app: FastAPI):
     tender_monitor_task = asyncio.create_task(tender_monitor_poll_loop(tender_monitor_stop))
     logger.info("Tender monitor: планировщик в фоне (вкл в /api/tenders/monitor/config)")
 
+    lead_hunt_stop = asyncio.Event()
+    from services.lead_hunt_background import lead_hunt_poll_loop
+
+    lead_hunt_task = asyncio.create_task(lead_hunt_poll_loop(lead_hunt_stop))
+    logger.info("Lead hunt: планировщик в фоне (вкл в /api/ops/lead-hunt/config)")
+
     yield
 
+    if lead_hunt_task is not None:
+        lead_hunt_stop.set()
+        lead_hunt_task.cancel()
+        try:
+            await lead_hunt_task
+        except asyncio.CancelledError:
+            pass
     if tender_monitor_task is not None:
         tender_monitor_stop.set()
         tender_monitor_task.cancel()

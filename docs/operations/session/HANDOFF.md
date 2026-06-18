@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 1] | Статус: ✅ done`
+
+**2026-06-18:** `lead_hunt_config/background`, API `/api/ops/lead-hunt/*`, poll в `main.py`; ICP-превью из won; pytest **9 PASS**. Коммит: `PENDING`. Следующий: **шаг 2 ICP + шаг 3 поиск**.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — CSV импорт/экспорт лидов] | Статус: ✅ done`
 
 **2026-06-17:** `crm_sync/csv_adapter`, `POST /import-csv`, `GET /export?format=csv`, UI `/leads/list`; pytest **8 PASS**. Коммит: `0c49729`. Следующий шаг MAP: **Битрикс push (шаг 2)**.

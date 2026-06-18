@@ -23,6 +23,8 @@
 | `industry_catalog.py` | Справочник отраслей (фикс + CRM) и статистика сегмента |
 | `lead_products_owned.py` | Нормализация списка «уже купили» на лиде |
 | `lead_segment_query.py` | Фильтр лидов по сегменту для рассылок |
+| `lead_hunt_config.py` | Конфиг автономного поиска лидов |
+| `lead_hunt_background.py` | Фоновый планировщик lead hunt + ICP-превью |
 
 Кэш ответов: `data/moy_zakupki_cache/`.  
 Тесты: `tests/test_tender_sources.py`.

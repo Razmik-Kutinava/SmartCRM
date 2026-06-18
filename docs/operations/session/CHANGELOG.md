@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-18 — Платформа: lead hunt шаг 1 (каркас)
+
+Фоновый планировщик, config/state JSON, `/api/ops/lead-hunt/*`, ICP-превью из won-лидов.
+
 ## 2026-06-17 — Платформа: CSV импорт/экспорт лидов (шаг 1 CRM sync)
 
 `crm_sync/csv_adapter`, API import-csv + export, UI `/leads/list`; Amo/HubSpot → BACKLOG.

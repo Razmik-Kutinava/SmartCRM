@@ -41,6 +41,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `agents_routes.py` | Промпты агентов: CRUD, версии, откат, compare, тест-run |
 | `logs_routes.py` | Буфер логов для UI |
 | `crm_routes.py` | CRM-настройки в ops |
+| `lead_hunt_routes.py` | Авто-поиск лидов: `/lead-hunt/status`, config, run |
 | `schemas.py` | Общие схемы ops |
 
 ### `tenders/` — `/api/tenders`
