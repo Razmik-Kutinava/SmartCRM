@@ -5,5 +5,6 @@
 | Домен | Документ |
 |-------|----------|
 | Vendor crawl → RAG `tech_specialist` | [`rag/F4_VENDOR_CRAWL_TUNING.md`](rag/F4_VENDOR_CRAWL_TUNING.md) |
+| A/B промптов по трейсам (Hermes / агенты) | [`agents/F4_PROMPT_AB_TUNING.md`](agents/F4_PROMPT_AB_TUNING.md) |
 
 Новые acceptance Ф4 → `phase4/{домен}/`.

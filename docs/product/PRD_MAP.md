@@ -517,6 +517,18 @@
 - [ ] Метаданные чанков — продукт / тип дока (datasheet, manual, …)
 - [ ] Eval retrieval — 10–20 вопросов к tech_specialist, pass rate
 
+### A/B промптов по трейсам (тюнинг)
+
+Детали: [`F4_PROMPT_AB_TUNING.md`](../operations/phase4/agents/F4_PROMPT_AB_TUNING.md)
+
+- [ ] Эталон intent при 👎 на трейсе
+- [ ] Больше кейсов + регрессия на 👍 / approved eval
+- [ ] Выбор модели (groq / hermes3) в UI
+- [ ] A/B для промптов агентов (`/ops/agents`)
+- [ ] Suggest-prompt → сразу A/B
+- [ ] История отчётов A/B в Ops
+- [ ] Dr. QA / KPI-gate в UI
+
 ---
 
 ## Сводка модулей

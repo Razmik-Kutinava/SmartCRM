@@ -27,6 +27,10 @@ python -m pytest tests/core/test_prompt_ab_traces.py tests/core/test_hermes_eval
 4. **A/B по трейсам** — сравнение с сохранённым промптом (hermes3)
 5. Если лучше → сохранить → снимок на «Обзор»
 
+## Тюнинг → Фаза 4
+
+См. [`F4_PROMPT_AB_TUNING.md`](../../phase4/agents/F4_PROMPT_AB_TUNING.md) — эталон при 👎, good-регрессия, модели, агенты, история, Dr. QA UI.
+
 ## Файлы
 
 - `core/prompt_ab_traces.py`
