@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-17 | Действие: A/B промптов по трейсам — prompt_ab_traces, API ab-traces, UI improve; MAP crawl [x]; pytest 5 PASS. | Коммит: `pending` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP A/B; суфлёр Стратега. | Статус: done
+2026-06-17 | Действие: A/B промптов по трейсам — prompt_ab_traces, API ab-traces, UI improve; MAP crawl [x]; pytest 5 PASS. | Коммит: `2230dc0` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP A/B; суфлёр Стратега. | Статус: done
 
 2026-06-17 | Действие: Ф4 vendor crawl tuning — чеклист 4 пункта в phase4/rag + BACKLOG + PRD_MAP. | Коммит: `0bed5e6` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» Ф3 crawl; A/B промптов. | Статус: done
 

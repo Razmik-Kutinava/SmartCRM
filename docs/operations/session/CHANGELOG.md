@@ -2,6 +2,16 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф3 A/B промптов по трейсам Hermes
+
+**Было:** версии промптов и suggest-prompt, но нет сравнения baseline vs вариант на 👎 фразах.
+
+**Стало:** `prompt_ab_traces.py`, API `POST /hermes/prompt/ab-traces`, UI `/ops/intents/improve`; pytest 5 PASS.
+
+## 2026-06-17 — Ф3 Vendor crawl MAP `[x]`
+
+Апрув «ок» — краулинг закрыт в PRD_MAP; тюнинг вынесен в Ф4.
+
 ## 2026-06-17 — Ф3 Vendor crawl шаг 4: Playwright SPA PDF
 
 **Было:** PDF только из HTML и web search; ссылки за JS на SPA не попадали в очередь.
