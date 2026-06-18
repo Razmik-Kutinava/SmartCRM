@@ -12,6 +12,8 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 
 Конфиг: `pytest.ini`, `.coveragerc`, фикстуры: `conftest.py`. Baseline %: `docs/operations/baselines/COVERAGE_BASELINE.md`. CI: `.github/workflows/ci.yml`, `docs/operations/baselines/CI_BASELINE.md`.
 
+`pytest.ini`: без `filterwarnings` на удалённый `StarletteDeprecationWarning` (Starlette ≥0.46); регрессия — `tests/test_pytest_config.py`.
+
 ## Правило: тест на фичу
 
 Каждый PR с новым/изменённым backend-кодом → **≥1 pytest** в зеркальной папке `tests/` (happy path, моки). Чеклист: `docs/dev/PR_CHECKLIST.md`. Регрессия в CI без `--cov-fail-under`.

@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[pytest.ini filterwarnings] | Статус: ✅ done`
+
+**2026-06-17:** убран битый `StarletteDeprecationWarning` из `pytest.ini` (Starlette 0.46+); `tests/test_pytest_config.py` — 2 PASS; обычный `pytest` без `-c NUL`.
+
+**Следующий шаг:** «ок» MAP мониторинг тендеров п.1 · п.2 календарь.
+
+---
+
 `Спринт:[Ф3] | Задача:[Тех. спец — мониторинг тендеров п.1] | Статус: ✅ done`
 
 **2026-06-17:** переименование «тендерный агент» → **Тех. спец — тендеры**; мониторинг 24/7 — config, фон, API, UI `/ops/tender-monitor`; pytest **9 PASS**.
