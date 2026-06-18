@@ -154,7 +154,11 @@ async def _synthesize(state: AgentState) -> dict[str, Any]:
     inst = (slots.get("instruction") or "").strip()
     inst_tail = f"\n\nУказание оператора: {inst}" if inst else ""
     if intent == "evaluate_tender":
-        task_hint = "Сформируй вердикт: участвовать в тендере или нет, с обоснованием."
+        task_hint = (
+            "Сформируй вердикт участия в тендере. "
+            "В JSON обязательно поле participation_verdict: participate | caution | no. "
+            "decision — одно предложение: участвуем или нет и почему."
+        )
     elif intent == "weekly_report":
         task_hint = "Сформируй executive summary недели: ключевые KPI и 3 приоритета на следующую неделю."
     elif intent == "find_similar_clients":

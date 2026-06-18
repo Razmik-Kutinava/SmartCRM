@@ -100,6 +100,8 @@ async def test_evaluate_tender_api(client):
     assert body["ok"] is True
     assert body["has_document"] is True
     assert "Участвовать" in body["result"]["final_reply"]
+    assert body["participation"]["verdict"] in ("participate", "caution", "no")
+    assert body["participation"]["label"]
 
 
 @pytest.mark.asyncio

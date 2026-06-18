@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -9,6 +10,7 @@ from pydantic import BaseModel, Field
 from agents.orchestrator import run_agents
 from agents.scenarios.tender_evaluation import AGENTS, INTENT
 from agents.scenarios.tender_context import tender_snapshot
+from core.tender_participation import extract_participation
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -22,9 +24,11 @@ class TenderEvaluateBody(BaseModel):
 
 def slots_from_body(body: TenderEvaluateBody) -> dict:
     tender = body.tender or {}
+    enrichment = tender.get("enrichment") or tender.get("customer_enrichment")
     slots = {
         "title": tender.get("title") or tender.get("name") or "",
         "customer": tender.get("customer") or "",
+        "customer_inn": tender.get("customer_inn") or tender.get("customerInn") or "",
         "budget": tender.get("budget") or "",
         "law": tender.get("law") or "",
         "region": tender.get("region") or "",
@@ -34,6 +38,13 @@ def slots_from_body(body: TenderEvaluateBody) -> dict:
         "document_text": (body.document_text or "").strip(),
         "question": body.question or f"Оцени тендер: {tender.get('title') or ''}".strip(),
     }
+    if isinstance(enrichment, dict) and enrichment:
+        parts = []
+        for k in ("customer_short_name", "customer_full_name", "risk_level", "scoring_grade"):
+            if enrichment.get(k):
+                parts.append(f"{k}: {enrichment[k]}")
+        if parts:
+            slots["enrichment_context"] = "; ".join(parts)
     return {k: v for k, v in slots.items() if v not in (None, "", "—")}
 
 
@@ -54,9 +65,12 @@ async def evaluate_tender_full(body: TenderEvaluateBody):
         logger.error("evaluate_tender_full: %s", e, exc_info=True)
         raise HTTPException(503, detail="Оценка недоступна (LLM)") from e
     snap = tender_snapshot(slots)
+    participation = extract_participation(result)
+    participation["evaluated_at"] = datetime.now(timezone.utc).isoformat()
     return {
         "ok": True,
         "tender": snap,
         "has_document": bool(slots.get("document_text")),
+        "participation": participation,
         "result": result,
     }

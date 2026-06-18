@@ -69,6 +69,7 @@
 	let tech_analysis   = $state(null);
 	let agent_loading   = $state(false);
 	let full_evaluation = $state(null);
+	let participation   = $state(null);
 	let link_lead_id    = $state('');
 	let link_notice     = $state('');
 	let customer_enrich = $state(null);
@@ -127,6 +128,7 @@
 			title: snap.title || row.title || '',
 			tender_analysis: row.tenderAnalysis,
 			tech_analysis: row.techAnalysis,
+			participation: snap.participation || null,
 		};
 	}
 
@@ -207,11 +209,19 @@
 
 	function searchKey(e) { if (e.key === 'Enter') search(); }
 
+	function verdictStyle(v) {
+		if (v === 'participate') return 'bg-emerald-900/50 border-emerald-600 text-emerald-200';
+		if (v === 'no') return 'bg-red-900/40 border-red-700 text-red-200';
+		return 'bg-amber-900/40 border-amber-700 text-amber-200';
+	}
+
 	function selectTender(t) {
 		selected = t;
 		detail_tab = 'doc';
 		tender_analysis = t.tender_analysis ?? null;
 		tech_analysis = t.tech_analysis ?? null;
+		participation = t.participation ?? null;
+		full_evaluation = null;
 		uploaded_files = [];
 		save_notice = '';
 		customer_enrich = t.enrichment ?? null;
@@ -249,7 +259,12 @@
 			const payload = {
 				external_id: tenderExternalId(selected),
 				source: selected.source || '',
-				snapshot: { ...selected, _dbId: undefined, _status: undefined },
+				snapshot: {
+					...selected,
+					participation: participation || selected.participation || null,
+					_dbId: undefined,
+					_status: undefined,
+				},
 				tender_analysis: tender_analysis,
 				tech_analysis: tech_analysis,
 				status: 'saved',
@@ -371,13 +386,22 @@
 		if (!selected) return;
 		agent_loading = true;
 		full_evaluation = null;
-		detail_tab = 'tender_agent';
+		participation = null;
+		detail_tab = 'verdict';
 		error = '';
 		try {
-			const res = await evaluateTenderFull(selected, documentContext());
+			const tenderPayload = {
+				...selected,
+				enrichment: customer_enrich || selected.enrichment || null,
+			};
+			const res = await evaluateTenderFull(tenderPayload, documentContext());
 			full_evaluation = res.result;
+			participation = res.participation || null;
+			if (participation) selected = { ...selected, participation };
 			const reply = res.result?.final_reply || res.result?.strategist_output?.final_reply;
 			if (reply) tender_analysis = reply;
+			const tech = res.result?.tech_output?.summary;
+			if (tech) tech_analysis = tech;
 			await saveCurrentTender();
 		} catch (e) {
 			error = 'Полная оценка: ' + (e.message || 'ошибка LLM');
@@ -846,12 +870,23 @@
 						</div>
 					</div>
 
+					{#if participation?.label}
+						<button
+							type="button"
+							onclick={() => detail_tab = 'verdict'}
+							class="mt-3 w-full text-left px-4 py-2 rounded-lg border text-sm font-medium {verdictStyle(participation.verdict)}"
+						>
+							Вердикт: {participation.label}
+						</button>
+					{/if}
+
 					<!-- Вкладки деталей -->
-					<div class="flex gap-1 mt-4">
+					<div class="flex gap-1 mt-4 flex-wrap">
 						{#each [
 							['doc', '📄 Описание'],
 							['files', '📎 Документы' + (uploaded_files.length ? ` (${uploaded_files.length})` : '')],
-							['tender_agent', '🎯 Тенд. спец'],
+							['verdict', '🎯 Вердикт' + (participation ? ' ✓' : '')],
+							['tender_agent', '📋 Тенд. спец'],
 							['tech_agent', '⚙️ Тех. спец'],
 						] as [id, label]}
 							<button
@@ -975,6 +1010,71 @@
 								<div class="text-xs text-gray-600 text-center py-4">Файлы не загружены</div>
 							{/if}
 						</div>
+
+					<!-- Вердикт участия -->
+					{:else if detail_tab === 'verdict'}
+						{#if agent_loading}
+							<div class="flex flex-col items-center justify-center h-48">
+								<div class="text-2xl animate-spin mb-3 text-emerald-400">⟳</div>
+								<div class="text-sm text-gray-400">Тех. спец + Экономист → Стратег…</div>
+							</div>
+						{:else if participation}
+							<div class="space-y-4">
+								<div class="rounded-xl p-5 border {verdictStyle(participation.verdict)}">
+									<div class="text-xs uppercase tracking-wider opacity-70 mb-1">Решение</div>
+									<div class="text-lg font-semibold">{participation.label}</div>
+									{#if participation.decision}
+										<p class="text-sm mt-2 opacity-90">{participation.decision}</p>
+									{/if}
+								</div>
+								{#if participation.rationale}
+									<div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+										<div class="text-xs font-semibold text-gray-400 uppercase mb-2">Обоснование</div>
+										<p class="text-sm text-gray-300">{participation.rationale}</p>
+									</div>
+								{/if}
+								{#if participation.next_action}
+									<div class="bg-indigo-900/30 rounded-xl p-4 border border-indigo-800/50">
+										<div class="text-xs font-semibold text-indigo-300 uppercase mb-2">Следующий шаг</div>
+										<p class="text-sm text-indigo-100">{participation.next_action}</p>
+									</div>
+								{/if}
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+									{#if participation.tech_summary}
+										<div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+											<div class="text-xs text-purple-400 font-medium mb-2">Тех. спец</div>
+											<p class="text-xs text-gray-300 whitespace-pre-wrap">{participation.tech_summary}</p>
+										</div>
+									{/if}
+									{#if participation.economist_summary}
+										<div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+											<div class="text-xs text-emerald-400 font-medium mb-2">Экономист</div>
+											<p class="text-xs text-gray-300 whitespace-pre-wrap">{participation.economist_summary}</p>
+										</div>
+									{/if}
+								</div>
+								{#if participation.evaluated_at}
+									<div class="text-xs text-gray-600">Оценено: {new Date(participation.evaluated_at).toLocaleString('ru-RU')}</div>
+								{/if}
+								<button onclick={runFullEvaluation}
+									disabled={agent_loading}
+									class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs rounded-lg">
+									Пересчитать вердикт
+								</button>
+							</div>
+						{:else}
+							<div class="flex flex-col items-center justify-center h-48 text-center">
+								<div class="text-3xl mb-3 opacity-20">🎯</div>
+								<div class="text-sm text-gray-400 mb-2">Вердикт Стратега по участию</div>
+								<div class="text-xs text-gray-600 mb-4">Загрузите документы и запустите полную оценку</div>
+								<button onclick={runFullEvaluation}
+									disabled={agent_loading}
+									class="px-6 py-2 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg"
+									data-testid="tender-verdict-run">
+									Полная оценка (тех + эконом + стратег)
+								</button>
+							</div>
+						{/if}
 
 					<!-- Тендерный специалист -->
 					{:else if detail_tab === 'tender_agent'}

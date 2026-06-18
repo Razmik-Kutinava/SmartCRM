@@ -1,5 +1,13 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Тендеры: sources апрув + вердикт участия] | Статус: ✅ done`
+
+**2026-06-17:** MAP п.3 sources `[x]` апрув; п.4 вердикт участия — `tender_participation`, API `participation`, UI вкладка «Вердикт», snapshot; pytest **29 PASS** зона.
+
+**Следующий шаг:** «ок» MAP п.4 · Аналитика v2 / Контур Ф4 — только по go.
+
+---
+
 `Спринт:[Ф3] | Задача:[Тендеры: sources + MAP] | Статус: ✅ done`
 
 **2026-06-17:** MAP п.2 `[x]`; Контур → Ф4 `F4_KONTUR_GATE`; п.3 `tender_sources` + Gosplan prod + фильтры + DataNewton UI; pytest зона тендеров.

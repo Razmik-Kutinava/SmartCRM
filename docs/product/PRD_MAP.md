@@ -482,8 +482,8 @@
 
 - [x] Мониторинг ключевых слов / ОКПД2 24/7 · [`F3_TECH_TENDER_MONITOR_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_MONITOR_ACCEPTANCE.md) · апрув «ок» 2026-06-17
 - [x] Уведомления + календарь дедлайнов · [`F3_TECH_TENDER_NOTIFY_CALENDAR_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_NOTIFY_CALENDAR_ACCEPTANCE.md) · апрув «ок» 2026-06-17
-- [ ] Дожать бесплатные источники (Gosplan prod, TenderGuru, мониторинг, DataNewton, доки) · [`F3_TECH_TENDER_SOURCES_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_SOURCES_ACCEPTANCE.md) · Контур → **Ф4**
-- [ ] Решение участвовать/нет с обоснованием (Тех. спец + Экономист → Стратег)
+- [x] Дожать бесплатные источники (Gosplan prod, TenderGuru, мониторинг, DataNewton, доки) · [`F3_TECH_TENDER_SOURCES_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_SOURCES_ACCEPTANCE.md) · Контур → **Ф4** · апрув «ок» 2026-06-17
+- [x] Решение участвовать/нет с обоснованием (Тех. спец + Экономист → Стратег) · [`F3_TECH_TENDER_PARTICIPATION_ACCEPTANCE.md`](../operations/phase3/tenders/F3_TECH_TENDER_PARTICIPATION_ACCEPTANCE.md) · апрув «ок» 2026-06-17
 
 ### Аналитика v2
 
