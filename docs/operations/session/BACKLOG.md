@@ -43,6 +43,19 @@
 
 ## Записи
 
+### Фаза 4 — vendor crawl → tech_specialist (тюнинг, не блокер Ф3)
+
+Чеклист: [`F4_VENDOR_CRAWL_TUNING.md`](../phase4/rag/F4_VENDOR_CRAWL_TUNING.md)
+
+| Приоритет | Пункт | Отложено |
+|-----------|-------|----------|
+| 🟡 | Автокраул `auto_crawl_enabled` | База устаревает без ручного запуска |
+| 🟡 | Глубже `doc_urls` (KB, datasheet, release notes) | Сейчас в основном лендинги |
+| 🟡 | Метаданные чанков (продукт, тип дока) | Точнее retrieval |
+| 🟡 | Eval retrieval 10–20 вопросов tech_specialist | Дыры не видны без метрик |
+
+`[2026-06-17] | PRD_MAP: Ф4 · vendor crawl тюнинг | Отложено: 4 пункта выше | Причина: Ф4 тюнинг до MVP, после «ок» Ф3 crawl | Нужна фаза MAP: 4 | Из шага: обсуждение улучшений tech_specialist`
+
 `[2026-06-17] | PRD_MAP: Ф3 Self-improvement · vendor crawl UI + cron | **✅ сделано** — `/ops/vendor-crawl` + `vendor_crawl_background.py` | Коммит: см. CHANGELOG`
 
 `[2026-06-15] | PRD_MAP: Ф3 Email · этап B массовый сегмент | **✅ сделано** — `EmailCampaignPanel`, preview-llm, send_now | Коммит: см. CHANGELOG`

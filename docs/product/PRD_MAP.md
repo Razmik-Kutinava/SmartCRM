@@ -29,7 +29,7 @@
 - [Фаза 1 — MVP](#фаза-1--mvp-проходим-первой) — [Лиды](#лиды-leads) · [Баллы](#балльная-воронка-p1p2p3-код) · [Голос](#голос--лиды-базово) · [Поиск/RAG](#поиск-и-rag-базово) · [Лидоген](#лидогенерация-leadgen) · [Тендеры](#тендеры-tenders-baseline) · [Агенты](#агенты-по-отдельности) · [Аналитика](#аналитика-базовая)
 - [Хвосты Ф1 → BACKLOG](#открытые-хвосты-фазы-1--вернуться)
 - [Фаза 2](#фаза-2--автоматизация) — [Порядок 1–9](#порядок-фазы-2) · [DoD Ф2](#definition-of-done--фаза-2) · [Сценарии Ф2](#фаза-2--сценарии) · §[1 Voice](#1-voice-layer-все-модули) … §[9 Enrich](#9-лиды--обогащение-enrich)
-- [Фаза 3](#фаза-3--автономия) · [Сводка модулей](#сводка-модулей)
+- [Фаза 3](#фаза-3--автономия) · [Фаза 4](#фаза-4--тюнинг-и-mvp) · [Сводка модулей](#сводка-модулей)
 
 ---
 
@@ -472,7 +472,7 @@
 ### Self-improvement
 
 - [x] **Quality gate tuning:** все агенты ≥85% (baseline 2026-06-14: Hermes 72.2%, Tech 60%) → [`AGENTS_GATE_TUNING_BASELINE.md`](../operations/baselines/AGENTS_GATE_TUNING_BASELINE.md) · [`F3_GATE_TUNING_ACCEPTANCE.md`](../operations/phase3/agents/F3_GATE_TUNING_ACCEPTANCE.md) — **A+B+C ✅ 2026-06-17**, апрув «ок»
-- [ ] Краулинг URL вендоров → RAG тех. спеца · **live 871 чанк, 10 PDF** · шаг1–4 ✅ [`F3_VENDOR_CRAWL_ACCEPTANCE.md`](../operations/phase3/rag/F3_VENDOR_CRAWL_ACCEPTANCE.md) · `[x]` после «ок»
+- [ ] Краулинг URL вендоров → RAG тех. спеца · **live 871 чанк, 10 PDF** · шаг1–4 ✅ [`F3_VENDOR_CRAWL_ACCEPTANCE.md`](../operations/phase3/rag/F3_VENDOR_CRAWL_ACCEPTANCE.md) · тюнинг → **Ф4** · `[x]` после «ок»
 - [ ] A/B промптов по трейсам
 - [ ] Авто-суфлёр Стратега
 
@@ -501,6 +501,21 @@
 
 - [ ] Расширенные SLA-протоколы + эскалация
 - [ ] Экспорт отчёта по баллам и воронке
+
+---
+
+## Фаза 4 — Тюнинг и MVP
+
+> Polish и доводка после базового Ф3. Не блокирует закрытие краулинга в Ф3.
+
+### Vendor crawl → RAG tech_specialist (тюнинг)
+
+Детали: [`F4_VENDOR_CRAWL_TUNING.md`](../operations/phase4/rag/F4_VENDOR_CRAWL_TUNING.md)
+
+- [ ] Автокраул (`auto_crawl_enabled`, интервал, фоновый poll)
+- [ ] Глубже `doc_urls` — KB, datasheet, release notes
+- [ ] Метаданные чанков — продукт / тип дока (datasheet, manual, …)
+- [ ] Eval retrieval — 10–20 вопросов к tech_specialist, pass rate
 
 ---
 

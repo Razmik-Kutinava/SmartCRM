@@ -129,6 +129,10 @@ curl -X POST http://127.0.0.1:8000/api/rag/vendor-crawl/run \
 
 **Live smoke:** discover на PT seed/doc_urls — 0 новых PDF (шаг 3 search уже дал 10); инфра и fallback готовы.
 
+## Тюнинг → Фаза 4
+
+См. [`F4_VENDOR_CRAWL_TUNING.md`](../../phase4/rag/F4_VENDOR_CRAWL_TUNING.md) — автокраул, doc_urls, метаданные, eval retrieval.
+
 ## Не в scope (BACKLOG)
 
 - Голосом «добавь ссылку на доки» (интент → API)

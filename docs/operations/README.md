@@ -21,6 +21,7 @@ docs/operations/
 ├── baselines/                # Coverage, CI, матрица правил
 ├── phase1/                   # Acceptance Фазы 1 (закрытые блоки MAP)
 ├── phase2/                   # Acceptance Фазы 2 (в работе)
+├── phase4/                   # Тюнинг / доводка до MVP (после Ф3)
 └── debt/                     # Отложенная уборка (не блокер)
 ```
 
@@ -51,6 +52,10 @@ docs/operations/
 
 См. [`phase2/README.md`](phase2/README.md) — quality gates агентов; новые acceptance — в подпапку по домену MAP.
 
+### `phase4/` — тюнинг и доводка до MVP (после Ф3)
+
+См. [`phase4/README.md`](phase4/README.md) — не блокер Ф3; vendor crawl tuning → `phase4/rag/`.
+
 ### `debt/`
 
 | Файл | Назначение |
@@ -61,6 +66,7 @@ docs/operations/
 
 - Новый **acceptance Ф1** (редко) → `phase1/{домен}/`
 - Новый **acceptance Ф2** → `phase2/{домен}/`
+- **Тюнинг после Ф3** → `phase4/{домен}/` (см. `phase4/README.md`)
 - **Не** класть acceptance в корень `operations/` — только в фазу + домен
 - Операционные записи (handoff, backlog) — только `session/`
 
