@@ -126,6 +126,12 @@ def count_overdue_open_tasks(tasks: list[dict[str, Any]], today: dt.date) -> int
     return n
 
 
+def score_divergent(manager_score: int, suggested_score: int, settings: dict[str, Any]) -> bool:
+    adv = settings.get("scoring_advisory") or {}
+    ratio = float(adv.get("manager_score_divergence_warn_ratio") or 0.32)
+    return abs(int(manager_score) - int(suggested_score)) / 100.0 >= ratio
+
+
 def compute_lead_score_advisory(
     lead: dict[str, Any],
     tasks: list[dict[str, Any]],

@@ -22,12 +22,24 @@ def lead_matches_search(lead: dict, query: str) -> bool:
     return q in hay
 
 
-def filter_leads(leads: list[dict], *, search="", filter_stage="all", filter_priority="all", tier_fn) -> list:
+def filter_leads(
+    leads: list[dict],
+    *,
+    search="",
+    filter_stage="all",
+    filter_priority="all",
+    filter_score_risk="all",
+    tier_fn,
+) -> list:
     out = []
     for l in leads:
         if filter_stage != "all" and l.get("stage") != filter_stage:
             continue
         if filter_priority != "all" and tier_fn(l).get("key") != filter_priority:
+            continue
+        if filter_score_risk == "warnings" and not l.get("hasScoreWarnings"):
+            continue
+        if filter_score_risk == "divergent" and not l.get("scoreDivergent"):
             continue
         if not lead_matches_search(l, search):
             continue
@@ -105,3 +117,15 @@ def test_filter_priority_uses_crm_thresholds():
     ]
     out = filter_leads(leads, filter_priority="critical", tier_fn=tier_fn)
     assert [x["id"] for x in out] == [1]
+
+
+def test_filter_score_risk_warnings_and_divergent():
+    leads = [
+        {"id": 1, "hasScoreWarnings": True, "scoreDivergent": False},
+        {"id": 2, "hasScoreWarnings": False, "scoreDivergent": True},
+        {"id": 3, "hasScoreWarnings": False, "scoreDivergent": False},
+    ]
+    w = filter_leads(leads, filter_score_risk="warnings", tier_fn=_tier_stub)
+    assert [x["id"] for x in w] == [1]
+    d = filter_leads(leads, filter_score_risk="divergent", tier_fn=_tier_stub)
+    assert [x["id"] for x in d] == [2]

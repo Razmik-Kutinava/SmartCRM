@@ -71,6 +71,12 @@ export const PRIORITY_FILTERS = [
 	{ id: 'low', label: 'Низкий' },
 ];
 
+export const SCORE_RISK_FILTERS = [
+	{ id: 'all', label: 'Все по баллам' },
+	{ id: 'warnings', label: 'С предупреждениями' },
+	{ id: 'divergent', label: 'Расхождение с подсказкой' },
+];
+
 const PRIORITY_RANK = { critical: 4, high: 3, medium: 2, low: 1 };
 
 export function priorityRank(tierKey) {
@@ -103,7 +109,15 @@ function fieldContains(leadVal, filterVal) {
 
 export function filterLeads(
 	leads,
-	{ search = '', filterStage = 'all', filterPriority = 'all', filterIndustry = '', filterCity = '', minScore = null },
+	{
+		search = '',
+		filterStage = 'all',
+		filterPriority = 'all',
+		filterScoreRisk = 'all',
+		filterIndustry = '',
+		filterCity = '',
+		minScore = null,
+	},
 	config = null,
 ) {
 	return leads.filter((l) => {
@@ -112,6 +126,8 @@ export function filterLeads(
 			const tier = leadPriorityTier(l.score, config);
 			if (tier.key !== filterPriority) return false;
 		}
+		if (filterScoreRisk === 'warnings' && !l.hasScoreWarnings) return false;
+		if (filterScoreRisk === 'divergent' && !l.scoreDivergent) return false;
 		if (minScore != null && Number.isFinite(minScore)) {
 			const sc = Number(l.score);
 			if (!Number.isFinite(sc) || sc < minScore) return false;

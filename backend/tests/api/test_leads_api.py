@@ -170,3 +170,21 @@ async def test_multiple_leads_order(client):
     r = await client.get("/api/leads")
     companies = [l["company"] for l in r.json()]
     assert companies.index("Второй") < companies.index("Первый")
+
+
+@pytest.mark.asyncio
+async def test_list_leads_includes_score_advisory_flags(client):
+    """GET /api/leads — лёгкие флаги scoreAdvisory для фильтров списка."""
+    create_r = await client.post(
+        "/api/leads",
+        json={"company": "Флаги advisory", "stage": "Новый", "score": 90},
+    )
+    assert create_r.status_code == 201
+
+    r = await client.get("/api/leads")
+    assert r.status_code == 200
+    row = next(l for l in r.json() if l["company"] == "Флаги advisory")
+    assert "hasScoreWarnings" in row
+    assert "scoreDivergent" in row
+    assert "suggestedScore" in row
+    assert row["scoreDivergent"] is True

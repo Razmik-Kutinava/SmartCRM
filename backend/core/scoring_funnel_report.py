@@ -6,7 +6,7 @@ from typing import Any, Optional
 
 from core.analytics_metrics import apply_analytics_filters, compute_analytics, period_label
 from core.lead_priority_tier import lead_priority_tier
-from core.lead_score_advisory import compute_lead_score_advisory
+from core.lead_score_advisory import compute_lead_score_advisory, score_divergent
 
 
 def group_tasks_by_lead(tasks: list[dict[str, Any]]) -> dict[int, list[dict[str, Any]]]:
@@ -20,12 +20,6 @@ def group_tasks_by_lead(tasks: list[dict[str, Any]]) -> dict[int, list[dict[str,
         except (TypeError, ValueError):
             continue
     return dict(out)
-
-
-def _divergence_warn(manager: int, suggested: int, settings: dict[str, Any]) -> bool:
-    adv = settings.get("scoring_advisory") or {}
-    ratio = float(adv.get("manager_score_divergence_warn_ratio") or 0.32)
-    return abs(manager - suggested) / 100.0 >= ratio
 
 
 def compute_scoring_funnel_report(
@@ -62,7 +56,7 @@ def compute_scoring_funnel_report(
         sug_int = int(sug) if sug is not None else 0
         if advisory_on:
             suggested_sum += sug_int
-            if _divergence_warn(mgr, sug_int, settings):
+            if score_divergent(mgr, sug_int, settings):
                 divergent += 1
         tier = lead_priority_tier(mgr, settings)
         warnings = advisory.get("warnings") or []
@@ -83,7 +77,7 @@ def compute_scoring_funnel_report(
                 "overdueOpenTasks": breakdown.get("overdueOpenTasks", 0),
                 "escalatedOpenTasks": breakdown.get("escalatedOpenTasks", 0),
                 "amountRub": lead.get("amountRub") or lead.get("amount_rub"),
-                "divergent": advisory_on and _divergence_warn(mgr, sug_int, settings),
+                "divergent": advisory_on and score_divergent(mgr, sug_int, settings),
             }
         )
 

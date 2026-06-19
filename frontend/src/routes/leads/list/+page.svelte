@@ -28,6 +28,7 @@
 		applyLeadListView,
 		applyVoiceListFilter,
 		PRIORITY_FILTERS,
+		SCORE_RISK_FILTERS,
 		SORT_OPTIONS,
 		leadListViewFromVoiceSlots,
 	} from '$lib/leads/leadListFilter.js';
@@ -43,6 +44,7 @@
 	let search = $state('');
 	let filterStage = $state('all');
 	let filterPriority = $state('all');
+	let filterScoreRisk = $state('all');
 	let filterIndustry = $state('');
 	let filterCity = $state('');
 	let filterMinScore = $state(null);
@@ -121,7 +123,16 @@
 	let filtered = $derived(
 		applyLeadListView(
 			leads,
-			{ search, filterStage, filterPriority, filterIndustry, filterCity, sortBy, minScore: filterMinScore },
+			{
+				search,
+				filterStage,
+				filterPriority,
+				filterScoreRisk,
+				filterIndustry,
+				filterCity,
+				sortBy,
+				minScore: filterMinScore,
+			},
 			getCachedCrmConfig(),
 		),
 	);
@@ -701,6 +712,16 @@
 				<option value={opt.id}>{opt.label}</option>
 			{/each}
 		</select>
+		<select
+			bind:value={filterScoreRisk}
+			class="bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-indigo-500"
+			aria-label="Фильтр по подсказке балла"
+			data-testid="leads-filter-score-risk"
+		>
+			{#each SCORE_RISK_FILTERS as opt}
+				<option value={opt.id}>{opt.label}</option>
+			{/each}
+		</select>
 	</div>
 	<div class="flex gap-1 flex-wrap">
 		{#each stages as stage}
@@ -777,6 +798,18 @@
 					<td class="px-4 py-3">
 						<span class="font-bold {scoreColor(lead.score)}">{lead.score}</span>
 						<span class="text-gray-600 text-xs">/100</span>
+						{#if lead.suggestedScore != null && lead.scoreDivergent}
+							<span
+								class="ml-1 px-1.5 py-0.5 rounded text-[10px] bg-amber-950 text-amber-300 border border-amber-800"
+								title="Подсказка {lead.suggestedScore}/100"
+							>Δ</span>
+						{/if}
+						{#if lead.hasScoreWarnings}
+							<span
+								class="ml-1 px-1.5 py-0.5 rounded text-[10px] bg-orange-950 text-orange-300 border border-orange-800"
+								title="{lead.scoreWarningsCount ?? 1} предупрежд."
+							>!</span>
+						{/if}
 					</td>
 					<td class="px-4 py-3">
 						<span class="px-2 py-0.5 rounded text-xs font-medium {priorityTierBadgeClass(tier)}">{tier.label}</span>

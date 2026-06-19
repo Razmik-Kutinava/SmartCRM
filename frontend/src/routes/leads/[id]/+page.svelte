@@ -35,6 +35,7 @@
 	import { auditFieldLabel } from '$lib/leads/leadAudit.js';
 	import { describeTransitionRule, rulesForTargetStage } from '$lib/leads/stageTransition.js';
 	import { buildMoneyPatch, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
+	import { formatScoreBreakdownLines } from '$lib/leads/scoreBreakdown.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 	import { enrichLeadOnCard } from '$lib/search/enrichLeadOnCard.js';
@@ -797,6 +798,24 @@
 								<li>{w}</li>
 							{/each}
 						</ul>
+					{/if}
+					{#if lead.scoreAdvisory?.breakdown}
+						{@const bdLines = formatScoreBreakdownLines(lead.scoreAdvisory.breakdown)}
+						{#if bdLines.length}
+							<details class="mt-2 text-xs border border-gray-700 rounded-lg bg-gray-950/60" data-testid="lead-score-breakdown">
+								<summary class="cursor-pointer px-2 py-1.5 text-gray-400 hover:text-gray-200 select-none">
+									Почему подсказка {lead.scoreAdvisory.suggestedScore}/100?
+								</summary>
+								<ul class="px-2 pb-2 space-y-0.5 border-t border-gray-800">
+									{#each bdLines as line}
+										<li class="flex justify-between gap-2 text-gray-400">
+											<span>{line.label}</span>
+											<span class="text-gray-200 font-mono tabular-nums">{line.value}</span>
+										</li>
+									{/each}
+								</ul>
+							</details>
+						{/if}
 					{/if}
 					{#if lead.tenderLink?.title}
 						<p class="text-xs text-indigo-400 mt-2" data-testid="lead-tender-link">

@@ -19,6 +19,8 @@
 	let notes = $state('');
 	let rulesJson = $state('[]');
 	let slaProtocolsJson = $state('[]');
+	let scoringAdvisoryEnabled = $state(true);
+	let scoringAdvisoryJson = $state('{}');
 	let bitrixOk = $state(false);
 	let bitrixMasked = $state(null);
 
@@ -41,6 +43,8 @@
 			notes = s.notes ?? '';
 			rulesJson = JSON.stringify(s.stage_transition_rules ?? [], null, 2);
 			slaProtocolsJson = JSON.stringify(s.sla_protocols ?? [], null, 2);
+			scoringAdvisoryEnabled = s.scoring_advisory_enabled !== false;
+			scoringAdvisoryJson = JSON.stringify(s.scoring_advisory ?? {}, null, 2);
 			bitrixOk = !!d.bitrix_webhook_configured;
 			bitrixMasked = d.bitrix_webhook_masked || null;
 		} catch (e) {
@@ -77,6 +81,15 @@
 			if (!Array.isArray(sla_protocols)) {
 				throw new Error('SLA-протоколы: ожидается JSON-массив');
 			}
+			let scoring_advisory;
+			try {
+				scoring_advisory = JSON.parse(scoringAdvisoryJson || '{}');
+			} catch {
+				throw new Error('Веса scoring_advisory: невалидный JSON');
+			}
+			if (!scoring_advisory || typeof scoring_advisory !== 'object' || Array.isArray(scoring_advisory)) {
+				throw new Error('Веса scoring_advisory: ожидается JSON-объект');
+			}
 			const body = {
 				stages,
 				priority_thresholds: { critical: crit, high: high, medium: med },
@@ -85,6 +98,8 @@
 				notes: notes.trim(),
 				stage_transition_rules,
 				sla_protocols,
+				scoring_advisory_enabled: scoringAdvisoryEnabled,
+				scoring_advisory,
 			};
 			const r = await fetch(`${API}/api/ops/crm-settings`, {
 				method: 'PUT',
@@ -173,6 +188,35 @@
 					class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white font-mono"
 					data-testid="ops-sla-protocols-json"
 				></textarea>
+			</div>
+
+			<div class="rounded-lg border border-amber-900/50 bg-amber-950/20 p-4 space-y-3" data-testid="ops-scoring-advisory">
+				<div class="flex items-center gap-2">
+					<input
+						id="scoring-advisory-enabled"
+						type="checkbox"
+						bind:checked={scoringAdvisoryEnabled}
+						class="rounded border-gray-600 bg-gray-900"
+					/>
+					<label for="scoring-advisory-enabled" class="text-sm text-gray-200">
+						Подсказка балла (scoring_advisory) включена
+					</label>
+				</div>
+				<div>
+					<label class="block text-xs text-gray-500 mb-1">
+						Веса подсказки (JSON-объект). Пустой <code class="text-gray-600">{'{}'}</code> — встроенные дефолты.
+						Ключи: <code class="text-gray-600">suggested_score_by_stage</code>,
+						<code class="text-gray-600">approval_weights</code>,
+						<code class="text-gray-600">overdue_open_task_penalty</code>,
+						<code class="text-gray-600">manager_score_divergence_warn_ratio</code>
+					</label>
+					<textarea
+						bind:value={scoringAdvisoryJson}
+						rows="14"
+						class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white font-mono"
+						data-testid="ops-scoring-advisory-json"
+					></textarea>
+				</div>
 			</div>
 
 			<div class="grid grid-cols-3 gap-3">

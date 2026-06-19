@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core import crm_settings_store
 from core.lead_approvals import merge_approvals_payload
 from core.lead_field_audit_util import TRACKED_ORM_FIELDS, append_lead_field_audits
+from core.lead_score_list_flags import attach_lead_score_flags, load_tasks_by_lead
 from core.stage_transition import merge_lead_patch_for_validation, validate_stage_transition
 from db.models import EmailMessage, Lead
 from db.session import get_db
@@ -21,8 +22,10 @@ logger = logging.getLogger(__name__)
 
 async def list_leads(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Lead).order_by(Lead.created_at.desc()))
-    leads = result.scalars().all()
-    return [lead_row.to_dict() for lead_row in leads]
+    leads = [lead_row.to_dict() for lead_row in result.scalars().all()]
+    settings = crm_settings_store.load_settings()
+    tasks_by_lead = await load_tasks_by_lead(db)
+    return attach_lead_score_flags(leads, tasks_by_lead, settings)
 
 
 async def list_industries(db: AsyncSession = Depends(get_db)):
