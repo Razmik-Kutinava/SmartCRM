@@ -14,6 +14,7 @@ from core import ops_store
 from db.models import Lead
 from services.lead_hunt_config import LeadHuntConfig, load_state, save_state
 from services.lead_hunt_notifications import add_notification
+from services.lead_hunt_queue import build_summary
 
 logger = logging.getLogger(__name__)
 
@@ -101,20 +102,28 @@ def _notify_new(entry: dict[str, Any]) -> None:
     )
 
 
-async def _create_lead_from_company(
-    company: dict[str, Any], score: int, db: AsyncSession
-) -> int | None:
+async def save_candidate_to_crm(cand: dict[str, Any], db: AsyncSession) -> int | None:
+    """Сохранение в CRM (логика _save_to_crm) в переданной сессии."""
     from leadgen.pipeline.persist import _find_lead_by_inn
     from leadgen.pipeline.persist_autosave import minimal_card_from_company
-    from leadgen.pipeline.persist_card import lead_payload_from_card
+    from leadgen.pipeline.persist_card import apply_payload_to_lead, lead_payload_from_card
 
-    card = minimal_card_from_company(company, final_score=score)
+    pipeline = cand.get("pipeline_card") or {}
+    score = int(cand.get("score") or 0)
+    company = cand.get("company") or {}
+    if pipeline.get("company_name"):
+        card = {**pipeline, "final_score": pipeline.get("final_score") or score}
+    else:
+        card = minimal_card_from_company(company, final_score=score)
     payload = lead_payload_from_card(card)
     payload["source"] = "lead_hunt"
     inn = (payload.get("inn") or "").strip() or None
     if inn:
         existing = await _find_lead_by_inn(db, inn)
         if existing:
+            apply_payload_to_lead(existing, payload)
+            await db.flush()
+            await db.refresh(existing)
             return existing.id
     name = (payload.get("company") or "").strip()
     if not name:
@@ -127,6 +136,42 @@ async def _create_lead_from_company(
     await db.flush()
     await db.refresh(lead)
     return lead.id
+
+
+async def _maybe_start_nurture(
+    db: AsyncSession,
+    lead_id: int,
+    *,
+    start_nurture: bool,
+    account_id: int | None,
+    product: str | None,
+) -> dict[str, Any] | None:
+    if not start_nurture:
+        return None
+    from db.models import EmailAccount
+    from services.email_nurture import start_nurture_chain
+
+    acc_id = account_id
+    if not acc_id:
+        row = await db.execute(select(EmailAccount.id).order_by(EmailAccount.id.asc()).limit(1))
+        acc_id = row.scalar_one_or_none()
+    if not acc_id:
+        return {"skipped": True, "reason": "no_email_account"}
+    try:
+        chain = await start_nurture_chain(
+            db,
+            lead_id=lead_id,
+            account_id=int(acc_id),
+            product=(product or "").strip() or None,
+            chain_label="Lead hunt · nurture",
+        )
+        return {"chain_id": chain.id, "steps_total": chain.steps_total}
+    except ValueError as e:
+        return {"skipped": True, "reason": str(e)}
+
+
+# alias для тестов
+_create_lead_from_company = save_candidate_to_crm
 
 
 async def process_search_results(
@@ -154,14 +199,16 @@ async def process_search_results(
             "score": int(item.get("score") or 0),
             "portrait_score": item.get("portrait_score"),
             "pipeline_score": item.get("pipeline_score"),
+            "pipeline_card": item.get("pipeline_card"),
             "search_source": item.get("search_source"),
             "agent_fanout": item.get("agent_fanout"),
             "icp_version": icp_version,
             "found_at": now,
             "lead_id": None,
         }
+        entry["summary"] = build_summary(entry)
         if cfg.autosave_above_threshold:
-            lead_id = await _create_lead_from_company(company, entry["score"], db)
+            lead_id = await save_candidate_to_crm(entry, db)
             if lead_id:
                 entry["status"] = "approved"
                 entry["lead_id"] = lead_id
@@ -185,26 +232,43 @@ async def process_search_results(
     return {"queued": queued, "approved": approved, "skipped": skipped}
 
 
-async def approve_candidate(candidate_id: str, db: AsyncSession) -> dict[str, Any]:
+async def approve_candidate(
+    candidate_id: str,
+    db: AsyncSession,
+    *,
+    start_nurture: bool = False,
+    nurture_account_id: int | None = None,
+    nurture_product: str | None = None,
+) -> dict[str, Any]:
     items = list((load_state().get("candidates") or []))
     for cand in items:
         if cand.get("id") != candidate_id:
             continue
         if cand.get("status") != "pending":
             raise ValueError("not_pending")
-        lead_id = await _create_lead_from_company(
-            cand.get("company") or {}, int(cand.get("score") or 0), db
-        )
+        lead_id = await save_candidate_to_crm(cand, db)
         if not lead_id:
             raise ValueError("create_failed")
+        nurture = await _maybe_start_nurture(
+            db,
+            lead_id,
+            start_nurture=start_nurture,
+            account_id=nurture_account_id,
+            product=nurture_product,
+        )
         cand["status"] = "approved"
         cand["lead_id"] = lead_id
         cand["approved_at"] = datetime.now(timezone.utc).isoformat()
+        if nurture:
+            cand["nurture"] = nurture
         state = load_state()
         state["candidates"] = items
         save_state(state)
         await db.commit()
-        return {"ok": True, "lead_id": lead_id, "candidate_id": candidate_id}
+        out: dict[str, Any] = {"ok": True, "lead_id": lead_id, "candidate_id": candidate_id}
+        if nurture:
+            out["nurture"] = nurture
+        return out
     raise ValueError("not_found")
 
 

@@ -90,16 +90,35 @@ async def test_lead_hunt_candidates_approve_reject(client, isolated_lead_hunt_st
         }
     )
 
-    async def _create(company, score, db):
+    async def _save(cand, db):
         return 99
 
     monkeypatch.setattr(
-        "services.lead_hunt_candidates._create_lead_from_company",
-        _create,
+        "services.lead_hunt_candidates.save_candidate_to_crm",
+        _save,
     )
-    ar = await client.post("/api/ops/lead-hunt/candidates/lh-test01/approve")
+    ar = await client.post("/api/ops/lead-hunt/queue/lh-test01/approve")
     assert ar.status_code == 200
     assert ar.json()["lead_id"] == 99
+
+    # алиас candidates/approve
+    lhc.save_state(
+        {
+            "candidates": [
+                {
+                    "id": "lh-test01b",
+                    "status": "pending",
+                    "company": {"inn": "7701111112", "name": "Approve Co 2"},
+                    "score": 71,
+                    "icp_version": 1,
+                    "found_at": "2026-06-19T00:00:00+00:00",
+                    "lead_id": None,
+                }
+            ]
+        }
+    )
+    ar2 = await client.post("/api/ops/lead-hunt/candidates/lh-test01b/approve")
+    assert ar2.status_code == 200
 
     lhc.save_state(
         {
@@ -117,14 +136,42 @@ async def test_lead_hunt_candidates_approve_reject(client, isolated_lead_hunt_st
         }
     )
     rr = await client.post(
-        "/api/ops/lead-hunt/candidates/lh-test02/reject",
+        "/api/ops/lead-hunt/queue/lh-test02/reject",
         json={"note": "нет"},
     )
     assert rr.status_code == 200
     assert rr.json()["ok"] is True
 
-    g = await client.get("/api/ops/lead-hunt/candidates", params={"status": "rejected"})
+    g = await client.get("/api/ops/lead-hunt/queue", params={"status": "rejected"})
     assert any(x["id"] == "lh-test02" for x in g.json()["items"])
+    assert g.json()["items"][0].get("company") == "Reject Co"
+
+
+@pytest.mark.asyncio
+async def test_lead_hunt_queue_list_shape(client, isolated_lead_hunt_state):
+    import services.lead_hunt_config as lhc
+
+    lhc.save_state(
+        {
+            "candidates": [
+                {
+                    "id": "lh-qshape",
+                    "status": "pending",
+                    "company": {"inn": "7703333333", "name": "Shape Co"},
+                    "score": 88,
+                    "summary": "Краткое резюме",
+                    "icp_version": 1,
+                    "found_at": "2026-06-19T00:00:00+00:00",
+                }
+            ]
+        }
+    )
+    r = await client.get("/api/ops/lead-hunt/queue")
+    assert r.status_code == 200
+    item = r.json()["items"][0]
+    assert item["company"] == "Shape Co"
+    assert item["score"] == 88
+    assert item["summary"] == "Краткое резюме"
 
 
 @pytest.mark.asyncio

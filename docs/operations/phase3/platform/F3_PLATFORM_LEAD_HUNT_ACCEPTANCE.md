@@ -49,15 +49,16 @@ ENV: `LEAD_HUNT_ENABLED`, `LEAD_HUNT_INTERVAL_HOURS`.
 
 | Компонент | Изменение |
 |-----------|-----------|
+| `lead_hunt_queue.py` | нормализованный вид: company, score, summary, status |
 | `state.candidates` | `pending` / `approved` / `rejected` |
-| `POST .../candidates/{id}/approve` | лид в CRM (`source=lead_hunt`) |
-| `POST .../candidates/{id}/reject` | отклонение |
-| `GET .../candidates` | список по статусу |
-| `autosave_above_threshold` | опционально сразу в CRM |
+| `GET .../lead-hunt/queue` | список по статусу (алиас `/candidates`) |
+| `POST .../queue/{id}/approve` | `save_candidate_to_crm` + опционально nurture |
+| `POST .../queue/{id}/reject` | отклонение |
+| UI | блок «Найдено агентами» на `/ops/queue` и `/leadgen` |
 
-- [x] Очередь в state
-- [x] Approve создаёт Lead
-- [x] pytest + API
+- [x] Очередь в state + нормализованный API
+- [x] Approve → CRM (`source=lead_hunt`), nurture опционально
+- [x] pytest queue + API + UI panel
 
 ## Шаг 5 — уведомления
 

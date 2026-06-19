@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 4 очередь+апрув] | Статус: ✅ done`
+
+**2026-06-19:** `lead_hunt_queue.py`, `GET/POST .../queue`, approve → CRM + nurture опц., UI «Найдено агентами» на `/ops/queue` и `/leadgen`; pytest **23 PASS**. Коммит: `TBD`. Следующий: **шаг 5 уведомления (если не закрыт)** · **«ок» MAP автопоиск**.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt цикл поиска агентами] | Статус: ✅ done`
 
 **2026-06-19:** `lead_hunt_search_cycle.py` — portrait+prospect → pipeline light → fanout analyst/marketer/economist, dedup БД; pytest **19 PASS** (incl. integration). Коммит: `c22ade8`. Следующий: **«ок» MAP автопоиск**.

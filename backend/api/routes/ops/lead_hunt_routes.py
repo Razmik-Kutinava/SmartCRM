@@ -10,10 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import get_db
 from services.lead_hunt_background import lead_hunt_status_payload, run_scheduled_lead_hunt
-from services.lead_hunt_candidates import approve_candidate, list_candidates, reject_candidate
+from services.lead_hunt_candidates import approve_candidate, reject_candidate
 from services.lead_hunt_config import LeadHuntConfig, load_config, save_config
 from services.lead_hunt_icp import build_and_persist_icp, load_latest_icp
 from services.lead_hunt_notifications import list_notifications, mark_all_read, mark_read
+from services.lead_hunt_queue import list_queue
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -33,6 +34,12 @@ class LeadHuntConfigBody(BaseModel):
 
 class RejectBody(BaseModel):
     note: str = ""
+
+
+class ApproveBody(BaseModel):
+    start_nurture: bool = False
+    nurture_account_id: int | None = None
+    nurture_product: str = ""
 
 
 class MarkReadBody(BaseModel):
@@ -84,19 +91,54 @@ async def lead_hunt_icp_refresh(db: AsyncSession = Depends(get_db)) -> dict[str,
         raise HTTPException(500, detail=str(e)) from e
 
 
+@router.get("/lead-hunt/queue")
+async def lead_hunt_queue(
+    status: str | None = Query(default="pending"),
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict[str, Any]:
+    items = list_queue(status=status or None, limit=limit)
+    return {"items": items, "count": len(items)}
+
+
 @router.get("/lead-hunt/candidates")
 async def lead_hunt_candidates(
     status: str | None = Query(default="pending"),
     limit: int = Query(default=50, ge=1, le=200),
 ) -> dict[str, Any]:
-    items = list_candidates(status=status or None, limit=limit)
+    items = list_queue(status=status or None, limit=limit)
     return {"items": items, "count": len(items)}
 
 
+@router.post("/lead-hunt/queue/{candidate_id}/approve")
+async def lead_hunt_queue_approve(
+    candidate_id: str,
+    body: ApproveBody | None = None,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    return await _approve_handler(candidate_id, body, db)
+
+
 @router.post("/lead-hunt/candidates/{candidate_id}/approve")
-async def lead_hunt_approve(candidate_id: str, db: AsyncSession = Depends(get_db)) -> dict[str, Any]:
+async def lead_hunt_approve(
+    candidate_id: str,
+    body: ApproveBody | None = None,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    return await _approve_handler(candidate_id, body, db)
+
+
+async def _approve_handler(
+    candidate_id: str, body: ApproveBody | None, db: AsyncSession
+) -> dict[str, Any]:
+    b = body or ApproveBody()
     try:
-        return await approve_candidate(candidate_id, db)
+        return await approve_candidate(
+            candidate_id,
+            db,
+            start_nurture=b.start_nurture,
+            nurture_account_id=b.nurture_account_id,
+            nurture_product=b.nurture_product or None,
+        )
     except ValueError as e:
         code = str(e)
         if code == "not_found":
@@ -109,8 +151,17 @@ async def lead_hunt_approve(candidate_id: str, db: AsyncSession = Depends(get_db
         raise HTTPException(500, detail=str(e)) from e
 
 
+@router.post("/lead-hunt/queue/{candidate_id}/reject")
+async def lead_hunt_queue_reject(candidate_id: str, body: RejectBody | None = None) -> dict[str, Any]:
+    return await _reject_handler(candidate_id, body)
+
+
 @router.post("/lead-hunt/candidates/{candidate_id}/reject")
 async def lead_hunt_reject(candidate_id: str, body: RejectBody | None = None) -> dict[str, Any]:
+    return await _reject_handler(candidate_id, body)
+
+
+async def _reject_handler(candidate_id: str, body: RejectBody | None) -> dict[str, Any]:
     try:
         return reject_candidate(candidate_id, note=(body.note if body else ""))
     except ValueError as e:

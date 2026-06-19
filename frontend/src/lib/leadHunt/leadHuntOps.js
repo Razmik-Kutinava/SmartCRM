@@ -42,26 +42,42 @@ export async function runLeadHunt() {
 	return r.json();
 }
 
+export async function fetchLeadHuntQueue(status = 'pending') {
+	const r = await fetch(`${API}/api/ops/lead-hunt/queue?status=${encodeURIComponent(status)}`);
+	if (!r.ok) throw new Error(await r.text());
+	return r.json();
+}
+
 export async function fetchLeadHuntCandidates(status = 'pending') {
-	const r = await fetch(`${API}/api/ops/lead-hunt/candidates?status=${encodeURIComponent(status)}`);
+	return fetchLeadHuntQueue(status);
+}
+
+export async function approveLeadHuntQueue(id, { start_nurture = false, nurture_product = '' } = {}) {
+	const r = await fetch(`${API}/api/ops/lead-hunt/queue/${id}/approve`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ start_nurture, nurture_product })
+	});
 	if (!r.ok) throw new Error(await r.text());
 	return r.json();
 }
 
-export async function approveLeadHuntCandidate(id) {
-	const r = await fetch(`${API}/api/ops/lead-hunt/candidates/${id}/approve`, { method: 'POST' });
-	if (!r.ok) throw new Error(await r.text());
-	return r.json();
-}
-
-export async function rejectLeadHuntCandidate(id, note = '') {
-	const r = await fetch(`${API}/api/ops/lead-hunt/candidates/${id}/reject`, {
+export async function rejectLeadHuntQueue(id, note = '') {
+	const r = await fetch(`${API}/api/ops/lead-hunt/queue/${id}/reject`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ note })
 	});
 	if (!r.ok) throw new Error(await r.text());
 	return r.json();
+}
+
+export async function approveLeadHuntCandidate(id, opts) {
+	return approveLeadHuntQueue(id, opts);
+}
+
+export async function rejectLeadHuntCandidate(id, note = '') {
+	return rejectLeadHuntQueue(id, note);
 }
 
 export async function fetchLeadHuntNotifications(unreadOnly = false) {

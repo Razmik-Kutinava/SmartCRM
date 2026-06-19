@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { getApiUrl } from '$lib/websocket.js';
 	import { severityBadge, severityLabel } from '$lib/opsCommon.js';
+	import LeadHuntQueuePanel from '$lib/leadHunt/LeadHuntQueuePanel.svelte';
 
 	const API = getApiUrl();
 
@@ -58,6 +59,10 @@
 		>
 			Обновить очередь из трейсов
 		</button>
+	</div>
+
+	<div class="mb-8">
+		<LeadHuntQueuePanel />
 	</div>
 
 	{#if loading}

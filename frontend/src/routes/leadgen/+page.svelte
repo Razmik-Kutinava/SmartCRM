@@ -9,6 +9,7 @@
 		startPortraitProgress,
 	} from '$lib/leadgen/portraitProgress.js';
 	import { getApiUrl } from '$lib/websocket.js';
+	import LeadHuntQueuePanel from '$lib/leadHunt/LeadHuntQueuePanel.svelte';
 	const API = getApiUrl();
 
 	// ── Режимы ────────────────────────────────────────────────────────────────
@@ -467,6 +468,10 @@ let portrait_deep      = $state(false);
 			onclick={() => show_config = !show_config}
 			class="text-xs px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
 		>⚙ Настройки</button>
+	</div>
+
+	<div class="mb-6" data-testid="lead-hunt-queue-block">
+		<LeadHuntQueuePanel compact />
 	</div>
 
 	{#if voiceCtx?.title || voiceCtx?.inn || voiceCtx?.portrait}

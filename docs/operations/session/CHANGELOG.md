@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Платформа: lead hunt шаг 4 (очередь + апрув)
+
+`GET /api/ops/lead-hunt/queue`, approve → `save_candidate_to_crm` + опциональный nurture; UI блок «Найдено агентами» на `/ops/queue` и `/leadgen`; pytest **27 PASS** (lead hunt suite).
+
 ## 2026-06-19 — Платформа: lead hunt цикл поиска (агенты)
 
 `lead_hunt_search_cycle`: portrait/prospect → `run_pipeline` light → fanout analyst+marketer+economist, dedup ИНН/company, очередь.

@@ -28,7 +28,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 |-------|----------------|
 | `api/` | … `test_export_api.py`, `test_leads_csv_api.py`, … |
 | `integrations/` | `test_bitrix_*.py`, `test_csv_adapter.py` |
-| `services/` | `test_lead_hunt_*` incl. `test_lead_hunt_search_cycle_integration.py` |
+| `services/` | `test_lead_hunt_*` incl. `test_lead_hunt_queue.py`, `test_lead_hunt_search_cycle_integration.py` |
 | `core/` | `test_hermes_eval.py`, `test_qa_agent.py`, `test_export_reports.py` |
 | `agents/` | `test_analyst.py` |
 | `rag/` | `test_search_providers.py`, `test_search_pkg.py`, `test_rag_chunks.py`, `test_search_modes.py`, `test_enrich_cache.py`, `test_qa_structure.py` |

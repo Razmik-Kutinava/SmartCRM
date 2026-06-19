@@ -70,12 +70,12 @@ async def test_approve_and_reject(monkeypatch, tmp_path):
     db.refresh = AsyncMock()
     db.commit = AsyncMock()
 
-    async def _create(company, score, session):
+    async def _save(cand, session):
         return 42
 
     monkeypatch.setattr(
-        "services.lead_hunt_candidates._create_lead_from_company",
-        AsyncMock(side_effect=_create),
+        "services.lead_hunt_candidates.save_candidate_to_crm",
+        AsyncMock(side_effect=_save),
     )
     await process_search_results(
         db,
