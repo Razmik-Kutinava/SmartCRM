@@ -12,7 +12,7 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
-2026-06-19 | Действие: Ф4 лиды п.2 — удаление (confirm, list+card, apiDelete, purge FK); MAP §Лиды; pytest 20 PASS. | Коммит: `pending` | Хвост A: DevTools smoke не делали | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP удаление. | Статус: done
+2026-06-19 | Действие: Ф4 лиды п.2 — удаление (confirm, list+card, apiDelete, purge FK); MAP §Лиды; pytest 20 PASS. | Коммит: `16ac2da` | Хвост A: DevTools smoke не делали | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP удаление. | Статус: done
 
 2026-06-19 | Действие: Ф4 дашборд п.1 — модалка «Новый лид» (дашборд + /leads/list), POST БД, acceptance + MAP; pytest 19 PASS. | Коммит: `f5e4274` | Хвост A: DevTools smoke руками не делали | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP дашборд п.1 · обход дашборда. | Статус: done
 
