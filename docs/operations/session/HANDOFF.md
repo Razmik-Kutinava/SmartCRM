@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 4 очередь+апрув] | Статус: ✅ done`
 
-**2026-06-19:** `lead_hunt_queue.py`, `GET/POST .../queue`, approve → CRM + nurture опц., UI «Найдено агентами» на `/ops/queue` и `/leadgen`; pytest **27 PASS**. Коммит: `4d1cf33`. Следующий: **«ок» MAP автопоиск** · шаги 5–7 при необходимости.
+**2026-06-19:** `lead_hunt_queue.py`, `GET/POST .../queue`, approve → CRM + nurture опц., UI «Найдено агентами» на `/ops/queue` и `/leadgen`; pytest **27 PASS**. Коммит: `4d1cf33` (ops `7a99e53`). Следующий: **«ок» MAP автопоиск**.
 
 ---
 
