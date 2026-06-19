@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[удаление list + карточка] | Статус: ✅ done`
+
+**2026-06-19:** DELETE через `apiDelete`; кнопки list/карточка + confirm; backend purge nurture/email; `F4_LEADS_ACCEPTANCE.md`, MAP §Лиды после Платформа; pytest **20 PASS**. Следующий: **«ок»** → `[x]` MAP удаление · обход лидов дальше.
+
+---
+
 `Спринт:[Ф4 дашборд] | Задача:[модалка «Новый лид» — дашборд + list] | Статус: ✅ done`
 
 **2026-06-19:** `LeadCreateModal` + host в layout; дашборд «Быстрые действия» и `/leads/list` → модалка, POST в БД; `F4_DASHBOARD_ACCEPTANCE.md`, MAP §Дашборд; pytest **19 PASS** (5 UI + 14 API). Коммит: `f5e4274`. Следующий: **«ок»** → `[x]` MAP дашборд п.1 · обход дашборда дальше.

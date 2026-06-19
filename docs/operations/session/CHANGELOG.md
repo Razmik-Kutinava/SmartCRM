@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Ф4 лиды п.2: удаление (list + карточка)
+
+confirm + apiDelete; purge nurture/email перед DELETE; MAP §Лиды; pytest 20 PASS.
+
 ## 2026-06-19 — Ф4 дашборд п.1: модалка «Новый лид»
 
 Глобальная `LeadCreateModal` (дашборд + `/leads/list`), POST `/api/leads`; acceptance `F4_DASHBOARD_ACCEPTANCE.md`; pytest `test_lead_create_ui.py` 5 + leads API 14 PASS.

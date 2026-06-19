@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import {
 		enrichLeadForCard,
 		getLeadById,
@@ -44,12 +45,14 @@
 	import { apiFetch } from '$lib/api.js';
 	import { fetchLeadIndustries, isIndustryEmpty } from '$lib/leads/industryCatalog.js';
 	import { assignLeadSlaProtocol, fetchSlaProtocols } from '$lib/leads/slaProtocol.js';
+	import { confirmAndDeleteLead } from '$lib/leads/leadDelete.js';
 
 	let lead = $state(null);
 	let notFound = $state(false);
 	let slaProtocols = $state([]);
 	let slaAssigning = $state(false);
 	let slaMsg = $state('');
+	let deleteBusy = $state(false);
 
 	let approvalsDraft = $state({});
 	function syncApprovalsDraft() {
@@ -316,6 +319,19 @@
 			leadTasksList = [];
 		} finally {
 			leadTasksLoading = false;
+		}
+	}
+
+	async function deleteCurrentLead() {
+		if (!lead || deleteBusy) return;
+		deleteBusy = true;
+		try {
+			const ok = await confirmAndDeleteLead(lead);
+			if (ok) await goto('/leads/list');
+		} catch (e) {
+			enrichMsg = `Ошибка удаления: ${e?.message || e}`;
+		} finally {
+			deleteBusy = false;
 		}
 	}
 
@@ -767,6 +783,13 @@
 			>{hubspotPushLoading ? 'HS…' : '📤 HubSpot'}</button>
 			<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">📊 Анализ</button>
 			<button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">🎙 Голос</button>
+			<button
+				type="button"
+				data-testid="lead-card-delete"
+				class="px-3 py-1.5 bg-red-950 hover:bg-red-900 disabled:opacity-50 text-sm text-red-200 rounded-lg transition-colors"
+				disabled={deleteBusy}
+				onclick={deleteCurrentLead}
+			>{deleteBusy ? 'Удаляю…' : '🗑 Удалить'}</button>
 		</div>
 	</div>
 	{#if enrichMsg}

@@ -163,6 +163,47 @@ async def test_delete_lead_not_found(client):
 
 
 @pytest.mark.asyncio
+async def test_delete_lead_with_nurture_chain(client, db_session):
+    """DELETE лида с цепочкой nurture — 204, без FK-ошибки."""
+    from datetime import datetime, timezone
+
+    from db.models.email import EmailAccount
+    from db.models.email_nurture import EmailNurtureChain, EmailNurtureStep
+
+    create_r = await client.post("/api/leads", json={"company": "Удалить с nurture"})
+    assert create_r.status_code == 201
+    lead_id = create_r.json()["id"]
+
+    acc = EmailAccount(
+        name="test",
+        provider="generic",
+        username="u@test.ru",
+        password="secret",
+        imap_server="imap.test",
+        smtp_server="smtp.test",
+    )
+    db_session.add(acc)
+    await db_session.flush()
+    chain = EmailNurtureChain(lead_id=lead_id, account_id=acc.id)
+    db_session.add(chain)
+    await db_session.flush()
+    db_session.add(
+        EmailNurtureStep(
+            chain_id=chain.id,
+            step_index=1,
+            scheduled_at=datetime.now(timezone.utc),
+        )
+    )
+    await db_session.commit()
+
+    del_r = await client.delete(f"/api/leads/{lead_id}")
+    assert del_r.status_code == 204
+
+    get_r = await client.get(f"/api/leads/{lead_id}")
+    assert get_r.status_code == 404
+
+
+@pytest.mark.asyncio
 async def test_multiple_leads_order(client):
     """Список возвращается по убыванию даты создания (новые сверху)."""
     await client.post("/api/leads", json={"company": "Первый"})

@@ -5,7 +5,7 @@
  * (пока не пришёл ответ от API).
  */
 import { browser } from '$app/environment';
-import { apiPatch } from './api.js';
+import { apiPatch, apiDelete } from './api.js';
 import { defaultApprovals, mergeApprovals } from './leadApprovals.js';
 import { formatLeadPatchError } from './leads/stageTransition.js';
 
@@ -150,10 +150,13 @@ export async function apiUpdateLead(id, patch) {
 
 /** Удалить лид в БД */
 export async function apiDeleteLead(id) {
-	const url = `${API()}/${id}`;
-	console.log('[API] DELETE', url);
-	const r = await fetch(url, { method: 'DELETE' });
-	if (!r.ok) throw new Error(`DELETE ${url} → ${r.status}`);
+	const path = `/api/leads/${id}`;
+	console.log('[API] DELETE', path);
+	const r = await apiDelete(path);
+	if (!r.ok) {
+		const text = await r.text().catch(() => '');
+		throw new Error(`DELETE ${path} → ${r.status}: ${text}`);
+	}
 }
 
 /** Сводка: total в Битриксе по фильтру + сколько лидов у нас с bitrix_lead_id */

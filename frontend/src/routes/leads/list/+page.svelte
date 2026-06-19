@@ -39,6 +39,7 @@
 	import { createLeadComment } from '$lib/leads/leadComments.js';
 	import { createLeadCommunication } from '$lib/leads/leadCommunications.js';
 	import { openLeadCreateModal } from '$lib/leads/leadCreateUi.js';
+	import { confirmAndDeleteLead } from '$lib/leads/leadDelete.js';
 
 	const API = getApiUrl();
 
@@ -594,10 +595,10 @@
 
 	async function deleteLead(lead) {
 		try {
-			await apiDeleteLead(lead.id);
+			const ok = await confirmAndDeleteLead(lead);
+			if (!ok) return;
 			leads = leads.filter((l) => l.id !== lead.id);
-			writeLeadsCache(leads);
-			notify(`Лид удалён: ${lead.company}`, 'info');
+			notify(`✓ Лид удалён: ${lead.company}`, 'success');
 		} catch (e) {
 			notify(`Ошибка удаления: ${e.message}`, 'error');
 		}
@@ -830,9 +831,11 @@
 						{/if}
 					</td>
 					<td class="px-4 py-3 text-right">
-						<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+						<div class="flex items-center justify-end gap-1">
 							<a href="/leads/{lead.id}" class="px-2 py-1 text-xs text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded transition-colors">Открыть</a>
 							<button
+								type="button"
+								data-testid="leads-list-delete-lead"
 								onclick={() => deleteLead(lead)}
 								class="px-2 py-1 text-xs text-red-400 hover:text-white hover:bg-red-900 rounded transition-colors"
 							>Удалить</button>

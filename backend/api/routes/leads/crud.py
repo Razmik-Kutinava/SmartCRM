@@ -3,7 +3,7 @@ import logging
 from decimal import Decimal
 
 from fastapi import Depends, HTTPException, Request
-from sqlalchemy import select
+from sqlalchemy import delete as sql_delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import crm_settings_store
@@ -12,12 +12,30 @@ from core.lead_field_audit_util import TRACKED_ORM_FIELDS, append_lead_field_aud
 from core.lead_score_list_flags import attach_lead_score_flags, load_tasks_by_lead
 from core.stage_transition import merge_lead_patch_for_validation, validate_stage_transition
 from db.models import EmailMessage, Lead
+from db.models.email import EmailThread
+from db.models.email_nurture import EmailNurtureChain, EmailNurtureStep
+from db.models.tender_saved import TenderSaved
 from db.session import get_db
 
 from .presenter import actor_from_request, dump_lead_create, lead_api_payload
 from .schemas import LeadCreate, LeadPatch, LookalikeImportBody
 
 logger = logging.getLogger(__name__)
+
+
+async def _purge_lead_dependencies(db: AsyncSession, lead_id: int) -> None:
+    """Снять FK-ссылки, иначе DELETE leads падает (nurture, email, тендеры)."""
+    chain_ids = (
+        await db.execute(select(EmailNurtureChain.id).where(EmailNurtureChain.lead_id == lead_id))
+    ).scalars().all()
+    if chain_ids:
+        await db.execute(sql_delete(EmailNurtureStep).where(EmailNurtureStep.chain_id.in_(chain_ids)))
+        await db.execute(sql_delete(EmailNurtureChain).where(EmailNurtureChain.lead_id == lead_id))
+    await db.execute(update(EmailMessage).where(EmailMessage.lead_id == lead_id).values(lead_id=None))
+    await db.execute(update(EmailThread).where(EmailThread.lead_id == lead_id).values(lead_id=None))
+    await db.execute(
+        update(TenderSaved).where(TenderSaved.linked_lead_id == lead_id).values(linked_lead_id=None)
+    )
 
 
 async def list_leads(db: AsyncSession = Depends(get_db)):
@@ -130,6 +148,7 @@ async def delete_lead(lead_id: int, db: AsyncSession = Depends(get_db)):
     lead = await db.get(Lead, lead_id)
     if not lead:
         raise HTTPException(404, detail="Лид не найден")
+    await _purge_lead_dependencies(db, lead_id)
     await db.delete(lead)
     await db.commit()
     logger.info("Лид удалён: %s (id=%s)", lead.company, lead.id)

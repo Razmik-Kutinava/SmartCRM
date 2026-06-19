@@ -12,5 +12,6 @@
 | Тех. спец — тендеры (автоматизация, матрица ТЗ, eval) | [`tenders/F4_TECH_TENDER_TUNING.md`](tenders/F4_TECH_TENDER_TUNING.md) |
 | Аналитика v2 (прогноз, калибровка, агенты) | [`analytics/F4_ANALYTICS_V2_TUNING.md`](analytics/F4_ANALYTICS_V2_TUNING.md) |
 | **Платформа** (интеграции без `.env`, синк, Telegram, баллы P3) | [`platform/F4_PLATFORM_TUNING.md`](platform/F4_PLATFORM_TUNING.md) |
+| **Лиды** (обход Ф4: CRUD, карточка) | [`leads/F4_LEADS_ACCEPTANCE.md`](leads/F4_LEADS_ACCEPTANCE.md) |
 
 Новые acceptance Ф4 → `phase4/{домен}/`.
