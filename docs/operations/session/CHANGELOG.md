@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Ф4 docs: план тюнинга баллов
+
+`F4_SCORING_TUNING.md` — 6 критичных пробелов после P3; секция в PRD_MAP; F4_PLATFORM §D актуализирован.
+
 ## 2026-06-19 — P3: smoke экспорт баллов (DevTools + live HTTP)
 
 `smoke_scoring_export.py`; Chrome DevTools: кнопка «Баллы» → xlsx 200; acceptance обновлён.

@@ -604,7 +604,7 @@
 | Модуль | Фаза | Сдано | Вернуться / следующий шаг |
 |--------|------|-------|---------------------------|
 | Лиды | 1 | ✅ 2026-06-08 | — |
-| Баллы | 1 (+P3) | ✅ | P3: SLA-протоколы |
+| Баллы | 1 (+P3) | ✅ P3 | Ф4: [`F4_SCORING_TUNING.md`](../operations/phase4/leads/F4_SCORING_TUNING.md) |
 | Голос лиды | 1 | ✅ (хвосты 🟡) 2026-06-11 | `VOICE_MIC_E2E_ACCEPTANCE.md`; п.3/5 spot-check → `BACKLOG` |
 | Поиск/RAG | 1→2 | ✅ база | Ф2 §4: кэш enrich, авто-чанки |
 | Лиды enrich | 2 | ✅ | Ф2 §9: кнопка + голос enrich — `LEADS_CARD_ENRICH_ACCEPTANCE.md`, `LEADS_ENRICH_VOICE_ACCEPTANCE.md` |
