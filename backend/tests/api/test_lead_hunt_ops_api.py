@@ -199,6 +199,23 @@ async def test_lead_hunt_icp_refresh(client, isolated_lead_hunt_state, monkeypat
 
 
 @pytest.mark.asyncio
+async def test_lead_hunt_notifications_unread(client, isolated_lead_hunt_state, monkeypatch, tmp_path):
+    import services.lead_hunt_notifications as lhn
+
+    monkeypatch.setattr(lhn, "NOTIFICATIONS_PATH", tmp_path / "lead_hunt_notifications.json")
+    lhn.add_notification(
+        kind="lead_hunt_new",
+        title="Тест",
+        detail="d",
+        dedupe_key="t:1",
+    )
+    r = await client.get("/api/ops/lead-hunt/notifications", params={"unread_only": True})
+    assert r.status_code == 200
+    body = r.json()
+    assert body.get("unread", 0) >= 1
+
+
+@pytest.mark.asyncio
 async def test_lead_hunt_run_skipped_when_disabled(client, isolated_lead_hunt_state):
     await client.put(
         "/api/ops/lead-hunt/config",

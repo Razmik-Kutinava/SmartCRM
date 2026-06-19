@@ -13,7 +13,7 @@ from services.lead_hunt_background import lead_hunt_status_payload, run_schedule
 from services.lead_hunt_candidates import approve_candidate, reject_candidate
 from services.lead_hunt_config import LeadHuntConfig, load_config, save_config
 from services.lead_hunt_icp import build_and_persist_icp, load_latest_icp
-from services.lead_hunt_notifications import list_notifications, mark_all_read, mark_read
+from services.lead_hunt_notifications import list_notifications, mark_all_read, mark_read, unread_count
 from services.lead_hunt_queue import list_queue
 
 logger = logging.getLogger(__name__)
@@ -179,7 +179,7 @@ async def lead_hunt_notifications(
     limit: int = Query(default=50, ge=1, le=200),
 ) -> dict[str, Any]:
     items = list_notifications(unread_only=unread_only, limit=limit)
-    return {"items": items, "count": len(items)}
+    return {"items": items, "count": len(items), "unread": unread_count()}
 
 
 @router.patch("/lead-hunt/notifications/read")

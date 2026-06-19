@@ -213,6 +213,11 @@ async def process_search_results(
                 entry["status"] = "approved"
                 entry["lead_id"] = lead_id
                 entry["approved_at"] = now
+                from services.lead_hunt_run_log import persist_fanout_agent_logs
+
+                entry["agent_run_ids"] = await persist_fanout_agent_logs(
+                    db, lead_id, entry.get("agent_fanout"), candidate_id=entry["id"]
+                )
                 approved += 1
                 items.insert(0, entry)
                 pending_fps.add(fp)
@@ -256,6 +261,11 @@ async def approve_candidate(
             account_id=nurture_account_id,
             product=nurture_product,
         )
+        from services.lead_hunt_run_log import persist_fanout_agent_logs
+
+        agent_run_ids = await persist_fanout_agent_logs(
+            db, lead_id, cand.get("agent_fanout"), candidate_id=candidate_id
+        )
         cand["status"] = "approved"
         cand["lead_id"] = lead_id
         cand["approved_at"] = datetime.now(timezone.utc).isoformat()
@@ -266,6 +276,8 @@ async def approve_candidate(
         save_state(state)
         await db.commit()
         out: dict[str, Any] = {"ok": True, "lead_id": lead_id, "candidate_id": candidate_id}
+        if agent_run_ids:
+            out["agent_run_ids"] = agent_run_ids
         if nurture:
             out["nurture"] = nurture
         return out

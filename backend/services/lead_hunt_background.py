@@ -111,6 +111,9 @@ async def run_scheduled_lead_hunt(
         "agent_fanout_enabled": cfg.agent_fanout_enabled,
     }
     append_run(report)
+    from services.lead_hunt_run_log import record_hunt_trace
+
+    report["trace_id"] = record_hunt_trace(report)
     if trigger == "auto":
         mark_auto_run(report)
     return report

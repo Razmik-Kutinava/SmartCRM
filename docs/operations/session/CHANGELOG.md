@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Платформа: lead hunt шаг 5 (фон + уведомления)
+
+Фоновый loop в `main.py`, trace `lead_hunt_run` + `agent_run_log` при approve, баннер и badge в Ops UI; Telegram → BACKLOG; pytest **33 PASS**.
+
 ## 2026-06-19 — Платформа: lead hunt шаг 4 (очередь + апрув)
 
 `GET /api/ops/lead-hunt/queue`, approve → `save_candidate_to_crm` + опциональный nurture; UI блок «Найдено агентами» на `/ops/queue` и `/leadgen`; pytest **27 PASS** (lead hunt suite).

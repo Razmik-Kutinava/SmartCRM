@@ -248,6 +248,8 @@
 
 `[2026-06-17] | PRD_MAP: «Quality gate tuning» | Отложено: фикс кейса economist-005 (ключевое «финансов») | Причина: 93.3% ≥85%, gate pass | Нужна фаза MAP: 3 | Из шага: live agents C`
 
+`[2026-06-19] | PRD_MAP: «Автономный поиск новых лидов агентами» | Отложено: Telegram-уведомления о новых кандидатах lead hunt | Причина: шаг 5 — in-app баннер + badge в Ops достаточно | Нужна фаза MAP: 3 | Из шага: lead hunt шаг 5`
+
 `[2026-06-17] | PRD_MAP: «Telegram-бот» | Отложено: регистрация бота в BotFather + `TELEGRAM_BOT_TOKEN` / chat_id | Причина: username занят / блок создания; пользователь откладывает | Нужна фаза MAP: 3 Платформа | Из шага: экспорт Excel/PDF`
 
 `[2026-06-17] | PRD_MAP: «Импорт/экспорт CRM» | Отложено: AmoCRM import (шаг 3), HubSpot import (шаг 4), push export Amo/HubSpot (шаг 5) | Причина: шаг 1 CSV + шаг 2 Битрикс push — по порядку MAP | Нужна фаза MAP: 3 | Из шага: CSV sync`

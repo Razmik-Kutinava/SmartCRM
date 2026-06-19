@@ -60,16 +60,20 @@ ENV: `LEAD_HUNT_ENABLED`, `LEAD_HUNT_INTERVAL_HOURS`.
 - [x] Approve → CRM (`source=lead_hunt`), nurture опционально
 - [x] pytest queue + API + UI panel
 
-## Шаг 5 — уведомления
+## Шаг 5 — фон + уведомления
 
 | Компонент | Изменение |
 |-----------|-----------|
-| `lead_hunt_notifications.py` | in-app уведомления |
-| `notify_ops_queue` | дублирование в Ops-очередь |
-| `GET/PATCH .../notifications` | список / прочитано |
+| `main.py` | `lead_hunt_poll_loop` в lifespan (как tender_monitor) |
+| `lead_hunt_run_log.py` | trace `lead_hunt_run` + `agent_run_log` при approve |
+| `core/traces.py` | `record_lead_hunt_run` |
+| UI ops | баннер + счётчик непрочитанных в nav |
+| Telegram | → BACKLOG (позже) |
 
-- [x] Уведомление при новом кандидате
-- [x] Ops queue item `kind=lead_hunt`
+- [x] Фоновый loop в main.py
+- [x] In-app уведомления + баннер / badge в Ops
+- [x] Trace + agent_run_log для eval
+- [x] pytest
 
 ## Шаг 6 — UI `/ops/lead-hunt`
 

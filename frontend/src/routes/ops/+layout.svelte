@@ -2,6 +2,8 @@
 	import { page } from '$app/stores';
 	import { getApiUrl } from '$lib/websocket.js';
 	import { onMount } from 'svelte';
+	import LeadHuntNotifyBanner from '$lib/leadHunt/LeadHuntNotifyBanner.svelte';
+	import { fetchLeadHuntNotifications } from '$lib/leadHunt/leadHuntOps.js';
 
 	let { children } = $props();
 
@@ -34,6 +36,16 @@
 
 	let queueOpen = $state(0);
 	let queueCritical = $state(0);
+	let leadHuntUnread = $state(0);
+
+	async function pollLeadHunt() {
+		try {
+			const d = await fetchLeadHuntNotifications(true);
+			leadHuntUnread = d.unread ?? (d.items || []).length;
+		} catch {
+			leadHuntUnread = 0;
+		}
+	}
 
 	async function pollQueue() {
 		try {
@@ -50,8 +62,13 @@
 
 	onMount(() => {
 		pollQueue();
+		pollLeadHunt();
 		const t = setInterval(pollQueue, 15000);
-		return () => clearInterval(t);
+		const lh = setInterval(pollLeadHunt, 20000);
+		return () => {
+			clearInterval(t);
+			clearInterval(lh);
+		};
 	});
 </script>
 
@@ -65,6 +82,9 @@
 				<p class="text-sm text-gray-400">
 					Процессы, трейсы и очередь решений. Критичные задачи: <span class="text-red-400 font-medium">{queueCritical}</span>,
 					всего открытых: <span class="text-white font-medium">{queueOpen}</span>
+					{#if leadHuntUnread > 0}
+						· Lead Hunt: <span class="text-amber-300 font-medium">{leadHuntUnread}</span> новых
+					{/if}
 				</p>
 			</div>
 		</div>
@@ -83,12 +103,18 @@
 					{#if item.href === '/ops/queue' && queueCritical > 0}
 						<span class="ml-1 text-xs bg-red-600 text-white px-1.5 py-0.5 rounded">{queueCritical}</span>
 					{/if}
+					{#if item.href === '/ops/lead-hunt' && leadHuntUnread > 0}
+						<span class="ml-1 text-xs bg-amber-600 text-white px-1.5 py-0.5 rounded">{leadHuntUnread}</span>
+					{/if}
 				</a>
 			{/each}
 		</nav>
 	</header>
 
 	<div class="flex-1 overflow-y-auto min-h-0">
+		<div class="px-6 pt-4">
+			<LeadHuntNotifyBanner />
+		</div>
 		{@render children()}
 	</div>
 </div>

@@ -30,6 +30,7 @@
 | `lead_hunt_candidates.py` | Поиск кандидатов, очередь approve → CRM |
 | `lead_hunt_queue.py` | Нормализованный вид очереди (company, score, summary) |
 | `lead_hunt_notifications.py` | In-app уведомления lead hunt |
+| `lead_hunt_run_log.py` | Trace прогона + agent_run_log fanout при approve |
 
 Кэш ответов: `data/moy_zakupki_cache/`.  
 Тесты: `tests/test_tender_sources.py`.

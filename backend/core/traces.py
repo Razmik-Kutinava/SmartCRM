@@ -96,6 +96,37 @@ def error_trace(trace: dict, error: str):
     logger.warning(f"Trace {trace['id']} error: {error}")
 
 
+def record_lead_hunt_run(report: dict) -> str:
+    """Трейс прогона lead hunt для eval / ops traces."""
+    trace = {
+        "id": str(uuid.uuid4())[:8],
+        "ts": time.time(),
+        "source": "lead_hunt",
+        "text": f"Lead hunt ({report.get('trigger', 'auto')})",
+        "intent": "lead_hunt_run",
+        "slots": {
+            "trigger": report.get("trigger"),
+            "icp_version": report.get("icp_version"),
+            "candidates_queued": report.get("candidates_queued"),
+            "candidates_approved": report.get("candidates_approved"),
+            "candidates_found": report.get("candidates_found"),
+            "phase": report.get("phase"),
+            "search_sources": report.get("search_sources") or [],
+        },
+        "agents": ["lead_hunt"],
+        "reply": (report.get("icp_portrait") or report.get("search_portrait") or "")[:400],
+        "duration_ms": None,
+        "model": "lead_hunt",
+        "feedback": None,
+        "error": None,
+    }
+    if report.get("search_errors"):
+        trace["error"] = "; ".join(str(x) for x in report["search_errors"][:3])[:300]
+    _traces.append(trace)
+    _save_to_disk()
+    return trace["id"]
+
+
 def set_feedback(trace_id: str, feedback: str) -> bool:
     """Устанавливает фидбек и сохраняет на диск."""
     for t in _traces:
