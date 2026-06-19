@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: docs Ф4 платформа — F4_PLATFORM_TUNING.md, секция в PRD_MAP + phase4 README. | Коммит: `PENDING` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф4-A экран интеграций. | Статус: done
+
 2026-06-17 | Действие: Ф3 платформа шаги 2–5 — Amo+HubSpot sync, Telegram inline+Ops critical, [x] CRM MAP. | Коммит: `c2949ce` | Хвост A: живой smoke Amo/HubSpot/Б24 не делали | Хвост B: нет | Хвост C: нет | Следующий шаг: баллы P3 SLA или Ф4. | Статус: done
 
 2026-06-17 | Действие: Ф3 платформа шаг 0–1 — [x] MAP lead hunt+Telegram, Битрикс push (adapter, API, UI, pytest). | Коммит: `c7d986c` | Хвост A: живой smoke Б24 не делали | Хвост B: Amo/HubSpot следующий шаг | Хвост C: нет | Следующий шаг: AmoCRM import/export. | Статус: done

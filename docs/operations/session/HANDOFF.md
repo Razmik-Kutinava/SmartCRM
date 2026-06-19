@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4] | Задача:[Платформа — план тюнинга в docs] | Статус: ✅ done`
+
+**2026-06-17:** `F4_PLATFORM_TUNING.md`, секция «Платформа» в PRD_MAP Ф4; что не сделали в Ф3 + чеклист A–E. Коммит: _pending_. Следующий: **go** Ф4-A экран интеграций.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — CRM sync Amo/HubSpot + Telegram хвост] | Статус: ✅ done`
 
 **2026-06-17:** AmoCRM + HubSpot import/push, Telegram inline approve/reject, Ops critical notify; PRD_MAP CRM `[x]`; pytest **22+ PASS**. Коммит: `c2949ce`. Следующий: баллы P3 (SLA) или Ф4.

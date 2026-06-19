@@ -10,5 +10,6 @@
 | Контур.Закупки API (gate) | [`tenders/F4_KONTUR_GATE.md`](tenders/F4_KONTUR_GATE.md) |
 | Тех. спец — тендеры (автоматизация, матрица ТЗ, eval) | [`tenders/F4_TECH_TENDER_TUNING.md`](tenders/F4_TECH_TENDER_TUNING.md) |
 | Аналитика v2 (прогноз, калибровка, агенты) | [`analytics/F4_ANALYTICS_V2_TUNING.md`](analytics/F4_ANALYTICS_V2_TUNING.md) |
+| **Платформа** (интеграции без `.env`, синк, Telegram, баллы P3) | [`platform/F4_PLATFORM_TUNING.md`](platform/F4_PLATFORM_TUNING.md) |
 
 Новые acceptance Ф4 → `phase4/{домен}/`.
