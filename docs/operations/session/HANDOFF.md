@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 5 фон+уведомления] | Статус: ✅ done`
 
-**2026-06-19:** trace + agent_run_log, баннер/badge Ops, loop в main.py; pytest **33 PASS**. Коммит: `a6e670f`. Следующий: **«ок» MAP автопоиск**.
+**2026-06-19:** trace + agent_run_log, баннер/badge Ops, loop в main.py; pytest **33 PASS**. Коммит: `a6e670f` (ops `d706ca5`). Следующий: **«ок» MAP автопоиск**.
 
 ---
 
