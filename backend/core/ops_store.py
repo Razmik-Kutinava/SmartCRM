@@ -244,12 +244,29 @@ def recompute_queue_and_suggestions(update_queue: bool = True) -> dict[str, Any]
 
     if update_queue:
         existing = load_queue()
+        old_open_auto = {
+            str(x.get("id", ""))
+            for x in existing
+            if str(x.get("id", "")).startswith("auto-") and x.get("status") == "open"
+        }
         manual_open = [
             x for x in existing
             if not str(x.get("id", "")).startswith("auto-") and x.get("status") == "open"
         ]
         resolved = [x for x in existing if x.get("status") in ("done", "dismissed")]
         save_queue(manual_open + new_items + resolved)
+        for item in new_items:
+            iid = str(item.get("id", ""))
+            if item.get("severity") == "critical" and iid not in old_open_auto:
+                try:
+                    from integrations.telegram.notify import notify_ops_critical_sync
+
+                    notify_ops_critical_sync(
+                        str(item.get("title") or "Ops"),
+                        str(item.get("detail") or ""),
+                    )
+                except Exception:
+                    logger.exception("telegram ops critical notify")
 
     proposals = _build_proposals(stats, good, bad, bad_ratio, err_pct, errors)
 

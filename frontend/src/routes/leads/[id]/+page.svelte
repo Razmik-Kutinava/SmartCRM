@@ -108,6 +108,9 @@
 	let exportPdfLoading = $state(false);
 	let bitrixPushLoading = $state(false);
 	let bitrixPushMsg = $state('');
+	let amoPushLoading = $state(false);
+	let hubspotPushLoading = $state(false);
+	let crmPushMsg = $state('');
 
 	async function loadIndustryOptions() {
 		try {
@@ -192,6 +195,40 @@
 			bitrixPushMsg = e?.message || String(e);
 		} finally {
 			bitrixPushLoading = false;
+		}
+	}
+
+	async function pushLeadAmo() {
+		if (!lead || amoPushLoading) return;
+		amoPushLoading = true;
+		crmPushMsg = '';
+		try {
+			const r = await apiFetch(`/api/leads/${lead.id}/push-amo`, { method: 'POST' });
+			const body = await r.json().catch(() => ({}));
+			if (!r.ok) throw new Error(body?.detail || `HTTP ${r.status}`);
+			crmPushMsg = `Amo #${body.amo_lead_id}`;
+			await sync();
+		} catch (e) {
+			crmPushMsg = e?.message || String(e);
+		} finally {
+			amoPushLoading = false;
+		}
+	}
+
+	async function pushLeadHubspot() {
+		if (!lead || hubspotPushLoading) return;
+		hubspotPushLoading = true;
+		crmPushMsg = '';
+		try {
+			const r = await apiFetch(`/api/leads/${lead.id}/push-hubspot`, { method: 'POST' });
+			const body = await r.json().catch(() => ({}));
+			if (!r.ok) throw new Error(body?.detail || `HTTP ${r.status}`);
+			crmPushMsg = `HubSpot ${body.hubspot_deal_id}`;
+			await sync();
+		} catch (e) {
+			crmPushMsg = e?.message || String(e);
+		} finally {
+			hubspotPushLoading = false;
 		}
 	}
 
@@ -681,6 +718,20 @@
 				disabled={bitrixPushLoading}
 				onclick={pushLeadBitrix}
 			>{bitrixPushLoading ? 'Битрикс…' : '📤 В Битрикс'}</button>
+			<button
+				type="button"
+				data-testid="lead-push-amo"
+				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+				disabled={amoPushLoading}
+				onclick={pushLeadAmo}
+			>{amoPushLoading ? 'Amo…' : '📤 Amo'}</button>
+			<button
+				type="button"
+				data-testid="lead-push-hubspot"
+				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+				disabled={hubspotPushLoading}
+				onclick={pushLeadHubspot}
+			>{hubspotPushLoading ? 'HS…' : '📤 HubSpot'}</button>
 			<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">📊 Анализ</button>
 			<button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">🎙 Голос</button>
 		</div>

@@ -36,11 +36,30 @@ async def notify_lead_hunt_candidate(entry: dict[str, Any]) -> bool:
     title = company.get("name") or company.get("name_short") or "Компания"
     score = entry.get("score", 0)
     inn = (company.get("inn") or "").strip()
+    cid = (entry.get("id") or "").strip()
     text = f"🎯 Новый кандидат Lead Hunt\n{title}\nСкор: {score}%"
     if inn:
         text += f"\nИНН: {inn}"
     text += "\n\n/ops/lead-hunt"
-    return await notify_text(text)
+    markup = None
+    if cid:
+        markup = {
+            "inline_keyboard": [
+                [
+                    {"text": "✅ Одобрить", "callback_data": f"lh_approve:{cid}"},
+                    {"text": "❌ Отклонить", "callback_data": f"lh_reject:{cid}"},
+                ]
+            ]
+        }
+    return await notify_text_with_markup(text, markup)
+
+
+async def notify_text_with_markup(text: str, reply_markup: dict[str, Any] | None) -> bool:
+    if not notify_enabled():
+        return False
+    from integrations.telegram.client import send_message
+
+    return await send_message(text, reply_markup=reply_markup)
 
 
 def notify_lead_hunt_candidate_sync(entry: dict[str, Any]) -> None:

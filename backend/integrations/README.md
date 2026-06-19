@@ -7,8 +7,13 @@
 | `telegram/` | Бот: уведомления lead hunt, команды /status /queue, polling |
 | `crm_sync/csv_adapter.py` | CSV импорт/экспорт лидов, dedup по email/ИНН/bitrix_lead_id |
 | `crm_sync/bitrix_adapter.py` | Push лида SmartCRM → Битрикс24 (`crm.lead.add/update`) |
+| `crm_sync/amo_adapter.py` | Импорт/экспорт лидов AmoCRM |
+| `crm_sync/hubspot_adapter.py` | Импорт/экспорт сделок HubSpot |
+| `amo_crm.py` | HTTP-клиент AmoCRM API v4 |
+| `hubspot_crm.py` | HTTP-клиент HubSpot Deals API |
 | `crm_sync/base.py` | Протоколы pull/push для адаптеров CRM |
 
 Переменные: `BITRIX24_WEBHOOK_URL`, `BITRIX_AUTO_SYNC_MINUTES`, `BITRIX_OUTBOUND_TOKEN`.  
 Telegram: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_NOTIFY_ENABLED`, `TELEGRAM_POLL_ENABLED`.  
-Роуты: `api/routes/leads/bitrix_routes.py`, `api/routes/webhooks_bitrix.py`.
+AmoCRM: `AMO_SUBDOMAIN`, `AMO_ACCESS_TOKEN`. HubSpot: `HUBSPOT_ACCESS_TOKEN`.  
+Роуты: `api/routes/leads/bitrix_routes.py`, `amo_routes.py`, `hubspot_routes.py`, `api/routes/webhooks_bitrix.py`.

@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — CRM sync Amo/HubSpot + Telegram хвост] | Статус: ✅ done`
+
+**2026-06-17:** AmoCRM + HubSpot import/push, Telegram inline approve/reject, Ops critical notify; PRD_MAP CRM `[x]`; pytest **22+ PASS**. Коммит: _pending_. Следующий: баллы P3 (SLA) или Ф4.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — MAP [x] + Битрикс push] | Статус: ✅ done`
 
 **2026-06-17:** PRD_MAP `[x]` lead hunt + Telegram; `push-bitrix`, `lead_to_bitrix_fields`, кнопка на карточке; pytest **5 PASS**. Коммит: _pending_. Следующий: **AmoCRM** import/export.

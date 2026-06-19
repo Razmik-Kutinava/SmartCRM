@@ -51,15 +51,46 @@ async def test_notify_lead_hunt_candidate(monkeypatch):
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "123:ABC")
     monkeypatch.setenv("TELEGRAM_CHAT_ID", "219951825")
     with patch(
-        "integrations.telegram.notify.send_message",
+        "integrations.telegram.client.send_message",
         new_callable=AsyncMock,
         return_value=True,
     ) as send:
         ok = await notify_lead_hunt_candidate(
-            {"company": {"name": "Test Co", "inn": "7701"}, "score": 80}
+            {"id": "lh-abc", "company": {"name": "Test Co", "inn": "7701"}, "score": 80}
         )
         assert ok is True
         assert "Test Co" in send.call_args[0][0]
+        assert send.call_args.kwargs.get("reply_markup") is not None
+
+
+@pytest.mark.asyncio
+async def test_handle_callback_approve(monkeypatch):
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "219951825")
+    with patch(
+        "services.lead_hunt_candidates.approve_candidate",
+        new_callable=AsyncMock,
+        return_value={"lead_id": 5},
+    ), patch(
+        "db.session.get_db_session",
+    ) as db_ctx, patch(
+        "integrations.telegram.handlers.answer_callback_query",
+        new_callable=AsyncMock,
+    ), patch(
+        "integrations.telegram.handlers.send_message",
+        new_callable=AsyncMock,
+    ) as send:
+        db_ctx.return_value.__aenter__ = AsyncMock(return_value=AsyncMock())
+        db_ctx.return_value.__aexit__ = AsyncMock(return_value=None)
+        await handle_update(
+            {
+                "callback_query": {
+                    "id": "cq1",
+                    "data": "lh_approve:lh-1",
+                    "message": {"chat": {"id": 219951825}},
+                }
+            }
+        )
+        send.assert_called()
 
 
 @pytest.mark.asyncio

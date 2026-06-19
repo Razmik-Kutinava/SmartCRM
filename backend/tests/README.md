@@ -112,7 +112,11 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `integrations/test_bitrix_webhook.py` | Исходящий вебхук ONCRMLEADADD |
 | `integrations/test_telegram.py` | Telegram: config, send_message mock, /start, notify lead hunt |
 | `integrations/test_bitrix_push.py` | Lead → Bitrix fields, push add/update mock |
+| `integrations/test_amo_adapter.py` | AmoCRM import/push adapter |
+| `integrations/test_hubspot_adapter.py` | HubSpot deals adapter |
 | `api/test_leads_bitrix_push_api.py` | POST push-bitrix API |
+| `api/test_leads_crm_sync_api.py` | Amo/HubSpot import/push API |
+| `core/test_ops_telegram_critical.py` | Ops critical → Telegram notify |
 | `leadgen/test_checko_http_client.py` | Checko HTTP без live API |
 | `leadgen/test_crm_threshold.py` | Порог автосохранения в CRM |
 | `email_sync/test_sync_helpers.py` | classify/normalize/to_text |

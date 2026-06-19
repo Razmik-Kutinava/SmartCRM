@@ -38,11 +38,9 @@ ENV: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_NOTIFY_ENABLED`, `TELEG
 - [x] Только `TELEGRAM_CHAT_ID` (+ `TELEGRAM_ALLOWED_CHAT_IDS`)
 - [x] pytest `/start`
 
-## Вне MVP (BACKLOG)
-
-- Inline-кнопки approve/reject из Telegram
-- Ops critical → Telegram (функция есть, wiring отложен)
-- Голос, дайджест, тендеры
+- [x] Inline-кнопки approve/reject из Telegram
+- [x] Ops critical → Telegram (hook в `ops_store.recompute_queue_and_suggestions`)
+- Голос, дайджест, тендеры — вне scope
 
 ## Ручная проверка
 

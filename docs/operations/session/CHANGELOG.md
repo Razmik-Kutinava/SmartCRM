@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Платформа: AmoCRM + HubSpot sync; Telegram inline + Ops critical
+
+Import/push API, `amo_lead_id` / `hubspot_deal_id`, UI кнопки; callback approve/reject; Ops critical → Telegram; PRD_MAP CRM `[x]`.
+
 ## 2026-06-17 — Платформа: MAP [x] lead hunt + Telegram; Битрикс push
 
 `[x]` в PRD_MAP для автопоиска и Telegram-бота; `POST /api/leads/{id}/push-bitrix`, `crm.lead.add/update`, UI «В Битрикс»; pytest **5 PASS**.

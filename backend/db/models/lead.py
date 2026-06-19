@@ -44,6 +44,8 @@ class Lead(Base):
 
     # ── Bitrix24 (дедуп при повторном импорте) ───────────────────────────────
     bitrix_lead_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
+    amo_lead_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
+    hubspot_deal_id: Mapped[Optional[str]] = mapped_column(String(64), nullable=True, index=True)
 
     # ── Идентификаторы (из Checko/DaData) ─────────────────────────────────────
     inn: Mapped[Optional[str]] = mapped_column(String(20), nullable=True, default=None)
@@ -121,6 +123,8 @@ class Lead(Base):
             "updatedAt": self.updated_at.isoformat() if self.updated_at else None,
             # Новые поля
             "bitrixLeadId": self.bitrix_lead_id,
+            "amoLeadId": self.amo_lead_id,
+            "hubspotDealId": self.hubspot_deal_id or "",
             "inn": self.inn or "",
             "ogrn": self.ogrn or "",
             "checko": checko,

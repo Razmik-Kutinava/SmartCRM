@@ -6,6 +6,8 @@
 		apiUpdateLead,
 		apiDeleteLead,
 		apiImportBitrix,
+		apiImportAmo,
+		apiImportHubspot,
 		apiImportLeadsCsv,
 		downloadLeadsCsvExport,
 		fetchBitrixImportStats,
@@ -49,6 +51,8 @@
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
 	let apiError = $state(false); // флаг недоступности API
 	let bitrixImporting = $state(false);
+	let amoImporting = $state(false);
+	let hubspotImporting = $state(false);
 	let csvImporting = $state(false);
 	let csvExporting = $state(false);
 	let csvInput = $state(null);
@@ -154,6 +158,36 @@
 			notify(`Импорт Битрикс24: ${e.message}`, 'error');
 		} finally {
 			bitrixImporting = false;
+		}
+	}
+
+	async function runAmoImport() {
+		if (amoImporting) return;
+		amoImporting = true;
+		try {
+			const res = await apiImportAmo();
+			leads = await fetchLeads();
+			writeLeadsCache(leads);
+			notify(`AmoCRM: +${res.imported} новых, обновлено ${res.updated}`, 'info');
+		} catch (e) {
+			notify(`AmoCRM: ${e.message}`, 'error');
+		} finally {
+			amoImporting = false;
+		}
+	}
+
+	async function runHubspotImport() {
+		if (hubspotImporting) return;
+		hubspotImporting = true;
+		try {
+			const res = await apiImportHubspot();
+			leads = await fetchLeads();
+			writeLeadsCache(leads);
+			notify(`HubSpot: +${res.imported} новых, обновлено ${res.updated}`, 'info');
+		} catch (e) {
+			notify(`HubSpot: ${e.message}`, 'error');
+		} finally {
+			hubspotImporting = false;
 		}
 	}
 
@@ -578,6 +612,20 @@
 			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
 			title="Нужен BITRIX24_WEBHOOK_URL на сервере"
 		>{bitrixImporting ? '⏳ Битрикс24…' : '📤 Битрикс24'}</button>
+		<button
+			type="button"
+			disabled={amoImporting}
+			onclick={runAmoImport}
+			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
+			title="AMO_SUBDOMAIN + AMO_ACCESS_TOKEN"
+		>{amoImporting ? '⏳ Amo…' : '📤 AmoCRM'}</button>
+		<button
+			type="button"
+			disabled={hubspotImporting}
+			onclick={runHubspotImport}
+			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
+			title="HUBSPOT_ACCESS_TOKEN"
+		>{hubspotImporting ? '⏳ HS…' : '📤 HubSpot'}</button>
 		<input
 			bind:this={csvInput}
 			type="file"

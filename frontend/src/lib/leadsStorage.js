@@ -213,6 +213,22 @@ export async function apiImportBitrix(options = {}) {
 	return body;
 }
 
+/** Импорт лидов из AmoCRM. */
+export async function apiImportAmo() {
+	const r = await fetch(`${API()}/import-amo`, { method: 'POST' });
+	const body = await r.json().catch(() => ({}));
+	if (!r.ok) throw new Error(body?.detail || `HTTP ${r.status}`);
+	return body;
+}
+
+/** Импорт сделок из HubSpot. */
+export async function apiImportHubspot() {
+	const r = await fetch(`${API()}/import-hubspot`, { method: 'POST' });
+	const body = await r.json().catch(() => ({}));
+	if (!r.ok) throw new Error(body?.detail || `HTTP ${r.status}`);
+	return body;
+}
+
 /** Импорт лидов из CSV (mode: upsert | skip). */
 export async function apiImportLeadsCsv(file, mode = 'upsert') {
 	const url = `${API()}/import-csv?mode=${encodeURIComponent(mode)}`;

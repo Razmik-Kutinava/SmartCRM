@@ -97,6 +97,8 @@ async def init_db():
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS checko_json TEXT",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS tech_json TEXT",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS bitrix_lead_id INTEGER",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS amo_lead_id INTEGER",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS hubspot_deal_id VARCHAR(64)",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS financials_json TEXT",
             "ALTER TABLE tasks ADD COLUMN IF NOT EXISTS sla_due VARCHAR(120)",
             "ALTER TABLE tasks ADD COLUMN IF NOT EXISTS escalated BOOLEAN DEFAULT FALSE",

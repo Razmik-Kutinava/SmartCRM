@@ -496,7 +496,7 @@
 
 - [x] Telegram-бот · [`F3_PLATFORM_TELEGRAM_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_TELEGRAM_ACCEPTANCE.md) · апрув 2026-06-17
 - [x] Экспорт Excel/PDF (воронка, карточка, тендеры) · [`F3_PLATFORM_EXPORT_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_EXPORT_ACCEPTANCE.md)
-- [ ] Импорт/экспорт Битрикс24, AmoCRM, HubSpot, CSV · CSV: [`F3_PLATFORM_CSV_SYNC_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_CSV_SYNC_ACCEPTANCE.md) · далее: Битрикс push, Amo, HubSpot
+- [x] Импорт/экспорт Битрикс24, AmoCRM, HubSpot, CSV · CSV: [`F3_PLATFORM_CSV_SYNC_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_CSV_SYNC_ACCEPTANCE.md) · Битрикс push: [`F3_PLATFORM_BITRIX_PUSH_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_BITRIX_PUSH_ACCEPTANCE.md) · Amo: [`F3_PLATFORM_AMO_SYNC_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_AMO_SYNC_ACCEPTANCE.md) · HubSpot: [`F3_PLATFORM_HUBSPOT_SYNC_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_HUBSPOT_SYNC_ACCEPTANCE.md)
 - [x] Автономный поиск новых лидов агентами · шаг 1–7: [`F3_PLATFORM_LEAD_HUNT_ACCEPTANCE.md`](../operations/phase3/platform/F3_PLATFORM_LEAD_HUNT_ACCEPTANCE.md) · апрув 2026-06-17
 
 ### Баллы P3 (остаток)

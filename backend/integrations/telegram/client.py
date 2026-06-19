@@ -32,6 +32,7 @@ async def send_message(
     *,
     chat_id: str | None = None,
     parse_mode: str | None = None,
+    reply_markup: dict[str, Any] | None = None,
 ) -> bool:
     if not is_configured():
         return False
@@ -41,9 +42,21 @@ async def send_message(
     body: dict[str, Any] = {"chat_id": cid, "text": text[:4096]}
     if parse_mode:
         body["parse_mode"] = parse_mode
+    if reply_markup:
+        body["reply_markup"] = reply_markup
     data = await api_call("sendMessage", body)
     if not data.get("ok"):
         logger.warning("telegram sendMessage: %s", data.get("description"))
+    return bool(data.get("ok"))
+
+
+async def answer_callback_query(callback_query_id: str, text: str = "") -> bool:
+    if not bot_token() or not callback_query_id:
+        return False
+    body: dict[str, Any] = {"callback_query_id": callback_query_id}
+    if text:
+        body["text"] = text[:200]
+    data = await api_call("answerCallbackQuery", body)
     return bool(data.get("ok"))
 
 
