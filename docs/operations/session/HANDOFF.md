@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 дашборд] | Задача:[модалка «Новый лид» — дашборд + list] | Статус: ✅ done`
 
-**2026-06-19:** `LeadCreateModal` + host в layout; дашборд «Быстрые действия» и `/leads/list` → модалка, POST в БД; `F4_DASHBOARD_ACCEPTANCE.md`, MAP §Дашборд; pytest **19 PASS** (5 UI + 14 API). Следующий: **«ок»** → `[x]` MAP дашборд п.1 · обход дашборда дальше.
+**2026-06-19:** `LeadCreateModal` + host в layout; дашборд «Быстрые действия» и `/leads/list` → модалка, POST в БД; `F4_DASHBOARD_ACCEPTANCE.md`, MAP §Дашборд; pytest **19 PASS** (5 UI + 14 API). Коммит: `f5e4274`. Следующий: **«ок»** → `[x]` MAP дашборд п.1 · обход дашборда дальше.
 
 ---
 
