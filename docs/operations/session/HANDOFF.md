@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 2 ICP] | Статус: ✅ done`
+
+**2026-06-18:** `lead_hunt_icp.py`, funnelBySource + Стратег, версии ICP, `GET/POST .../icp`; pytest **13 PASS**. Коммит: `PENDING`. Следующий: **шаг 3 поиск кандидатов**.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 1] | Статус: ✅ done`
 
 **2026-06-18:** `lead_hunt_config/background`, API `/api/ops/lead-hunt/*`, poll в `main.py`; ICP-превью из won; pytest **9 PASS**. Коммит: `d24fcba`. Следующий: **шаг 2 ICP + шаг 3 поиск**.

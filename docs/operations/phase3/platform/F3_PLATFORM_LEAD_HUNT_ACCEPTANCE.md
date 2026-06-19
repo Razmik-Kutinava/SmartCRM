@@ -29,11 +29,28 @@ ENV: `LEAD_HUNT_ENABLED`, `LEAD_HUNT_INTERVAL_HOURS` (override файла).
 - [x] Прогон строит ICP-портрет из выигранных сделок (без поиска кандидатов)
 - [x] pytest unit + API
 
+## Шаг 2 — ICP из CRM (этот шаг)
+
+| Компонент | Изменение |
+|-----------|-----------|
+| `lead_hunt_icp.py` | `build_icp_from_won` + `funnelBySource` |
+| `strategist_enrich_icp` | 1 LLM-вызов (fallback эвристика) |
+| `state.icp` | версионированный ICP (`current`, `versions[]`) |
+| `GET /api/ops/lead-hunt/icp` | текущий ICP |
+| `POST /api/ops/lead-hunt/icp/refresh` | пересборка без полного hunt run |
+
+### Критерии шага 2
+
+- [x] Портрет из выигранных + топ источников по конверсии
+- [x] Стратег дополняет город/отрасль/размер
+- [x] Версии ICP в `lead_hunt_state.json`
+- [x] pytest unit + API
+
 ## Дальше (не этот шаг)
 
 | Шаг | Содержание |
 |-----|------------|
-| 2 | ICP + Стратег, версионирование |
+| 2 | ICP + Стратег, версии | ✅ шаг 2 |
 | 3 | `search_by_portrait` / prospect в цикле |
 | 4 | Очередь approve → CRM |
 | 5 | Уведомления |

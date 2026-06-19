@@ -9,6 +9,7 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.lead_hunt_config import load_config, load_state, save_state
+from services.lead_hunt_icp import load_latest_icp
 
 logger = logging.getLogger(__name__)
 
@@ -61,37 +62,39 @@ async def run_scheduled_lead_hunt(
     db: AsyncSession | None = None,
 ) -> dict[str, Any]:
     """
-    Шаг 1: каркас прогона — ICP-превью из won-лидов, без поиска кандидатов.
-    Поиск и очередь — шаги 3–4.
+    Шаг 2: ICP из won + funnelBySource + Стратег; поиск кандидатов — шаг 3.
     """
     cfg = load_config()
     if not cfg.hunt_enabled:
         return {"skipped": True, "reason": "hunt_disabled", "trigger": trigger}
 
-    from agents.scenarios.similar_context import build_portrait_from_won, load_won_leads_db
+    from services.lead_hunt_icp import build_and_persist_icp
 
-    async def _load_won(session: AsyncSession) -> list[dict[str, Any]]:
-        return await load_won_leads_db(session, limit=cfg.won_sample_limit)
+    async def _run(session: AsyncSession) -> dict[str, Any]:
+        icp = await build_and_persist_icp(session, won_limit=cfg.won_sample_limit)
+        return icp
 
     if db is not None:
-        won = await _load_won(db)
+        icp = await _run(db)
     else:
         from db.session import get_db_session
 
         async with get_db_session() as session:
-            won = await _load_won(session)
-    portrait = build_portrait_from_won(won)
+            icp = await _run(session)
 
     report: dict[str, Any] = {
         "ok": True,
-        "phase": "framework",
+        "phase": "icp",
         "trigger": trigger,
-        "won_count": len(won),
-        "icp_portrait": portrait,
+        "won_count": icp.get("won_count", 0),
+        "icp_version": icp.get("version"),
+        "icp_portrait": icp.get("portrait_text") or icp.get("base_portrait"),
+        "search_portrait": icp.get("search_portrait"),
+        "icp": icp,
         "candidates_found": 0,
         "candidates_per_run": cfg.candidates_per_run,
         "min_score_threshold": cfg.min_score_threshold,
-        "note": "Каркас шага 1: поиск кандидатов подключится в шаге 3",
+        "note": "Шаг 2: ICP сохранён; поиск кандидатов — шаг 3",
     }
     append_run(report)
     if trigger == "auto":
@@ -133,6 +136,7 @@ async def lead_hunt_status_payload() -> dict[str, Any]:
     state = load_state()
     sched = state.get("scheduler") or {}
     runs = state.get("runs") or []
+    icp = load_latest_icp()
     return {
         "hunt_enabled": cfg.hunt_enabled,
         "hunt_interval_hours": cfg.hunt_interval_hours,
@@ -144,5 +148,7 @@ async def lead_hunt_status_payload() -> dict[str, Any]:
         "scheduler": sched,
         "last_run": runs[0] if runs else None,
         "history_count": len(runs),
-        "phase": "framework",
+        "phase": "icp",
+        "icp_current": icp,
+        "icp_version": (icp or {}).get("version"),
     }

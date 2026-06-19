@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.session import get_db
 from services.lead_hunt_background import lead_hunt_status_payload, run_scheduled_lead_hunt
 from services.lead_hunt_config import LeadHuntConfig, load_config, save_config
+from services.lead_hunt_icp import build_and_persist_icp, load_latest_icp
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -43,6 +44,30 @@ async def lead_hunt_put_config(body: LeadHuntConfigBody) -> dict[str, Any]:
         raise HTTPException(400, detail=str(e)) from e
     save_config(cfg)
     return load_config().model_dump()
+
+
+@router.get("/lead-hunt/icp")
+async def lead_hunt_icp() -> dict[str, Any]:
+    from services.lead_hunt_config import load_state
+
+    current = load_latest_icp()
+    block = load_state().get("icp") or {}
+    return {
+        "current": current,
+        "current_version": block.get("current_version"),
+        "versions_count": len(block.get("versions") or []),
+    }
+
+
+@router.post("/lead-hunt/icp/refresh")
+async def lead_hunt_icp_refresh(db: AsyncSession = Depends(get_db)) -> dict[str, Any]:
+    cfg = load_config()
+    try:
+        icp = await build_and_persist_icp(db, won_limit=cfg.won_sample_limit)
+        return {"ok": True, "icp": icp}
+    except Exception as e:
+        logger.exception("lead-hunt icp refresh")
+        raise HTTPException(500, detail=str(e)) from e
 
 
 @router.post("/lead-hunt/run")

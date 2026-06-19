@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-18 — Платформа: lead hunt шаг 2 (ICP)
+
+ICP из won + funnelBySource, Стратег LLM, версии в state, API icp/refresh.
+
 ## 2026-06-18 — Платформа: lead hunt шаг 1 (каркас)
 
 Фоновый планировщик, config/state JSON, `/api/ops/lead-hunt/*`, ICP-превью из won-лидов.
