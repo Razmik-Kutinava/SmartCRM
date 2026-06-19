@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — lead hunt шаги 3–6] | Статус: ✅ done`
+
+**2026-06-19:** поиск `search_by_portrait`, очередь approve/reject → CRM, уведомления, UI `/ops/lead-hunt`; pytest **15 PASS**; DevTools: страница + nav OK. Коммит: `PENDING`. Следующий: **«ок» MAP автопоиск** · Битрикс push / другой блок.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 2 ICP] | Статус: ✅ done`
 
 **2026-06-18:** `lead_hunt_icp.py`, funnelBySource + Стратег, версии ICP, `GET/POST .../icp`; pytest **13 PASS**. Коммит: `080a2cf`. Следующий: **шаг 3 поиск кандидатов**.

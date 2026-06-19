@@ -24,8 +24,10 @@
 | `lead_products_owned.py` | Нормализация списка «уже купили» на лиде |
 | `lead_segment_query.py` | Фильтр лидов по сегменту для рассылок |
 | `lead_hunt_config.py` | Конфиг автономного поиска лидов |
-| `lead_hunt_background.py` | Фоновый планировщик lead hunt + прогон ICP |
-| `lead_hunt_icp.py` | ICP из won + funnelBySource + Стратег, версии в state |
+| `lead_hunt_background.py` | Фоновый планировщик lead hunt (ICP → поиск) |
+| `lead_hunt_icp.py` | ICP из won + funnelBySource + Стратег |
+| `lead_hunt_candidates.py` | Поиск кандидатов, очередь approve → CRM |
+| `lead_hunt_notifications.py` | In-app уведомления lead hunt |
 
 Кэш ответов: `data/moy_zakupki_cache/`.  
 Тесты: `tests/test_tender_sources.py`.

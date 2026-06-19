@@ -23,6 +23,7 @@ class LeadHuntConfig(BaseModel):
     min_score_threshold: int = Field(default=30, ge=0, le=100)
     won_sample_limit: int = Field(default=50, ge=1, le=200)
     autosave_above_threshold: bool = False
+    notify_ops_queue: bool = True
 
 
 def _env_bool(name: str) -> bool | None:

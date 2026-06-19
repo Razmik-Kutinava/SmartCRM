@@ -4,14 +4,16 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import get_db
 from services.lead_hunt_background import lead_hunt_status_payload, run_scheduled_lead_hunt
+from services.lead_hunt_candidates import approve_candidate, list_candidates, reject_candidate
 from services.lead_hunt_config import LeadHuntConfig, load_config, save_config
 from services.lead_hunt_icp import build_and_persist_icp, load_latest_icp
+from services.lead_hunt_notifications import list_notifications, mark_all_read, mark_read
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -24,6 +26,16 @@ class LeadHuntConfigBody(BaseModel):
     min_score_threshold: int = Field(default=30, ge=0, le=100)
     won_sample_limit: int = Field(default=50, ge=1, le=200)
     autosave_above_threshold: bool = False
+    notify_ops_queue: bool = True
+
+
+class RejectBody(BaseModel):
+    note: str = ""
+
+
+class MarkReadBody(BaseModel):
+    all: bool = False
+    notification_id: str | None = None
 
 
 @router.get("/lead-hunt/status")
@@ -68,6 +80,65 @@ async def lead_hunt_icp_refresh(db: AsyncSession = Depends(get_db)) -> dict[str,
     except Exception as e:
         logger.exception("lead-hunt icp refresh")
         raise HTTPException(500, detail=str(e)) from e
+
+
+@router.get("/lead-hunt/candidates")
+async def lead_hunt_candidates(
+    status: str | None = Query(default="pending"),
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict[str, Any]:
+    items = list_candidates(status=status or None, limit=limit)
+    return {"items": items, "count": len(items)}
+
+
+@router.post("/lead-hunt/candidates/{candidate_id}/approve")
+async def lead_hunt_approve(candidate_id: str, db: AsyncSession = Depends(get_db)) -> dict[str, Any]:
+    try:
+        return await approve_candidate(candidate_id, db)
+    except ValueError as e:
+        code = str(e)
+        if code == "not_found":
+            raise HTTPException(404, detail="Кандидат не найден") from e
+        if code == "not_pending":
+            raise HTTPException(409, detail="Кандидат уже обработан") from e
+        raise HTTPException(400, detail="Не удалось создать лид") from e
+    except Exception as e:
+        logger.exception("lead-hunt approve %s", candidate_id)
+        raise HTTPException(500, detail=str(e)) from e
+
+
+@router.post("/lead-hunt/candidates/{candidate_id}/reject")
+async def lead_hunt_reject(candidate_id: str, body: RejectBody | None = None) -> dict[str, Any]:
+    try:
+        return reject_candidate(candidate_id, note=(body.note if body else ""))
+    except ValueError as e:
+        code = str(e)
+        if code == "not_found":
+            raise HTTPException(404, detail="Кандидат не найден") from e
+        if code == "not_pending":
+            raise HTTPException(409, detail="Кандидат уже обработан") from e
+        raise HTTPException(400, detail=str(e)) from e
+
+
+@router.get("/lead-hunt/notifications")
+async def lead_hunt_notifications(
+    unread_only: bool = Query(default=False),
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict[str, Any]:
+    items = list_notifications(unread_only=unread_only, limit=limit)
+    return {"items": items, "count": len(items)}
+
+
+@router.patch("/lead-hunt/notifications/read")
+async def lead_hunt_notifications_read(body: MarkReadBody) -> dict[str, Any]:
+    if body.all:
+        return {"ok": True, "marked": mark_all_read()}
+    if not body.notification_id:
+        raise HTTPException(400, detail="notification_id or all=true")
+    ok = mark_read(body.notification_id)
+    if not ok:
+        raise HTTPException(404, detail="Уведомление не найдено")
+    return {"ok": True}
 
 
 @router.post("/lead-hunt/run")

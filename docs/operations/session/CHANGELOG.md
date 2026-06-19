@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Платформа: lead hunt шаги 3–6 (поиск, очередь, уведомления, UI)
+
+`search_by_portrait` в прогоне, очередь pending/approve/reject → CRM, in-app уведомления + Ops queue, `/ops/lead-hunt`; pytest 15 PASS.
+
 ## 2026-06-18 — Платформа: lead hunt шаг 2 (ICP)
 
 ICP из won + funnelBySource, Стратег LLM, версии в state, API icp/refresh.

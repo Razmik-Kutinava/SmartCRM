@@ -41,6 +41,7 @@ def mark_auto_run(report: dict[str, Any] | None, *, error: str | None = None) ->
         "last_auto_error": error,
         "last_won_count": int((report or {}).get("won_count") or 0),
         "last_candidates": int((report or {}).get("candidates_found") or 0),
+        "last_queued": int((report or {}).get("candidates_queued") or 0),
         "last_phase": (report or {}).get("phase"),
     }
     state["scheduler"] = sched
@@ -61,40 +62,50 @@ async def run_scheduled_lead_hunt(
     trigger: str = "auto",
     db: AsyncSession | None = None,
 ) -> dict[str, Any]:
-    """
-    Шаг 2: ICP из won + funnelBySource + Стратег; поиск кандидатов — шаг 3.
-    """
+    """ICP → search_by_portrait → очередь кандидатов (approve → CRM)."""
     cfg = load_config()
     if not cfg.hunt_enabled:
         return {"skipped": True, "reason": "hunt_disabled", "trigger": trigger}
 
+    from services.lead_hunt_candidates import process_search_results, search_candidates
     from services.lead_hunt_icp import build_and_persist_icp
 
-    async def _run(session: AsyncSession) -> dict[str, Any]:
+    async def _run(session: AsyncSession) -> tuple[dict[str, Any], dict[str, Any], dict[str, int]]:
         icp = await build_and_persist_icp(session, won_limit=cfg.won_sample_limit)
-        return icp
+        search = await search_candidates(icp, cfg)
+        stats = await process_search_results(
+            session,
+            search["candidates"],
+            icp_version=int(icp.get("version") or 0),
+            cfg=cfg,
+        )
+        return icp, search, stats
 
     if db is not None:
-        icp = await _run(db)
+        icp, search, stats = await _run(db)
     else:
         from db.session import get_db_session
 
         async with get_db_session() as session:
-            icp = await _run(session)
+            icp, search, stats = await _run(session)
 
+    found = stats["queued"] + stats["approved"]
     report: dict[str, Any] = {
         "ok": True,
-        "phase": "icp",
+        "phase": "search",
         "trigger": trigger,
         "won_count": icp.get("won_count", 0),
         "icp_version": icp.get("version"),
         "icp_portrait": icp.get("portrait_text") or icp.get("base_portrait"),
         "search_portrait": icp.get("search_portrait"),
-        "icp": icp,
-        "candidates_found": 0,
+        "candidates_found": found,
+        "candidates_queued": stats["queued"],
+        "candidates_approved": stats["approved"],
+        "candidates_skipped": stats["skipped"],
+        "search_total_raw": search.get("total_raw", 0),
+        "search_errors": search.get("errors") or [],
         "candidates_per_run": cfg.candidates_per_run,
         "min_score_threshold": cfg.min_score_threshold,
-        "note": "Шаг 2: ICP сохранён; поиск кандидатов — шаг 3",
     }
     append_run(report)
     if trigger == "auto":
@@ -117,26 +128,30 @@ async def lead_hunt_poll_loop(stop: asyncio.Event) -> None:
                     logger.debug("Lead hunt auto: %s", result.get("reason"))
                 else:
                     logger.info(
-                        "Lead hunt auto: won=%s phase=%s candidates=%s",
+                        "Lead hunt auto: won=%s queued=%s approved=%s",
                         result.get("won_count"),
-                        result.get("phase"),
-                        result.get("candidates_found"),
+                        result.get("candidates_queued"),
+                        result.get("candidates_approved"),
                     )
             except Exception:
                 logger.exception("Lead hunt auto failed")
                 mark_auto_run(None, error="exception")
         try:
             await asyncio.wait_for(stop.wait(), timeout=1800)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             pass
 
 
 async def lead_hunt_status_payload() -> dict[str, Any]:
+    from services.lead_hunt_candidates import list_candidates
+    from services.lead_hunt_notifications import unread_count
+
     cfg = load_config()
     state = load_state()
     sched = state.get("scheduler") or {}
     runs = state.get("runs") or []
     icp = load_latest_icp()
+    pending = list_candidates(status="pending", limit=100)
     return {
         "hunt_enabled": cfg.hunt_enabled,
         "hunt_interval_hours": cfg.hunt_interval_hours,
@@ -144,11 +159,14 @@ async def lead_hunt_status_payload() -> dict[str, Any]:
         "min_score_threshold": cfg.min_score_threshold,
         "won_sample_limit": cfg.won_sample_limit,
         "autosave_above_threshold": cfg.autosave_above_threshold,
+        "notify_ops_queue": cfg.notify_ops_queue,
         "scheduler_due": scheduler_due(cfg.hunt_interval_hours) if cfg.hunt_enabled else False,
         "scheduler": sched,
         "last_run": runs[0] if runs else None,
         "history_count": len(runs),
-        "phase": "icp",
+        "phase": "search",
         "icp_current": icp,
         "icp_version": (icp or {}).get("version"),
+        "pending_candidates": len(pending),
+        "notifications_unread": unread_count(),
     }
