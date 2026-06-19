@@ -520,6 +520,7 @@
 
 Детали: [`F4_LEADS_ACCEPTANCE.md`](../operations/phase4/leads/F4_LEADS_ACCEPTANCE.md)
 
+- [ ] **Интеграции с внешними CRM** — поэтапно: экран подключения, Битрикс/Amo/HubSpot, CSV, далее webhooks и новые адаптеры · [`F4_LEADS_ACCEPTANCE.md`](../operations/phase4/leads/F4_LEADS_ACCEPTANCE.md) §П.0 · платформа [`F4_PLATFORM_TUNING.md`](../operations/phase4/platform/F4_PLATFORM_TUNING.md)
 - [x] Создание лида — модалка дашборд + `/leads/list`, POST в БД · апрув 2026-06-19
 - [x] Удаление лида — confirm, list + карточка, DELETE в БД · pytest `test_lead_delete_ui.py` · апрув 2026-06-19
 - [ ] Карточка — редактирование, этап, комментарии, касания, задачи, enrich, рассылка · обход владельца
@@ -528,7 +529,6 @@
 - [ ] Задачи / календарь / фокус — smoke после Ф4 · обход
 - [ ] Аналитика `/leads/analytics` — smoke · обход
 - [ ] Голос на лидах — create, filter, delete approve (S04) · обход
-- [ ] Импорты на списке — UX без ключей; интеграции → [`F4_PLATFORM_TUNING.md`](../operations/phase4/platform/F4_PLATFORM_TUNING.md)
 
 ### Vendor crawl → RAG tech_specialist (тюнинг)
 
