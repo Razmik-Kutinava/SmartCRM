@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 2 ICP] | Статус: ✅ done`
 
-**2026-06-18:** `lead_hunt_icp.py`, funnelBySource + Стратег, версии ICP, `GET/POST .../icp`; pytest **13 PASS**. Коммит: `PENDING`. Следующий: **шаг 3 поиск кандидатов**.
+**2026-06-18:** `lead_hunt_icp.py`, funnelBySource + Стратег, версии ICP, `GET/POST .../icp`; pytest **13 PASS**. Коммит: `080a2cf`. Следующий: **шаг 3 поиск кандидатов**.
 
 ---
 
