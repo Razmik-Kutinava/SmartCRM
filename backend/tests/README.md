@@ -87,6 +87,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `test_lead_score_advisory.py` | Скор-советы |
 | `core/test_lead_priority_tier.py` | Приоритет лида (зеркало crmStages.js) |
 | `smoke/test_scoring_funnel_smoke.py` | Смоук балльной воронки (API + формула) |
+| `smoke/test_lead_card_page.py` | Контракт карточки лида: industryOptions $state, breakdown marker |
 | `voice/test_whisper_stt.py` | Groq Whisper STT, preprocess, pipeline audio |
 | `smoke/test_whisper_stt_smoke.py` | HTTP transcribe + ops whisper settings + WS |
 | `smoke/test_voice_mic_ws_e2e.py` | WS audio bytes → STT → Hermes (mic E2E) |

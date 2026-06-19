@@ -18,6 +18,7 @@ PYTEST_PATHS = [
     "tests/lib/test_lead_list_filter.py",
     "tests/core/test_lead_score_list_flags.py",
     "tests/api/test_leads_api.py::test_list_leads_includes_score_advisory_flags",
+    "tests/smoke/test_lead_card_page.py",
 ]
 
 
@@ -128,6 +129,42 @@ def _frontend_pages_smoke() -> bool:
     return True
 
 
+def _frontend_lead_card_smoke() -> bool:
+    base = _frontend_base()
+    key = _api_key()
+    if not base or not key:
+        return True
+    url = f"{_api_base()}/api/leads"
+    try:
+        with urlopen(Request(url, headers={"X-API-Key": key}), timeout=20) as resp:
+            rows = json.loads(resp.read().decode("utf-8"))
+    except (HTTPError, URLError) as e:
+        print(f"frontend lead card FAIL: API leads — {e}")
+        return False
+    if not rows:
+        print("frontend lead card skip: нет лидов")
+        return True
+    lid = rows[0].get("id")
+    if not lid:
+        print("frontend lead card FAIL: нет id у первого лида")
+        return False
+    path = f"/leads/{lid}"
+    try:
+        with urlopen(Request(f"{base}{path}", method="GET"), timeout=8) as r:
+            html = r.read(1024).decode("utf-8", errors="replace")
+    except OSError as e:
+        print(f"frontend lead card FAIL {path}: {e}")
+        return False
+    if r.status not in (200, 308):
+        print(f"frontend lead card FAIL {path}: HTTP {r.status}")
+        return False
+    if len(html) < 50:
+        print(f"frontend lead card FAIL {path}: пустой ответ")
+        return False
+    print(f"frontend OK: {base}{path} (HTTP 200)")
+    return True
+
+
 def main() -> int:
     _load_env()
     print("SmartCRM smoke — Ф4 баллы (сортировка + UI)\n")
@@ -143,6 +180,9 @@ def main() -> int:
         return 1
     if not _frontend_pages_smoke():
         print("\nScoring F4 UI smoke: FAIL (frontend)")
+        return 1
+    if not _frontend_lead_card_smoke():
+        print("\nScoring F4 UI smoke: FAIL (frontend lead card)")
         return 1
     print("\nScoring F4 UI smoke: OK")
     return 0
