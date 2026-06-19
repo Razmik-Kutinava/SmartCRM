@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 5 фон+уведомления] | Статус: ✅ done`
+
+**2026-06-19:** trace + agent_run_log, баннер/badge Ops, loop в main.py; pytest **33 PASS**. Коммит: `a6e670f`. Следующий: **«ок» MAP автопоиск**.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 4 очередь+апрув] | Статус: ✅ done`
 
 **2026-06-19:** `lead_hunt_queue.py`, `GET/POST .../queue`, approve → CRM + nurture опц., UI «Найдено агентами» на `/ops/queue` и `/leadgen`; pytest **27 PASS**. Коммит: `4d1cf33` (ops `222a288`). Следующий: **«ок» MAP автопоиск**.
