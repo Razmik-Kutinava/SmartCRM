@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 баллы] | Задача:[сортировка + DevTools smoke] | Статус: ✅ done`
+
+**2026-06-17:** Сортировка «Предупреждения ↓» / «Расхождение ↓»; `scoreDelta` в API; `smoke_scoring_f4_ui.py`; DevTools: list фильтры, /ops/crm веса, карточка breakdown (лид 3191); фикс `industryOptions` на карточке. Коммит: `0d66a41`. Следующий: **go** Ф4 D–F (прогноз, пороги, Ops badge) или Ф4-A интеграции.
+
+---
+
 `Спринт:[Ф4 баллы] | Задача:[A–C Ops UI + breakdown + list filters] | Статус: ✅ done`
 
 **2026-06-17:** `/ops/crm` — редактор `scoring_advisory`; карточка — раскрываемый breakdown; `/leads/list` — флаги API + фильтры warnings/divergent; pytest **17 PASS**. Коммит: `618bffe`. Следующий: **«ок»** → `[x]` MAP Ф4 баллы A–C или go D–F.

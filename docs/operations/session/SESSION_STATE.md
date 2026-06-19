@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: Ф4 сортировка warnings/delta + DevTools smoke + smoke_scoring_f4_ui.py; фикс industryOptions карточка; pytest/smoke 11 PASS. | Коммит: `0d66a41` | Хвост A: нет | Хвост B: нет | Хвост C: industryOptions ReferenceError на /leads/[id] — починили | Следующий шаг: go Ф4 D–F или Ф4-A интеграции. | Статус: done
+
 2026-06-17 | Действие: Ф4 баллы A–C — Ops scoring_advisory UI, breakdown карточка, флаги+фильтры списка; pytest 17 PASS. | Коммит: `618bffe` | Хвост A: DevTools/smoke UI не кликал; сортировка по warnings — не делали; MAP [x] ждёт «ок» | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP Ф4 баллы A–C или go D–F. | Статус: done
 
 2026-06-19 | Действие: docs Ф4 баллы — F4_SCORING_TUNING.md, секция в PRD_MAP, F4_PLATFORM §D. | Коммит: `11abbf1` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф4-A интеграции или Ф4 баллы-A. | Статус: done

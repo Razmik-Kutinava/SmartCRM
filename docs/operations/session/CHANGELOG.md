@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф4 баллы: сортировка списка + DevTools smoke
+
+Сортировка warnings/delta; `smoke_scoring_f4_ui.py`; DevTools smoke list/ops/crm/breakdown; фикс `industryOptions` на карточке.
+
 ## 2026-06-17 — Ф4 баллы A–C: Ops веса, breakdown, фильтры списка
 
 UI `scoring_advisory` в `/ops/crm`; breakdown подсказки на карточке; `hasScoreWarnings`/`scoreDivergent` в API списка + фильтры `/leads/list`.
