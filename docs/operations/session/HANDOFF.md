@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[Платформа — CRM sync Amo/HubSpot + Telegram хвост] | Статус: ✅ done`
 
-**2026-06-17:** AmoCRM + HubSpot import/push, Telegram inline approve/reject, Ops critical notify; PRD_MAP CRM `[x]`; pytest **22+ PASS**. Коммит: _pending_. Следующий: баллы P3 (SLA) или Ф4.
+**2026-06-17:** AmoCRM + HubSpot import/push, Telegram inline approve/reject, Ops critical notify; PRD_MAP CRM `[x]`; pytest **22+ PASS**. Коммит: `c2949ce`. Следующий: баллы P3 (SLA) или Ф4.
 
 ---
 
