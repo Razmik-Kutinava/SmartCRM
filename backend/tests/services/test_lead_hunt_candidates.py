@@ -11,7 +11,6 @@ from services.lead_hunt_candidates import (
     list_candidates,
     process_search_results,
     reject_candidate,
-    search_candidates,
 )
 from services.lead_hunt_config import LeadHuntConfig
 
@@ -25,28 +24,15 @@ def test_candidate_fingerprint_inn():
 
 
 @pytest.mark.asyncio
-async def test_search_candidates_filters_by_threshold(monkeypatch):
-    cfg = LeadHuntConfig(min_score_threshold=50, candidates_per_run=3)
+async def test_search_candidates_delegates_to_cycle(monkeypatch):
+    from services.lead_hunt_candidates import search_candidates
 
-    async def _mock_search(portrait, limit=3, **kw):
-        return {
-            "results": [
-                {"inn": "1", "name": "Low", "_portrait_match": 0.2},
-                {"inn": "2", "name": "High", "_portrait_match": 0.8},
-            ],
-            "agent_review": {"companies": []},
-            "errors": [],
-        }
+    async def _cycle(icp, cfg, db):
+        return {"candidates": [{"company": _company(), "score": 80}], "errors": [], "total_raw": 1}
 
-    monkeypatch.setattr(
-        "leadgen.pipeline.search_by_portrait",
-        AsyncMock(side_effect=_mock_search),
-    )
-    icp = {"search_portrait": "B2B IT Москва"}
-    out = await search_candidates(icp, cfg)
-    assert out["total_raw"] == 2
+    monkeypatch.setattr("services.lead_hunt_search_cycle.run_search_cycle", AsyncMock(side_effect=_cycle))
+    out = await search_candidates({"search_portrait": "x"}, LeadHuntConfig(), AsyncMock())
     assert len(out["candidates"]) == 1
-    assert out["candidates"][0]["score"] == 80
 
 
 @pytest.mark.asyncio
@@ -57,7 +43,7 @@ async def test_process_search_results_queues_pending(monkeypatch, tmp_path):
     monkeypatch.setattr(lhc, "STATE_PATH", tmp_path / "state.json")
     monkeypatch.setattr(lhn, "NOTIFICATIONS_PATH", tmp_path / "notif.json")
     cfg = LeadHuntConfig(notify_ops_queue=True, autosave_above_threshold=False)
-    candidates = [{"company": _company(), "score": 75}]
+    candidates = [{"company": _company(), "score": 75, "agent_fanout": {"fanout_agent_count": 3}}]
 
     with patch("services.lead_hunt_candidates._push_ops_queue") as push:
         stats = await process_search_results(
@@ -70,7 +56,7 @@ async def test_process_search_results_queues_pending(monkeypatch, tmp_path):
     push.assert_called_once()
     pending = list_candidates(status="pending")
     assert len(pending) == 1
-    assert pending[0]["score"] == 75
+    assert pending[0]["agent_fanout"]["fanout_agent_count"] == 3
 
 
 @pytest.mark.asyncio
@@ -83,8 +69,6 @@ async def test_approve_and_reject(monkeypatch, tmp_path):
     db.flush = AsyncMock()
     db.refresh = AsyncMock()
     db.commit = AsyncMock()
-
-    fake_lead = type("L", (), {"id": 42})()
 
     async def _create(company, score, session):
         return 42

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Платформа: lead hunt цикл поиска (агенты)
+
+`lead_hunt_search_cycle`: portrait/prospect → `run_pipeline` light → fanout analyst+marketer+economist, dedup ИНН/company, очередь.
+
 ## 2026-06-19 — Платформа: lead hunt шаги 3–6 (поиск, очередь, уведомления, UI)
 
 `search_by_portrait` в прогоне, очередь pending/approve/reject → CRM, in-app уведомления + Ops queue, `/ops/lead-hunt`; pytest 15 PASS.

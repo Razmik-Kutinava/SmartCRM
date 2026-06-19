@@ -167,8 +167,16 @@
 				Уведомления в Ops-очередь
 			</label>
 			<label class="flex items-center gap-2 text-sm">
+				<input type="checkbox" bind:checked={cfg.agent_fanout_enabled} />
+				Fanout агентов (аналитик + маркетолог + экономист)
+			</label>
+			<label class="flex items-center gap-2 text-sm">
+				<input type="checkbox" bind:checked={cfg.use_prospect_fallback} />
+				Prospect fallback (Serper/Tavily)
+			</label>
+			<label class="flex items-center gap-2 text-sm">
 				<input type="checkbox" bind:checked={cfg.autosave_above_threshold} />
-				Сразу в CRM (без очереди)
+				Сразу в CRM (без очереди, только ≥ порога)
 			</label>
 			<div class="flex gap-2">
 				<button class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm disabled:opacity-50" disabled={saving} onclick={save}>
@@ -218,7 +226,15 @@
 						<li class="border rounded p-3 flex flex-wrap justify-between gap-2 items-start">
 							<div>
 								<p class="font-medium">{companyLabel(c)}</p>
-								<p class="text-xs text-slate-500">Скор {c.score}% · ИНН {c.company?.inn || '—'}</p>
+								<p class="text-xs text-slate-500">
+									Скор {c.score}% · ИНН {c.company?.inn || '—'}
+									{#if c.agent_fanout?.fanout_agent_count}
+										· агентов {c.agent_fanout.fanout_agent_count}
+									{/if}
+									{#if c.search_source}
+										· {c.search_source}
+									{/if}
+								</p>
 							</div>
 							<div class="flex gap-2">
 								<button class="text-sm px-2 py-1 bg-emerald-600 text-white rounded" onclick={() => approve(c.id)}>В CRM</button>

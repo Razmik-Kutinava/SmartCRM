@@ -81,6 +81,19 @@ ENV: `LEAD_HUNT_ENABLED`, `LEAD_HUNT_INTERVAL_HOURS`.
 - [x] Экран Ops
 - [x] Ручной прогон + одобрение кандидатов
 
+## Шаг 7 — цикл поиска (агенты)
+
+| Компонент | Изменение |
+|-----------|-----------|
+| `lead_hunt_search_cycle.py` | ICP → portrait + prospect → pipeline light → fanout |
+| `run_pipeline(deep_analysis=False)` | лёгкий скоринг топ-N |
+| `fanout` | analyst + marketer + economist (как generate_lead) |
+| dedup | ИНН / company в БД |
+| очередь | не в CRM (autosave ≥ порога — настройка) |
+
+- [x] Пайплайн прогона с агентами
+- [x] pytest integration моки Checko/Serper/pipeline/fanout
+
 ## Критерии закрытия MAP
 
 - [x] Шаги 1–6

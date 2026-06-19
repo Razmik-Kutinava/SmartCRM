@@ -16,7 +16,7 @@ async def test_lead_hunt_status(client, isolated_lead_hunt_state):
     assert r.status_code == 200
     body = r.json()
     assert "hunt_enabled" in body
-    assert body["phase"] == "search"
+    assert body["phase"] == "agent_search"
     assert "scheduler" in body
 
 
@@ -52,8 +52,8 @@ async def test_lead_hunt_run_when_enabled(client, isolated_lead_hunt_state, monk
             "strategist_mode": "test",
         }
 
-    async def _mock_search(icp, cfg):
-        return {"candidates": [], "errors": [], "total_raw": 0}
+    async def _mock_search(icp, cfg, db):
+        return {"candidates": [], "errors": [], "total_raw": 0, "dedup_db": 0, "search_sources": []}
 
     monkeypatch.setattr("services.lead_hunt_icp.strategist_enrich_icp", _mock_enrich)
     monkeypatch.setattr("services.lead_hunt_candidates.search_candidates", _mock_search)
@@ -65,7 +65,7 @@ async def test_lead_hunt_run_when_enabled(client, isolated_lead_hunt_state, monk
     assert r.status_code == 200
     body = r.json()
     assert body.get("ok") is True
-    assert body.get("phase") == "search"
+    assert body.get("phase") == "agent_search"
     assert body.get("icp_version") == 1
     assert "search_portrait" in body
 

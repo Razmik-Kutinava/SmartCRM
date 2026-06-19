@@ -46,28 +46,12 @@ def _pending_fingerprints() -> set[str]:
     }
 
 
-async def search_candidates(icp: dict[str, Any], cfg: LeadHuntConfig) -> dict[str, Any]:
-    portrait = (icp.get("search_portrait") or icp.get("portrait_text") or "").strip()
-    if not portrait:
-        return {"candidates": [], "errors": ["empty_portrait"], "total_raw": 0}
+async def search_candidates(
+    icp: dict[str, Any], cfg: LeadHuntConfig, db: AsyncSession
+) -> dict[str, Any]:
+    from services.lead_hunt_search_cycle import run_search_cycle
 
-    from leadgen.pipeline import search_by_portrait
-    from leadgen.pipeline.persist_autosave import portrait_fit_score
-
-    limit = min(cfg.candidates_per_run, 5)
-    result = await search_by_portrait(portrait, limit=limit, save_to_crm=False)
-    review = result.get("agent_review") or {}
-    picked: list[dict[str, Any]] = []
-    for company in result.get("results") or []:
-        score = portrait_fit_score(company, review)
-        if score < cfg.min_score_threshold:
-            continue
-        picked.append({"company": company, "score": score})
-    return {
-        "candidates": picked,
-        "errors": result.get("errors") or [],
-        "total_raw": len(result.get("results") or []),
-    }
+    return await run_search_cycle(icp, cfg, db)
 
 
 def _push_ops_queue(entry: dict[str, Any]) -> None:
@@ -168,6 +152,10 @@ async def process_search_results(
             "status": "pending",
             "company": company,
             "score": int(item.get("score") or 0),
+            "portrait_score": item.get("portrait_score"),
+            "pipeline_score": item.get("pipeline_score"),
+            "search_source": item.get("search_source"),
+            "agent_fanout": item.get("agent_fanout"),
             "icp_version": icp_version,
             "found_at": now,
             "lead_id": None,

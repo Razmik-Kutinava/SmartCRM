@@ -26,6 +26,7 @@
 | `lead_hunt_config.py` | Конфиг автономного поиска лидов |
 | `lead_hunt_background.py` | Фоновый планировщик lead hunt (ICP → поиск) |
 | `lead_hunt_icp.py` | ICP из won + funnelBySource + Стратег |
+| `lead_hunt_search_cycle.py` | Цикл: portrait/prospect → pipeline → fanout агентов |
 | `lead_hunt_candidates.py` | Поиск кандидатов, очередь approve → CRM |
 | `lead_hunt_notifications.py` | In-app уведомления lead hunt |
 

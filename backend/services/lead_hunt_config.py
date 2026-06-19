@@ -24,6 +24,8 @@ class LeadHuntConfig(BaseModel):
     won_sample_limit: int = Field(default=50, ge=1, le=200)
     autosave_above_threshold: bool = False
     notify_ops_queue: bool = True
+    use_prospect_fallback: bool = True
+    agent_fanout_enabled: bool = True
 
 
 def _env_bool(name: str) -> bool | None:

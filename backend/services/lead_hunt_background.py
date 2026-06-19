@@ -72,7 +72,7 @@ async def run_scheduled_lead_hunt(
 
     async def _run(session: AsyncSession) -> tuple[dict[str, Any], dict[str, Any], dict[str, int]]:
         icp = await build_and_persist_icp(session, won_limit=cfg.won_sample_limit)
-        search = await search_candidates(icp, cfg)
+        search = await search_candidates(icp, cfg, session)
         stats = await process_search_results(
             session,
             search["candidates"],
@@ -92,7 +92,7 @@ async def run_scheduled_lead_hunt(
     found = stats["queued"] + stats["approved"]
     report: dict[str, Any] = {
         "ok": True,
-        "phase": "search",
+        "phase": "agent_search",
         "trigger": trigger,
         "won_count": icp.get("won_count", 0),
         "icp_version": icp.get("version"),
@@ -103,9 +103,12 @@ async def run_scheduled_lead_hunt(
         "candidates_approved": stats["approved"],
         "candidates_skipped": stats["skipped"],
         "search_total_raw": search.get("total_raw", 0),
+        "search_dedup_db": search.get("dedup_db", 0),
+        "search_sources": search.get("search_sources") or [],
         "search_errors": search.get("errors") or [],
         "candidates_per_run": cfg.candidates_per_run,
         "min_score_threshold": cfg.min_score_threshold,
+        "agent_fanout_enabled": cfg.agent_fanout_enabled,
     }
     append_run(report)
     if trigger == "auto":
@@ -164,9 +167,11 @@ async def lead_hunt_status_payload() -> dict[str, Any]:
         "scheduler": sched,
         "last_run": runs[0] if runs else None,
         "history_count": len(runs),
-        "phase": "search",
+        "phase": "agent_search",
         "icp_current": icp,
         "icp_version": (icp or {}).get("version"),
         "pending_candidates": len(pending),
         "notifications_unread": unread_count(),
+        "agent_fanout_enabled": cfg.agent_fanout_enabled,
+        "use_prospect_fallback": cfg.use_prospect_fallback,
     }
