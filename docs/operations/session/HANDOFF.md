@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — lead hunt цикл поиска агентами] | Статус: ✅ done`
+
+**2026-06-19:** `lead_hunt_search_cycle.py` — portrait+prospect → pipeline light → fanout analyst/marketer/economist, dedup БД; pytest **19 PASS** (incl. integration). Коммит: `c22ade8`. Следующий: **«ок» MAP автопоиск**.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt шаги 3–6] | Статус: ✅ done`
 
 **2026-06-19:** поиск `search_by_portrait`, очередь approve/reject → CRM, уведомления, UI `/ops/lead-hunt`; pytest **15 PASS**; DevTools: страница + nav OK. Коммит: `85acdee`. Следующий: **«ок» MAP автопоиск** · Битрикс push / другой блок.

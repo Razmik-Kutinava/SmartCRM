@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-19 | Действие: Ф3 lead hunt цикл агентов — search_cycle, fanout, dedup БД. | Коммит: `c22ade8` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP автопоиск. | Статус: done
+
 2026-06-19 | Действие: Ф3 lead hunt шаги 3–6 — поиск, очередь, уведомления, UI /ops/lead-hunt. | Коммит: `85acdee` | Хвост A: нет | Хвост B: нет | Хвост C: UI API pending при reload uvicorn в smoke | Следующий шаг: «ок» MAP автопоиск. | Статус: done
 
 2026-06-18 | Действие: Ф3 lead hunt шаг 2 — ICP из won + funnelBySource + Стратег, версии state. | Коммит: `080a2cf` | Хвост A: поиск кандидатов (шаг 3), UI ops — нет | Хвост B: шаги 3–6 → BACKLOG | Хвост C: нет | Следующий шаг: go шаг 3 search_by_portrait. | Статус: done
