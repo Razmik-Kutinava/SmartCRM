@@ -2,7 +2,7 @@
 
 `Спринт:[Ф3] | Задача:[Платформа — Telegram-бот MVP] | Статус: ✅ done (MAP ждёт «ок»)`
 
-**2026-06-17:** `integrations/telegram/` — poll loop, уведомления lead hunt, команды `/start` `/status` `/queue`; pytest **5 PASS** (telegram). Коммит: _pending_. Следующий: **«ок»** → `[x]` PRD_MAP Telegram · Ops critical wiring → BACKLOG.
+**2026-06-17:** `integrations/telegram/` — poll loop, уведомления lead hunt, команды `/start` `/status` `/queue`; pytest **5 PASS** (telegram). Коммит: `01ae21b`. Следующий: **«ок»** → `[x]` PRD_MAP Telegram · Ops critical wiring → BACKLOG.
 
 ---
 
