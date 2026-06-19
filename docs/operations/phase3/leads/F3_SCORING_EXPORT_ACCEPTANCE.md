@@ -29,9 +29,9 @@
 
 ## Ручная проверка
 
-1. `/leads/analytics` → «Баллы» → Excel — лист Leads с баллами.
-2. Лид с просроченной задачей — в отчёте warningsCount > 0.
+- [x] 2026-06-19 DevTools: `/leads/analytics` → Excel → «Баллы» → `GET /api/leads/scoring/export?format=xlsx` **200**
+- [x] `smoke_scoring_export.py`: pytest 13 + live xlsx (листы KPI/FunnelScores/Leads)
 
 ## Отложено
 
-- Живой smoke DevTools — по желанию оператора
+- нет

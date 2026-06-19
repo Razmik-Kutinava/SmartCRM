@@ -57,6 +57,7 @@
 | `smoke_campaign_mass_ui.py` | Live UI: `/email` → Массовая (сегмент) — Playwright, чекбоксы → счётчик → 3 LLM → test ib@ |
 | `probe_email_host.py` | Диагностика IMAP/SMTP портов для кастомного хоста (me@) |
 | `smoke_scoring_funnel.py` | Смоук балльной воронки: формула scoreAdvisory + приоритеты |
+| `smoke_scoring_export.py` | Смоук экспорта баллов: pytest + live xlsx + frontend URL |
 | `smoke_whisper_stt.py` | Смоук Groq Whisper STT + опц. live Groq |
 | `smoke_hermes_leads.py` | Смоук Hermes интентов по лидам (CRUD, стадия, задача) |
 | `smoke_voice_action.py` | Смоук сборки voice_action (approve/filter/navigate) |
