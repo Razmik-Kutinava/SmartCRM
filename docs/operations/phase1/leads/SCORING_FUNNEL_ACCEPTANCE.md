@@ -28,5 +28,4 @@ cd backend && python scripts/smoke_scoring_funnel.py
 
 ## Хвост (не блокер)
 
-- Экспорт по баллам / расширенные SLA → Фаза 3
 - Лидоген использует свои пороги 80/60/40 в `score_card.py` (не CRM config)

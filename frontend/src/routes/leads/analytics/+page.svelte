@@ -15,6 +15,7 @@
 	let loading = $state(true);
 	let err = $state('');
 	let exporting = $state(false);
+	let exportingScoring = $state(false);
 	let exportFormat = $state('csv');
 	let voiceCtx = $state(null);
 	let activeView = $state('');
@@ -107,6 +108,32 @@
 		}
 	}
 
+	async function exportScoringReport() {
+		exportingScoring = true;
+		const filters = readFilters();
+		try {
+			const q = new URLSearchParams();
+			if (filters.period) q.set('period', filters.period);
+			if (filters.source) q.set('source', filters.source);
+			q.set('format', exportFormat);
+			const path = `/api/leads/scoring/export?${q.toString()}`;
+			const r = await apiFetch(path);
+			if (!r.ok) throw new Error(`Экспорт баллов: HTTP ${r.status}`);
+			const blob = await r.blob();
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			const ext = exportFormat === 'xlsx' ? 'xlsx' : exportFormat === 'pdf' ? 'pdf' : 'csv';
+			a.download = `scoring-funnel-${new Date().toISOString().slice(0, 10)}.${ext}`;
+			a.click();
+			URL.revokeObjectURL(url);
+		} catch (e) {
+			err = e?.message || String(e);
+		} finally {
+			exportingScoring = false;
+		}
+	}
+
 	const periodLabel = $derived(
 		metrics?.filters?.periodLabel ||
 			PERIOD_LABELS[metrics?.filters?.period] ||
@@ -154,7 +181,16 @@
 				onclick={exportReport}
 				data-testid="analytics-export-btn"
 			>
-				{exporting ? 'Экспорт…' : '📥 Экспорт'}
+				{exporting ? 'Экспорт…' : '📥 Воронка'}
+			</button>
+			<button
+				type="button"
+				class="px-3 py-1.5 bg-indigo-900/60 hover:bg-indigo-800/60 text-sm text-indigo-200 rounded-lg border border-indigo-700/50 transition-colors disabled:opacity-50"
+				disabled={loading || exportingScoring || !metrics}
+				onclick={exportScoringReport}
+				data-testid="scoring-export-btn"
+			>
+				{exportingScoring ? 'Экспорт…' : '📊 Баллы'}
 			</button>
 		</div>
 	</div>

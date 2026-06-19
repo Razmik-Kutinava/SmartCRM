@@ -178,7 +178,6 @@ def tenders_to_pdf(items: list[dict[str, Any]]) -> bytes:
 
 
 def analytics_export_bytes(metrics: dict[str, Any], fmt: str) -> tuple[bytes, str, str]:
-    """Возвращает (content, media_type, filename)."""
     f = (fmt or "csv").lower()
     if f == "csv":
         text = analytics_to_csv(metrics)
@@ -194,5 +193,173 @@ def analytics_export_bytes(metrics: dict[str, Any], fmt: str) -> tuple[bytes, st
             analytics_to_pdf(metrics),
             "application/pdf",
             "analytics-report.pdf",
+        )
+    raise ValueError(f"unsupported format: {fmt}")
+
+
+def scoring_funnel_to_csv(report: dict[str, Any]) -> str:
+    import csv
+    import io
+
+    buf = io.StringIO()
+    w = csv.writer(buf, lineterminator="\n")
+    w.writerow(["metric", "value"])
+    w.writerow(["total", report.get("total")])
+    w.writerow(["avgManagerScore", report.get("avgManagerScore")])
+    w.writerow(["avgSuggestedScore", report.get("avgSuggestedScore") or ""])
+    w.writerow(["divergentCount", report.get("divergentCount")])
+    w.writerow([])
+    w.writerow(["stage", "count", "avgManagerScore", "avgSuggestedScore"])
+    for row in report.get("funnelScores") or []:
+        w.writerow([
+            row.get("stage"),
+            row.get("count"),
+            row.get("avgManagerScore"),
+            row.get("avgSuggestedScore") if row.get("avgSuggestedScore") is not None else "",
+        ])
+    w.writerow([])
+    w.writerow(["priorityKey", "count"])
+    for key, cnt in sorted((report.get("priorityDistribution") or {}).items()):
+        w.writerow([key, cnt])
+    w.writerow([])
+    w.writerow([
+        "id",
+        "company",
+        "stage",
+        "source",
+        "managerScore",
+        "suggestedScore",
+        "priority",
+        "warningsCount",
+        "overdueOpenTasks",
+        "amountRub",
+        "divergent",
+    ])
+    for row in report.get("leads") or []:
+        w.writerow([
+            row.get("id"),
+            row.get("company"),
+            row.get("stage"),
+            row.get("source"),
+            row.get("managerScore"),
+            row.get("suggestedScore") if row.get("suggestedScore") is not None else "",
+            row.get("priorityLabel"),
+            row.get("warningsCount"),
+            row.get("overdueOpenTasks"),
+            row.get("amountRub") or "",
+            "yes" if row.get("divergent") else "",
+        ])
+    return buf.getvalue()
+
+
+def scoring_funnel_to_xlsx(report: dict[str, Any]) -> bytes:
+    from openpyxl import Workbook
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "KPI"
+    ws.append(["metric", "value"])
+    ws.append(["total", report.get("total")])
+    ws.append(["avgManagerScore", report.get("avgManagerScore")])
+    ws.append(["avgSuggestedScore", report.get("avgSuggestedScore")])
+    ws.append(["divergentCount", report.get("divergentCount")])
+    ws2 = wb.create_sheet("FunnelScores")
+    ws2.append(["stage", "count", "avgManagerScore", "avgSuggestedScore"])
+    for row in report.get("funnelScores") or []:
+        ws2.append([
+            row.get("stage"),
+            row.get("count"),
+            row.get("avgManagerScore"),
+            row.get("avgSuggestedScore"),
+        ])
+    ws3 = wb.create_sheet("Priority")
+    ws3.append(["priorityKey", "count"])
+    for key, cnt in sorted((report.get("priorityDistribution") or {}).items()):
+        ws3.append([key, cnt])
+    ws4 = wb.create_sheet("Leads")
+    ws4.append([
+        "id",
+        "company",
+        "stage",
+        "source",
+        "managerScore",
+        "suggestedScore",
+        "priority",
+        "warningsCount",
+        "overdueOpenTasks",
+        "amountRub",
+        "divergent",
+        "warnings",
+    ])
+    for row in report.get("leads") or []:
+        ws4.append([
+            row.get("id"),
+            row.get("company"),
+            row.get("stage"),
+            row.get("source"),
+            row.get("managerScore"),
+            row.get("suggestedScore"),
+            row.get("priorityLabel"),
+            row.get("warningsCount"),
+            row.get("overdueOpenTasks"),
+            row.get("amountRub"),
+            row.get("divergent"),
+            row.get("warnings"),
+        ])
+    buf = io.BytesIO()
+    wb.save(buf)
+    return buf.getvalue()
+
+
+def scoring_funnel_to_pdf(report: dict[str, Any]) -> bytes:
+    lines = [
+        f"Лидов: {report.get('total')}",
+        f"Ср. балл менеджера: {report.get('avgManagerScore')}",
+        f"Ср. подсказка: {report.get('avgSuggestedScore') or '—'}",
+        f"Расхождение ≥ порога: {report.get('divergentCount')}",
+        "",
+        "Воронка (баллы по стадиям):",
+    ]
+    for row in report.get("funnelScores") or []:
+        sug = row.get("avgSuggestedScore")
+        sug_txt = f" / подсказка {sug}" if sug is not None else ""
+        lines.append(
+            f"  {row.get('stage')}: {row.get('count')} лид., ср. {row.get('avgManagerScore')}{sug_txt}"
+        )
+    lines.append("")
+    lines.append("Приоритет:")
+    for key, cnt in sorted((report.get("priorityDistribution") or {}).items()):
+        lines.append(f"  {key}: {cnt}")
+    lines.append("")
+    top = (report.get("leads") or [])[:25]
+    if top:
+        lines.append("Топ лидов (до 25):")
+        for row in top:
+            lines.append(
+                f"  #{row.get('id')} {row.get('company')} · {row.get('stage')} · "
+                f"балл {row.get('managerScore')} / {row.get('suggestedScore')} · {row.get('priorityLabel')}"
+            )
+    if len(report.get("leads") or []) > 25:
+        lines.append(f"... и ещё {len(report['leads']) - 25}")
+    return _pdf_bytes("SmartCRM — баллы и воронка", lines)
+
+
+def scoring_export_bytes(report: dict[str, Any], fmt: str) -> tuple[bytes, str, str]:
+    """Возвращает (content, media_type, filename)."""
+    f = (fmt or "csv").lower()
+    if f == "csv":
+        text = scoring_funnel_to_csv(report)
+        return text.encode("utf-8-sig"), "text/csv; charset=utf-8", "scoring-funnel-report.csv"
+    if f == "xlsx":
+        return (
+            scoring_funnel_to_xlsx(report),
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "scoring-funnel-report.xlsx",
+        )
+    if f == "pdf":
+        return (
+            scoring_funnel_to_pdf(report),
+            "application/pdf",
+            "scoring-funnel-report.pdf",
         )
     raise ValueError(f"unsupported format: {fmt}")

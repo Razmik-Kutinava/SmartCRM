@@ -501,8 +501,8 @@
 
 ### Баллы P3 (остаток)
 
-- [ ] Расширенные SLA-протоколы + эскалация · [`F3_SLA_PROTOCOLS_ACCEPTANCE.md`](../operations/phase3/leads/F3_SLA_PROTOCOLS_ACCEPTANCE.md)
-- [ ] Экспорт отчёта по баллам и воронке
+- [x] Расширенные SLA-протоколы + эскалация · [`F3_SLA_PROTOCOLS_ACCEPTANCE.md`](../operations/phase3/leads/F3_SLA_PROTOCOLS_ACCEPTANCE.md) · апрув 2026-06-17
+- [x] Экспорт отчёта по баллам и воронке · [`F3_SCORING_EXPORT_ACCEPTANCE.md`](../operations/phase3/leads/F3_SCORING_EXPORT_ACCEPTANCE.md)
 
 ---
 
@@ -582,8 +582,8 @@
 - [ ] Расписание синка + маппинг стадий + конфликты полей
 - [ ] Битрикс: исходящий вебхук из UI + подсказка туннеля
 - [ ] Telegram: привязка чата из UI, дайджест, уведомления тендеров
-- [ ] SLA-протоколы + эскалация (хвост P3)
-- [ ] Экспорт отчёта по баллам и воронке (хвост P3)
+- [x] SLA-протоколы + эскалация — см. P3 [`F3_SLA_PROTOCOLS_ACCEPTANCE.md`](../operations/phase3/leads/F3_SLA_PROTOCOLS_ACCEPTANCE.md)
+- [x] Экспорт отчёта по баллам и воронке — см. P3 [`F3_SCORING_EXPORT_ACCEPTANCE.md`](../operations/phase3/leads/F3_SCORING_EXPORT_ACCEPTANCE.md)
 - [ ] Acceptance + smoke живых интеграций
 
 ---

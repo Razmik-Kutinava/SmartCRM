@@ -5,7 +5,7 @@ REST API для лидов — сборка роутера из подмодул
 """
 from fastapi import APIRouter
 
-from . import analytics_routes, amo_routes, bitrix_routes, crud, csv_routes, engagement, export_routes, hubspot_routes, sla_routes
+from . import analytics_routes, amo_routes, bitrix_routes, crud, csv_routes, engagement, export_routes, hubspot_routes, scoring_export_routes, sla_routes
 
 router = APIRouter(prefix="/api/leads", tags=["leads"])
 
@@ -15,6 +15,7 @@ router.include_router(hubspot_routes.router)
 router.include_router(sla_routes.router)
 router.get("/analytics/summary")(analytics_routes.analytics_summary)
 router.get("/analytics/export")(analytics_routes.analytics_export)
+router.get("/scoring/export")(scoring_export_routes.scoring_export)
 router.include_router(engagement.router)
 router.include_router(csv_routes.router)
 router.include_router(export_routes.router)

@@ -52,7 +52,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_close_forecast.py` | Прогноз закрытия сделки по стадии и баллу (Экономист) |
 | `agent_trace_analytics.py` | Эффективность агентов по трейсам (👍/👎, интенты) |
 | `analytics_metrics.py` | KPI воронки, когорты, воронка по источнику, CSV |
-| `export_reports.py` | Excel/PDF: воронка, карточка лида, список тендеров |
+| `export_reports.py` | Excel/PDF: воронка, карточка лида, тендеры, баллы+воронка |
 | `llm.py` | Общий чат с LLM (Groq/Ollama), json_mode |
 | `auth.py` | API-ключ, `require_api_key` |
 | `crypto.py` | Шифрование секретов (почта и т.п.) |
@@ -74,6 +74,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `hermes_prompt_profiles.py` | Профили промптов |
 | `crm_settings_store.py` | Настройки CRM (стадии, воронка, SLA-протоколы) |
 | `sla_protocols.py` | Пресеты и нормализация SLA-протоколов, маркеры `sla_step:` в note задач |
+| `scoring_funnel_report.py` | Отчёт по баллам лидов + воронка для экспорта P3 |
 | `lead_approvals.py` | Согласования смены стадии лида |
 | `lead_score_advisory.py` | Подсказки по скору лида |
 | `lead_priority_tier.py` | Приоритет лида по порогам CRM (зеркало `crmStages.js`) |

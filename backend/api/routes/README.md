@@ -20,6 +20,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `engagement.py` | Комментарии, логи связи, аудит полей, стадии |
 | `bitrix_routes.py` | Импорт лидов из Битрикс24, статус синка |
 | `sla_routes.py` | `GET /sla-protocols`, `PUT /{id}/sla-protocol` — назначение SLA-протокола |
+| `scoring_export_routes.py` | `GET /scoring/export` — экспорт отчёта по баллам и воронке |
 | `presenter.py` | Как отдать лид в JSON для API |
 | `schemas.py` | Pydantic-схемы запросов/ответов |
 

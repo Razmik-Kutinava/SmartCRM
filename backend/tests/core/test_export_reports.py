@@ -64,3 +64,43 @@ def test_tenders_export():
     assert xlsx[:2] == b"PK"
     pdf = tenders_to_pdf(items)
     assert pdf.startswith(b"%PDF")
+
+
+_SAMPLE_SCORING = {
+    "total": 2,
+    "avgManagerScore": 55,
+    "avgSuggestedScore": 40,
+    "divergentCount": 1,
+    "funnelScores": [{"stage": "Новый", "count": 2, "avgManagerScore": 55, "avgSuggestedScore": 40}],
+    "priorityDistribution": {"medium": 1, "high": 1},
+    "leads": [
+        {
+            "id": 1,
+            "company": "Co",
+            "stage": "Новый",
+            "source": "email",
+            "managerScore": 70,
+            "suggestedScore": 43,
+            "priorityLabel": "Высокий",
+            "warningsCount": 0,
+            "overdueOpenTasks": 0,
+            "amountRub": None,
+            "divergent": True,
+            "warnings": "",
+        }
+    ],
+}
+
+
+def test_scoring_export_bytes_formats():
+    from core.export_reports import scoring_export_bytes
+
+    csv_b, _, csv_name = scoring_export_bytes(_SAMPLE_SCORING, "csv")
+    assert csv_name.endswith(".csv")
+    assert b"company" in csv_b
+    xlsx_b, _, xlsx_name = scoring_export_bytes(_SAMPLE_SCORING, "xlsx")
+    assert xlsx_name.endswith(".xlsx")
+    assert xlsx_b[:2] == b"PK"
+    pdf_b, _, pdf_name = scoring_export_bytes(_SAMPLE_SCORING, "pdf")
+    assert pdf_name.endswith(".pdf")
+    assert pdf_b.startswith(b"%PDF")

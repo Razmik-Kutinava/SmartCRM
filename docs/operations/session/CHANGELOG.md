@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — P3: экспорт баллов и воронки + [x] SLA в MAP
+
+`GET /api/leads/scoring/export`, отчёт KPI+лиды+воронка по баллам, UI «Баллы» на аналитике; PRD_MAP P3 остаток закрыт.
+
 ## 2026-06-17 — P3: SLA-протоколы + эскалация (шаги 1–5)
 
 Пресеты `sla_protocols`, назначение на лид (`PUT /api/leads/{id}/sla-protocol`), автозадачи при смене стадии, фоновый poll эскалации → Ops queue + Telegram critical; UI карточка лида, Ops CRM JSON, фильтры задач; acceptance `F3_SLA_PROTOCOLS_ACCEPTANCE.md`; pytest **24 PASS**.
