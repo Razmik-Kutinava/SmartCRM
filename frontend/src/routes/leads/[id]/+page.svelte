@@ -106,7 +106,8 @@
 	let enrichRunning = $state(false);
 	let enrichMsg = $state('');
 	let exportPdfLoading = $state(false);
-	let industryOptions = $state([]);
+	let bitrixPushLoading = $state(false);
+	let bitrixPushMsg = $state('');
 
 	async function loadIndustryOptions() {
 		try {
@@ -168,6 +169,29 @@
 			enrichMsg = e?.message || String(e);
 		} finally {
 			exportPdfLoading = false;
+		}
+	}
+
+	async function pushLeadBitrix() {
+		if (!lead || bitrixPushLoading) return;
+		bitrixPushLoading = true;
+		bitrixPushMsg = '';
+		try {
+			const r = await apiFetch(`/api/leads/${lead.id}/push-bitrix`, { method: 'POST' });
+			const body = await r.json().catch(() => ({}));
+			if (!r.ok) {
+				const d = body?.detail;
+				throw new Error(typeof d === 'string' ? d : `HTTP ${r.status}`);
+			}
+			bitrixPushMsg =
+				body.action === 'updated'
+					? `Обновлён в Битрикс #${body.bitrix_lead_id}`
+					: `Создан в Битрикс #${body.bitrix_lead_id}`;
+			await sync();
+		} catch (e) {
+			bitrixPushMsg = e?.message || String(e);
+		} finally {
+			bitrixPushLoading = false;
 		}
 	}
 
@@ -650,6 +674,13 @@
 				disabled={exportPdfLoading}
 				onclick={exportLeadPdf}
 			>{exportPdfLoading ? 'PDF…' : '📄 PDF'}</button>
+			<button
+				type="button"
+				data-testid="lead-push-bitrix"
+				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+				disabled={bitrixPushLoading}
+				onclick={pushLeadBitrix}
+			>{bitrixPushLoading ? 'Битрикс…' : '📤 В Битрикс'}</button>
 			<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">📊 Анализ</button>
 			<button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">🎙 Голос</button>
 		</div>

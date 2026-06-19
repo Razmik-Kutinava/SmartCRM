@@ -362,6 +362,98 @@ def row_to_lead_fields(
     }
 
 
+def _split_contact_name(contact: str) -> tuple[str, str]:
+    raw = (contact or "").strip()
+    if not raw or raw == "—":
+        return "", ""
+    parts = raw.split(None, 1)
+    if len(parts) == 1:
+        return parts[0], ""
+    return parts[0], parts[1]
+
+
+def _bitrix_multi_field(value: str, *, value_type: str = "WORK") -> list[dict[str, str]]:
+    v = (value or "").strip()
+    if not v or v == "—":
+        return []
+    return [{"VALUE": v, "VALUE_TYPE": value_type}]
+
+
+def _invert_label_map(names: dict[str, str], label: str, default: str) -> str:
+    lbl = (label or "").strip()
+    if not lbl or lbl == "—":
+        return default
+    for key, name in names.items():
+        if name == lbl:
+            return key
+    low = lbl.lower()
+    for key, name in names.items():
+        if name.lower() == low:
+            return key
+    return default
+
+
+async def lead_to_bitrix_fields(lead: Lead) -> dict[str, Any]:
+    """SmartCRM Lead → поля crm.lead.add/update."""
+    status_names = await _load_status_names()
+    source_names = await _load_source_names()
+    stage = (lead.stage or "Новый").strip()
+    source = (lead.source or "—").strip()
+    status_id = _invert_label_map(status_names, stage, "NEW")
+    source_id = _invert_label_map(source_names, source, "OTHER")
+
+    company = (lead.company or "").strip()
+    contact = (lead.contact or "").strip()
+    title = company if company and company != "—" else contact or "Лид SmartCRM"
+    first, last = _split_contact_name(contact)
+
+    fields: dict[str, Any] = {
+        "TITLE": title[:255],
+        "STATUS_ID": status_id,
+        "SOURCE_ID": source_id,
+        "NAME": first[:50],
+        "LAST_NAME": last[:50],
+        "POST": (lead.position or "")[:255] if (lead.position or "").strip() not in ("", "—") else None,
+        "COMMENTS": (lead.description or "")[:2000] if lead.description else None,
+        "ADDRESS_CITY": (lead.city or "")[:255] if (lead.city or "").strip() not in ("", "—") else None,
+        "CURRENCY_ID": "RUB",
+    }
+    if lead.amount_rub is not None:
+        fields["OPPORTUNITY"] = str(lead.amount_rub)
+    email = _bitrix_multi_field(lead.email or "")
+    if email:
+        fields["EMAIL"] = email
+    phone = _bitrix_multi_field(lead.phone or "", value_type="MOBILE")
+    if phone:
+        fields["PHONE"] = phone
+    web = _bitrix_multi_field(lead.website or "")
+    if web:
+        fields["WEB"] = web
+    inn = (lead.inn or "").strip()
+    if inn:
+        fields["UF_CRM_INN"] = inn
+    return {k: v for k, v in fields.items() if v not in (None, "", [])}
+
+
+async def push_lead_to_bitrix(db: AsyncSession, lead: Lead) -> dict[str, Any]:
+    """Выгрузка лида в Битрикс24: update если bitrix_lead_id, иначе add."""
+    fields = await lead_to_bitrix_fields(lead)
+    if lead.bitrix_lead_id:
+        await bitrix_call("crm.lead.update", {"id": int(lead.bitrix_lead_id), "fields": fields})
+        action = "updated"
+        b_id = int(lead.bitrix_lead_id)
+    else:
+        data = await bitrix_call("crm.lead.add", {"fields": fields})
+        raw = data.get("result")
+        if raw is None:
+            raise BitrixWebhookError("crm.lead.add: пустой result")
+        b_id = int(raw)
+        lead.bitrix_lead_id = b_id
+        await db.flush()
+        action = "created"
+    return {"action": action, "bitrix_lead_id": b_id}
+
+
 async def _count_local_bitrix_leads(db: AsyncSession) -> int:
     r = await db.execute(
         select(func.count()).select_from(Lead).where(Lead.bitrix_lead_id.isnot(None))

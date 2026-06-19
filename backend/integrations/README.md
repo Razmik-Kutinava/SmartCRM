@@ -6,6 +6,7 @@
 | `bitrix24_sync.py` | Один лид (upsert), фоновый опрос, состояние синка |
 | `telegram/` | Бот: уведомления lead hunt, команды /status /queue, polling |
 | `crm_sync/csv_adapter.py` | CSV импорт/экспорт лидов, dedup по email/ИНН/bitrix_lead_id |
+| `crm_sync/bitrix_adapter.py` | Push лида SmartCRM → Битрикс24 (`crm.lead.add/update`) |
 | `crm_sync/base.py` | Протоколы pull/push для адаптеров CRM |
 
 Переменные: `BITRIX24_WEBHOOK_URL`, `BITRIX_AUTO_SYNC_MINUTES`, `BITRIX_OUTBOUND_TOKEN`.  

@@ -87,8 +87,34 @@ async def bitrix_sync_status():
         "today_filter": date.today().isoformat(),
         "sync_state": state,
         "how_it_works": (
-            "BITRIX24_WEBHOOK_URL — мы вызываем REST Битрикса (crm.lead.list/get). "
+            "BITRIX24_WEBHOOK_URL — мы вызываем REST Битрикса (crm.lead.list/get/add/update). "
             "Исходящий вебхук в Битриксе → POST /api/webhooks/bitrix/events (мгновенно). "
-            f"Фоновый опрос каждые {minutes} мин — лиды с DATE_CREATE >= сегодня."
+            f"Фоновый опрос каждые {minutes} мин — лиды с DATE_CREATE >= сегодня. "
+            "POST /api/leads/{id}/push-bitrix — выгрузка лида из SmartCRM в Б24."
         ),
     }
+
+
+@router.post("/{lead_id}/push-bitrix")
+async def push_lead_bitrix(lead_id: int, db: AsyncSession = Depends(get_db)):
+    """Выгрузка лида SmartCRM в Битрикс24 (crm.lead.add или update)."""
+    r = await db.execute(select(Lead).where(Lead.id == lead_id))
+    lead = r.scalar_one_or_none()
+    if not lead:
+        raise HTTPException(404, detail="Лид не найден")
+    try:
+        from integrations.bitrix24 import BitrixWebhookError
+        from integrations.crm_sync.bitrix_adapter import push_lead
+    except ImportError as e:
+        logger.exception("push-bitrix import: %s", e)
+        raise HTTPException(500, detail="Ошибка сервера. Проверьте логи.") from e
+    try:
+        result = await push_lead(db, lead)
+        await db.commit()
+        await db.refresh(lead)
+    except BitrixWebhookError as e:
+        raise HTTPException(403, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("push-bitrix lead_id=%s", lead_id)
+        raise HTTPException(502, detail="Ошибка выгрузки в Битрикс24. Подробности в логах.") from e
+    return {"status": "ok", **result, "lead_id": lead.id}

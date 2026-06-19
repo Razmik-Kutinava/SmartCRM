@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Платформа: MAP [x] lead hunt + Telegram; Битрикс push
+
+`[x]` в PRD_MAP для автопоиска и Telegram-бота; `POST /api/leads/{id}/push-bitrix`, `crm.lead.add/update`, UI «В Битрикс»; pytest **5 PASS**.
+
 ## 2026-06-17 — Платформа: Telegram-бот (MVP)
 
 `integrations/telegram/`: long polling, уведомления новых кандидатов lead hunt, команды `/start` `/status` `/queue`; acceptance `F3_PLATFORM_TELEGRAM_ACCEPTANCE.md`; pytest **5 PASS**.

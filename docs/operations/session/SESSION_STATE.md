@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: Ф3 платформа шаг 0–1 — [x] MAP lead hunt+Telegram, Битрикс push (adapter, API, UI, pytest). | Коммит: `PENDING` | Хвост A: живой smoke Б24 не делали | Хвост B: Amo/HubSpot следующий шаг | Хвост C: нет | Следующий шаг: AmoCRM import/export. | Статус: done
+
 2026-06-17 | Действие: Ф3 Telegram-бот MVP — poll, notify lead hunt, /start /status /queue, acceptance, pytest. | Коммит: `01ae21b` | Хвост A: Ops critical wiring не подключён | Хвост B: inline approve/reject → BACKLOG | Хвост C: нет | Следующий шаг: «ок» MAP Telegram. | Статус: done
 
 2026-06-19 | Действие: Ф3 lead hunt шаги 6–7 — UI оператора, approve-above, acceptance, DevTools smoke. | Коммит: `7045476` | Хвост A: PRD_MAP [x] ждёт «ок» | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP автопоиск. | Статус: done
