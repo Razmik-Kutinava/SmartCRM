@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3 P3] | Задача:[smoke экспорт баллов DevTools] | Статус: ✅ done`
+
+**2026-06-19:** DevTools `/leads/analytics` → Excel → «Баллы» → HTTP 200; `smoke_scoring_export.py` pytest 13 + live xlsx 245KB. Коммит: `f6459af`. Следующий: **Ф4** экран интеграций.
+
+---
+
 `Спринт:[Ф3 P3] | Задача:[SLA [x] + экспорт баллов] | Статус: ✅ done`
 
 **2026-06-17:** MAP `[x]` SLA + экспорт баллов/воронки; `GET /api/leads/scoring/export` (csv/xlsx/pdf), кнопка «Баллы» на `/leads/analytics`; pytest **19 PASS** (scoring export suite). Коммит: `39f452e`. Следующий: **Ф4** экран интеграций или живой smoke.

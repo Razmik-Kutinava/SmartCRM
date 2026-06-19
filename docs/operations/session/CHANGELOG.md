@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — P3: smoke экспорт баллов (DevTools + live HTTP)
+
+`smoke_scoring_export.py`; Chrome DevTools: кнопка «Баллы» → xlsx 200; acceptance обновлён.
+
 ## 2026-06-17 — P3: экспорт баллов и воронки + [x] SLA в MAP
 
 `GET /api/leads/scoring/export`, отчёт KPI+лиды+воронка по баллам, UI «Баллы» на аналитике; PRD_MAP P3 остаток закрыт.
