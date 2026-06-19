@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф4: регресс industryOptions на карточке лида
+
+`test_lead_card_page.py`, smoke GET `/leads/{id}`; DevTools без ReferenceError.
+
 ## 2026-06-17 — Ф4 баллы: сортировка списка + DevTools smoke
 
 Сортировка warnings/delta; `smoke_scoring_f4_ui.py`; DevTools smoke list/ops/crm/breakdown; фикс `industryOptions` на карточке.

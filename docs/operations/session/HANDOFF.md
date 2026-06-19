@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 баллы] | Задача:[хвост C industryOptions — регресс + smoke] | Статус: ✅ done`
+
+**2026-06-17:** `test_lead_card_page.py`, smoke `/leads/{id}`; DevTools `/leads/3191` — карточка и breakdown OK, без `industryOptions` в консоли. Коммит: `31242ec`. Следующий: **go** Ф4 D–F или Ф4-A.
+
+---
+
 `Спринт:[Ф4 баллы] | Задача:[сортировка + DevTools smoke] | Статус: ✅ done`
 
 **2026-06-17:** Сортировка «Предупреждения ↓» / «Расхождение ↓»; `scoreDelta` в API; `smoke_scoring_f4_ui.py`; DevTools: list фильтры, /ops/crm веса, карточка breakdown (лид 3191); фикс `industryOptions` на карточке. Коммит: `0d66a41`. Следующий: **go** Ф4 D–F (прогноз, пороги, Ops badge) или Ф4-A интеграции.
