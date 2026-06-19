@@ -1,8 +1,14 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[апрув удаление] | Статус: ✅ done`
+
+**2026-06-19:** Ручной тест list + карточка OK; MAP `[x]` удаление лида. Коммит: `pending`. Следующий: обход лидов дальше по владельцу.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[удаление list + карточка] | Статус: ✅ done`
 
-**2026-06-19:** DELETE через `apiDelete`; кнопки list/карточка + confirm; backend purge nurture/email; `F4_LEADS_ACCEPTANCE.md`, MAP §Лиды после Платформа; pytest **20 PASS**. Коммит: `16ac2da`. Следующий: **«ок»** → `[x]` MAP удаление · обход лидов дальше.
+**2026-06-19:** DELETE через `apiDelete`; кнопки list/карточка + confirm; backend purge nurture/email; `F4_LEADS_ACCEPTANCE.md`, MAP §Лиды после Дашборд; pytest **20 PASS**. Коммит: `16ac2da`.
 
 ---
 

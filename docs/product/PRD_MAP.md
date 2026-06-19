@@ -521,7 +521,7 @@
 Детали: [`F4_LEADS_ACCEPTANCE.md`](../operations/phase4/leads/F4_LEADS_ACCEPTANCE.md)
 
 - [x] Создание лида — модалка дашборд + `/leads/list`, POST в БД · апрув 2026-06-19
-- [ ] Удаление лида — confirm, list + карточка, DELETE в БД · pytest `test_lead_delete_ui.py` · **ждёт «ок»**
+- [x] Удаление лида — confirm, list + карточка, DELETE в БД · pytest `test_lead_delete_ui.py` · апрув 2026-06-19
 
 ### Vendor crawl → RAG tech_specialist (тюнинг)
 
