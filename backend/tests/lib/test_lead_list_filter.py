@@ -56,8 +56,31 @@ def sort_leads(leads: list[dict], sort_by: str = "score_desc", tier_fn=None) -> 
         except (TypeError, ValueError):
             return 0.0
 
+    def warnings_of(l: dict) -> int:
+        try:
+            return int(l.get("scoreWarningsCount") or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    def score_delta_of(l: dict) -> int:
+        if l.get("scoreDelta") is not None:
+            try:
+                return int(l["scoreDelta"])
+            except (TypeError, ValueError):
+                pass
+        mgr = score_of(l)
+        try:
+            sug = float(l.get("suggestedScore") or 0)
+        except (TypeError, ValueError):
+            sug = 0.0
+        return int(abs(mgr - sug))
+
     if sort_by == "score_asc":
         return sorted(rows, key=score_of)
+    if sort_by == "warnings_desc":
+        return sorted(rows, key=lambda l: (-warnings_of(l), -score_delta_of(l)))
+    if sort_by == "score_delta_desc":
+        return sorted(rows, key=lambda l: (-score_delta_of(l), -warnings_of(l)))
     if sort_by == "priority_desc" and tier_fn:
 
         def key(l: dict):
@@ -129,3 +152,23 @@ def test_filter_score_risk_warnings_and_divergent():
     assert [x["id"] for x in w] == [1]
     d = filter_leads(leads, filter_score_risk="divergent", tier_fn=_tier_stub)
     assert [x["id"] for x in d] == [2]
+
+
+def test_sort_warnings_desc():
+    leads = [
+        {"id": 1, "scoreWarningsCount": 1, "scoreDelta": 5},
+        {"id": 2, "scoreWarningsCount": 3, "scoreDelta": 2},
+        {"id": 3, "scoreWarningsCount": 0, "scoreDelta": 10},
+    ]
+    out = sort_leads(leads, "warnings_desc")
+    assert [x["id"] for x in out] == [2, 1, 3]
+
+
+def test_sort_score_delta_desc():
+    leads = [
+        {"id": 1, "scoreDelta": 10, "scoreWarningsCount": 0},
+        {"id": 2, "scoreDelta": 40, "scoreWarningsCount": 1},
+        {"id": 3, "scoreDelta": 25, "scoreWarningsCount": 0},
+    ]
+    out = sort_leads(leads, "score_delta_desc")
+    assert [x["id"] for x in out] == [2, 3, 1]

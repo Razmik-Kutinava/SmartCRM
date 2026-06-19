@@ -27,3 +27,4 @@ def test_attach_lead_score_flags_batch():
     out = attach_lead_score_flags(leads, tasks, settings)
     assert out[0]["hasScoreWarnings"] is True
     assert "suggestedScore" in out[0]
+    assert "scoreDelta" in out[0]

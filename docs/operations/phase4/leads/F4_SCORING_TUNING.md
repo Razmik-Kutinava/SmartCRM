@@ -38,7 +38,7 @@
 
 - [x] Лёгкие поля в `GET /api/leads` (без полного advisory на каждый лид): `hasScoreWarnings`, `scoreDivergent` (или аналог)
 - [x] Фильтры в `/leads/list`: «с предупреждениями», «расхождение с подсказкой»
-- [ ] Сортировка опционально: по числу warnings / по delta score
+- [x] Сортировка опционально: по числу warnings / по delta score
 
 ### D. Связка с аналитикой (перекрёст с Analytics v2)
 

@@ -143,6 +143,7 @@
 	let amoPushLoading = $state(false);
 	let hubspotPushLoading = $state(false);
 	let crmPushMsg = $state('');
+	let industryOptions = $state(/** @type {string[]} */ ([]));
 
 	async function loadIndustryOptions() {
 		try {

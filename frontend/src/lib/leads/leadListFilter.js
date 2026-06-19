@@ -5,6 +5,8 @@ export const SORT_OPTIONS = [
 	{ id: 'score_desc', label: 'Балл ↓' },
 	{ id: 'score_asc', label: 'Балл ↑' },
 	{ id: 'priority_desc', label: 'Приоритет ↓' },
+	{ id: 'warnings_desc', label: 'Предупреждения ↓' },
+	{ id: 'score_delta_desc', label: 'Расхождение ↓' },
 	{ id: 'company_asc', label: 'Компания А–Я' },
 ];
 
@@ -138,6 +140,17 @@ export function filterLeads(
 	});
 }
 
+/** @param {Record<string, unknown>} lead */
+function scoreDeltaOf(lead) {
+	if (lead.scoreDelta != null && Number.isFinite(Number(lead.scoreDelta))) {
+		return Number(lead.scoreDelta);
+	}
+	const mgr = Number(lead.score);
+	const sug = Number(lead.suggestedScore);
+	if (!Number.isFinite(mgr) || !Number.isFinite(sug)) return 0;
+	return Math.abs(mgr - sug);
+}
+
 /** @param {Array<Record<string, unknown>>} leads */
 export function sortLeads(leads, sortBy = 'score_desc', config = null) {
 	const rows = [...leads];
@@ -145,11 +158,19 @@ export function sortLeads(leads, sortBy = 'score_desc', config = null) {
 		const n = Number(l.score);
 		return Number.isFinite(n) ? n : 0;
 	};
+	const warningsOf = (l) => {
+		const n = Number(l.scoreWarningsCount);
+		return Number.isFinite(n) ? n : 0;
+	};
 	const companyOf = (l) => String(l.company || '').toLocaleLowerCase('ru');
 
 	switch (sortBy) {
 		case 'score_asc':
 			return rows.sort((a, b) => scoreOf(a) - scoreOf(b));
+		case 'warnings_desc':
+			return rows.sort((a, b) => warningsOf(b) - warningsOf(a) || scoreDeltaOf(b) - scoreDeltaOf(a));
+		case 'score_delta_desc':
+			return rows.sort((a, b) => scoreDeltaOf(b) - scoreDeltaOf(a) || warningsOf(b) - warningsOf(a));
 		case 'priority_desc':
 			return rows.sort((a, b) => {
 				const ta = leadPriorityTier(a.score, config);

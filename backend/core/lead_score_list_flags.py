@@ -18,17 +18,20 @@ def lead_score_flags(
             "hasScoreWarnings": False,
             "scoreDivergent": False,
             "scoreWarningsCount": 0,
+            "scoreDelta": 0,
         }
     advisory = compute_lead_score_advisory(lead, tasks, settings)
     mgr = int(lead.get("score") or 0)
     sug = advisory.get("suggestedScore")
     sug_int = int(sug) if sug is not None else 0
     warnings = advisory.get("warnings") or []
+    delta = abs(mgr - sug_int) if sug is not None else 0
     return {
         "suggestedScore": sug,
         "hasScoreWarnings": len(warnings) > 0,
         "scoreDivergent": score_divergent(mgr, sug_int, settings),
         "scoreWarningsCount": len(warnings),
+        "scoreDelta": delta,
     }
 
 

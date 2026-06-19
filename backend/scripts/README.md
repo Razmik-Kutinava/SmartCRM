@@ -58,6 +58,7 @@
 | `probe_email_host.py` | Диагностика IMAP/SMTP портов для кастомного хоста (me@) |
 | `smoke_scoring_funnel.py` | Смоук балльной воронки: формула scoreAdvisory + приоритеты |
 | `smoke_scoring_export.py` | Смоук экспорта баллов: pytest + live xlsx + frontend URL |
+| `smoke_scoring_f4_ui.py` | Смоук Ф4 баллы: сортировка списка, флаги API, UI /leads/list + /ops/crm |
 | `smoke_whisper_stt.py` | Смоук Groq Whisper STT + опц. live Groq |
 | `smoke_hermes_leads.py` | Смоук Hermes интентов по лидам (CRUD, стадия, задача) |
 | `smoke_voice_action.py` | Смоук сборки voice_action (approve/filter/navigate) |

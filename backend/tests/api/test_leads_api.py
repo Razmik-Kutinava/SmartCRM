@@ -187,4 +187,5 @@ async def test_list_leads_includes_score_advisory_flags(client):
     assert "hasScoreWarnings" in row
     assert "scoreDivergent" in row
     assert "suggestedScore" in row
+    assert "scoreDelta" in row
     assert row["scoreDivergent"] is True
