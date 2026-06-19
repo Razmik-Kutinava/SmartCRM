@@ -46,6 +46,10 @@ class Lead(Base):
     bitrix_lead_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
     amo_lead_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
     hubspot_deal_id: Mapped[Optional[str]] = mapped_column(String(64), nullable=True, index=True)
+    sla_protocol_id: Mapped[Optional[str]] = mapped_column(String(64), nullable=True, index=True)
+    sla_protocol_started_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True, default=None
+    )
 
     # ── Идентификаторы (из Checko/DaData) ─────────────────────────────────────
     inn: Mapped[Optional[str]] = mapped_column(String(20), nullable=True, default=None)
@@ -125,6 +129,10 @@ class Lead(Base):
             "bitrixLeadId": self.bitrix_lead_id,
             "amoLeadId": self.amo_lead_id,
             "hubspotDealId": self.hubspot_deal_id or "",
+            "slaProtocolId": self.sla_protocol_id or "",
+            "slaProtocolStartedAt": (
+                self.sla_protocol_started_at.isoformat() if self.sla_protocol_started_at else None
+            ),
             "inn": self.inn or "",
             "ogrn": self.ogrn or "",
             "checko": checko,

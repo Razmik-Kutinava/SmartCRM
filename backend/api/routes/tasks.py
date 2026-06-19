@@ -86,6 +86,8 @@ async def list_tasks(
                 for raw in (t.due, t.sla_due)
             )
         ]
+    elif status == "escalated":
+        tasks = [t for t in tasks if t.status == "open" and t.escalated]
 
     if lead_id is not None:
         tasks = [t for t in tasks if t.lead_id == lead_id]

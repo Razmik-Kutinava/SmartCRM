@@ -18,6 +18,7 @@
 	let defaultScore = $state(50);
 	let notes = $state('');
 	let rulesJson = $state('[]');
+	let slaProtocolsJson = $state('[]');
 	let bitrixOk = $state(false);
 	let bitrixMasked = $state(null);
 
@@ -39,6 +40,7 @@
 			defaultScore = s.default_new_lead_score ?? 50;
 			notes = s.notes ?? '';
 			rulesJson = JSON.stringify(s.stage_transition_rules ?? [], null, 2);
+			slaProtocolsJson = JSON.stringify(s.sla_protocols ?? [], null, 2);
 			bitrixOk = !!d.bitrix_webhook_configured;
 			bitrixMasked = d.bitrix_webhook_masked || null;
 		} catch (e) {
@@ -66,6 +68,15 @@
 			if (!Array.isArray(stage_transition_rules)) {
 				throw new Error('Правила переходов: ожидается JSON-массив объектов');
 			}
+			let sla_protocols;
+			try {
+				sla_protocols = JSON.parse(slaProtocolsJson || '[]');
+			} catch {
+				throw new Error('SLA-протоколы: невалидный JSON');
+			}
+			if (!Array.isArray(sla_protocols)) {
+				throw new Error('SLA-протоколы: ожидается JSON-массив');
+			}
 			const body = {
 				stages,
 				priority_thresholds: { critical: crit, high: high, medium: med },
@@ -73,6 +84,7 @@
 				default_new_lead_score: defaultScore,
 				notes: notes.trim(),
 				stage_transition_rules,
+				sla_protocols,
 			};
 			const r = await fetch(`${API}/api/ops/crm-settings`, {
 				method: 'PUT',
@@ -150,6 +162,16 @@
 					bind:value={rulesJson}
 					rows="10"
 					class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white font-mono"
+				></textarea>
+			</div>
+
+			<div>
+				<label class="block text-xs text-gray-500 mb-1">SLA-протоколы (JSON-массив): id, name, stage, steps[]</label>
+				<textarea
+					bind:value={slaProtocolsJson}
+					rows="12"
+					class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white font-mono"
+					data-testid="ops-sla-protocols-json"
 				></textarea>
 			</div>
 

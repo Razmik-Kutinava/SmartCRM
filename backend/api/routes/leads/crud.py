@@ -101,6 +101,7 @@ async def update_lead(
             detail={"code": "stage_transition_blocked", "messages": msgs},
         )
     before_snap = {k: getattr(lead, k) for k in TRACKED_ORM_FIELDS}
+    old_stage = lead.stage
     if "approvals" in data:
         lead.approvals = merge_approvals_payload(lead.approvals, data["approvals"])
     for field, value in data.items():
@@ -112,6 +113,10 @@ async def update_lead(
             setattr(lead, field, value)
     after_snap = {k: getattr(lead, k) for k in TRACKED_ORM_FIELDS}
     await append_lead_field_audits(db, lead.id, before_snap, after_snap, actor_from_request(request))
+    if "stage" in data and str(data.get("stage") or "").strip() != str(old_stage or "").strip():
+        from services.sla_protocol_runner import maybe_auto_assign_on_stage
+
+        await maybe_auto_assign_on_stage(db, lead, old_stage, str(data.get("stage") or ""))
     await db.commit()
     await db.refresh(lead)
     logger.info("Лид обновлён: %s (id=%s) → %s", lead.company, lead.id, data)

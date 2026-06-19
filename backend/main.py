@@ -101,8 +101,20 @@ async def lifespan(app: FastAPI):
         telegram_task = asyncio.create_task(telegram_poll_loop(telegram_stop))
         logger.info("Telegram: polling (уведомления + /status /queue)")
 
+    sla_esc_stop = asyncio.Event()
+    from services.sla_escalation_background import sla_escalation_poll_loop
+
+    sla_esc_task = asyncio.create_task(sla_escalation_poll_loop(sla_esc_stop))
+    logger.info("SLA escalation: фоновый poll (SLA_ESCALATION_POLL_MINUTES, по умолчанию 5)")
+
     yield
 
+    sla_esc_stop.set()
+    sla_esc_task.cancel()
+    try:
+        await sla_esc_task
+    except asyncio.CancelledError:
+        pass
     if telegram_task is not None:
         telegram_stop.set()
         telegram_task.cancel()

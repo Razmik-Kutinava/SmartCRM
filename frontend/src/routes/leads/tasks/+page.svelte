@@ -8,6 +8,7 @@
 	let leads = $state([]);
 	let loading = $state(true);
 	let err = $state('');
+	let filter = $state('all');
 
 	let title = $state('');
 	let due = $state('');
@@ -22,7 +23,8 @@
 		loading = true;
 		err = '';
 		try {
-			tasks = await fetchTasks();
+			const params = filter === 'all' ? {} : { status: filter };
+			tasks = await fetchTasks(params);
 			leads = await fetchLeads().catch(() => []);
 		} catch (e) {
 			err = e?.message || String(e);
@@ -87,8 +89,17 @@
 	<div class="px-6 py-3 border-b border-gray-800 bg-gray-900 shrink-0">
 		<h1 class="text-lg font-semibold text-white">Задачи и SLA</h1>
 		<p class="text-xs text-gray-500">
-			Один список задач CRM: срок, SLA-дедлайн, эскалация при просрочке (флажок).
+			Один список задач CRM: срок, SLA-дедлайн, эскалация при просрочке (авто + флажок).
 		</p>
+		<div class="flex gap-2 mt-2 flex-wrap">
+			{#each [['all', 'Все'], ['overdue', 'Просрочено'], ['escalated', 'Эскалация'], ['open', 'Открытые']] as [id, label]}
+				<button
+					type="button"
+					class="text-xs px-2 py-1 rounded {filter === id ? 'bg-indigo-600 text-white' : 'bg-gray-800 text-gray-400'}"
+					onclick={() => { filter = id; load(); }}
+				>{label}</button>
+			{/each}
+		</div>
 	</div>
 
 	<div class="flex-1 overflow-y-auto p-6 space-y-6">

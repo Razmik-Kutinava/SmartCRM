@@ -72,7 +72,8 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `agent_prompt_versions.py` | Git-like версии override промптов (агенты + Hermes) |
 | `hermes_prompt_store.py` | Override Hermes + автоснимки в версии |
 | `hermes_prompt_profiles.py` | Профили промптов |
-| `crm_settings_store.py` | Настройки CRM (стадии, воронка) |
+| `crm_settings_store.py` | Настройки CRM (стадии, воронка, SLA-протоколы) |
+| `sla_protocols.py` | Пресеты и нормализация SLA-протоколов, маркеры `sla_step:` в note задач |
 | `lead_approvals.py` | Согласования смены стадии лида |
 | `lead_score_advisory.py` | Подсказки по скору лида |
 | `lead_priority_tier.py` | Приоритет лида по порогам CRM (зеркало `crmStages.js`) |

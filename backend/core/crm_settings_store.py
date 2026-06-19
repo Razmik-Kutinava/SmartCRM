@@ -10,6 +10,8 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+from core.sla_protocols import DEFAULT_SLA_PROTOCOLS, normalize_sla_protocols
+
 logger = logging.getLogger(__name__)
 
 _DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -38,6 +40,8 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     # P2: правила перехода в стадию (пустой список = без доп. гейтов). Пример элемента:
     # {"to_stage": "Выигран", "require_non_empty": ["email", "company"], "require_positive_amount_rub": true}
     "stage_transition_rules": [],
+    # P3: SLA-протоколы (шаги задач по стадии лида)
+    "sla_protocols": [],
 }
 
 
@@ -84,6 +88,10 @@ def load_settings() -> dict[str, Any]:
             merged["stage_transition_rules"] = normalize_stage_transition_rules(
                 data["stage_transition_rules"]
             )
+        if "sla_protocols" in data:
+            merged["sla_protocols"] = normalize_sla_protocols(data["sla_protocols"])
+        elif not merged.get("sla_protocols"):
+            merged["sla_protocols"] = normalize_sla_protocols(DEFAULT_SLA_PROTOCOLS)
         return merged
     except Exception as e:
         logger.warning("crm_settings: не удалось прочитать %s: %s", _FILE, e)
@@ -103,6 +111,8 @@ def save_settings(new_data: dict[str, Any]) -> dict[str, Any]:
             current["stages"] = cleaned
         elif k == "stage_transition_rules":
             current["stage_transition_rules"] = normalize_stage_transition_rules(v)
+        elif k == "sla_protocols":
+            current["sla_protocols"] = normalize_sla_protocols(v)
         elif k in DEFAULT_SETTINGS:
             current[k] = v
     _FILE.write_text(json.dumps(current, ensure_ascii=False, indent=2), encoding="utf-8")

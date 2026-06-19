@@ -42,9 +42,13 @@
 	import { openLeadIndustryModal } from '$lib/leads/leadIndustryUi.js';
 	import { apiFetch } from '$lib/api.js';
 	import { fetchLeadIndustries, isIndustryEmpty } from '$lib/leads/industryCatalog.js';
+	import { assignLeadSlaProtocol, fetchSlaProtocols } from '$lib/leads/slaProtocol.js';
 
-	let lead    = $state(null);
+	let lead = $state(null);
 	let notFound = $state(false);
+	let slaProtocols = $state([]);
+	let slaAssigning = $state(false);
+	let slaMsg = $state('');
 
 	let approvalsDraft = $state({});
 	function syncApprovalsDraft() {
@@ -84,8 +88,35 @@
 		}
 		pullLead();
 		loadIndustryOptions();
+		loadSlaCatalog();
 		return page.subscribe(pullLead);
 	});
+
+	async function loadSlaCatalog() {
+		try {
+			const d = await fetchSlaProtocols();
+			slaProtocols = d.protocols || [];
+		} catch {
+			slaProtocols = [];
+		}
+	}
+
+	async function changeSlaProtocol(protocolId) {
+		if (!lead || slaAssigning) return;
+		slaAssigning = true;
+		slaMsg = '';
+		try {
+			const updated = await assignLeadSlaProtocol(lead.id, protocolId || null);
+			lead = updated;
+			writeLeadsCache(await fetchLeads().catch(() => [lead]));
+			slaMsg = protocolId ? 'SLA-протокол назначен' : 'Протокол снят';
+			await loadLeadTasks();
+		} catch (e) {
+			slaMsg = e?.message || String(e);
+		} finally {
+			slaAssigning = false;
+		}
+	}
 
 	let stageSaving = $state(false);
 	let moneyAmountStr = $state('');
@@ -1124,6 +1155,35 @@
 
 				<!-- ── ЗАДАЧИ ── -->
 				{:else if activeTab === 'tasks'}
+					<div class="mb-4 rounded-xl border border-gray-800 bg-gray-900/80 p-4 space-y-2" data-testid="lead-sla-protocol">
+						<div class="text-sm font-medium text-white">SLA-протокол</div>
+						<select
+							class="w-full rounded-lg bg-gray-950 border border-gray-700 px-3 py-2 text-sm text-white"
+							disabled={slaAssigning}
+							value={lead.slaProtocolId || ''}
+							onchange={(e) => changeSlaProtocol(e.currentTarget.value)}
+						>
+							<option value="">— Не назначен —</option>
+							{#each slaProtocols as p}
+								<option value={p.id}>{p.name}</option>
+							{/each}
+						</select>
+						{#if lead.slaProtocol?.steps?.length}
+							<ul class="text-xs text-gray-400 space-y-1 mt-2">
+								{#each lead.slaProtocol.steps as step}
+									<li class="flex justify-between gap-2">
+										<span>{step.title}</span>
+										<span class={step.escalated ? 'text-red-400' : 'text-gray-500'}>
+											{step.sla_status || step.status}
+										</span>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+						{#if slaMsg}
+							<p class="text-xs text-gray-500">{slaMsg}</p>
+						{/if}
+					</div>
 					<div class="space-y-2">
 						{#if leadTasksLoading}
 							<p class="text-gray-500 text-sm">Загрузка задач…</p>

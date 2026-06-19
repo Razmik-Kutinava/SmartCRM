@@ -501,7 +501,7 @@
 
 ### Баллы P3 (остаток)
 
-- [ ] Расширенные SLA-протоколы + эскалация
+- [ ] Расширенные SLA-протоколы + эскалация · [`F3_SLA_PROTOCOLS_ACCEPTANCE.md`](../operations/phase3/leads/F3_SLA_PROTOCOLS_ACCEPTANCE.md)
 - [ ] Экспорт отчёта по баллам и воронке
 
 ---

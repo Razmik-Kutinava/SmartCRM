@@ -165,6 +165,13 @@ def compute_lead_score_advisory(
     if overdue_n > 0:
         warnings.append(f"Есть просроченные открытые задачи: {overdue_n}. Закройте или перенесите срок.")
 
+    escalated_n = sum(
+        1 for t in tasks if t.get("status") == "open" and t.get("escalated")
+    )
+    breakdown["escalatedOpenTasks"] = escalated_n
+    if escalated_n > 0:
+        warnings.append(f"Эскалированные открытые задачи: {escalated_n}. Требуют внимания руководителя.")
+
     base = int(by_stage.get(stage, 45))
     breakdown["baseFromStage"] = base
 

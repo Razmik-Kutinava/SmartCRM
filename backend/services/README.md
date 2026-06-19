@@ -31,6 +31,9 @@
 | `lead_hunt_queue.py` | Нормализованный вид очереди (company, score, summary) |
 | `lead_hunt_notifications.py` | In-app уведомления lead hunt |
 | `lead_hunt_run_log.py` | Trace прогона + agent_run_log fanout при approve |
+| `sla_protocol_runner.py` | Назначение SLA-протокола на лид, автозадачи, статус шагов |
+| `sla_escalation.py` | Просрочка SLA → escalated + Ops queue (+ Telegram critical) |
+| `sla_escalation_background.py` | Фоновый poll эскалации (`SLA_ESCALATION_POLL_MINUTES`) |
 
 Кэш ответов: `data/moy_zakupki_cache/`.  
 Тесты: `tests/test_tender_sources.py`.
