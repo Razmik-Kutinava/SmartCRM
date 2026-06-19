@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Ф4 баллы A–C: Ops веса, breakdown, фильтры списка
+
+UI `scoring_advisory` в `/ops/crm`; breakdown подсказки на карточке; `hasScoreWarnings`/`scoreDivergent` в API списка + фильтры `/leads/list`.
+
 ## 2026-06-19 — Ф4 docs: план тюнинга баллов
 
 `F4_SCORING_TUNING.md` — 6 критичных пробелов после P3; секция в PRD_MAP; F4_PLATFORM §D актуализирован.

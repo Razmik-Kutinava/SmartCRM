@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: Ф4 баллы A–C — Ops scoring_advisory UI, breakdown карточка, флаги+фильтры списка; pytest 17 PASS. | Коммит: `618bffe` | Хвост A: DevTools/smoke UI не кликал; сортировка по warnings — не делали; MAP [x] ждёт «ок» | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP Ф4 баллы A–C или go D–F. | Статус: done
+
 2026-06-19 | Действие: docs Ф4 баллы — F4_SCORING_TUNING.md, секция в PRD_MAP, F4_PLATFORM §D. | Коммит: `11abbf1` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф4-A интеграции или Ф4 баллы-A. | Статус: done
 
 2026-06-19 | Действие: smoke экспорт баллов — DevTools «Баллы» xlsx 200, smoke_scoring_export.py OK (pytest 13 + live 245KB). | Коммит: `f6459af` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: Ф4 экран интеграций. | Статус: done

@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 баллы] | Задача:[A–C Ops UI + breakdown + list filters] | Статус: ✅ done`
+
+**2026-06-17:** `/ops/crm` — редактор `scoring_advisory`; карточка — раскрываемый breakdown; `/leads/list` — флаги API + фильтры warnings/divergent; pytest **17 PASS**. Коммит: `618bffe`. Следующий: **«ок»** → `[x]` MAP Ф4 баллы A–C или go D–F.
+
+---
+
 `Спринт:[Ф4 docs] | Задача:[план тюнинга баллов F4_SCORING_TUNING] | Статус: ✅ done`
 
 **2026-06-19:** `F4_SCORING_TUNING.md`, секция «Баллы (тюнинг Ф4)» в PRD_MAP; F4_PLATFORM_TUNING §D обновлён (P3 [x]). Коммит: `11abbf1`. Следующий: **go** Ф4-A интеграции или go Ф4 баллы-A (UI весов Ops).
