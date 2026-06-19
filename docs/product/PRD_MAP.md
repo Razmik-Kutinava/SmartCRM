@@ -516,6 +516,13 @@
 
 - [x] Модалка «Новый лид» — дашборд + `/leads/list`, POST в БД · [`F4_DASHBOARD_ACCEPTANCE.md`](../operations/phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md) · апрув 2026-06-19
 
+### Лиды (обход Ф4)
+
+Детали: [`F4_LEADS_ACCEPTANCE.md`](../operations/phase4/leads/F4_LEADS_ACCEPTANCE.md)
+
+- [x] Создание лида — модалка дашборд + `/leads/list`, POST в БД · апрув 2026-06-19
+- [ ] Удаление лида — confirm, list + карточка, DELETE в БД · pytest `test_lead_delete_ui.py` · **ждёт «ок»**
+
 ### Vendor crawl → RAG tech_specialist (тюнинг)
 
 Детали: [`F4_VENDOR_CRAWL_TUNING.md`](../operations/phase4/rag/F4_VENDOR_CRAWL_TUNING.md)
@@ -602,13 +609,6 @@
 - [x] SLA-протоколы + эскалация — см. P3 [`F3_SLA_PROTOCOLS_ACCEPTANCE.md`](../operations/phase3/leads/F3_SLA_PROTOCOLS_ACCEPTANCE.md)
 - [x] Экспорт отчёта по баллам и воронке — см. P3 [`F3_SCORING_EXPORT_ACCEPTANCE.md`](../operations/phase3/leads/F3_SCORING_EXPORT_ACCEPTANCE.md)
 - [ ] Acceptance + smoke живых интеграций
-
-### Лиды (обход Ф4)
-
-Детали: [`F4_LEADS_ACCEPTANCE.md`](../operations/phase4/leads/F4_LEADS_ACCEPTANCE.md)
-
-- [x] Создание лида — модалка дашборд + `/leads/list`, POST в БД · апрув 2026-06-19
-- [ ] Удаление лида — confirm, list + карточка, DELETE в БД · pytest `test_lead_delete_ui.py` · **ждёт «ок»**
 
 ---
 
