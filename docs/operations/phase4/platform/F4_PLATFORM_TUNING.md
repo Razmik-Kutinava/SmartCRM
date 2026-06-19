@@ -49,10 +49,12 @@
 - [ ] Несколько chat_id / роли (оператор vs руководитель) — `TELEGRAM_ALLOWED_CHAT_IDS` в UI
 - [ ] Голосовые команды через бота — **вне scope**, только если явный go
 
-### D. Баллы P3 (остаток MAP, логично в Ф4 платформа)
+### D. Баллы P3 — закрыто в Ф3
 
-- [ ] **Расширенные SLA-протоколы + эскалация** (связка tasks ↔ лиды ↔ Ops)
-- [ ] **Экспорт отчёта по баллам и воронке** (Excel/PDF или CSV, как `export_reports`)
+- [x] SLA-протоколы + эскалация → [`F3_SLA_PROTOCOLS_ACCEPTANCE.md`](../../phase3/leads/F3_SLA_PROTOCOLS_ACCEPTANCE.md)
+- [x] Экспорт баллов и воронки → [`F3_SCORING_EXPORT_ACCEPTANCE.md`](../../phase3/leads/F3_SCORING_EXPORT_ACCEPTANCE.md)
+
+**Тюнинг Ф4 (остаток по баллам):** [`F4_SCORING_TUNING.md`](../leads/F4_SCORING_TUNING.md) — UI весов, breakdown, фильтры списка, связка с прогнозом.
 
 ### E. Качество и приёмка
 
@@ -76,8 +78,8 @@
 
 1. **A** — экран интеграций + хранение секретов (блокер для «без хлопот»)  
 2. **B** — расписание и маппинг стадий  
-3. **D** — SLA + экспорт баллов  
-4. **C** — Telegram дайджест/тендеры  
+3. **C** — Telegram дайджест/тендеры  
+4. **Баллы Ф4** — см. [`F4_SCORING_TUNING.md`](../leads/F4_SCORING_TUNING.md) (параллельно с Analytics v2)  
 5. **E** — acceptance + smoke  
 
 ---
@@ -86,4 +88,4 @@
 
 Пункты **A–E** → секция **«Фаза 4 — Платформа»** в [`PRD_MAP.md`](../../../product/PRD_MAP.md).
 
-Баллы P3 (SLA, экспорт) — дублируют хвост § «Баллы P3 (остаток)»; закрывать **одним шагом** или перенести `[x]` в MAP после Ф4-D.
+Баллы P3 (SLA, экспорт) — **[x] в MAP**. Тюнинг баллов Ф4 — отдельно [`F4_SCORING_TUNING.md`](../leads/F4_SCORING_TUNING.md).

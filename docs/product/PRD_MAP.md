@@ -573,6 +573,17 @@
 - [ ] 👎/👍 по агенту в трейсе + связка stats → A/B/суфлёр
 - [ ] Когорты по неделе/кварталу (переключатель)
 
+### Баллы (тюнинг Ф4)
+
+Детали: [`F4_SCORING_TUNING.md`](../operations/phase4/leads/F4_SCORING_TUNING.md)
+
+- [ ] UI весов `scoring_advisory` в Ops (`/ops/crm`) — сейчас только API/JSON, на карточке ссылка врёт
+- [ ] Breakdown подсказки на карточке лида (этап, сумма, апрувы, штрафы)
+- [ ] Список лидов: флаги `hasScoreWarnings` / `scoreDivergent` + фильтры
+- [ ] Прогноз закрытия на карточке (перекрёст с Analytics v2)
+- [ ] Единые пороги CRM ↔ лидоген или явная подпись в UI
+- [ ] Ops-видимость расхождений балла (badge / очередь)
+
 ### Платформа
 
 Детали: [`F4_PLATFORM_TUNING.md`](../operations/phase4/platform/F4_PLATFORM_TUNING.md)
