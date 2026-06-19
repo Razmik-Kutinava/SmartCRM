@@ -88,7 +88,7 @@ def _notify_new(entry: dict[str, Any]) -> None:
     company = entry.get("company") or {}
     title = _company_label(company)
     fp = candidate_fingerprint(company)
-    add_notification(
+    created = add_notification(
         kind="lead_hunt_new",
         title=f"Новый кандидат: {title}",
         detail=f"Скор {entry.get('score', 0)}%. Одобрите в Lead Hunt.",
@@ -100,6 +100,10 @@ def _notify_new(entry: dict[str, Any]) -> None:
             "score": entry.get("score"),
         },
     )
+    if created:
+        from integrations.telegram.notify import notify_lead_hunt_candidate_sync
+
+        notify_lead_hunt_candidate_sync(entry)
 
 
 async def save_candidate_to_crm(cand: dict[str, Any], db: AsyncSession) -> int | None:

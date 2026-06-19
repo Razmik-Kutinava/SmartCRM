@@ -252,5 +252,9 @@
 
 `[2026-06-17] | PRD_MAP: «Telegram-бот» | Отложено: регистрация бота в BotFather + `TELEGRAM_BOT_TOKEN` / chat_id | Причина: username занят / блок создания; пользователь откладывает | Нужна фаза MAP: 3 Платформа | Из шага: экспорт Excel/PDF`
 
+`[2026-06-17] | PRD_MAP: «Telegram-бот» | Отложено: inline-кнопки approve/reject кандидатов из чата | Причина: MVP — команды + push уведомления | Нужна фаза MAP: 3 | Из шага: Telegram MVP`
+
+`[2026-06-17] | PRD_MAP: «Telegram-бот» | Отложено: Ops critical → Telegram (wiring в ops_store) | Причина: функция notify_ops_critical есть, hook отложен | Нужна фаза MAP: 3 | Из шага: Telegram MVP`
+
 `[2026-06-17] | PRD_MAP: «Импорт/экспорт CRM» | Отложено: AmoCRM import (шаг 3), HubSpot import (шаг 4), push export Amo/HubSpot (шаг 5) | Причина: шаг 1 CSV + шаг 2 Битрикс push — по порядку MAP | Нужна фаза MAP: 3 | Из шага: CSV sync`
 

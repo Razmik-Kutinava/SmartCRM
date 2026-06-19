@@ -91,8 +91,25 @@ async def lifespan(app: FastAPI):
         "Lead hunt: фоновый poll (вкл в /api/ops/lead-hunt/config · UI /ops/lead-hunt, /leadgen → Авто-охота)"
     )
 
+    telegram_stop = asyncio.Event()
+    telegram_task = None
+    from integrations.telegram.config import poll_enabled as telegram_poll_enabled
+
+    if telegram_poll_enabled():
+        from integrations.telegram.background import telegram_poll_loop
+
+        telegram_task = asyncio.create_task(telegram_poll_loop(telegram_stop))
+        logger.info("Telegram: polling (уведомления + /status /queue)")
+
     yield
 
+    if telegram_task is not None:
+        telegram_stop.set()
+        telegram_task.cancel()
+        try:
+            await telegram_task
+        except asyncio.CancelledError:
+            pass
     if lead_hunt_task is not None:
         lead_hunt_stop.set()
         lead_hunt_task.cancel()

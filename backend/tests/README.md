@@ -110,6 +110,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `integrations/test_bitrix_row_map.py` | Маппинг полей Битрикс → Lead |
 | `integrations/test_bitrix_sync_state.py` | sync state + poll skip + upsert mock |
 | `integrations/test_bitrix_webhook.py` | Исходящий вебхук ONCRMLEADADD |
+| `integrations/test_telegram.py` | Telegram: config, send_message mock, /start, notify lead hunt |
 | `leadgen/test_checko_http_client.py` | Checko HTTP без live API |
 | `leadgen/test_crm_threshold.py` | Порог автосохранения в CRM |
 | `email_sync/test_sync_helpers.py` | classify/normalize/to_text |

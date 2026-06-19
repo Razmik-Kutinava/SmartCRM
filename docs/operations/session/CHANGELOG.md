@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-17 — Платформа: Telegram-бот (MVP)
+
+`integrations/telegram/`: long polling, уведомления новых кандидатов lead hunt, команды `/start` `/status` `/queue`; acceptance `F3_PLATFORM_TELEGRAM_ACCEPTANCE.md`; pytest **5 PASS**.
+
 ## 2026-06-19 — Платформа: lead hunt шаги 6–7 (UI оператора + закрытие acceptance)
 
 `LeadHuntOperatorPanel`, вкладка «Авто-охота» в `/leadgen`, `POST approve-above`, DevTools smoke; PRD_MAP `[x]` ждёт «ок».

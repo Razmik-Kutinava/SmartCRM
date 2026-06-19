@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — Telegram-бот MVP] | Статус: ✅ done (MAP ждёт «ок»)`
+
+**2026-06-17:** `integrations/telegram/` — poll loop, уведомления lead hunt, команды `/start` `/status` `/queue`; pytest **5 PASS** (telegram). Коммит: _pending_. Следующий: **«ок»** → `[x]` PRD_MAP Telegram · Ops critical wiring → BACKLOG.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt шаги 6–7 UI+закрытие] | Статус: ✅ done (MAP ждёт «ок»)`
 
 **2026-06-19:** `LeadHuntOperatorPanel`, `/leadgen` → «Авто-охота», `approve-above ≥70`, DevTools smoke OK; pytest **35 PASS**. Коммит: `7045476`. Следующий: **«ок»** → `[x]` в PRD_MAP автопоиск.

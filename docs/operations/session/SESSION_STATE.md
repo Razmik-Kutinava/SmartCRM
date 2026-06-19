@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-17 | Действие: Ф3 Telegram-бот MVP — poll, notify lead hunt, /start /status /queue, acceptance, pytest. | Коммит: `PENDING` | Хвост A: Ops critical wiring не подключён | Хвост B: inline approve/reject → BACKLOG | Хвост C: нет | Следующий шаг: «ок» MAP Telegram. | Статус: done
+
 2026-06-19 | Действие: Ф3 lead hunt шаги 6–7 — UI оператора, approve-above, acceptance, DevTools smoke. | Коммит: `7045476` | Хвост A: PRD_MAP [x] ждёт «ок» | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP автопоиск. | Статус: done
 
 2026-06-19 | Действие: Ф3 lead hunt шаг 5 — фон loop, trace+agent_run_log, баннер/badge Ops. | Коммит: `a6e670f` | Хвост A: DevTools smoke UI не кликал | Хвост B: Telegram lead hunt → BACKLOG | Хвост C: нет | Следующий шаг: «ок» MAP автопоиск. | Статус: done
