@@ -10,6 +10,7 @@
 	} from '$lib/leadgen/portraitProgress.js';
 	import { getApiUrl } from '$lib/websocket.js';
 	import LeadHuntQueuePanel from '$lib/leadHunt/LeadHuntQueuePanel.svelte';
+	import LeadHuntOperatorPanel from '$lib/leadHunt/LeadHuntOperatorPanel.svelte';
 	const API = getApiUrl();
 
 	// ── Режимы ────────────────────────────────────────────────────────────────
@@ -17,6 +18,7 @@
 		{ id: 'direct',   label: 'По ИНН / названию', icon: '🏢' },
 		{ id: 'portrait', label: 'По портрету',        icon: '🎯' },
 		{ id: 'cluster',  label: 'Кластер / Холдинг',  icon: '🕸' },
+		{ id: 'hunt',     label: 'Авто-охота',         icon: '🤖' },
 		{ id: 'news',     label: 'Новости рынка',       icon: '📰' },
 		{ id: 'limits',   label: 'API Лимиты',          icon: '🔑' },
 	];
@@ -470,9 +472,11 @@ let portrait_deep      = $state(false);
 		>⚙ Настройки</button>
 	</div>
 
-	<div class="mb-6" data-testid="lead-hunt-queue-block">
-		<LeadHuntQueuePanel compact />
-	</div>
+	{#if mode !== 'hunt'}
+		<div class="mb-6" data-testid="lead-hunt-queue-block">
+			<LeadHuntQueuePanel compact />
+		</div>
+	{/if}
 
 	{#if voiceCtx?.title || voiceCtx?.inn || voiceCtx?.portrait}
 		<p class="text-xs text-indigo-400 mb-3" data-testid="voice-leadgen-context">
@@ -498,8 +502,10 @@ let portrait_deep      = $state(false);
 		{/each}
 	</div>
 
-	<!-- ── API Лимиты (отдельный режим без формы) ── -->
-	{#if mode === 'limits'}
+	<!-- ── Авто-охота (lead hunt) ── -->
+	{#if mode === 'hunt'}
+		<LeadHuntOperatorPanel theme="leadgen" />
+	{:else if mode === 'limits'}
 		<div class="space-y-4">
 			<!-- Шапка -->
 			<div class="flex items-center justify-between flex-wrap gap-2">

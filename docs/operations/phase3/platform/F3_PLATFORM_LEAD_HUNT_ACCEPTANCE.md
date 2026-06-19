@@ -75,32 +75,36 @@ ENV: `LEAD_HUNT_ENABLED`, `LEAD_HUNT_INTERVAL_HOURS`.
 - [x] Trace + agent_run_log для eval
 - [x] pytest
 
-## Шаг 6 — UI `/ops/lead-hunt`
+## Шаг 6 — UI оператора
 
 | Компонент | Изменение |
 |-----------|-----------|
-| `leadHuntOps.js` | клиент API |
-| `/ops/lead-hunt` | конфиг, ICP, очередь, approve/reject |
-| `ops/+layout.svelte` | пункт навигации |
+| `LeadHuntOperatorPanel.svelte` | вкл/выкл, интервал, последний прогон, очередь |
+| `/ops/lead-hunt` | экран оператора (тёмная тема Ops) |
+| `/leadgen` вкладка «Авто-охота» | тот же панель в лидогене |
+| `POST .../queue/approve-above` | «Одобрить всех ≥70» |
+| `leadHuntOps.js` | `approveLeadHuntAbove`, `getApiUrl` |
 
-- [x] Экран Ops
-- [x] Ручной прогон + одобрение кандидатов
+- [x] Вкл/выкл, интервал, последний прогон, очередь
+- [x] «Запустить сейчас», «Одобрить всех ≥70»
+- [x] DevTools smoke (data-testid + клики)
 
-## Шаг 7 — цикл поиска (агенты)
+## Шаг 7 — закрытие MAP (ждёт «ок» пользователя)
 
 | Компонент | Изменение |
 |-----------|-----------|
-| `lead_hunt_search_cycle.py` | ICP → portrait + prospect → pipeline light → fanout |
-| `run_pipeline(deep_analysis=False)` | лёгкий скоринг топ-N |
-| `fanout` | analyst + marketer + economist (как generate_lead) |
-| dedup | ИНН / company в БД |
-| очередь | не в CRM (autosave ≥ порога — настройка) |
+| Acceptance | шаги 1–7 полные |
+| `backend/leadgen/README.md` | секция lead hunt |
+| `backend/main.py` | lead hunt в lifespan |
+| `PRD_MAP.md` | `[x]` — **только после «ок»** |
 
-- [x] Пайплайн прогона с агентами
-- [x] pytest integration моки Checko/Serper/pipeline/fanout
+- [x] Acceptance полный
+- [x] README + main.py
+- [ ] `[x]` в PRD_MAP — после апрува оператора
 
 ## Критерии закрытия MAP
 
-- [x] Шаги 1–6
-- [x] pytest lead hunt (unit + API)
-- [x] UI smoke в браузере (страница `/ops/lead-hunt`, nav «Lead Hunt»; API — после reload uvicorn)
+- [x] Шаги 1–7 (код + pytest)
+- [x] pytest lead hunt suite (unit + API + bulk)
+- [x] UI smoke `/ops/lead-hunt` + `/leadgen` вкладка «Авто-охота»
+- [ ] PRD_MAP `[x]` — по «ок» пользователя

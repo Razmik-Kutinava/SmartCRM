@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф3] | Задача:[Платформа — lead hunt шаги 6–7 UI+закрытие] | Статус: ✅ done (MAP ждёт «ок»)`
+
+**2026-06-19:** `LeadHuntOperatorPanel`, `/leadgen` → «Авто-охота», `approve-above ≥70`, DevTools smoke OK; pytest **35 PASS**. Коммит: `TBD`. Следующий: **«ок»** → `[x]` в PRD_MAP автопоиск.
+
+---
+
 `Спринт:[Ф3] | Задача:[Платформа — lead hunt шаг 5 фон+уведомления] | Статус: ✅ done`
 
 **2026-06-19:** trace + agent_run_log, баннер/badge Ops, loop в main.py; pytest **33 PASS**. Коммит: `a6e670f` (ops `d706ca5`). Следующий: **«ок» MAP автопоиск**.

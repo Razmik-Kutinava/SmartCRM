@@ -25,6 +25,8 @@
 
 Публичный API: `from leadgen.pipeline import run_pipeline, run_cluster, search_by_portrait`.
 
+**Авто-охота (lead hunt):** фоновый поиск по ICP из won-лидов → очередь кандидатов → approve в CRM. Код: `backend/services/lead_hunt_*.py`, API `/api/ops/lead-hunt/*`, UI `/ops/lead-hunt` и вкладка «Авто-охота» в `/leadgen`. Acceptance: `docs/operations/phase3/platform/F3_PLATFORM_LEAD_HUNT_ACCEPTANCE.md`.
+
 ---
 
 ## Пакет `modules/checko/` — API Checko.ru

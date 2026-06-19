@@ -87,7 +87,9 @@ async def lifespan(app: FastAPI):
     from services.lead_hunt_background import lead_hunt_poll_loop
 
     lead_hunt_task = asyncio.create_task(lead_hunt_poll_loop(lead_hunt_stop))
-    logger.info("Lead hunt: планировщик в фоне (вкл в /api/ops/lead-hunt/config)")
+    logger.info(
+        "Lead hunt: фоновый poll (вкл в /api/ops/lead-hunt/config · UI /ops/lead-hunt, /leadgen → Авто-охота)"
+    )
 
     yield
 

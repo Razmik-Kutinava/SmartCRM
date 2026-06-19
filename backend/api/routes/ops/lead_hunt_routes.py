@@ -10,7 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import get_db
 from services.lead_hunt_background import lead_hunt_status_payload, run_scheduled_lead_hunt
-from services.lead_hunt_candidates import approve_candidate, reject_candidate
+from services.lead_hunt_candidates import (
+    approve_candidate,
+    approve_candidates_above_score,
+    reject_candidate,
+)
 from services.lead_hunt_config import LeadHuntConfig, load_config, save_config
 from services.lead_hunt_icp import build_and_persist_icp, load_latest_icp
 from services.lead_hunt_notifications import list_notifications, mark_all_read, mark_read, unread_count
@@ -107,6 +111,26 @@ async def lead_hunt_candidates(
 ) -> dict[str, Any]:
     items = list_queue(status=status or None, limit=limit)
     return {"items": items, "count": len(items)}
+
+
+@router.post("/lead-hunt/queue/approve-above")
+async def lead_hunt_queue_approve_above(
+    min_score: int = Query(default=70, ge=0, le=100),
+    body: ApproveBody | None = None,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    b = body or ApproveBody()
+    try:
+        return await approve_candidates_above_score(
+            db,
+            min_score=min_score,
+            start_nurture=b.start_nurture,
+            nurture_account_id=b.nurture_account_id,
+            nurture_product=b.nurture_product or None,
+        )
+    except Exception as e:
+        logger.exception("lead-hunt approve-above min_score=%s", min_score)
+        raise HTTPException(500, detail=str(e)) from e
 
 
 @router.post("/lead-hunt/queue/{candidate_id}/approve")

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Платформа: lead hunt шаги 6–7 (UI оператора + закрытие acceptance)
+
+`LeadHuntOperatorPanel`, вкладка «Авто-охота» в `/leadgen`, `POST approve-above`, DevTools smoke; PRD_MAP `[x]` ждёт «ок».
+
 ## 2026-06-19 — Платформа: lead hunt шаг 5 (фон + уведомления)
 
 Фоновый loop в `main.py`, trace `lead_hunt_run` + `agent_run_log` при approve, баннер и badge в Ops UI; Telegram → BACKLOG; pytest **33 PASS**.

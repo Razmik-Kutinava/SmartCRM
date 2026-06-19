@@ -19,7 +19,7 @@
 		{ href: '/ops/search',   label: '🔍 Поиск' },
 		{ href: '/ops/vendor-crawl', label: '📚 Вендоры RAG' },
 		{ href: '/ops/tender-monitor', label: '📋 Тендеры 24/7' },
-		{ href: '/ops/lead-hunt', label: '🎯 Lead Hunt' },
+		{ href: '/ops/lead-hunt', label: '🤖 Авто-охота' },
 		{ href: '/ops/queue',    label: 'Очередь' },
 		{ href: '/ops/stats',    label: 'Статистика' },
 		{ href: '/ops/insights', label: 'Инсайты' },

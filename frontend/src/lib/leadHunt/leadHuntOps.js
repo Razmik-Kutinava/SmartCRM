@@ -1,6 +1,8 @@
 /** Ops API — автономный поиск лидов (lead hunt). */
 
-const API = '';
+import { getApiUrl } from '$lib/websocket.js';
+
+const API = getApiUrl();
 
 export async function fetchLeadHuntConfig() {
 	const r = await fetch(`${API}/api/ops/lead-hunt/config`);
@@ -80,6 +82,16 @@ export async function rejectLeadHuntCandidate(id, note = '') {
 	return rejectLeadHuntQueue(id, note);
 }
 
+export async function approveLeadHuntAbove(minScore = 70, opts = {}) {
+	const r = await fetch(`${API}/api/ops/lead-hunt/queue/approve-above?min_score=${minScore}`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(opts)
+	});
+	if (!r.ok) throw new Error(await r.text());
+	return r.json();
+}
+
 export async function fetchLeadHuntNotifications(unreadOnly = false) {
 	const q = unreadOnly ? '?unread_only=true' : '';
 	const r = await fetch(`${API}/api/ops/lead-hunt/notifications${q}`);
@@ -98,6 +110,7 @@ export async function markLeadHuntNotificationsRead(all = true, notificationId =
 }
 
 export function companyLabel(c) {
+	if (typeof c?.company === 'string') return c.company;
 	const co = c?.company || c;
 	return co?.name || co?.name_short || co?.company || '—';
 }

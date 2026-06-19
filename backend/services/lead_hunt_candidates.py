@@ -284,6 +284,46 @@ async def approve_candidate(
     raise ValueError("not_found")
 
 
+async def approve_candidates_above_score(
+    db: AsyncSession,
+    *,
+    min_score: int = 70,
+    start_nurture: bool = False,
+    nurture_account_id: int | None = None,
+    nurture_product: str | None = None,
+) -> dict[str, Any]:
+    """Одобрить всех pending с score >= min_score."""
+    pending = list_candidates(status="pending", limit=200)
+    targets = [c for c in pending if int(c.get("score") or 0) >= min_score]
+    approved: list[dict[str, Any]] = []
+    failed: list[dict[str, Any]] = []
+    for cand in targets:
+        cid = cand.get("id")
+        if not cid:
+            continue
+        try:
+            result = await approve_candidate(
+                cid,
+                db,
+                start_nurture=start_nurture,
+                nurture_account_id=nurture_account_id,
+                nurture_product=nurture_product,
+            )
+            approved.append({"candidate_id": cid, "lead_id": result.get("lead_id")})
+        except ValueError as e:
+            failed.append({"candidate_id": cid, "error": str(e)})
+        except Exception as e:
+            failed.append({"candidate_id": cid, "error": str(e)})
+    return {
+        "ok": True,
+        "min_score": min_score,
+        "approved_count": len(approved),
+        "failed_count": len(failed),
+        "approved": approved,
+        "failed": failed,
+    }
+
+
 def reject_candidate(candidate_id: str, *, note: str = "") -> dict[str, Any]:
     items = list((load_state().get("candidates") or []))
     for cand in items:

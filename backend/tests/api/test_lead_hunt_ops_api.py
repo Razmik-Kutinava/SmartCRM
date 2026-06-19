@@ -216,6 +216,37 @@ async def test_lead_hunt_notifications_unread(client, isolated_lead_hunt_state, 
 
 
 @pytest.mark.asyncio
+async def test_lead_hunt_approve_above_api(client, isolated_lead_hunt_state, monkeypatch):
+    import services.lead_hunt_config as lhc
+
+    lhc.save_state(
+        {
+            "candidates": [
+                {
+                    "id": "lh-bulk1",
+                    "status": "pending",
+                    "score": 75,
+                    "company": {"inn": "7705555555", "name": "Bulk Co"},
+                }
+            ]
+        }
+    )
+
+    async def _approve(cid, db, **kwargs):
+        return {"ok": True, "lead_id": 88, "candidate_id": cid}
+
+    monkeypatch.setattr(
+        "services.lead_hunt_candidates.approve_candidate",
+        _approve,
+    )
+    r = await client.post("/api/ops/lead-hunt/queue/approve-above", params={"min_score": 70})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["approved_count"] == 1
+    assert body["approved"][0]["lead_id"] == 88
+
+
+@pytest.mark.asyncio
 async def test_lead_hunt_run_skipped_when_disabled(client, isolated_lead_hunt_state):
     await client.put(
         "/api/ops/lead-hunt/config",
