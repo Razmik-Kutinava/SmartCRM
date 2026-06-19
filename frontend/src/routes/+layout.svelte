@@ -10,6 +10,7 @@
 	import VoiceActionHost from '../components/VoiceActionHost.svelte';
 	import LeadMailingHost from '../components/LeadMailingHost.svelte';
 	import LeadIndustryHost from '../components/LeadIndustryHost.svelte';
+	import LeadCreateHost from '../components/LeadCreateHost.svelte';
 	import { goto } from '$app/navigation';
 
 	let { children } = $props();
@@ -469,4 +470,5 @@
 	<VoiceActionHost />
 	<LeadMailingHost />
 	<LeadIndustryHost />
+	<LeadCreateHost />
 </div>

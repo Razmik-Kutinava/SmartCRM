@@ -38,6 +38,7 @@
 	} from '$lib/voice/voiceAction.js';
 	import { createLeadComment } from '$lib/leads/leadComments.js';
 	import { createLeadCommunication } from '$lib/leads/leadCommunications.js';
+	import { openLeadCreateModal } from '$lib/leads/leadCreateUi.js';
 
 	const API = getApiUrl();
 
@@ -660,11 +661,16 @@
 			data-testid="leads-csv-export"
 		>{csvExporting ? '⏳…' : '📤 Экспорт CSV'}</button>
 		<button
-			onclick={() => {
-				const name = prompt('Компания:');
-				if (name) handleVoiceResult({ intent: 'create_lead', slots: { company: name }, reply: '' });
-			}}
+			type="button"
+			onclick={() => openLeadCreateModal({
+				source: 'Список лидов',
+				onCreated: (created) => {
+					leads = [created, ...leads.filter((l) => l.id !== created.id)];
+					notify(`✓ Лид сохранён: ${created.company}`);
+				},
+			})}
 			class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg"
+			data-testid="leads-list-create-lead"
 		>+ Новый лид</button>
 	</div>
 </div>

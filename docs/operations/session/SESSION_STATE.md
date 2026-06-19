@@ -12,6 +12,8 @@
 
 **Правило:** в строке только реальный `Коммит: \`hash\`` — иначе FAIL (`check_agent_step` + **pre-commit hook**).
 
+2026-06-19 | Действие: Ф4 дашборд п.1 — модалка «Новый лид» (дашборд + /leads/list), POST БД, acceptance + MAP; pytest 19 PASS. | Коммит: `pending` | Хвост A: DevTools smoke руками не делали | Хвост B: нет | Хвост C: нет | Следующий шаг: «ок» MAP дашборд п.1 · обход дашборда. | Статус: done
+
 2026-06-17 | Действие: хвост C — регресс industryOptions: test_lead_card_page.py, smoke /leads/{id}, DevTools /leads/3191 без ReferenceError. | Коммит: `31242ec` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Следующий шаг: go Ф4 D–F или Ф4-A. | Статус: done
 
 2026-06-17 | Действие: Ф4 сортировка warnings/delta + DevTools smoke + smoke_scoring_f4_ui.py; фикс industryOptions карточка; pytest/smoke 11 PASS. | Коммит: `0d66a41` | Хвост A: нет | Хвост B: нет | Хвост C: industryOptions ReferenceError на /leads/[id] — починили | Следующий шаг: go Ф4 D–F или Ф4-A интеграции. | Статус: done

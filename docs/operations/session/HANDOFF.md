@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 дашборд] | Задача:[модалка «Новый лид» — дашборд + list] | Статус: ✅ done`
+
+**2026-06-19:** `LeadCreateModal` + host в layout; дашборд «Быстрые действия» и `/leads/list` → модалка, POST в БД; `F4_DASHBOARD_ACCEPTANCE.md`, MAP §Дашборд; pytest **19 PASS** (5 UI + 14 API). Следующий: **«ок»** → `[x]` MAP дашборд п.1 · обход дашборда дальше.
+
+---
+
 `Спринт:[Ф4 баллы] | Задача:[хвост C industryOptions — регресс + smoke] | Статус: ✅ done`
 
 **2026-06-17:** `test_lead_card_page.py`, smoke `/leads/{id}`; DevTools `/leads/3191` — карточка и breakdown OK, без `industryOptions` в консоли. Коммит: `31242ec`. Следующий: **go** Ф4 D–F или Ф4-A.

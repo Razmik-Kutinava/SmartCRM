@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Ф4 дашборд п.1: модалка «Новый лид»
+
+Глобальная `LeadCreateModal` (дашборд + `/leads/list`), POST `/api/leads`; acceptance `F4_DASHBOARD_ACCEPTANCE.md`; pytest `test_lead_create_ui.py` 5 + leads API 14 PASS.
+
 ## 2026-06-17 — Ф4: регресс industryOptions на карточке лида
 
 `test_lead_card_page.py`, smoke GET `/leads/{id}`; DevTools без ReferenceError.

@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { getApiUrl } from '$lib/websocket.js';
 	import { readLeadsCache } from '$lib/leadsStorage.js';
+	import { openLeadCreateModal } from '$lib/leads/leadCreateUi.js';
 
 	const API = getApiUrl();
 
@@ -233,7 +234,18 @@
 	<div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
 		<div class="text-sm font-medium text-white mb-3">Быстрые действия</div>
 		<div class="flex flex-wrap gap-2">
-			<a href="/leads/list" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">+ Новый лид</a>
+			<button
+				type="button"
+				class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors"
+				data-testid="dashboard-create-lead"
+				onclick={() => openLeadCreateModal({
+					source: 'Дашборд',
+					onCreated: (created) => {
+						leads = [created, ...leads.filter((l) => l.id !== created.id)].slice(0, 5);
+						if (stats) stats = { ...stats, total: stats.total + 1 };
+					},
+				})}
+			>+ Новый лид</button>
 			<a href="/agents" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">🤖 Задача агенту</a>
 			<a href="/ops/intents/traces" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">📡 Трейсы</a>
 			<a href="/ops/voice" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">🎙 Настройка голоса</a>

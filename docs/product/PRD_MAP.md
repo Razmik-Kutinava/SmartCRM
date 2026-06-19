@@ -508,7 +508,13 @@
 
 ## Фаза 4 — Тюнинг и MVP
 
-> Polish и доводка после базового Ф3. Не блокирует закрытие краулинга в Ф3.
+> Polish и доводка после базового Ф3. **Старт Ф4:** обход с дашборда — см. [`F4_DASHBOARD_ACCEPTANCE.md`](../operations/phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md).
+
+### Дашборд (обход Ф4)
+
+Детали: [`F4_DASHBOARD_ACCEPTANCE.md`](../operations/phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md)
+
+- [ ] Модалка «Новый лид» — дашборд + `/leads/list`, POST в БД · pytest `test_lead_create_ui.py` · **ждёт «ок»**
 
 ### Vendor crawl → RAG tech_specialist (тюнинг)
 

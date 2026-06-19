@@ -4,6 +4,7 @@
 
 | Домен | Документ |
 |-------|----------|
+| **Дашборд** (обход Ф4, старт) | [`dashboard/F4_DASHBOARD_ACCEPTANCE.md`](dashboard/F4_DASHBOARD_ACCEPTANCE.md) |
 | Vendor crawl → RAG `tech_specialist` | [`rag/F4_VENDOR_CRAWL_TUNING.md`](rag/F4_VENDOR_CRAWL_TUNING.md) |
 | A/B промптов по трейсам (Hermes / агенты) | [`agents/F4_PROMPT_AB_TUNING.md`](agents/F4_PROMPT_AB_TUNING.md) |
 | Авто-суфлёр Стратега (все агенты + Hermes) | [`agents/F4_STRATEGIST_SUGGESTER_TUNING.md`](agents/F4_STRATEGIST_SUGGESTER_TUNING.md) |
