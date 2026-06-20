@@ -729,7 +729,7 @@
 			<span class="text-gray-700">/</span>
 			<span class="text-sm text-white font-medium">{lead.company}</span>
 		</div>
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-2 flex-wrap justify-end">
 			<button
 				type="button"
 				data-testid="lead-card-enrich"
@@ -796,10 +796,23 @@
 		<div class="px-6 py-1.5 text-xs border-b border-gray-800 bg-gray-900/80 text-gray-400" data-testid="lead-card-enrich-msg">{enrichMsg}</div>
 	{/if}
 
-	<div class="flex-1 overflow-hidden flex">
-		<!-- Left: Lead info -->
-		<div class="w-80 border-r border-gray-800 overflow-y-auto bg-gray-900 shrink-0">
-			<div class="p-5 space-y-5">
+	<div class="flex-1 flex flex-col overflow-hidden min-h-0" data-testid="lead-card-main">
+		<div class="flex gap-1 sm:gap-4 px-4 sm:px-6 pt-3 border-b border-gray-800 shrink-0 overflow-x-auto">
+			{#each [['overview', 'Обзор'], ['tasks', 'Задачи'], ['emails', 'Письма'], ['agents', 'Агенты'], ['checko', 'Checko']] as [id, label]}
+				<button
+					type="button"
+					onclick={() => onTabChange(id)}
+					class="pb-3 px-1 text-sm whitespace-nowrap transition-colors border-b-2 {activeTab === id
+						? 'text-white border-indigo-500'
+						: 'text-gray-500 border-transparent hover:text-gray-300'}"
+				>{label}</button>
+			{/each}
+		</div>
+
+		<div class="flex-1 overflow-y-auto p-4 sm:p-6">
+
+			{#if activeTab === 'overview'}
+			<div class="space-y-6 max-w-5xl mx-auto w-full" data-testid="lead-card-overview">
 				<div>
 					<div class="text-lg font-bold text-white">{lead.company}</div>
 					<div class="text-sm text-gray-400 mt-0.5">{lead.contact} · {lead.position}</div>
@@ -1151,53 +1164,38 @@
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<!-- Right: Tabs -->
-		<div class="flex-1 flex flex-col overflow-hidden">
-			<div class="flex gap-4 px-6 pt-4 border-b border-gray-800 shrink-0">
-				{#each [['overview', 'Обзор'], ['tasks', 'Задачи'], ['emails', 'Письма'], ['agents', 'Агенты'], ['checko', 'Checko']] as [id, label]}
-					<button
-						onclick={() => onTabChange(id)}
-						class="pb-3 text-sm transition-colors border-b-2 {activeTab === id
-							? 'text-white border-indigo-500'
-							: 'text-gray-500 border-transparent hover:text-gray-300'}"
-					>{label}</button>
-				{/each}
+			<div class="border-t border-gray-800 pt-6 space-y-4">
+				<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Лента активности</div>
+				<div>
+					<textarea bind:value={noteText} placeholder="Добавить заметку или команду агентам..."
+						class="w-full bg-gray-900 border border-gray-700 text-gray-200 text-sm rounded-lg px-4 py-3 placeholder-gray-600 focus:outline-none focus:border-indigo-500 resize-none h-20"></textarea>
+					<div class="flex gap-2 mt-2">
+						<button type="button" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">Добавить заметку</button>
+						<button type="button" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">Поручить агенту</button>
+					</div>
+				</div>
+				<div class="space-y-3">
+					{#each activityHistory as item}
+						<div class="flex gap-3">
+							<div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5
+								{item.type === 'agent' ? 'bg-indigo-900 text-indigo-300' : 'bg-gray-800 text-gray-400'} text-xs">
+								{item.type === 'call' ? '✆' : item.type === 'agent' ? '⬡' : '✎'}
+							</div>
+							<div class="flex-1">
+								<div class="flex items-center gap-2 mb-0.5">
+									<span class="text-xs font-medium {item.type === 'agent' ? 'text-indigo-400' : 'text-gray-400'}">{item.author}</span>
+									<span class="text-xs text-gray-600">{item.date}</span>
+								</div>
+								<p class="text-sm text-gray-300">{item.text}</p>
+							</div>
+						</div>
+					{/each}
+				</div>
+			</div>
 			</div>
 
-			<div class="flex-1 overflow-y-auto p-6">
-
-				<!-- ── ОБЗОР ── -->
-				{#if activeTab === 'overview'}
-					<div class="mb-5">
-						<textarea bind:value={noteText} placeholder="Добавить заметку или команду агентам..."
-							class="w-full bg-gray-900 border border-gray-700 text-gray-200 text-sm rounded-lg px-4 py-3 placeholder-gray-600 focus:outline-none focus:border-indigo-500 resize-none h-20"></textarea>
-						<div class="flex gap-2 mt-2">
-							<button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">Добавить заметку</button>
-							<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">Поручить агенту</button>
-						</div>
-					</div>
-					<div class="space-y-3">
-						{#each activityHistory as item}
-							<div class="flex gap-3">
-								<div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5
-									{item.type === 'agent' ? 'bg-indigo-900 text-indigo-300' : 'bg-gray-800 text-gray-400'} text-xs">
-									{item.type === 'call' ? '✆' : item.type === 'agent' ? '⬡' : '✎'}
-								</div>
-								<div class="flex-1">
-									<div class="flex items-center gap-2 mb-0.5">
-										<span class="text-xs font-medium {item.type === 'agent' ? 'text-indigo-400' : 'text-gray-400'}">{item.author}</span>
-										<span class="text-xs text-gray-600">{item.date}</span>
-									</div>
-									<p class="text-sm text-gray-300">{item.text}</p>
-								</div>
-							</div>
-						{/each}
-					</div>
-
-				<!-- ── ЗАДАЧИ ── -->
-				{:else if activeTab === 'tasks'}
+			{:else if activeTab === 'tasks'}
 					<div class="mb-4 rounded-xl border border-gray-800 bg-gray-900/80 p-4 space-y-2" data-testid="lead-sla-protocol">
 						<div class="text-sm font-medium text-white">SLA-протокол</div>
 						<select
@@ -1511,10 +1509,9 @@
 							</div>
 						{/if}
 					</div>
-				{/if}
 
 				<!-- ── CHECKO ── -->
-				{#if activeTab === 'checko'}
+				{:else if activeTab === 'checko'}
 					{@const ck = lead.checko || {}}
 					{@const co = ck.company || {}}
 					{@const fin = ck.financials || {}}
@@ -1716,7 +1713,6 @@
 				{/if}
 
 			</div>
-		</div>
 	</div>
 {:else}
 	<div class="flex flex-col items-center justify-center flex-1 p-8 text-gray-500 text-sm">Загрузка…</div>

@@ -21,3 +21,11 @@ def test_lead_card_score_breakdown_marker():
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert 'data-testid="lead-score-breakdown"' in text
     assert "formatScoreBreakdownLines" in text
+
+
+def test_lead_card_overview_single_column_layout():
+    """Обзор: весь контент карточки во вкладке, без левого сайдбара w-80."""
+    text = _LEAD_CARD.read_text(encoding="utf-8")
+    assert 'data-testid="lead-card-overview"' in text
+    assert 'data-testid="lead-card-main"' in text
+    assert "w-80 border-r border-gray-800" not in text
