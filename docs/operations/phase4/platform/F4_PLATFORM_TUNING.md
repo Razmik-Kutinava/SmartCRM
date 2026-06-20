@@ -3,6 +3,8 @@
 **Откуда:** Ф3 закрыл каркас (CSV, CRM push/import по кнопкам, lead hunt, Telegram MVP, Excel/PDF).  
 **Зачем Ф4:** интеграции **без правки `.env`**, стабильный прод-синк, хвост P3 по баллам.
 
+**Acceptance интеграций CRM (отдельный блок MAP):** [`F4_CRM_INTEGRATIONS_ACCEPTANCE.md`](F4_CRM_INTEGRATIONS_ACCEPTANCE.md) — MVP, шаги, критерии. **Код:** шаг 1 `/ops/integrations` — **создаём**.
+
 **Acceptance Ф3 (база):** `phase3/platform/F3_PLATFORM_*_ACCEPTANCE.md`
 
 ---
@@ -25,7 +27,8 @@
 ### A. Интеграции без `.env` (главный UX-гэп)
 
 - [ ] Страница **`/ops/integrations`** (или секция в Ops): Битрикс24, AmoCRM, HubSpot, Telegram
-- [ ] **Сохранение credentials в БД** (шифрование at rest), не в git/env для prod-пользователя
+- [ ] **Шифрование credentials AES-256** (или Fernet) at rest в БД
+- [ ] **Middleware вебхуков:** единая проверка подписи/token (Битрикс уже частично в `webhooks_bitrix.py`)
 - [ ] Статусы: `не подключено` / `подключено` / `ошибка` / `токен истёк` + последняя проверка
 - [ ] **Битрикс24:** ввод `BITRIX24_WEBHOOK_URL` в UI, тест `crm.lead.list`, маскирование секрета
 - [ ] **AmoCRM:** OAuth или long-lived token через форму + subdomain
@@ -59,7 +62,7 @@
 ### E. Качество и приёмка
 
 - [ ] Smoke-скрипт или чеклист: живой Битрикс / Amo / HubSpot / Telegram (опционально в CI с secrets)
-- [ ] `F4_PLATFORM_INTEGRATIONS_ACCEPTANCE.md` — критерии «подключил за 5 минут без SSH»
+- [ ] `F4_CRM_INTEGRATIONS_ACCEPTANCE.md` — критерии «подключил за 5 минут без SSH» · **создан 2026-06-19**
 - [ ] Обновить `backend/integrations/README.md` и ops-runbook
 
 ---
@@ -69,6 +72,8 @@
 | Тема | Куда |
 |------|------|
 | Amo/HubSpot enterprise (кастомные поля, воронки) | BACKLOG после базового OAuth |
+| **AI-маппинг полей (LLM)** | BACKLOG — после ручного маппинга в Ops |
+| Kanban / табы / DnD «как Битрикс» | Уже Ф1 — `/leads/funnel`, карточка |
 | Замена Битрикс как primary CRM | продуктовое решение, не тюнинг |
 | Мультитенант (разные credentials на организацию) | Ф5+ / SaaS |
 
@@ -86,6 +91,6 @@
 
 ## Связь с PRD_MAP
 
-Пункты **A–E** → секция **«Фаза 4 — Платформа»** в [`PRD_MAP.md`](../../../product/PRD_MAP.md).
+Пункты **A–E** → секция **«Фаза 4 — Интеграции CRM»** и **«Платформа»** в [`PRD_MAP.md`](../../../product/PRD_MAP.md).
 
 Баллы P3 (SLA, экспорт) — **[x] в MAP**. Тюнинг баллов Ф4 — отдельно [`F4_SCORING_TUNING.md`](../leads/F4_SCORING_TUNING.md).

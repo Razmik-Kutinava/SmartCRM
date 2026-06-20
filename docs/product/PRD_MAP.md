@@ -516,11 +516,22 @@
 
 - [x] Модалка «Новый лид» — дашборд + `/leads/list`, POST в БД · [`F4_DASHBOARD_ACCEPTANCE.md`](../operations/phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md) · апрув 2026-06-19
 
+### Интеграции CRM (Ф4, перед обходом лидов)
+
+Детали: [`F4_CRM_INTEGRATIONS_ACCEPTANCE.md`](../operations/phase4/platform/F4_CRM_INTEGRATIONS_ACCEPTANCE.md) · тюнинг [`F4_PLATFORM_TUNING.md`](../operations/phase4/platform/F4_PLATFORM_TUNING.md)
+
+- [ ] Экран **`/ops/integrations`** — Битрикс, Amo, HubSpot; статусы подключения · шаг 1, **создаём**
+- [ ] **OAuth / credentials топ-3:** Битрикс24 (№1) → AmoCRM (№2) → HubSpot (№3)
+- [ ] **Security:** шифрование токенов (AES), middleware вебхуков (подпись), валидация входа
+- [ ] **Импорт/экспорт в 1 клик** — API + CSV-шаблон; кнопки на `/leads/list` из UI credentials
+- [ ] **Маппинг стадий/полей** в Ops (ручной, без LLM на MVP)
+- [ ] Битрикс исходящий вебхук + расписание синка · после подключения
+- [ ] Smoke + acceptance закрыт · `tests/integrations/`
+
 ### Лиды (обход Ф4)
 
 Детали: [`F4_LEADS_ACCEPTANCE.md`](../operations/phase4/leads/F4_LEADS_ACCEPTANCE.md)
 
-- [ ] **Интеграции с внешними CRM** — поэтапно: экран подключения, Битрикс/Amo/HubSpot, CSV, далее webhooks и новые адаптеры · [`F4_LEADS_ACCEPTANCE.md`](../operations/phase4/leads/F4_LEADS_ACCEPTANCE.md) §П.0 · платформа [`F4_PLATFORM_TUNING.md`](../operations/phase4/platform/F4_PLATFORM_TUNING.md)
 - [x] Создание лида — модалка дашборд + `/leads/list`, POST в БД · апрув 2026-06-19
 - [x] Удаление лида — confirm, list + карточка, DELETE в БД · pytest `test_lead_delete_ui.py` · апрув 2026-06-19
 - [ ] Карточка — редактирование, этап, комментарии, касания, задачи, enrich, рассылка · обход владельца

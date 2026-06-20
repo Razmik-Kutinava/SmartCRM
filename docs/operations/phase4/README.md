@@ -5,6 +5,7 @@
 | Домен | Документ |
 |-------|----------|
 | **Дашборд** (обход Ф4, старт) | [`dashboard/F4_DASHBOARD_ACCEPTANCE.md`](dashboard/F4_DASHBOARD_ACCEPTANCE.md) |
+| **Интеграции CRM** (подключение внешних CRM, перед лидами) | [`platform/F4_CRM_INTEGRATIONS_ACCEPTANCE.md`](platform/F4_CRM_INTEGRATIONS_ACCEPTANCE.md) |
 | **Лиды** (обход Ф4: CRUD, карточка) | [`leads/F4_LEADS_ACCEPTANCE.md`](leads/F4_LEADS_ACCEPTANCE.md) |
 | Vendor crawl → RAG `tech_specialist` | [`rag/F4_VENDOR_CRAWL_TUNING.md`](rag/F4_VENDOR_CRAWL_TUNING.md) |
 | A/B промптов по трейсам (Hermes / агенты) | [`agents/F4_PROMPT_AB_TUNING.md`](agents/F4_PROMPT_AB_TUNING.md) |
