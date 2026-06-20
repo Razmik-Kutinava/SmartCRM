@@ -1163,7 +1163,6 @@
 						{/each}
 					</div>
 				</div>
-			</div>
 
 			<div class="border-t border-gray-800 pt-6 space-y-4">
 				<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Лента активности</div>
