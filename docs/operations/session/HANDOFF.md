@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 интеграции CRM] | Задача:[отдельный блок MAP + acceptance] | Статус: ✅ done`
 
-**2026-06-19:** Блок «Интеграции CRM» в MAP (после Дашборд, перед Лиды); `F4_CRM_INTEGRATIONS_ACCEPTANCE.md` — MVP OAuth топ-3, security, импорт, маппинг; §П.0 вынесен из leads. Код шаг 1 `/ops/integrations` — **создаём**. Только доки. Коммит: `pending`. Следующий: **go** на код `/ops/integrations`.
+**2026-06-19:** Блок «Интеграции CRM» в MAP (после Дашборд, перед Лиды); `F4_CRM_INTEGRATIONS_ACCEPTANCE.md` — MVP OAuth топ-3, security, импорт, маппинг; §П.0 вынесен из leads. Код шаг 1 `/ops/integrations` — **создаём**. Коммит: `16328d9`. Следующий: **go** на код `/ops/integrations`.
 
 ---
 
