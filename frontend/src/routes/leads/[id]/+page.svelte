@@ -43,6 +43,8 @@
 	import LeadContactsPanel from '../../../components/LeadContactsPanel.svelte';
 	import LeadScoreAdvisoryPanel from '../../../components/LeadScoreAdvisoryPanel.svelte';
 	import LeadActivityPanel from '../../../components/LeadActivityPanel.svelte';
+	import LeadPassportPanel from '../../../components/LeadPassportPanel.svelte';
+	import { passportHasData } from '$lib/leads/leadPassport.js';
 
 	let lead = $state(null);
 	let notFound = $state(false);
@@ -825,7 +827,7 @@
 
 	<div class="flex-1 flex flex-col overflow-hidden min-h-0" data-testid="lead-card-main">
 		<div class="flex gap-1 sm:gap-4 px-4 sm:px-6 pt-3 border-b border-gray-800 shrink-0 overflow-x-auto">
-			{#each [['overview', 'Обзор'], ['tasks', 'Задачи'], ['emails', 'Письма'], ['agents', 'Агенты'], ['checko', 'Checko']] as [id, label]}
+			{#each [['overview', 'Обзор'], ['passport', 'Паспорт'], ['tasks', 'Задачи'], ['emails', 'Письма'], ['agents', 'Агенты']] as [id, label]}
 				<button
 					type="button"
 					onclick={() => onTabChange(id)}
@@ -1369,205 +1371,14 @@
 						{/if}
 					</div>
 
-				<!-- ── CHECKO ── -->
-				{:else if activeTab === 'checko'}
-					{@const ck = lead.checko || {}}
-					{@const co = ck.company || {}}
-					{@const fin = ck.financials || {}}
-					{@const tech = ck.tech || {}}
-					{@const risks = co.risk_flags || {}}
-
-					{#if !lead.inn && !Object.keys(ck).length}
-						<div class="text-center py-12 text-gray-600 text-sm">
-							Нет данных Checko. Лид нужно создать через Лидогенератор.
+				<!-- ── ПАСПОРТ КЛИЕНТА ── -->
+				{:else if activeTab === 'passport'}
+					{#if !passportHasData(lead)}
+						<div class="text-center py-12 text-gray-600 text-sm" data-testid="lead-passport-empty">
+							Паспорт пуст. Укажите ИНН, создайте лид через Лидогенератор или нажмите ✨ Обогатить.
 						</div>
 					{:else}
-						<div class="space-y-4">
-
-							<!-- ЕГРЮЛ -->
-							<div class="bg-gray-950 rounded-xl border border-gray-800 p-4">
-								<h3 class="text-sm font-medium text-gray-300 mb-3">📋 ЕГРЮЛ</h3>
-								<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
-									{#each [
-										['ИНН', lead.inn], ['ОГРН', lead.ogrn], ['КПП', co.kpp],
-										['Статус', co.status], ['Дата рег.', co.registration_date],
-										['ОКВЭД', co.okved ? co.okved + (co.okved_name ? ' — ' + co.okved_name : '') : null],
-										['МСП', co.smb_category], ['Сотрудников', co.employees_count],
-										['Филиалов', co.branch_count], ['Тип управления', co.management_type],
-									].filter(([,v]) => v != null && v !== '') as [label, value]}
-										<div class="flex justify-between gap-2">
-											<span class="text-gray-500 shrink-0">{label}</span>
-											<span class="text-gray-300 text-right text-xs">{value}</span>
-										</div>
-									{/each}
-								</div>
-								{#if co.address}
-									<div class="mt-2 pt-2 border-t border-gray-800 text-xs text-gray-500">Адрес: <span class="text-gray-300">{co.address}</span></div>
-								{/if}
-								{#if risks.is_bad_supplier || risks.has_disqualified_leader || risks.is_mass_address}
-									<div class="flex flex-wrap gap-1.5 mt-2">
-										{#if risks.is_bad_supplier}<span class="text-xs px-2 py-0.5 rounded-full bg-red-900 text-red-300">⛔ Недобросовестный поставщик</span>{/if}
-										{#if risks.has_disqualified_leader}<span class="text-xs px-2 py-0.5 rounded-full bg-orange-900 text-orange-300">⚠ Дисквалифицированный руководитель</span>{/if}
-										{#if risks.is_mass_address}<span class="text-xs px-2 py-0.5 rounded-full bg-yellow-900 text-yellow-300">📍 Массовый адрес</span>{/if}
-									</div>
-								{/if}
-							</div>
-
-							<!-- Контакты -->
-							{#if co.phones?.length || co.emails?.length || lead.website}
-								<div class="bg-gray-950 rounded-xl border border-gray-800 p-4">
-									<h3 class="text-sm font-medium text-gray-300 mb-3">📞 Контакты</h3>
-									<div class="space-y-1.5 text-sm">
-										{#if lead.website}
-											<div class="flex justify-between"><span class="text-gray-500">Сайт</span><a href="https://{lead.website}" target="_blank" class="text-indigo-400 hover:underline">{lead.website}</a></div>
-										{/if}
-										{#each (co.phones || []) as ph}
-											<div class="flex justify-between"><span class="text-gray-500">📞</span><a href="tel:{ph}" class="text-green-400 hover:underline font-mono text-xs">{ph}</a></div>
-										{/each}
-										{#each (co.emails || []) as em}
-											<div class="flex justify-between"><span class="text-gray-500">✉</span><span class="text-gray-300 font-mono text-xs">{em}</span></div>
-										{/each}
-									</div>
-								</div>
-							{/if}
-
-							<!-- Учредители + связанные компании -->
-							{#if co.founders?.length || co.related_companies?.length}
-								<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-									{#if co.founders?.length}
-										<div class="bg-gray-950 rounded-xl border border-gray-800 p-4">
-											<h3 class="text-xs font-medium text-gray-400 mb-2">👥 Учредители ({co.founders.length})</h3>
-											{#each co.founders as f}
-												<div class="flex justify-between text-xs py-0.5">
-													<span class="text-gray-300">{f.name}</span>
-													<span class="text-gray-600">{f.type === 'LEGAL' ? '🏢' : '👤'} {f.share_percent ? f.share_percent + '%' : ''}</span>
-												</div>
-											{/each}
-										</div>
-									{/if}
-									{#if co.related_companies?.length}
-										<div class="bg-gray-950 rounded-xl border border-purple-900/30 p-4">
-											<h3 class="text-xs font-medium text-purple-400 mb-2">🔗 Связанные ({co.related_companies.length})</h3>
-											{#each co.related_companies as rc}
-												<div class="text-xs py-0.5">
-													<span class="text-gray-300">{rc.name_full || rc.name}</span>
-													{#if rc.inn}<span class="text-gray-600 ml-1">· {rc.inn}</span>{/if}
-												</div>
-											{/each}
-										</div>
-									{/if}
-								</div>
-							{/if}
-
-							<!-- Финансы -->
-							{#if fin.revenue}
-								<div class="bg-gray-950 rounded-xl border border-gray-800 p-4">
-									<h3 class="text-sm font-medium text-gray-300 mb-3">💰 Финансы {fin.finance_year ? '(' + fin.finance_year + ' г.)' : ''}</h3>
-									<div class="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
-										{#each [['Выручка', fin.revenue],['Прибыль', fin.profit],['Активы', fin.assets],['Расходы', fin.expense],['Кред. задолж.', fin.debt]].filter(([,v]) => v) as [l, v]}
-											<div class="flex justify-between">
-												<span class="text-gray-500">{l}</span>
-												<span class="text-white text-xs">{v >= 1e9 ? (v/1e9).toFixed(1) + ' млрд' : v >= 1e6 ? (v/1e6).toFixed(1) + ' млн' : v?.toLocaleString('ru')} ₽</span>
-											</div>
-										{/each}
-									</div>
-									{#if fin.revenue_series?.length > 1}
-										<div class="mt-2 pt-2 border-t border-gray-800 flex flex-wrap gap-3">
-											{#each fin.revenue_series as [yr, rev]}
-												<span class="text-xs text-gray-500">{yr}: <span class="text-gray-300">{rev >= 1e9 ? (rev/1e9).toFixed(1) + ' млрд' : (rev/1e6).toFixed(1) + ' млн'} ₽</span></span>
-											{/each}
-										</div>
-									{/if}
-								</div>
-							{/if}
-
-							<!-- Юр. данные: ФССП / Арбитраж / Госзакупки / Проверки / Федресурс -->
-							<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-								{#if fin.contracts_count > 0}
-									<div class="bg-gray-950 rounded-xl border border-green-900/30 p-3">
-										<div class="text-xs font-medium text-green-400 mb-2">🏛️ Госзакупки · {fin.contracts_count}</div>
-										{#each (fin.contracts || []) as c}
-											<div class="text-xs pb-1 border-b border-gray-800 mb-1">
-												<div class="text-gray-300 line-clamp-1">{c.subject || c.number}</div>
-												<div class="text-green-400">{c.amount >= 1e6 ? (c.amount/1e6).toFixed(1) + ' млн' : c.amount} ₽ · {c.date}</div>
-											</div>
-										{/each}
-									</div>
-								{/if}
-								{#if fin.enforcement_count > 0}
-									<div class="bg-gray-950 rounded-xl border border-red-900/30 p-3">
-										<div class="text-xs font-medium text-red-400 mb-2">🚨 ФССП · {fin.enforcement_count}</div>
-										{#each (fin.enforcements || []) as e}
-											<div class="text-xs pb-1 border-b border-gray-800 mb-1">
-												<div class="text-gray-400 line-clamp-1">{e.reason || e.number}</div>
-												<div class="text-red-400">{e.amount >= 1e6 ? (e.amount/1e6).toFixed(1) + ' млн' : e.amount} ₽ · {e.date}</div>
-											</div>
-										{/each}
-									</div>
-								{/if}
-								{#if fin.arbitration_count > 0}
-									<div class="bg-gray-950 rounded-xl border border-yellow-900/30 p-3">
-										<div class="text-xs font-medium text-yellow-400 mb-2">⚖️ Арбитраж · {fin.arbitration_count}</div>
-										{#each (fin.arbitration_cases || []) as c}
-											<div class="text-xs pb-1 border-b border-gray-800 mb-1">
-												<span class="text-gray-400">{c.number}</span>
-												{#if c.amount}<span class="text-yellow-400 ml-2">{c.amount >= 1e6 ? (c.amount/1e6).toFixed(1) + ' млн' : c.amount} ₽</span>{/if}
-											</div>
-										{/each}
-									</div>
-								{/if}
-								{#if fin.inspection_count > 0}
-									<div class="bg-gray-950 rounded-xl border border-gray-700 p-3">
-										<div class="text-xs font-medium text-gray-400 mb-2">🔍 Проверки ГП · {fin.inspection_count}</div>
-										{#each (fin.inspections || []) as i}
-											<div class="text-xs pb-1 border-b border-gray-800 mb-1">
-												<div class="text-gray-400">{i.authority}</div>
-												<div class="text-gray-600">{i.date} {i.violations ? '· Нарушения' : ''}</div>
-											</div>
-										{/each}
-									</div>
-								{/if}
-								{#if fin.fedresurs_count > 0}
-									<div class="bg-gray-950 rounded-xl border border-orange-900/30 p-3">
-										<div class="text-xs font-medium text-orange-400 mb-2">📋 Федресурс · {fin.fedresurs_count}</div>
-										{#each (fin.fedresurs_messages || []) as m}
-											<div class="text-xs pb-1 border-b border-gray-800 mb-1">
-												<span class="text-orange-400">{m.type}</span> · <span class="text-gray-600">{m.date}</span>
-												{#if m.text}<div class="text-gray-500 line-clamp-1">{m.text}</div>{/if}
-											</div>
-										{/each}
-									</div>
-								{/if}
-								{#if fin.has_bankruptcy}
-									<div class="bg-gray-950 rounded-xl border border-red-800/50 p-3">
-										<div class="text-xs font-medium text-red-400 mb-2">⛔ Банкротство ЕФРСБ</div>
-										{#each (fin.bankruptcy_messages || []) as m}
-											<div class="text-xs pb-1"><span class="text-red-400">{m.type}</span> · <span class="text-gray-600">{m.date}</span></div>
-										{/each}
-									</div>
-								{/if}
-							</div>
-
-							<!-- Лицензии -->
-							{#if co.licenses?.length}
-								<div class="bg-gray-950 rounded-xl border border-gray-800 p-4">
-									<h3 class="text-xs font-medium text-gray-400 mb-2">📜 Лицензии ({co.licenses.length})</h3>
-									{#each co.licenses as lic}<div class="text-xs text-gray-400 py-0.5">· {lic}</div>{/each}
-								</div>
-							{/if}
-
-							<!-- Технологии -->
-							{#if tech.count > 0 || tech.all?.length}
-								<div class="bg-gray-950 rounded-xl border border-gray-800 p-4">
-									<h3 class="text-xs font-medium text-gray-400 mb-2">💻 Технологии · {tech.count ?? 0}</h3>
-									{#if tech.crm?.length}<div class="text-xs text-indigo-400 mb-1">CRM: {tech.crm.join(', ')}</div>{/if}
-									<div class="flex flex-wrap gap-1">
-										{#each (tech.all || []) as t}<span class="text-xs px-1.5 py-0.5 rounded bg-gray-800 text-gray-400">{t}</span>{/each}
-									</div>
-								</div>
-							{/if}
-
-						</div>
+						<LeadPassportPanel {lead} />
 					{/if}
 				{/if}
 
