@@ -1,20 +1,11 @@
 /** Лог касаний лида: звонок, встреча, письмо (apiFetch + X-API-Key). */
 import { apiFetch, apiPost } from '$lib/api.js';
+import { ACTIVITY_TYPES, activityTypeLabel, communicationTypeLabel } from '$lib/leads/leadActivityTypes.js';
 
-export const COMMUNICATION_TYPES = [
-	{ value: 'call', label: 'Звонок' },
-	{ value: 'meeting', label: 'Встреча' },
-	{ value: 'email', label: 'Письмо' },
-	{ value: 'other', label: 'Другое' },
-];
+export { ACTIVITY_TYPES, activityTypeLabel, communicationTypeLabel };
 
-/** @type {Record<string, string>} */
-const TYPE_LABELS = Object.fromEntries(COMMUNICATION_TYPES.map((t) => [t.value, t.label]));
-
-/** @param {string} type */
-export function communicationTypeLabel(type) {
-	return TYPE_LABELS[type] || type;
-}
+/** @deprecated */
+export const COMMUNICATION_TYPES = ACTIVITY_TYPES;
 
 export async function fetchLeadCommunications(leadId, limit = 40) {
 	const n = Number(leadId);
@@ -29,7 +20,7 @@ export async function createLeadCommunication(
 	{ communicationType, content, actor = 'Менеджер', occurredAt = null },
 ) {
 	const text = String(content ?? '').trim();
-	if (!text) throw new Error('Пустое описание касания');
+	if (!text) throw new Error('Пустое описание');
 	const body = { communicationType, content: text, actor };
 	if (occurredAt) body.occurredAt = occurredAt;
 	const r = await apiPost(`/api/leads/${leadId}/communications`, body);

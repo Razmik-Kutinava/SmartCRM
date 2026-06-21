@@ -29,7 +29,7 @@ async def test_lead_communication_empty_content_rejected(client):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("ctype", ["call", "meeting", "email"])
+@pytest.mark.parametrize("ctype", ["call", "meeting", "email", "vks", "meeting_offline", "comment", "note"])
 async def test_lead_communication_types(client, ctype):
     create_r = await client.post("/api/leads", json={"company": f"Тип {ctype}"})
     lead_id = create_r.json()["id"]

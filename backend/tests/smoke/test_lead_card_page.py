@@ -52,7 +52,10 @@ def test_lead_card_overview_two_column_layout():
         'data-testid="lead-card-overview-right"', 1
     )[0]
     right = overview.split('data-testid="lead-card-overview-right"', 1)[1]
-    assert "Касания (лог)" in left
+    assert "Касания (лог)" not in left
+    assert "LeadActivityPanel" in left
+    assert "Комментарии" not in left
+    assert "Лента активности" not in left
     assert "LeadDealPathPanel" in left
     assert "Карточка (редактирование)" in right
     assert "Суммы сделки" in right
@@ -76,8 +79,8 @@ def test_lead_card_stages_under_header():
         'data-testid="lead-card-overview-right"', 1
     )[0]
     stages_idx = left.index('data-testid="lead-card-stages"')
-    comms_idx = left.index("Касания (лог)")
-    assert stages_idx < comms_idx
+    activity_idx = left.index('LeadActivityPanel')
+    assert stages_idx < activity_idx
     right = text.split('data-testid="lead-card-overview-right"', 1)[1]
     assert 'data-testid="lead-card-stages"' not in right
 
