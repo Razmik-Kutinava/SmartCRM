@@ -17,6 +17,7 @@
 		getCachedCrmConfig,
 		leadPriorityTier,
 		priorityTierBadgeClass,
+		stageBadgeClass,
 	} from '$lib/crmStages.js';
 	import { fetchEmailAccounts, fetchEmailThreads, fetchNurtureChains } from '$lib/emailStorage.js';
 	import {
@@ -851,11 +852,39 @@
 					<div class="text-lg font-bold text-white">{lead.company}</div>
 					<div class="text-sm text-gray-400 mt-0.5">{lead.contact} · {lead.position}</div>
 					<div class="flex items-center gap-2 mt-2 flex-wrap">
-						<span class="px-2 py-0.5 bg-blue-900 text-blue-300 text-xs rounded-full font-medium">{lead.stage}</span>
 						<span class="text-green-400 font-bold text-sm">{lead.score}/100</span>
 						<span class="px-2 py-0.5 rounded text-xs font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
 					</div>
-					<p class="text-[11px] text-gray-600 mt-1 leading-snug">
+
+					<div class="mt-3 space-y-2" data-testid="lead-card-stages">
+						<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Этап</div>
+						<div class="flex flex-wrap gap-1.5">
+							{#each CRM_STAGES as stage}
+								{@const stageRules = rulesForTargetStage(stageTransitionRules, stage)}
+								<button
+									type="button"
+									disabled={stageSaving}
+									onclick={() => setStage(stage)}
+									title={stageRules.length
+										? `Требования: ${stageRules.map(describeTransitionRule).join('; ')}`
+										: stage}
+									class="px-2.5 py-1 text-xs rounded-full transition-all disabled:opacity-50 {stageBadgeClass(stage)}
+										{lead.stage === stage
+										? 'ring-2 ring-white/35 font-semibold shadow-md'
+										: 'opacity-80 hover:opacity-100'}"
+								>
+									{stage}
+								</button>
+							{/each}
+						</div>
+						{#if stageTransitionRules.length}
+							<p class="text-[10px] text-gray-600 leading-snug">
+								Правила из CRM/Ops: наведи на стадию — подсказка; при блокировке покажем детали.
+							</p>
+						{/if}
+					</div>
+
+					<p class="text-[11px] text-gray-600 mt-3 leading-snug">
 						Балл вручную менеджером; автоматом не перезаписывается. Ниже — суммы в ₽ и подсказка/предупреждения с бэка.
 					</p>
 					{#if lead.scoreAdvisory?.suggestedScore != null}
@@ -1078,39 +1107,6 @@
 							</div>
 						{/each}
 					</div>
-				</div>
-
-				<div class="space-y-2">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Сменить этап</div>
-					<div class="grid grid-cols-2 gap-1">
-						{#each CRM_STAGES as stage}
-							{@const stageRules = rulesForTargetStage(stageTransitionRules, stage)}
-							<button
-								type="button"
-								disabled={stageSaving}
-								onclick={() => setStage(stage)}
-								title={stageRules.length
-									? `Требования: ${stageRules.map(describeTransitionRule).join('; ')}`
-									: ''}
-								class="px-2 py-1 text-xs rounded-lg text-left transition-colors disabled:opacity-50
-									{lead.stage === stage
-									? 'bg-indigo-600 text-white'
-									: 'bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white'}"
-							>
-								{stage}
-								{#if stageRules.length}
-									<span class="block text-[9px] opacity-70 mt-0.5 line-clamp-1">
-										{describeTransitionRule(stageRules[0])}
-									</span>
-								{/if}
-							</button>
-						{/each}
-					</div>
-					{#if stageTransitionRules.length}
-						<p class="text-[10px] text-gray-600 mt-2 leading-snug">
-							Правила из CRM/Ops: наведи на стадию — подсказка; при блокировке покажем детали.
-						</p>
-					{/if}
 				</div>
 
 				</div>

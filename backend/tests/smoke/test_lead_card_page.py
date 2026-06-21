@@ -42,3 +42,14 @@ def test_lead_card_toolbar_compact():
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert 'data-testid="lead-card-toolbar"' in text
     assert "flex-nowrap" in text
+
+
+def test_lead_card_stages_under_header():
+    """Этапы сразу под шапкой, цветные кнопки, не внизу колонки."""
+    text = _LEAD_CARD.read_text(encoding="utf-8")
+    assert text.count('data-testid="lead-card-stages"') == 1
+    assert "stageBadgeClass" in text
+    assert "Сменить этап" not in text
+    stages_idx = text.index('data-testid="lead-card-stages"')
+    edit_idx = text.index("Карточка (редактирование)")
+    assert stages_idx < edit_idx

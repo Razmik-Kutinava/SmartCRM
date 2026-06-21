@@ -86,6 +86,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `smoke/test_leads_block_acceptance.py` | Acceptance PRD_MAP п.1–12 (API) |
 | `test_lead_score_advisory.py` | Скор-советы |
 | `core/test_lead_priority_tier.py` | Приоритет лида (зеркало crmStages.js) |
+| `core/test_crm_stage_badge.py` | Цвета бейджей этапов воронки (stageBadgeClass) |
 | `smoke/test_scoring_funnel_smoke.py` | Смоук балльной воронки (API + формула) |
 | `smoke/test_lead_card_page.py` | Контракт карточки: industryOptions, breakdown, обзор 2 колонки |
 | `frontend/test_lead_create_ui.py` | Модалка «Новый лид»: store smoke + разметка дашборд/list |

@@ -101,3 +101,17 @@ export function priorityTierBadgeClass(tier) {
 	};
 	return m[tier?.key] || m.low;
 }
+
+/** Цвет бейджа/кнопки этапа воронки (как в списке лидов). */
+const STAGE_BADGE_CLASSES = {
+	Новый: 'bg-gray-700 text-gray-300',
+	Квалифицирован: 'bg-blue-900 text-blue-300',
+	'КП отправлено': 'bg-yellow-900 text-yellow-300',
+	Переговоры: 'bg-indigo-900 text-indigo-300',
+	Выигран: 'bg-green-900 text-green-300',
+	Проигран: 'bg-red-900 text-red-300',
+};
+
+export function stageBadgeClass(stage) {
+	return STAGE_BADGE_CLASSES[stage] || 'bg-gray-700 text-gray-300';
+}
