@@ -24,4 +24,5 @@ def test_lead_activity_panel_has_types_and_datetime():
     assert "datetime-local" in panel
     assert "ВКС" in types
     assert "Заметка" in types
+    assert "leadActivityTasks" in panel
     assert "buildActivityTimeline" in _TIMELINE.read_text(encoding="utf-8")

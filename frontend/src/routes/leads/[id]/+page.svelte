@@ -630,6 +630,7 @@
 	function onTabChange(tab) {
 		activeTab = tab;
 		if (tab === 'emails') loadEmails();
+		if (tab === 'overview') loadLeadTasks();
 	}
 
 	// ─── Compose ────────────────────────────────────────────────
@@ -1079,10 +1080,14 @@
 					<div class="p-4 min-w-0 flex-1" data-testid="lead-card-overview-right">
 						<LeadActivityPanel
 							leadId={lead.id}
+							relatedLead={lead.company}
+							tasks={leadTasksList}
+							tasksLoading={leadTasksLoading}
 							communications={leadComms}
 							comments={leadComments}
 							audit={leadAudit}
 							onSaved={loadLeadActivity}
+							onTasksChanged={loadLeadTasks}
 						/>
 					</div>
 				</div>
