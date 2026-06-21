@@ -851,7 +851,7 @@
 			{#if activeTab === 'overview'}
 			<div class="w-full" data-testid="lead-card-overview">
 				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
-				<div class="space-y-6 min-w-0" data-testid="lead-card-overview-left">
+				<div class="space-y-6 min-w-0 lg:order-2" data-testid="lead-card-overview-right">
 				<div>
 					<div class="text-lg font-bold text-white">{lead.company}</div>
 					<div class="text-sm text-gray-400 mt-0.5">{lead.contact} · {lead.position}</div>
@@ -1088,9 +1088,9 @@
 
 				</div>
 
-				<div class="space-y-6 min-w-0" data-testid="lead-card-overview-right">
+				<div class="space-y-6 min-w-0 lg:order-1" data-testid="lead-card-overview-left">
 
-				<div class="space-y-2 border-t border-gray-800 pt-4 lg:border-t-0 lg:pt-0">
+				<div class="space-y-2">
 					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Касания (лог)</div>
 					<div class="max-h-32 overflow-y-auto space-y-1.5 text-[11px] mb-2">
 						{#each leadComms as log (log.id)}

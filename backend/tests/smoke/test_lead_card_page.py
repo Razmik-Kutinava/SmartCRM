@@ -24,17 +24,25 @@ def test_lead_card_score_breakdown_marker():
 
 
 def test_lead_card_overview_two_column_layout():
-    """Обзор: две колонки на всю ширину, без max-w-5xl по центру."""
+    """Обзор: две колонки — слева активность, справа редактирование."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert 'data-testid="lead-card-overview"' in text
     assert 'data-testid="lead-card-overview-left"' in text
     assert 'data-testid="lead-card-overview-right"' in text
     assert 'data-testid="lead-card-main"' in text
     assert "lg:grid-cols-2" in text
+    assert "lg:order-1" in text
+    assert "lg:order-2" in text
     assert "w-80 border-r border-gray-800" not in text
     overview = text.split('data-testid="lead-card-overview"', 1)[1].split("{:else if activeTab === 'tasks'}", 1)[0]
     assert "max-w-5xl" not in overview
     assert "mx-auto" not in overview
+    left = overview.split('data-testid="lead-card-overview-left"', 1)[1].split(
+        'data-testid="lead-card-overview-right"', 1
+    )[0]
+    right = overview.split('data-testid="lead-card-overview-right"', 1)[1]
+    assert "Касания (лог)" in left
+    assert "Карточка (редактирование)" in right
 
 
 def test_lead_card_toolbar_compact():
@@ -50,8 +58,11 @@ def test_lead_card_stages_under_header():
     assert text.count('data-testid="lead-card-stages"') == 1
     assert "stageBadgeClass" in text
     assert "Сменить этап" not in text
-    stages_idx = text.index('data-testid="lead-card-stages"')
-    edit_idx = text.index("Карточка (редактирование)")
+    right = text.split('data-testid="lead-card-overview-right"', 1)[1].split(
+        'data-testid="lead-card-overview-left"', 1
+    )[0]
+    stages_idx = right.index('data-testid="lead-card-stages"')
+    edit_idx = right.index("Карточка (редактирование)")
     assert stages_idx < edit_idx
 
 
