@@ -77,6 +77,9 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `scoring_funnel_report.py` | Отчёт по баллам лидов + воронка для экспорта P3 |
 | `lead_approvals.py` | Согласования смены стадии лида |
 | `lead_score_advisory.py` | Подсказки по скору лида |
+| `lead_deal_path.py` | Цепочка квалификации и документов (путь сделки) |
+| `lead_stage_hints.py` | Мульти-подсказки по этапу, срокам, докам |
+| `lead_card_context.py` | Даты этапа и касаний для карточки |
 | `lead_score_list_flags.py` | Флаги advisory для списка лидов (`hasScoreWarnings`, `scoreDivergent`) |
 | `lead_priority_tier.py` | Приоритет лида по порогам CRM (зеркало `crmStages.js`) |
 | `lead_field_audit_util.py` | Аудит изменений полей лида |

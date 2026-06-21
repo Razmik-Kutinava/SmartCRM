@@ -7,6 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import crm_settings_store, lead_score_advisory
 from core.lead_approvals import default_approvals_dict, merge_approvals_payload
+from core.lead_card_context import last_communication_at, stage_entered_at
+from core.lead_deal_path import build_deal_path
+from core.lead_stage_hints import compute_stage_hints
 from core.tender_lead_link import tender_link_for_lead
 from services.sla_protocol_runner import build_protocol_status
 from db.models import Lead, Task
@@ -45,6 +48,16 @@ async def lead_api_payload(lead: Lead, db: AsyncSession) -> dict:
             "breakdown": {},
             "disabled": True,
         }
+    entered = await stage_entered_at(db, lead.id, str(lead.stage or "Новый"), lead.created_at)
+    last_comm = await last_communication_at(db, lead.id)
+    payload["dealPath"] = build_deal_path(payload)
+    payload["stageHints"] = compute_stage_hints(
+        payload,
+        stage_entered_at=entered,
+        last_comm_at=last_comm,
+        settings=settings,
+        score_advisory=payload.get("scoreAdvisory"),
+    )
     tender_link = await tender_link_for_lead(db, lead.id)
     if tender_link:
         payload["tenderLink"] = tender_link

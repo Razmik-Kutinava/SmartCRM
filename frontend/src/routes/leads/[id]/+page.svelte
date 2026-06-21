@@ -21,8 +21,6 @@
 	} from '$lib/crmStages.js';
 	import { fetchEmailAccounts, fetchEmailThreads, fetchNurtureChains } from '$lib/emailStorage.js';
 	import {
-		APPROVAL_KEYS,
-		APPROVAL_LABELS_RU,
 		defaultApprovals,
 		mergeApprovals,
 	} from '$lib/leadApprovals.js';
@@ -47,6 +45,8 @@
 	import { fetchLeadIndustries, isIndustryEmpty } from '$lib/leads/industryCatalog.js';
 	import { assignLeadSlaProtocol, fetchSlaProtocols } from '$lib/leads/slaProtocol.js';
 	import { confirmAndDeleteLead } from '$lib/leads/leadDelete.js';
+	import LeadStageHints from '../../../components/LeadStageHints.svelte';
+	import LeadDealPathPanel from '../../../components/LeadDealPathPanel.svelte';
 
 	let lead = $state(null);
 	let notFound = $state(false);
@@ -56,6 +56,10 @@
 	let deleteBusy = $state(false);
 
 	let approvalsDraft = $state({});
+	function toggleApprovalKey(key, checked) {
+		approvalsDraft[key] = checked;
+		approvalsDraft = { ...approvalsDraft };
+	}
 	function syncApprovalsDraft() {
 		if (!lead) {
 			approvalsDraft = defaultApprovals();
@@ -884,20 +888,24 @@
 						{/if}
 					</div>
 
-					<p class="text-[11px] text-gray-600 mt-3 leading-snug">
+					<LeadStageHints hints={lead.stageHints || []} />
+
+					<LeadDealPathPanel
+						dealPath={lead.dealPath}
+						approvalsDraft={approvalsDraft}
+						stage={lead.stage}
+						saving={approvalsSaving}
+						onToggleApproval={toggleApprovalKey}
+						onSave={saveApprovalsChecklist}
+					/>
+
+					<p class="text-[11px] text-gray-600 mt-1 leading-snug">
 						Балл вручную менеджером; автоматом не перезаписывается. Ниже — суммы в ₽ и подсказка/предупреждения с бэка.
 					</p>
 					{#if lead.scoreAdvisory?.suggestedScore != null}
 						<p class="text-xs text-gray-500 mt-1">
 							Подсказка (не меняет балл менеджера): <span class="text-amber-400/90">{lead.scoreAdvisory.suggestedScore}/100</span>
 						</p>
-					{/if}
-					{#if lead.scoreAdvisory?.warnings?.length}
-						<ul class="mt-2 space-y-1 text-xs text-amber-200/95 bg-amber-950/40 border border-amber-900/60 rounded-lg px-2 py-2 list-disc list-inside">
-							{#each lead.scoreAdvisory.warnings as w}
-								<li>{w}</li>
-							{/each}
-						</ul>
 					{/if}
 					{#if lead.scoreAdvisory?.breakdown}
 						{@const bdLines = formatScoreBreakdownLines(lead.scoreAdvisory.breakdown)}
@@ -1060,37 +1068,6 @@
 							{moneySaving ? 'Сохранение…' : 'Сохранить суммы'}
 						</button>
 					</div>
-				</div>
-
-				<div class="space-y-2 border-t border-gray-800 pt-4">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Апрувы и документы</div>
-					<p class="text-[10px] text-gray-600 leading-snug">
-						Как в CRM points: влияют на подсказку балла (не на балл менеджера). Веса — в Ops → scoring_advisory.
-					</p>
-					<div class="grid grid-cols-1 gap-1.5 max-h-52 overflow-y-auto text-xs">
-						{#each APPROVAL_KEYS as k}
-							<label class="flex items-start gap-2 text-gray-300 cursor-pointer select-none">
-								<input
-									type="checkbox"
-									class="mt-0.5 rounded border-gray-600"
-									checked={!!approvalsDraft[k]}
-									onchange={(e) => {
-										approvalsDraft[k] = e.currentTarget.checked;
-										approvalsDraft = { ...approvalsDraft };
-									}}
-								/>
-								<span>{APPROVAL_LABELS_RU[k] || k}</span>
-							</label>
-						{/each}
-					</div>
-					<button
-						type="button"
-						disabled={approvalsSaving}
-						onclick={saveApprovalsChecklist}
-						class="w-full py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-100 disabled:opacity-50"
-					>
-						{approvalsSaving ? 'Сохранение…' : 'Сохранить чеклист'}
-					</button>
 				</div>
 
 				<div class="space-y-2">

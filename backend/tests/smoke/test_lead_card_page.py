@@ -53,3 +53,12 @@ def test_lead_card_stages_under_header():
     stages_idx = text.index('data-testid="lead-card-stages"')
     edit_idx = text.index("Карточка (редактирование)")
     assert stages_idx < edit_idx
+
+
+def test_lead_card_deal_path_and_hints_ui():
+    text = _LEAD_CARD.read_text(encoding="utf-8")
+    assert "LeadStageHints" in text
+    assert "LeadDealPathPanel" in text
+    assert "lead.stageHints" in text
+    assert "lead.dealPath" in text
+    assert "Апрувы и документы" not in text

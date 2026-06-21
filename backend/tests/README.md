@@ -69,7 +69,8 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `lib/test_funnel_dnd.py` | Воронка Kanban DnD (зеркало funnelDnD.js) |
 | `lib/test_lead_list_filter.py` | Фильтры и сортировка списка лидов |
 | `lib/test_lead_card_money.py` | Суммы ₽ на карточке лида |
-| `api/test_lead_engagement.py` | Комментарии, касания, апрувы |
+| `api/test_lead_engagement.py` | Комментарии, касания, апрувы, dealPath/stageHints в GET |
+| `core/test_lead_deal_path.py` | Путь сделки, подсказки по этапу, порядок доков |
 | `core/test_task_dates.py` | Даты и SLA задач |
 | `api/test_tasks_api.py` | CRUD задач, lead_id, overdue |
 | `api/test_lead_comments_api.py` | Комментарии: 404, пустой body, порядок, x-actor-name |

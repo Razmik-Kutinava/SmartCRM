@@ -61,3 +61,20 @@ async def test_lead_approvals_patch(client):
 
     get_r = await client.get(f"/api/leads/{lead_id}")
     assert get_r.json()["approvals"]["lprEstablished"] is True
+
+
+@pytest.mark.asyncio
+async def test_lead_card_deal_path_and_hints_in_api(client):
+    create_r = await client.post(
+        "/api/leads",
+        json={"company": "Путь сделки", "contact": "Иван", "phone": "+7999"},
+    )
+    lead_id = create_r.json()["id"]
+    get_r = await client.get(f"/api/leads/{lead_id}")
+    assert get_r.status_code == 200
+    data = get_r.json()
+    assert "dealPath" in data
+    assert "stageHints" in data
+    groups = data["dealPath"]["groups"]
+    assert any(g["id"] == "qualification" for g in groups)
+    assert isinstance(data["stageHints"], list)

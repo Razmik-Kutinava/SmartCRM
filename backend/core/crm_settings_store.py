@@ -40,6 +40,11 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     # P2: правила перехода в стадию (пустой список = без доп. гейтов). Пример элемента:
     # {"to_stage": "Выигран", "require_non_empty": ["email", "company"], "require_positive_amount_rub": true}
     "stage_transition_rules": [],
+    "stage_nudge_limits": {
+        "Новый": 3,
+        "Квалифицирован": 8,
+        "Переговоры": 5,
+    },
     # P3: SLA-протоколы (шаги задач по стадии лида)
     "sla_protocols": [],
 }
