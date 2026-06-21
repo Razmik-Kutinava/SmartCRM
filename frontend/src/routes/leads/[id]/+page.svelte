@@ -851,7 +851,7 @@
 			{#if activeTab === 'overview'}
 			<div class="w-full" data-testid="lead-card-overview">
 				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
-				<div class="space-y-6 min-w-0 lg:order-2" data-testid="lead-card-overview-right">
+				<div class="space-y-6 min-w-0" data-testid="lead-card-overview-left">
 				<div>
 					<div class="text-lg font-bold text-white">{lead.company}</div>
 					<div class="text-sm text-gray-400 mt-0.5">{lead.contact} · {lead.position}</div>
@@ -900,7 +900,7 @@
 					/>
 
 					<p class="text-[11px] text-gray-600 mt-1 leading-snug">
-						Балл вручную менеджером; автоматом не перезаписывается. Ниже — суммы в ₽ и подсказка/предупреждения с бэка.
+						Балл вручную менеджером; подсказка справа в форме скоринга и в блоке ниже.
 					</p>
 					{#if lead.scoreAdvisory?.suggestedScore != null}
 						<p class="text-xs text-gray-500 mt-1">
@@ -937,6 +937,122 @@
 					{/if}
 				</div>
 
+				<div class="space-y-2 border-t border-gray-800 pt-4">
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Касания (лог)</div>
+					<div class="max-h-32 overflow-y-auto space-y-1.5 text-[11px] mb-2">
+						{#each leadComms as log (log.id)}
+							<div class="text-gray-400 border-b border-gray-800/80 pb-1">
+								<span class="text-cyan-600/90">{communicationTypeLabel(log.communicationType)}</span>
+								<span class="text-gray-600"> · {log.actor}</span>
+								<div class="text-gray-300 mt-0.5 whitespace-pre-wrap">{log.content}</div>
+								<div class="text-gray-600">{log.createdAt ? new Date(log.createdAt).toLocaleString('ru-RU') : ''}</div>
+							</div>
+						{:else}
+							<p class="text-gray-600">Пока нет записей.</p>
+						{/each}
+					</div>
+					<select
+						bind:value={commType}
+						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200"
+					>
+						{#each COMMUNICATION_TYPES as t (t.value)}
+							<option value={t.value}>{t.label}</option>
+						{/each}
+					</select>
+					<textarea
+						bind:value={commContent}
+						placeholder="Что сделали / договорились…"
+						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600 min-h-[3rem]"
+					></textarea>
+					<button
+						type="button"
+						disabled={commSaving || !commContent.trim()}
+						onclick={submitCommunication}
+						class="w-full py-1.5 rounded-lg text-xs font-medium bg-cyan-900/40 hover:bg-cyan-800/50 text-cyan-100 disabled:opacity-50"
+					>
+						{commSaving ? 'Запись…' : 'Записать касание'}
+					</button>
+				</div>
+
+				<div class="space-y-2 border-t border-gray-800 pt-4">
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Комментарии</div>
+					<div class="max-h-40 overflow-y-auto space-y-2 text-xs">
+						{#each leadComments as c (c.id)}
+							<div class="bg-gray-950/80 border border-gray-800 rounded px-2 py-1.5">
+								<div class="text-gray-500 mb-0.5">{c.author} · {c.createdAt ? new Date(c.createdAt).toLocaleString('ru-RU') : ''}</div>
+								<div class="text-gray-200 whitespace-pre-wrap">{c.body}</div>
+							</div>
+						{:else}
+							<p class="text-gray-600">Пока нет комментариев.</p>
+						{/each}
+					</div>
+					<textarea
+						bind:value={commentDraft}
+						placeholder="Комментарий к сделке…"
+						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600 min-h-[4rem]"
+					></textarea>
+					<button
+						type="button"
+						disabled={commentPosting || !commentDraft.trim()}
+						onclick={submitComment}
+						class="w-full py-1.5 rounded-lg text-xs font-medium bg-indigo-900/50 hover:bg-indigo-800/60 text-indigo-100 disabled:opacity-50"
+					>
+						{commentPosting ? 'Отправка…' : 'Добавить комментарий'}
+					</button>
+				</div>
+
+				<div class="space-y-2 border-t border-gray-800 pt-4">
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">История полей</div>
+					<div class="max-h-36 overflow-y-auto space-y-1 text-[11px]">
+						{#each leadAudit as row (row.id)}
+							<div class="text-gray-400 border-b border-gray-800/80 pb-1">
+								{#if row.eventType && row.eventType !== 'field_change'}
+									<span class="text-[10px] text-cyan-500/90 mr-1">[{row.eventType}]</span>
+								{/if}
+								<span class="text-amber-600/90">{auditFieldLabel(row.field)}</span>
+								<span class="text-gray-600"> ← </span>
+								<span class="text-gray-500 line-clamp-1">{row.oldValue || '—'}</span>
+								<span class="text-gray-600"> → </span>
+								<span class="text-gray-300 line-clamp-1">{row.newValue || '—'}</span>
+								<div class="text-gray-600 mt-0.5">{row.actor} · {row.changedAt ? new Date(row.changedAt).toLocaleString('ru-RU') : ''}</div>
+							</div>
+						{:else}
+							<p class="text-gray-600">Изменений по полям ещё не было.</p>
+						{/each}
+					</div>
+				</div>
+
+			<div class="border-t border-gray-800 pt-6 space-y-4">
+				<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Лента активности</div>
+				<div>
+					<textarea bind:value={noteText} placeholder="Добавить заметку или команду агентам..."
+						class="w-full bg-gray-900 border border-gray-700 text-gray-200 text-sm rounded-lg px-4 py-3 placeholder-gray-600 focus:outline-none focus:border-indigo-500 resize-none h-20"></textarea>
+					<div class="flex gap-2 mt-2">
+						<button type="button" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">Добавить заметку</button>
+						<button type="button" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">Поручить агенту</button>
+					</div>
+				</div>
+				<div class="space-y-3">
+					{#each activityHistory as item}
+						<div class="flex gap-3">
+							<div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5
+								{item.type === 'agent' ? 'bg-indigo-900 text-indigo-300' : 'bg-gray-800 text-gray-400'} text-xs">
+								{item.type === 'call' ? '✆' : item.type === 'agent' ? '⬡' : '✎'}
+							</div>
+							<div class="flex-1">
+								<div class="flex items-center gap-2 mb-0.5">
+									<span class="text-xs font-medium {item.type === 'agent' ? 'text-indigo-400' : 'text-gray-400'}">{item.author}</span>
+									<span class="text-xs text-gray-600">{item.date}</span>
+								</div>
+								<p class="text-sm text-gray-300">{item.text}</p>
+							</div>
+						</div>
+					{/each}
+				</div>
+			</div>
+				</div>
+
+				<div class="space-y-6 min-w-0 lg:sticky lg:top-4" data-testid="lead-card-overview-right">
 				<div class="space-y-2">
 					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Карточка (редактирование)</div>
 					<div class="space-y-2 text-sm">
@@ -1085,124 +1201,6 @@
 						{/each}
 					</div>
 				</div>
-
-				</div>
-
-				<div class="space-y-6 min-w-0 lg:order-1" data-testid="lead-card-overview-left">
-
-				<div class="space-y-2">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Касания (лог)</div>
-					<div class="max-h-32 overflow-y-auto space-y-1.5 text-[11px] mb-2">
-						{#each leadComms as log (log.id)}
-							<div class="text-gray-400 border-b border-gray-800/80 pb-1">
-								<span class="text-cyan-600/90">{communicationTypeLabel(log.communicationType)}</span>
-								<span class="text-gray-600"> · {log.actor}</span>
-								<div class="text-gray-300 mt-0.5 whitespace-pre-wrap">{log.content}</div>
-								<div class="text-gray-600">{log.createdAt ? new Date(log.createdAt).toLocaleString('ru-RU') : ''}</div>
-							</div>
-						{:else}
-							<p class="text-gray-600">Пока нет записей.</p>
-						{/each}
-					</div>
-					<select
-						bind:value={commType}
-						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200"
-					>
-						{#each COMMUNICATION_TYPES as t (t.value)}
-							<option value={t.value}>{t.label}</option>
-						{/each}
-					</select>
-					<textarea
-						bind:value={commContent}
-						placeholder="Что сделали / договорились…"
-						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600 min-h-[3rem]"
-					></textarea>
-					<button
-						type="button"
-						disabled={commSaving || !commContent.trim()}
-						onclick={submitCommunication}
-						class="w-full py-1.5 rounded-lg text-xs font-medium bg-cyan-900/40 hover:bg-cyan-800/50 text-cyan-100 disabled:opacity-50"
-					>
-						{commSaving ? 'Запись…' : 'Записать касание'}
-					</button>
-				</div>
-
-				<div class="space-y-2 border-t border-gray-800 pt-4">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Комментарии</div>
-					<div class="max-h-40 overflow-y-auto space-y-2 text-xs">
-						{#each leadComments as c (c.id)}
-							<div class="bg-gray-950/80 border border-gray-800 rounded px-2 py-1.5">
-								<div class="text-gray-500 mb-0.5">{c.author} · {c.createdAt ? new Date(c.createdAt).toLocaleString('ru-RU') : ''}</div>
-								<div class="text-gray-200 whitespace-pre-wrap">{c.body}</div>
-							</div>
-						{:else}
-							<p class="text-gray-600">Пока нет комментариев.</p>
-						{/each}
-					</div>
-					<textarea
-						bind:value={commentDraft}
-						placeholder="Комментарий к сделке…"
-						class="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600 min-h-[4rem]"
-					></textarea>
-					<button
-						type="button"
-						disabled={commentPosting || !commentDraft.trim()}
-						onclick={submitComment}
-						class="w-full py-1.5 rounded-lg text-xs font-medium bg-indigo-900/50 hover:bg-indigo-800/60 text-indigo-100 disabled:opacity-50"
-					>
-						{commentPosting ? 'Отправка…' : 'Добавить комментарий'}
-					</button>
-				</div>
-
-				<div class="space-y-2 border-t border-gray-800 pt-4">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">История полей</div>
-					<div class="max-h-36 overflow-y-auto space-y-1 text-[11px]">
-						{#each leadAudit as row (row.id)}
-							<div class="text-gray-400 border-b border-gray-800/80 pb-1">
-								{#if row.eventType && row.eventType !== 'field_change'}
-									<span class="text-[10px] text-cyan-500/90 mr-1">[{row.eventType}]</span>
-								{/if}
-								<span class="text-amber-600/90">{auditFieldLabel(row.field)}</span>
-								<span class="text-gray-600"> ← </span>
-								<span class="text-gray-500 line-clamp-1">{row.oldValue || '—'}</span>
-								<span class="text-gray-600"> → </span>
-								<span class="text-gray-300 line-clamp-1">{row.newValue || '—'}</span>
-								<div class="text-gray-600 mt-0.5">{row.actor} · {row.changedAt ? new Date(row.changedAt).toLocaleString('ru-RU') : ''}</div>
-							</div>
-						{:else}
-							<p class="text-gray-600">Изменений по полям ещё не было.</p>
-						{/each}
-					</div>
-				</div>
-
-			<div class="border-t border-gray-800 pt-6 space-y-4">
-				<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Лента активности</div>
-				<div>
-					<textarea bind:value={noteText} placeholder="Добавить заметку или команду агентам..."
-						class="w-full bg-gray-900 border border-gray-700 text-gray-200 text-sm rounded-lg px-4 py-3 placeholder-gray-600 focus:outline-none focus:border-indigo-500 resize-none h-20"></textarea>
-					<div class="flex gap-2 mt-2">
-						<button type="button" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">Добавить заметку</button>
-						<button type="button" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">Поручить агенту</button>
-					</div>
-				</div>
-				<div class="space-y-3">
-					{#each activityHistory as item}
-						<div class="flex gap-3">
-							<div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5
-								{item.type === 'agent' ? 'bg-indigo-900 text-indigo-300' : 'bg-gray-800 text-gray-400'} text-xs">
-								{item.type === 'call' ? '✆' : item.type === 'agent' ? '⬡' : '✎'}
-							</div>
-							<div class="flex-1">
-								<div class="flex items-center gap-2 mb-0.5">
-									<span class="text-xs font-medium {item.type === 'agent' ? 'text-indigo-400' : 'text-gray-400'}">{item.author}</span>
-									<span class="text-xs text-gray-600">{item.date}</span>
-								</div>
-								<p class="text-sm text-gray-300">{item.text}</p>
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
 				</div>
 			</div>
 			</div>

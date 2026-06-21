@@ -24,15 +24,15 @@ def test_lead_card_score_breakdown_marker():
 
 
 def test_lead_card_overview_two_column_layout():
-    """Обзор: две колонки — слева активность, справа редактирование."""
+    """Обзор: слева воронка и активность, справа редактируемая карточка."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert 'data-testid="lead-card-overview"' in text
     assert 'data-testid="lead-card-overview-left"' in text
     assert 'data-testid="lead-card-overview-right"' in text
     assert 'data-testid="lead-card-main"' in text
     assert "lg:grid-cols-2" in text
-    assert "lg:order-1" in text
-    assert "lg:order-2" in text
+    assert "lg:order-1" not in text
+    assert "lg:order-2" not in text
     assert "w-80 border-r border-gray-800" not in text
     overview = text.split('data-testid="lead-card-overview"', 1)[1].split("{:else if activeTab === 'tasks'}", 1)[0]
     assert "max-w-5xl" not in overview
@@ -42,7 +42,9 @@ def test_lead_card_overview_two_column_layout():
     )[0]
     right = overview.split('data-testid="lead-card-overview-right"', 1)[1]
     assert "Касания (лог)" in left
+    assert "LeadDealPathPanel" in left
     assert "Карточка (редактирование)" in right
+    assert "Суммы сделки" in right
 
 
 def test_lead_card_toolbar_compact():
@@ -53,17 +55,19 @@ def test_lead_card_toolbar_compact():
 
 
 def test_lead_card_stages_under_header():
-    """Этапы сразу под шапкой, цветные кнопки, не внизу колонки."""
+    """Этапы и путь сделки слева под шапкой, не в колонке редактирования."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert text.count('data-testid="lead-card-stages"') == 1
     assert "stageBadgeClass" in text
     assert "Сменить этап" not in text
-    right = text.split('data-testid="lead-card-overview-right"', 1)[1].split(
-        'data-testid="lead-card-overview-left"', 1
+    left = text.split('data-testid="lead-card-overview-left"', 1)[1].split(
+        'data-testid="lead-card-overview-right"', 1
     )[0]
-    stages_idx = right.index('data-testid="lead-card-stages"')
-    edit_idx = right.index("Карточка (редактирование)")
-    assert stages_idx < edit_idx
+    stages_idx = left.index('data-testid="lead-card-stages"')
+    comms_idx = left.index("Касания (лог)")
+    assert stages_idx < comms_idx
+    right = text.split('data-testid="lead-card-overview-right"', 1)[1]
+    assert 'data-testid="lead-card-stages"' not in right
 
 
 def test_lead_card_deal_path_and_hints_ui():
