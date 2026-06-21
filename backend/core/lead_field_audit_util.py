@@ -26,6 +26,7 @@ TRACKED_ORM_FIELDS: tuple[str, ...] = (
     "industry",
     "industry_verified",
     "products_owned",
+    "contacts",
     "city",
     "responsible",
     "next_call",

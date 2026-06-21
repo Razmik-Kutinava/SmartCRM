@@ -45,6 +45,7 @@ def test_lead_card_overview_two_column_layout():
     assert "LeadDealPathPanel" in left
     assert "Карточка (редактирование)" in right
     assert "Суммы сделки" in right
+    assert "LeadContactsPanel" in text
 
 
 def test_lead_card_toolbar_compact():

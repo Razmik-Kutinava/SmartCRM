@@ -31,6 +31,31 @@ def test_stage_stale_hint_critical():
     assert hints[0]["severity"] == "critical"
 
 
+def test_deal_path_lpr_from_contacts():
+    lead = {
+        "company": "A",
+        "contact": "—",
+        "phone": "—",
+        "email": "—",
+        "contacts": [
+            {
+                "name": "Иван",
+                "role": "lpr",
+                "position": "ГД",
+                "phones": ["+7999"],
+                "emails": [],
+                "messengers": [],
+            }
+        ],
+        "approvals": {},
+    }
+    path = build_deal_path(lead)
+    qual = next(g for g in path["groups"] if g["id"] == "qualification")
+    lpr_step = next(s for s in qual["steps"] if s["key"] == "lprEstablished")
+    assert lpr_step["done"] is True
+    assert lpr_step["kind"] == "derived"
+
+
 def test_next_incomplete_step_lpr():
     lead = {
         "company": "A",

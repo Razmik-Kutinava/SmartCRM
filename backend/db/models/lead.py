@@ -11,6 +11,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from db.session import Base
 
 from core.lead_approvals import merge_approvals_payload
+from core.lead_contacts import contacts_for_api, normalize_contacts
 
 
 class Lead(Base):
@@ -34,6 +35,7 @@ class Lead(Base):
     industry: Mapped[str] = mapped_column(String(255), default="—")
     industry_verified: Mapped[bool] = mapped_column(default=False)
     products_owned: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
+    contacts: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
     city: Mapped[str] = mapped_column(String(255), default="—")
     responsible: Mapped[str] = mapped_column(String(255), default="Я")
     next_call: Mapped[str] = mapped_column(String(100), default="—")
@@ -118,6 +120,15 @@ class Lead(Base):
             "industry": self.industry,
             "industryVerified": bool(getattr(self, "industry_verified", False)),
             "productsOwned": list(getattr(self, "products_owned", None) or []),
+            "contacts": contacts_for_api(
+                {
+                    "contacts": normalize_contacts(getattr(self, "contacts", None)),
+                    "contact": self.contact,
+                    "phone": self.phone,
+                    "email": self.email,
+                    "position": self.position,
+                }
+            ),
             "city": self.city,
             "responsible": self.responsible,
             "nextCall": self.next_call,

@@ -25,6 +25,7 @@
 		mergeApprovals,
 	} from '$lib/leadApprovals.js';
 	import { detailsDraftFromLead, patchFromDetailsDraft } from '$lib/leads/leadCardEdit.js';
+	import { contactsDraftFromLead, contactsPatchFromDraft } from '$lib/leads/leadContacts.js';
 	import { loadLeadCardActivity } from '$lib/leads/leadCardActivity.js';
 	import {
 		COMMUNICATION_TYPES,
@@ -47,6 +48,7 @@
 	import { confirmAndDeleteLead } from '$lib/leads/leadDelete.js';
 	import LeadStageHints from '../../../components/LeadStageHints.svelte';
 	import LeadDealPathPanel from '../../../components/LeadDealPathPanel.svelte';
+	import LeadContactsPanel from '../../../components/LeadContactsPanel.svelte';
 
 	let lead = $state(null);
 	let notFound = $state(false);
@@ -92,6 +94,7 @@
 			sync();
 			syncMoneyInputsFromLead();
 			syncDetailsDraftFromLead();
+			syncContactsDraftFromLead();
 			await loadLeadActivity();
 			await loadLeadTasks();
 		}
@@ -142,7 +145,9 @@
 	let commSaving = $state(false);
 	let approvalsSaving = $state(false);
 	let detailsDraft = $state(detailsDraftFromLead(null));
+	let contactsDraft = $state(/** @type {Array<Record<string, string>>} */ ([]));
 	let detailsSaving = $state(false);
+	let contactsSaving = $state(false);
 	let enrichRunning = $state(false);
 	let enrichMsg = $state('');
 	let exportPdfLoading = $state(false);
@@ -167,6 +172,8 @@
 			onSaved: (saved) => {
 				sync();
 				syncDetailsDraftFromLead();
+				syncContactsDraftFromLead();
+			syncContactsDraftFromLead();
 			},
 		});
 	}
@@ -182,6 +189,7 @@
 			writeLeadsCache(fresh);
 			sync();
 			syncDetailsDraftFromLead();
+			syncContactsDraftFromLead();
 			if (data.cached) {
 				enrichMsg = 'Данные из кэша enrich (24 ч)';
 			} else if (applied) {
@@ -277,6 +285,33 @@
 		detailsDraft = detailsDraftFromLead(lead);
 	}
 
+	function syncContactsDraftFromLead() {
+		contactsDraft = contactsDraftFromLead(lead);
+	}
+
+	async function saveContactsFields() {
+		if (!lead || contactsSaving) return;
+		contactsSaving = true;
+		try {
+			const contacts = contactsPatchFromDraft(contactsDraft);
+			await apiUpdateLead(lead.id, { contacts });
+			await fetchLeadById(lead.id);
+			const fresh = await fetchLeads();
+			writeLeadsCache(fresh);
+			sync();
+			syncDetailsDraftFromLead();
+			syncContactsDraftFromLead();
+			syncContactsDraftFromLead();
+			syncApprovalsDraft();
+			await loadLeadActivity();
+		} catch (e) {
+			console.error(e);
+			alert('Не удалось сохранить контакты: ' + (e?.message || e));
+		} finally {
+			contactsSaving = false;
+		}
+	}
+
 	async function saveDetailsFields() {
 		if (!lead || detailsSaving) return;
 		let patch;
@@ -294,6 +329,7 @@
 			writeLeadsCache(fresh);
 			sync();
 			syncDetailsDraftFromLead();
+			syncContactsDraftFromLead();
 			syncMoneyInputsFromLead();
 			await loadLeadActivity();
 		} catch (e) {
@@ -1060,22 +1096,12 @@
 							<span class="text-gray-500 text-xs">Компания</span>
 							<input bind:value={detailsDraft.company} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
 						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Контакт</span>
-							<input bind:value={detailsDraft.contact} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Должность</span>
-							<input bind:value={detailsDraft.position} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Email</span>
-							<input bind:value={detailsDraft.email} type="email" class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Телефон</span>
-							<input bind:value={detailsDraft.phone} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
+						<LeadContactsPanel
+							contacts={contactsDraft}
+							onChange={(c) => { contactsDraft = c; }}
+							onSave={saveContactsFields}
+							saving={contactsSaving}
+						/>
 						<label class="block">
 							<span class="text-gray-500 text-xs">Сайт</span>
 							<input bind:value={detailsDraft.website} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
@@ -1134,12 +1160,12 @@
 							<span class="text-gray-500 text-xs">Описание / заметка</span>
 							<textarea bind:value={detailsDraft.description} rows="3" class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm resize-y"></textarea>
 						</label>
-						{#if detailsDraft.email.trim()}
+						{#if lead.email && lead.email !== '—'}
 							<button
 								type="button"
 								class="text-xs text-indigo-400 hover:text-indigo-300 text-left"
-								onclick={() => { onTabChange('emails'); openCompose(detailsDraft.email.trim()); }}
-							>✉ Написать на {detailsDraft.email}</button>
+								onclick={() => { onTabChange('emails'); openCompose(lead.email); }}
+							>✉ Написать на {lead.email}</button>
 						{/if}
 						<button
 							type="button"

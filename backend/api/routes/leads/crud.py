@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import crm_settings_store
 from core.lead_approvals import merge_approvals_payload
+from core.lead_contacts import apply_contacts_patch, normalize_contacts
 from core.lead_field_audit_util import TRACKED_ORM_FIELDS, append_lead_field_audits
 from core.lead_score_list_flags import attach_lead_score_flags, load_tasks_by_lead
 from core.stage_transition import merge_lead_patch_for_validation, validate_stage_transition
@@ -103,6 +104,16 @@ async def update_lead(
         from services.lead_products_owned import normalize_products_owned
 
         data["products_owned"] = normalize_products_owned(data["products_owned"])
+    if "contacts" in data:
+        contact_sync = apply_contacts_patch(lead, data["contacts"])
+        data["contacts"] = contact_sync["contacts"]
+        merged_ap = merge_approvals_payload(lead.approvals, contact_sync.get("approvals"))
+        if "approvals" in data:
+            merged_ap = merge_approvals_payload(merged_ap, data["approvals"])
+        data["approvals"] = merged_ap
+        for flat_key, flat_val in contact_sync.items():
+            if flat_key not in ("contacts", "approvals"):
+                data[flat_key] = flat_val
     patch_for_merge: dict = {}
     for field, value in data.items():
         if field == "approvals":

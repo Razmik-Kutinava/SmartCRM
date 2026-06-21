@@ -78,6 +78,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_approvals.py` | Согласования смены стадии лида |
 | `lead_score_advisory.py` | Подсказки по скору лида |
 | `lead_deal_path.py` | Цепочка квалификации и документов (путь сделки) |
+| `lead_contacts.py` | Контакты лида, роли, автоматический ЛПР |
 | `lead_stage_hints.py` | Мульти-подсказки по этапу, срокам, докам |
 | `lead_card_context.py` | Даты этапа и касаний для карточки |
 | `lead_score_list_flags.py` | Флаги advisory для списка лидов (`hasScoreWarnings`, `scoreDivergent`) |

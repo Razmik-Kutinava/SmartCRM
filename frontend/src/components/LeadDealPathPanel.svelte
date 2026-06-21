@@ -62,6 +62,17 @@
 								<span class="w-4 shrink-0 text-center">{step.done ? '✓' : '○'}</span>
 								<span class="flex-1">{step.label || APPROVAL_LABELS_RU[step.key]}</span>
 							</button>
+						{:else if step.kind === 'derived'}
+							<div
+								class="flex items-center gap-2 text-xs rounded-lg border px-2.5 py-2 {stepClass(step.done, false)}"
+								data-testid="deal-path-derived-{step.key}"
+							>
+								<span class="w-4 shrink-0 text-center">{step.done ? '✓' : '○'}</span>
+								<span class="flex-1">{step.label}</span>
+								{#if !step.done}
+									<span class="text-[10px] text-amber-500/80">в контактах</span>
+								{/if}
+							</div>
 						{:else}
 							<div
 								class="flex items-center gap-2 text-xs rounded-lg border px-2.5 py-2 {stepClass(step.done, false)}"

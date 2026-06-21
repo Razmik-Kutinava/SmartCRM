@@ -13,6 +13,7 @@ from core.lead_deal_path import (
     next_incomplete_step,
 )
 from core.lead_approvals import APPROVAL_LABELS_RU
+from core.lead_contacts import contacts_for_api, has_established_lpr
 
 
 def _hint(severity: str, code: str, message: str, **extra: Any) -> dict[str, Any]:
@@ -101,8 +102,8 @@ def compute_stage_hints(
     if stage == "Новый":
         if not _field_done(lead, "contact") or not _field_done(lead, "company"):
             hints.append(_hint("warn", "qual_fields", "Заполни компанию и контакт — без этого не квалифицируем."))
-        if not approvals.get("lprEstablished"):
-            hints.append(_hint("warn", "lpr_missing", "Найди и отметь ЛПР — следующий шаг «Квалифицирован»."))
+        if not has_established_lpr(contacts_for_api(lead)):
+            hints.append(_hint("warn", "lpr_missing", "Добавь контакт с ролью ЛПР справа — имя, должность и телефон или email."))
 
     if stage == "Квалифицирован":
         for key in PRE_KP_APPROVAL_KEYS:

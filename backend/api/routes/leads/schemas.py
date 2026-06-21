@@ -83,6 +83,7 @@ class LeadPatch(BaseModel):
     responsible: Optional[str] = None
     next_call: Optional[str] = None
     description: Optional[str] = None
+    contacts: Optional[list[dict[str, Any]]] = None
     approvals: Optional[dict[str, Any]] = None
 
 

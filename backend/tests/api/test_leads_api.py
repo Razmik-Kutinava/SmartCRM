@@ -78,6 +78,32 @@ async def test_update_lead_email(client):
 
 
 @pytest.mark.asyncio
+async def test_update_lead_contacts_sets_lpr(client):
+    """PATCH contacts → ЛПР в approvals и dealPath."""
+    create_r = await client.post("/api/leads", json={"company": "Контакты Тест"})
+    lead_id = create_r.json()["id"]
+    contacts = [
+        {
+            "name": "Алексей",
+            "role": "lpr",
+            "position": "Гендиректор",
+            "phones": ["+79001234567"],
+            "emails": ["lpr@test.ru"],
+            "messengers": ["telegram:@alex"],
+        }
+    ]
+    patch_r = await client.patch(f"/api/leads/{lead_id}", json={"contacts": contacts})
+    assert patch_r.status_code == 200
+    data = patch_r.json()
+    assert data["contact"] == "Алексей"
+    assert data["email"] == "lpr@test.ru"
+    assert data["approvals"]["lprEstablished"] is True
+    qual = next(g for g in data["dealPath"]["groups"] if g["id"] == "qualification")
+    lpr_step = next(s for s in qual["steps"] if s["key"] == "lprEstablished")
+    assert lpr_step["done"] is True
+
+
+@pytest.mark.asyncio
 async def test_update_lead_amount_rub_camelcase(client):
     """PATCH с amountRub/paidAmountRub (как карточка /leads/{id}) сохраняется в БД."""
     create_r = await client.post("/api/leads", json={"company": "Суммы CRUD"})

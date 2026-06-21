@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from core.lead_approvals import APPROVAL_LABELS_RU
+from core.lead_contacts import contacts_for_api, has_established_lpr
 
 DEFAULT_STAGE_DAY_LIMITS: dict[str, int] = {
     "Новый": 3,
@@ -73,6 +74,12 @@ def _approval_done(approvals: dict[str, bool], key: str) -> bool:
     return bool(approvals.get(key))
 
 
+def _lpr_established(lead: dict[str, Any], approvals: dict[str, bool]) -> bool:
+    if has_established_lpr(contacts_for_api(lead)):
+        return True
+    return _approval_done(approvals, "lprEstablished")
+
+
 def _step_row(*, key: str, label: str, kind: str, done: bool) -> dict[str, Any]:
     return {"key": key, "label": label, "kind": kind, "done": done}
 
@@ -89,8 +96,8 @@ def build_deal_path(lead: dict[str, Any]) -> dict[str, Any]:
         _step_row(
             key="lprEstablished",
             label=APPROVAL_LABELS_RU["lprEstablished"],
-            kind="approval",
-            done=_approval_done(approvals, "lprEstablished"),
+            kind="derived",
+            done=_lpr_established(lead, approvals),
         )
     )
     groups.append(_pack_group("qualification", qual_steps))
