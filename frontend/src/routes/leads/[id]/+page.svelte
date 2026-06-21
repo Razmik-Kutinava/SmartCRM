@@ -729,26 +729,38 @@
 			<span class="text-gray-700">/</span>
 			<span class="text-sm text-white font-medium">{lead.company}</span>
 		</div>
-		<div class="flex items-center gap-2 flex-wrap justify-end">
+		<div class="flex items-center gap-1 flex-nowrap shrink-0" data-testid="lead-card-toolbar">
 			<button
 				type="button"
 				data-testid="lead-card-enrich"
-				class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-sm text-white rounded-lg transition-colors"
+				title={enrichRunning ? 'Обогащение…' : 'Обогатить'}
+				aria-label="Обогатить"
+				class="w-9 h-9 flex items-center justify-center bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-sm text-white rounded-lg transition-colors"
 				disabled={enrichRunning || !lead?.company}
 				onclick={() => runLeadEnrich(false)}
-			>{enrichRunning ? '⟳ Обогащение…' : '✨ Обогатить'}</button>
-			<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">🔍 Исследовать</button>
+			>{enrichRunning ? '⟳' : '✨'}</button>
 			<button
-				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
+				type="button"
+				title="Исследовать"
+				aria-label="Исследовать"
+				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
+			>🔍</button>
+			<button
+				type="button"
+				title="Написать"
+				aria-label="Написать"
+				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
 				onclick={() => { onTabChange('emails'); openCompose(lead.email, ''); }}
-			>✉️ Написать</button>
+			>✉️</button>
 			<button
 				type="button"
 				data-testid="lead-mailing-open"
-				class="px-3 py-1.5 bg-violet-700 hover:bg-violet-600 text-sm text-white rounded-lg transition-colors relative"
+				title="Рассылка"
+				aria-label="Рассылка"
+				class="w-9 h-9 flex items-center justify-center bg-violet-700 hover:bg-violet-600 text-sm text-white rounded-lg transition-colors relative"
 				onclick={() => lead && openLeadMailing(lead)}
 			>
-				🔗 Рассылка
+				🔗
 				{#if nurtureChainCount > 0}
 					<span class="absolute -top-1 -right-1 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-indigo-500 text-[10px] leading-[1.1rem] text-center font-bold">{nurtureChainCount}</span>
 				{/if}
@@ -756,40 +768,60 @@
 			<button
 				type="button"
 				data-testid="lead-export-pdf"
-				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg transition-colors"
+				title={exportPdfLoading ? 'Экспорт PDF…' : 'Экспорт PDF'}
+				aria-label="Экспорт PDF"
+				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg transition-colors"
 				disabled={exportPdfLoading}
 				onclick={exportLeadPdf}
-			>{exportPdfLoading ? 'PDF…' : '📄 PDF'}</button>
+			>{exportPdfLoading ? '…' : '📄'}</button>
 			<button
 				type="button"
 				data-testid="lead-push-bitrix"
-				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+				title={bitrixPushLoading ? 'Отправка в Битрикс…' : 'В Битрикс'}
+				aria-label="В Битрикс"
+				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
 				disabled={bitrixPushLoading}
 				onclick={pushLeadBitrix}
-			>{bitrixPushLoading ? 'Битрикс…' : '📤 В Битрикс'}</button>
+			>{bitrixPushLoading ? '…' : '📤'}</button>
 			<button
 				type="button"
 				data-testid="lead-push-amo"
-				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+				title={amoPushLoading ? 'Отправка в Amo…' : 'В Amo'}
+				aria-label="В Amo"
+				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
 				disabled={amoPushLoading}
 				onclick={pushLeadAmo}
-			>{amoPushLoading ? 'Amo…' : '📤 Amo'}</button>
+			>{amoPushLoading ? '…' : '🅰'}</button>
 			<button
 				type="button"
 				data-testid="lead-push-hubspot"
-				class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+				title={hubspotPushLoading ? 'Отправка в HubSpot…' : 'В HubSpot'}
+				aria-label="В HubSpot"
+				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors disabled:opacity-50"
 				disabled={hubspotPushLoading}
 				onclick={pushLeadHubspot}
-			>{hubspotPushLoading ? 'HS…' : '📤 HubSpot'}</button>
-			<button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors">📊 Анализ</button>
-			<button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors">🎙 Голос</button>
+			>{hubspotPushLoading ? '…' : '🅷'}</button>
+			<button
+				type="button"
+				title="Анализ"
+				aria-label="Анализ"
+				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
+			>📊</button>
+			<button
+				type="button"
+				title="Голос"
+				aria-label="Голос"
+				class="w-9 h-9 flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg transition-colors"
+			>🎙</button>
 			<button
 				type="button"
 				data-testid="lead-card-delete"
-				class="px-3 py-1.5 bg-red-950 hover:bg-red-900 disabled:opacity-50 text-sm text-red-200 rounded-lg transition-colors"
+				title={deleteBusy ? 'Удаление…' : 'Удалить лид'}
+				aria-label="Удалить лид"
+				class="w-9 h-9 flex items-center justify-center bg-red-950 hover:bg-red-900 disabled:opacity-50 text-sm text-red-200 rounded-lg transition-colors"
 				disabled={deleteBusy}
 				onclick={deleteCurrentLead}
-			>{deleteBusy ? 'Удаляю…' : '🗑 Удалить'}</button>
+			>{deleteBusy ? '…' : '🗑'}</button>
 		</div>
 	</div>
 	{#if enrichMsg}

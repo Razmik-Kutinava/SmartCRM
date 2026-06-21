@@ -29,3 +29,10 @@ def test_lead_card_overview_single_column_layout():
     assert 'data-testid="lead-card-overview"' in text
     assert 'data-testid="lead-card-main"' in text
     assert "w-80 border-r border-gray-800" not in text
+
+
+def test_lead_card_toolbar_compact():
+    """Шапка: иконки + title, одна строка."""
+    text = _LEAD_CARD.read_text(encoding="utf-8")
+    assert 'data-testid="lead-card-toolbar"' in text
+    assert "flex-nowrap" in text

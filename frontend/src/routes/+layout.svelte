@@ -12,6 +12,11 @@
 	import LeadIndustryHost from '../components/LeadIndustryHost.svelte';
 	import LeadCreateHost from '../components/LeadCreateHost.svelte';
 	import { goto } from '$app/navigation';
+	import {
+		isLeadCardRoute,
+		readSidebarCollapsed,
+		writeSidebarCollapsed,
+	} from '$lib/ui/appSidebar.js';
 
 	let { children } = $props();
 
@@ -46,6 +51,36 @@
 		{ id: 'marketer',      name: 'Маркетолог',  implemented: false },
 		{ id: 'tech_specialist', name: 'Тех. спец', implemented: false },
 	]);
+
+	let sidebarCollapsed = $state(false);
+	let sidebarHidden = $state(false);
+
+	$effect(() => {
+		const path = $page.url.pathname;
+		if (isLeadCardRoute(path)) {
+			sidebarHidden = true;
+		} else {
+			sidebarHidden = false;
+			sidebarCollapsed = readSidebarCollapsed();
+		}
+	});
+
+	function toggleSidebarHidden() {
+		sidebarHidden = !sidebarHidden;
+	}
+
+	function toggleSidebarCollapsed() {
+		sidebarCollapsed = !sidebarCollapsed;
+		if (!isLeadCardRoute($page.url.pathname)) {
+			writeSidebarCollapsed(sidebarCollapsed);
+		}
+	}
+
+	function sidebarWidthClass() {
+		if (sidebarHidden) return 'w-0 min-w-0 border-r-0';
+		if (sidebarCollapsed) return 'w-14 min-w-[3.5rem]';
+		return 'w-56 min-w-[14rem]';
+	}
 
 	// ── Глобальный голосовой ввод ────────────────────────────────────────────────
 	let voice_recording  = $state(false);
@@ -290,25 +325,44 @@
 <div class="flex h-screen bg-gray-950 text-gray-100 overflow-hidden">
 
 	<!-- Sidebar -->
-	<aside class="w-56 bg-gray-900 border-r border-gray-800 flex flex-col shrink-0">
+	<aside
+		data-testid="app-sidebar"
+		data-sidebar-hidden={sidebarHidden ? 'true' : 'false'}
+		data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'}
+		class="{sidebarWidthClass()} bg-gray-900 border-r border-gray-800 flex flex-col shrink-0 overflow-hidden transition-[width,min-width] duration-200"
+	>
 
 		<!-- Logo -->
-		<div class="px-4 py-4 border-b border-gray-800">
-			<div class="flex items-center gap-2.5">
-				<div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-white text-sm">S</div>
-				<div>
-					<div class="font-semibold text-sm text-white leading-tight">SmartCRM</div>
-					<div class="text-xs text-gray-500 leading-tight">AI отдел продаж</div>
-				</div>
+		<div class="px-2 py-3 border-b border-gray-800 flex items-center justify-between gap-1">
+			<div class="flex items-center gap-2.5 min-w-0 flex-1">
+				<div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-white text-sm shrink-0">S</div>
+				{#if !sidebarCollapsed}
+					<div class="min-w-0">
+						<div class="font-semibold text-sm text-white leading-tight truncate">SmartCRM</div>
+						<div class="text-xs text-gray-500 leading-tight truncate">AI отдел продаж</div>
+					</div>
+				{/if}
 			</div>
+			{#if !sidebarHidden}
+				<button
+					type="button"
+					data-testid="sidebar-collapse-toggle"
+					title={sidebarCollapsed ? 'Развернуть меню' : 'Свернуть в иконки'}
+					aria-label={sidebarCollapsed ? 'Развернуть меню' : 'Свернуть в иконки'}
+					onclick={toggleSidebarCollapsed}
+					class="shrink-0 w-7 h-7 rounded-md text-gray-500 hover:text-white hover:bg-gray-800 text-xs"
+				>{sidebarCollapsed ? '»' : '«'}</button>
+			{/if}
 		</div>
 
 		<!-- Nav -->
-		<nav class="flex-1 px-2 py-3 space-y-0.5">
+		<nav class="flex-1 px-1.5 py-3 space-y-0.5 overflow-y-auto">
 			{#each navItems as item}
 				<a
 					href={item.href}
-					class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150
+					title={item.label}
+					class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-all duration-150
+						{sidebarCollapsed ? 'justify-center' : ''}
 						{item.href === '/leads'
 							? ($page.url.pathname.startsWith('/leads') || $page.url.pathname.startsWith('/crm')
 								? 'bg-indigo-600 text-white font-medium'
@@ -317,29 +371,33 @@
 								? 'bg-indigo-600 text-white font-medium'
 								: 'text-gray-400 hover:text-white hover:bg-gray-800'}"
 				>
-					<span class="text-xs opacity-70">{item.icon}</span>
-					{item.label}
+					<span class="text-xs opacity-70 shrink-0">{item.icon}</span>
+					{#if !sidebarCollapsed}
+						<span class="truncate">{item.label}</span>
+					{/if}
 				</a>
 			{/each}
 		</nav>
 
 		<!-- Agents status -->
-		<div class="px-3 py-3 border-t border-gray-800">
-			<div class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Агенты</div>
-			<div class="space-y-1.5">
-			{#each agents as agent}
-				<div class="flex items-center justify-between">
-					<div class="flex items-center gap-2">
-						<div class="w-1.5 h-1.5 rounded-full transition-colors {agent.implemented ? 'bg-green-400' : 'bg-gray-600'}"></div>
-						<span class="text-xs text-gray-400">{agent.name}</span>
+		{#if !sidebarCollapsed}
+			<div class="px-3 py-3 border-t border-gray-800">
+				<div class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Агенты</div>
+				<div class="space-y-1.5">
+				{#each agents as agent}
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-2">
+							<div class="w-1.5 h-1.5 rounded-full transition-colors {agent.implemented ? 'bg-green-400' : 'bg-gray-600'}"></div>
+							<span class="text-xs text-gray-400">{agent.name}</span>
+						</div>
+						<span class="text-xs {agent.implemented ? 'text-green-600' : 'text-gray-600'}">
+							{agent.implemented ? 'активен' : 'ожидает'}
+						</span>
 					</div>
-					<span class="text-xs {agent.implemented ? 'text-green-600' : 'text-gray-600'}">
-						{agent.implemented ? 'активен' : 'ожидает'}
-					</span>
+				{/each}
 				</div>
-			{/each}
 			</div>
-		</div>
+		{/if}
 
 	</aside>
 
@@ -349,6 +407,17 @@
 		<!-- ── Глобальная голосовая панель ── -->
 		<div class="bg-indigo-950/80 border-b border-indigo-900/60 px-4 py-2 shrink-0 backdrop-blur-sm">
 			<div class="flex items-center gap-3">
+
+				{#if isLeadCardRoute($page.url.pathname)}
+					<button
+						type="button"
+						data-testid="sidebar-toggle"
+						title={sidebarHidden ? 'Показать меню' : 'Скрыть меню'}
+						aria-label={sidebarHidden ? 'Показать меню' : 'Скрыть меню'}
+						onclick={toggleSidebarHidden}
+						class="flex items-center justify-center w-9 h-9 rounded-lg shrink-0 bg-indigo-900/50 hover:bg-indigo-800/70 text-indigo-200 text-sm transition-colors"
+					>☰</button>
+				{/if}
 
 				<!-- Кнопка микрофона -->
 				<button
