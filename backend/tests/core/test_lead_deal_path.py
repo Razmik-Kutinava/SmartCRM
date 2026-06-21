@@ -20,6 +20,14 @@ def test_deal_path_order_includes_kp_after_rebate():
     pre = next(g for g in path["groups"] if g["id"] == "pre_kp")
     keys = [s["key"] for s in pre["steps"]]
     assert keys.index("rebateAgreed") < keys.index("kpSent")
+    assert "lprEstablished" not in keys
+
+
+def test_deal_path_next_step_in_payload():
+    lead = {"company": "—", "contact": "—", "phone": "—", "email": "—", "approvals": {}}
+    path = build_deal_path(lead)
+    assert path.get("nextStep") is not None
+    assert path["nextStep"]["key"] == "company"
 
 
 def test_stage_stale_hint_critical():

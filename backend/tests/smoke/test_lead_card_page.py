@@ -5,6 +5,7 @@ from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[3]
 _LEAD_CARD = _REPO / "frontend" / "src" / "routes" / "leads" / "[id]" / "+page.svelte"
+_DEAL_PATH_PANEL = _REPO / "frontend" / "src" / "components" / "LeadDealPathPanel.svelte"
 
 
 def test_lead_card_industry_options_declared_before_use():
@@ -73,8 +74,12 @@ def test_lead_card_stages_under_header():
 
 def test_lead_card_deal_path_and_hints_ui():
     text = _LEAD_CARD.read_text(encoding="utf-8")
+    panel = _DEAL_PATH_PANEL.read_text(encoding="utf-8")
     assert "LeadStageHints" in text
     assert "LeadDealPathPanel" in text
+    assert 'data-testid="lead-deal-path-next"' in panel
+    assert 'data-testid="lead-deal-path-accordion"' in panel
     assert "lead.stageHints" in text
     assert "lead.dealPath" in text
     assert "Апрувы и документы" not in text
+    assert "Сохранить документы" not in panel

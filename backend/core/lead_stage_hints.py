@@ -9,8 +9,6 @@ from core.lead_deal_path import (
     PRE_KP_APPROVAL_KEYS,
     QUALIFICATION_FIELD_STEPS,
     WON_APPROVAL_KEYS,
-    build_deal_path,
-    next_incomplete_step,
 )
 from core.lead_approvals import APPROVAL_LABELS_RU
 from core.lead_contacts import contacts_for_api, has_established_lpr
@@ -134,18 +132,6 @@ def compute_stage_hints(
                 hints.append(
                     _hint("warn", f"won_doc_{key}", f"Выигран, но не закрыто: «{label}».")
                 )
-
-    nxt = next_incomplete_step(lead)
-    if nxt and len(hints) < 6:
-        hints.append(
-            _hint(
-                "info",
-                "next_step",
-                f"Следующий шаг ({nxt['groupTitle']}): {nxt['label']}.",
-                stepKey=nxt.get("key"),
-                groupId=nxt.get("groupId"),
-            )
-        )
 
     if score_advisory:
         for w in score_advisory.get("warnings") or []:

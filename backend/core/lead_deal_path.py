@@ -20,7 +20,6 @@ QUALIFICATION_FIELD_STEPS: tuple[dict[str, str], ...] = (
 )
 
 PRE_KP_APPROVAL_KEYS: tuple[str, ...] = (
-    "lprEstablished",
     "assortmentAgreed",
     "priceAgreed",
     "termsAgreed",
@@ -49,7 +48,7 @@ DEAL_PATH_GROUPS: tuple[dict[str, Any], ...] = (
     {
         "id": "pre_kp",
         "title": "Документы до КП",
-        "subtitle": "От ЛПР до скидки и отправки КП, макс. 8 дней в «Квалифицирован»",
+        "subtitle": "От ассортимента до скидки и отправки КП, макс. 8 дней в «Квалифицирован»",
         "relatedStages": ("Квалифицирован", "КП отправлено"),
     },
     {
@@ -124,7 +123,8 @@ def build_deal_path(lead: dict[str, Any]) -> dict[str, Any]:
     ]
     groups.append(_pack_group("won", won_steps))
 
-    return {"groups": groups, "stageDayLimits": dict(DEFAULT_STAGE_DAY_LIMITS)}
+    nxt = _first_incomplete(groups)
+    return {"groups": groups, "stageDayLimits": dict(DEFAULT_STAGE_DAY_LIMITS), "nextStep": nxt}
 
 
 def _pack_group(group_id: str, steps: list[dict[str, Any]]) -> dict[str, Any]:
@@ -140,10 +140,14 @@ def _pack_group(group_id: str, steps: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def next_incomplete_step(lead: dict[str, Any]) -> dict[str, Any] | None:
-    path = build_deal_path(lead)
-    for group in path["groups"]:
+def _first_incomplete(groups: list[dict[str, Any]]) -> dict[str, Any] | None:
+    for group in groups:
         for step in group["steps"]:
             if not step["done"]:
                 return {**step, "groupId": group["id"], "groupTitle": group["title"]}
     return None
+
+
+def next_incomplete_step(lead: dict[str, Any]) -> dict[str, Any] | None:
+    path = build_deal_path(lead)
+    return path.get("nextStep")
