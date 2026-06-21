@@ -6,6 +6,7 @@ from pathlib import Path
 _REPO = Path(__file__).resolve().parents[3]
 _LEAD_CARD = _REPO / "frontend" / "src" / "routes" / "leads" / "[id]" / "+page.svelte"
 _DEAL_PATH_PANEL = _REPO / "frontend" / "src" / "components" / "LeadDealPathPanel.svelte"
+_SCORE_ADVISORY_PANEL = _REPO / "frontend" / "src" / "components" / "LeadScoreAdvisoryPanel.svelte"
 
 
 def test_lead_card_industry_options_declared_before_use():
@@ -20,8 +21,17 @@ def test_lead_card_industry_options_declared_before_use():
 
 def test_lead_card_score_breakdown_marker():
     text = _LEAD_CARD.read_text(encoding="utf-8")
-    assert 'data-testid="lead-score-breakdown"' in text
-    assert "formatScoreBreakdownLines" in text
+    panel = _SCORE_ADVISORY_PANEL.read_text(encoding="utf-8")
+    assert "LeadScoreAdvisoryPanel" in text
+    assert 'data-testid="lead-score-advisory-panel"' in panel
+    assert 'data-testid="lead-score-breakdown"' in panel
+    overview = text.split('data-testid="lead-card-overview"', 1)[1].split("{:else if activeTab === 'tasks'}", 1)[0]
+    left = overview.split('data-testid="lead-card-overview-left"', 1)[1].split(
+        'data-testid="lead-card-overview-right"', 1
+    )[0]
+    right = overview.split('data-testid="lead-card-overview-right"', 1)[1]
+    assert "Подсказка (не меняет балл" not in left
+    assert "LeadScoreAdvisoryPanel" in right
 
 
 def test_lead_card_overview_two_column_layout():
