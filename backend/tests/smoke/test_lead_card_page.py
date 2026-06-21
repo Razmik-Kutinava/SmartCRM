@@ -26,40 +26,41 @@ def test_lead_card_score_breakdown_marker():
     assert 'data-testid="lead-score-advisory-panel"' in panel
     assert 'data-testid="lead-score-breakdown"' in panel
     overview = text.split('data-testid="lead-card-overview"', 1)[1].split("{:else if activeTab === 'tasks'}", 1)[0]
-    left = overview.split('data-testid="lead-card-overview-left"', 1)[1].split(
-        'data-testid="lead-card-overview-right"', 1
-    )[0]
-    right = overview.split('data-testid="lead-card-overview-right"', 1)[1]
-    assert "Подсказка (не меняет балл" not in left
-    assert "LeadScoreAdvisoryPanel" in right
+    center = overview.split('data-testid="lead-card-overview-center"', 1)[1]
+    assert "Подсказка (не меняет балл" not in overview.split("lead-card-overview-stages", 1)[0]
+    assert "LeadScoreAdvisoryPanel" in center
 
 
-def test_lead_card_overview_two_column_layout():
-    """Обзор: слева воронка и активность, справа редактируемая карточка."""
+def test_lead_card_overview_three_column_layout():
+    """Обзор: три колонки — стадии | карточка | действия."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert 'data-testid="lead-card-overview"' in text
-    assert 'data-testid="lead-card-overview-left"' in text
+    assert 'data-testid="lead-card-overview-stages"' in text
+    assert 'data-testid="lead-card-overview-card"' in text
+    assert 'data-testid="lead-card-overview-activity"' in text
+    assert 'data-testid="lead-card-overview-center"' in text
     assert 'data-testid="lead-card-overview-right"' in text
     assert 'data-testid="lead-card-main"' in text
-    assert "lg:grid-cols-2" in text
-    assert "lg:order-1" not in text
-    assert "lg:order-2" not in text
-    assert "w-80 border-r border-gray-800" not in text
-    overview = text.split('data-testid="lead-card-overview"', 1)[1].split("{:else if activeTab === 'tasks'}", 1)[0]
-    assert "max-w-5xl" not in overview
-    assert "mx-auto" not in overview
-    left = overview.split('data-testid="lead-card-overview-left"', 1)[1].split(
-        'data-testid="lead-card-overview-right"', 1
+    assert "xl:grid-cols-3" in text
+    assert "lg:grid-cols-2" not in text.split('data-testid="lead-card-overview"', 1)[1].split(
+        "{:else if activeTab === 'tasks'}", 1
     )[0]
-    right = overview.split('data-testid="lead-card-overview-right"', 1)[1]
-    assert "Касания (лог)" not in left
-    assert "LeadActivityPanel" in left
-    assert "Комментарии" not in left
-    assert "Лента активности" not in left
-    assert "LeadDealPathPanel" in left
-    assert "Карточка (редактирование)" in right
-    assert "Суммы сделки" in right
-    assert "LeadContactsPanel" in text
+    overview = text.split('data-testid="lead-card-overview"', 1)[1].split("{:else if activeTab === 'tasks'}", 1)[0]
+    stages = overview.split('data-testid="lead-card-overview-stages"', 1)[1].split(
+        'data-testid="lead-card-overview-card"', 1
+    )[0]
+    center = overview.split('data-testid="lead-card-overview-center"', 1)[1].split(
+        'data-testid="lead-card-overview-activity"', 1
+    )[0]
+    activity = overview.split('data-testid="lead-card-overview-activity"', 1)[1]
+    assert "LeadDealPathPanel" in stages
+    assert "LeadActivityPanel" not in stages
+    assert "LeadContactsPanel" in center
+    assert "Суммы сделки" in center
+    assert "Карточка клиента" in overview
+    assert "Действия и история" in overview
+    assert "LeadActivityPanel" in activity
+    assert "LeadDealPathPanel" not in activity
 
 
 def test_lead_card_toolbar_compact():
@@ -69,20 +70,19 @@ def test_lead_card_toolbar_compact():
     assert "flex-nowrap" in text
 
 
-def test_lead_card_stages_under_header():
-    """Этапы и путь сделки слева под шапкой, не в колонке редактирования."""
+def test_lead_card_stages_in_first_column():
+    """Этапы и путь сделки — первая колонка, не в карточке и не в действиях."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert text.count('data-testid="lead-card-stages"') == 1
-    assert "stageBadgeClass" in text
-    assert "Сменить этап" not in text
-    left = text.split('data-testid="lead-card-overview-left"', 1)[1].split(
-        'data-testid="lead-card-overview-right"', 1
+    stages = text.split('data-testid="lead-card-overview-stages"', 1)[1].split(
+        'data-testid="lead-card-overview-card"', 1
     )[0]
-    stages_idx = left.index('data-testid="lead-card-stages"')
-    activity_idx = left.index('LeadActivityPanel')
-    assert stages_idx < activity_idx
-    right = text.split('data-testid="lead-card-overview-right"', 1)[1]
-    assert 'data-testid="lead-card-stages"' not in right
+    center = text.split('data-testid="lead-card-overview-center"', 1)[1].split(
+        'data-testid="lead-card-overview-activity"', 1
+    )[0]
+    assert 'data-testid="lead-card-stages"' in stages
+    assert 'data-testid="lead-card-stages"' not in center
+    assert "LeadDealPathPanel" in stages
 
 
 def test_lead_card_deal_path_and_hints_ui():

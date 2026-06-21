@@ -841,19 +841,31 @@
 		<div class="flex-1 overflow-y-auto p-4 sm:p-6">
 
 			{#if activeTab === 'overview'}
-			<div class="w-full" data-testid="lead-card-overview">
-				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
-				<div class="space-y-6 min-w-0" data-testid="lead-card-overview-left">
-				<div>
+			<div class="w-full space-y-4" data-testid="lead-card-overview">
+				<!-- Шапка лида -->
+				<div class="rounded-2xl border border-gray-800 bg-gray-900/60 px-4 py-3 sm:px-5">
 					<div class="text-lg font-bold text-white">{lead.company}</div>
 					<div class="text-sm text-gray-400 mt-0.5">{lead.contact} · {lead.position}</div>
 					<div class="flex items-center gap-2 mt-2 flex-wrap">
 						<span class="text-green-400 font-bold text-sm">{lead.score}/100</span>
 						<span class="px-2 py-0.5 rounded text-xs font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
+						<span class="text-xs text-gray-500">· {lead.stage}</span>
 					</div>
+				</div>
 
-					<div class="mt-3 space-y-2" data-testid="lead-card-stages">
-						<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Этап</div>
+				<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-5 items-start">
+				<!-- 1. Стадии и документы -->
+				<div
+					class="rounded-2xl border border-indigo-900/50 bg-gray-950/80 shadow-lg shadow-indigo-950/20 min-w-0 flex flex-col"
+					data-testid="lead-card-overview-stages"
+				>
+					<div class="px-4 py-3 border-b border-indigo-900/40 bg-indigo-950/25 flex items-center gap-2">
+						<span class="text-base" aria-hidden="true">📊</span>
+						<h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-200">Стадии и документы</h2>
+					</div>
+					<div class="p-4 space-y-4 min-w-0" data-testid="lead-card-overview-left">
+					<div class="space-y-2" data-testid="lead-card-stages">
+						<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Этап воронки</div>
 						<div class="flex flex-wrap gap-1.5">
 							{#each CRM_STAGES as stage}
 								{@const stageRules = rulesForTargetStage(stageTransitionRules, stage)}
@@ -892,7 +904,7 @@
 					/>
 
 					{#if lead.tenderLink?.title}
-						<p class="text-xs text-indigo-400 mt-2" data-testid="lead-tender-link">
+						<p class="text-xs text-indigo-400" data-testid="lead-tender-link">
 							◇ Тендер:
 							{#if lead.tenderLink.url && lead.tenderLink.url !== '#'}
 								<a href={lead.tenderLink.url} target="_blank" rel="noopener" class="hover:underline">{lead.tenderLink.title}</a>
@@ -901,20 +913,20 @@
 							{/if}
 						</p>
 					{/if}
+					</div>
 				</div>
 
-				<LeadActivityPanel
-					leadId={lead.id}
-					communications={leadComms}
-					comments={leadComments}
-					audit={leadAudit}
-					onSaved={loadLeadActivity}
-				/>
-				</div>
-
-				<div class="space-y-6 min-w-0 lg:sticky lg:top-4" data-testid="lead-card-overview-right">
+				<!-- 2. Карточка клиента -->
+				<div
+					class="rounded-2xl border border-emerald-900/45 bg-gray-950/80 shadow-lg shadow-emerald-950/15 min-w-0 xl:sticky xl:top-4"
+					data-testid="lead-card-overview-card"
+				>
+					<div class="px-4 py-3 border-b border-emerald-900/35 bg-emerald-950/20 flex items-center gap-2">
+						<span class="text-base" aria-hidden="true">👤</span>
+						<h2 class="text-xs font-semibold uppercase tracking-wider text-emerald-200">Карточка клиента</h2>
+					</div>
+					<div class="p-4 space-y-5 min-w-0 max-h-[calc(100vh-14rem)] overflow-y-auto" data-testid="lead-card-overview-center">
 				<div class="space-y-2">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Карточка (редактирование)</div>
 					<div class="space-y-2 text-sm">
 						<label class="block">
 							<span class="text-gray-500 text-xs">Компания</span>
@@ -1052,8 +1064,29 @@
 					</div>
 					<LeadScoreAdvisoryPanel scoreAdvisory={lead.scoreAdvisory} />
 				</div>
+					</div>
 				</div>
-			</div>
+
+				<!-- 3. Действия и история -->
+				<div
+					class="rounded-2xl border border-violet-900/45 bg-gray-950/80 shadow-lg shadow-violet-950/15 min-w-0 flex flex-col"
+					data-testid="lead-card-overview-activity"
+				>
+					<div class="px-4 py-3 border-b border-violet-900/35 bg-violet-950/20 flex items-center gap-2">
+						<span class="text-base" aria-hidden="true">⚡</span>
+						<h2 class="text-xs font-semibold uppercase tracking-wider text-violet-200">Действия и история</h2>
+					</div>
+					<div class="p-4 min-w-0 flex-1" data-testid="lead-card-overview-right">
+						<LeadActivityPanel
+							leadId={lead.id}
+							communications={leadComms}
+							comments={leadComments}
+							audit={leadAudit}
+							onSaved={loadLeadActivity}
+						/>
+					</div>
+				</div>
+				</div>
 			</div>
 
 			{:else if activeTab === 'tasks'}
