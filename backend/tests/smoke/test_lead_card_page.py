@@ -23,12 +23,18 @@ def test_lead_card_score_breakdown_marker():
     assert "formatScoreBreakdownLines" in text
 
 
-def test_lead_card_overview_single_column_layout():
-    """Обзор: весь контент карточки во вкладке, без левого сайдбара w-80."""
+def test_lead_card_overview_two_column_layout():
+    """Обзор: две колонки на всю ширину, без max-w-5xl по центру."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert 'data-testid="lead-card-overview"' in text
+    assert 'data-testid="lead-card-overview-left"' in text
+    assert 'data-testid="lead-card-overview-right"' in text
     assert 'data-testid="lead-card-main"' in text
+    assert "lg:grid-cols-2" in text
     assert "w-80 border-r border-gray-800" not in text
+    overview = text.split('data-testid="lead-card-overview"', 1)[1].split("{:else if activeTab === 'tasks'}", 1)[0]
+    assert "max-w-5xl" not in overview
+    assert "mx-auto" not in overview
 
 
 def test_lead_card_toolbar_compact():

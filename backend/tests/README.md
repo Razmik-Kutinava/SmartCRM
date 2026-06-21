@@ -87,7 +87,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `test_lead_score_advisory.py` | Скор-советы |
 | `core/test_lead_priority_tier.py` | Приоритет лида (зеркало crmStages.js) |
 | `smoke/test_scoring_funnel_smoke.py` | Смоук балльной воронки (API + формула) |
-| `smoke/test_lead_card_page.py` | Контракт карточки: industryOptions, breakdown, обзор без сайдбара w-80 |
+| `smoke/test_lead_card_page.py` | Контракт карточки: industryOptions, breakdown, обзор 2 колонки |
 | `frontend/test_lead_create_ui.py` | Модалка «Новый лид»: store smoke + разметка дашборд/list |
 | `frontend/test_app_sidebar_ui.py` | Сворачиваемый сайдбар layout + иконки тулбара карточки лида |
 | `frontend/test_lead_delete_ui.py` | Удаление лида: apiDelete, кнопки list/карточка, purge в crud |
