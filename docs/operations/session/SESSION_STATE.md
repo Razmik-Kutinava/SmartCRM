@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-19 | Действие: сегментация лидов — lead_profile (ОКВЭД normalize, employees_band, portrait_score), колонки Lead, sync CRUD/enrich/CSV/B24, фильтры list, backfill script; pytest 28+ PASS. | Коммит: `c799e1c` | Хвост A: backfill на прод не запускали; UI в браузере не проверяли | Хвост B: сворачиваемые группы в списке — BACKLOG | Хвост C: нет | Статус: done
+2026-06-19 | Действие: сегментация лидов — lead_profile (ОКВЭД normalize, employees_band, portrait_score), колонки Lead, sync CRUD/enrich/CSV/B24, фильтры list, backfill script; pytest 28+ PASS. | Коммит: `28517cd` | Хвост A: backfill на прод не запускали; UI в браузере не проверяли | Хвост B: сворачиваемые группы в списке — BACKLOG | Хвост C: нет | Статус: done
 
 2026-06-19 | Действие: /leads/list — шапка (Новый лид + ⋯ импорт), KPI, фильтры с подписями, сброс; pytest smoke 4+5 PASS. | Коммит: `20edfdb` | Хвост A: апрув в браузере | Хвост B: нет | Хвост C: нет | Статус: done
 
