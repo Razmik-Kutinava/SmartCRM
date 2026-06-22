@@ -87,6 +87,71 @@ export const EMPLOYEES_BAND_FILTERS = [
 	{ id: '1000+', label: '1000+' },
 ];
 
+export const GROUP_BY_OPTIONS = [
+	{ id: 'none', label: 'Без группировки' },
+	{ id: 'okved_section', label: 'ОКВЭД секция' },
+	{ id: 'employees_band', label: 'Размер компании' },
+	{ id: 'stage', label: 'Этап' },
+];
+
+const EMPTY_GROUP_KEY = '__empty__';
+
+function groupKeyForLead(lead, groupBy) {
+	switch (groupBy) {
+		case 'okved_section':
+			return String(lead.okvedSection || '').trim() || EMPTY_GROUP_KEY;
+		case 'employees_band':
+			return String(lead.employeesBand || '').trim() || EMPTY_GROUP_KEY;
+		case 'stage':
+			return String(lead.stage || '').trim() || EMPTY_GROUP_KEY;
+		default:
+			return '';
+	}
+}
+
+/** Подпись заголовка группы для UI. */
+export function groupLabelForKey(key, groupBy) {
+	if (!key || key === EMPTY_GROUP_KEY) {
+		if (groupBy === 'okved_section') return 'Без ОКВЭД';
+		if (groupBy === 'employees_band') return 'Размер не указан';
+		if (groupBy === 'stage') return 'Без этапа';
+		return '—';
+	}
+	if (groupBy === 'okved_section') return `Секция ${key}`;
+	if (groupBy === 'employees_band') return `${key} сотр.`;
+	return key;
+}
+
+/**
+ * Разбить отфильтрованный список на сворачиваемые группы.
+ * @returns {Array<{ key: string, label: string, leads: Array<Record<string, unknown>>, count: number }>}
+ */
+export function groupLeads(leads, groupBy = 'none') {
+	if (!groupBy || groupBy === 'none') {
+		return [{ key: '', label: '', leads, count: leads.length }];
+	}
+	const buckets = new Map();
+	for (const l of leads) {
+		const k = groupKeyForLead(l, groupBy);
+		if (!buckets.has(k)) buckets.set(k, []);
+		buckets.get(k).push(l);
+	}
+	const keys = [...buckets.keys()].sort((a, b) => {
+		if (a === EMPTY_GROUP_KEY) return 1;
+		if (b === EMPTY_GROUP_KEY) return -1;
+		return a.localeCompare(b, 'ru');
+	});
+	return keys.map((k) => {
+		const rows = buckets.get(k) || [];
+		return {
+			key: k,
+			label: groupLabelForKey(k, groupBy),
+			leads: rows,
+			count: rows.length,
+		};
+	});
+}
+
 /** Уникальные секции ОКВЭД (первые 2 цифры) из списка лидов. */
 export function distinctOkvedSections(leads) {
 	const counts = new Map();

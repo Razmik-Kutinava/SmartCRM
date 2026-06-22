@@ -30,7 +30,9 @@
 		PRIORITY_FILTERS,
 		SCORE_RISK_FILTERS,
 		EMPLOYEES_BAND_FILTERS,
+		GROUP_BY_OPTIONS,
 		distinctOkvedSections,
+		groupLeads,
 		SORT_OPTIONS,
 		leadListViewFromVoiceSlots,
 	} from '$lib/leads/leadListFilter.js';
@@ -54,6 +56,9 @@
 	let filterEmployeesBand = $state('all');
 	let filterOkvedSection = $state('all');
 	let filterMinScore = $state(null);
+	let groupBy = $state('none');
+	/** @type {string[]} */
+	let collapsedGroupKeys = $state([]);
 	let sortBy = $state('score_desc');
 	let showVoice = $state(false); // голос теперь глобальный — в layout
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
@@ -148,6 +153,20 @@
 	let showListMenu = $state(false);
 
 	const okvedSectionOptions = $derived(distinctOkvedSections(leads));
+
+	const listGroups = $derived(groupLeads(filtered, groupBy));
+
+	function toggleListGroup(key) {
+		if (collapsedGroupKeys.includes(key)) {
+			collapsedGroupKeys = collapsedGroupKeys.filter((k) => k !== key);
+		} else {
+			collapsedGroupKeys = [...collapsedGroupKeys, key];
+		}
+	}
+
+	function onGroupByChange() {
+		collapsedGroupKeys = [];
+	}
 
 	const listKpi = $derived.by(() => {
 		const cfg = getCachedCrmConfig();
@@ -858,6 +877,19 @@
 					{/each}
 				</select>
 			</label>
+			<label class="min-w-[8rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Группировка</span>
+				<select
+					bind:value={groupBy}
+					onchange={onGroupByChange}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-group-by"
+				>
+					{#each GROUP_BY_OPTIONS as opt}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
 			{#if filtersActive}
 				<button
 					type="button"
@@ -942,7 +974,26 @@
 			</tr>
 		</thead>
 		<tbody class="divide-y divide-gray-800/60">
-			{#each filtered as lead, i}
+			{#each listGroups as group (group.key || '__all__')}
+				{#if groupBy !== 'none'}
+					<tr class="bg-gray-800/50" data-testid="leads-list-group-header">
+						<td colspan="10" class="px-4 py-2">
+							<button
+								type="button"
+								class="flex items-center gap-2 text-xs font-medium text-gray-300 hover:text-white w-full text-left"
+								data-testid="leads-list-group-toggle"
+								data-group-key={group.key}
+								onclick={() => toggleListGroup(group.key)}
+							>
+								<span class="text-gray-500 w-4 shrink-0">{collapsedGroupKeys.includes(group.key) ? '▶' : '▼'}</span>
+								<span>{group.label}</span>
+								<span class="text-gray-600 font-normal">({group.count})</span>
+							</button>
+						</td>
+					</tr>
+				{/if}
+				{#if groupBy === 'none' || !collapsedGroupKeys.includes(group.key)}
+					{#each group.leads as lead, i}
 				{@const tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
 				<tr class="hover:bg-gray-800/30 transition-colors group">
 					<td class="px-6 py-3 text-gray-600 text-xs">{i + 1}</td>
@@ -1005,6 +1056,8 @@
 						</div>
 					</td>
 				</tr>
+					{/each}
+				{/if}
 			{/each}
 
 			{#if filtered.length === 0}

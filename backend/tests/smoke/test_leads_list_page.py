@@ -42,6 +42,10 @@ def test_leads_list_filters_labeled():
     assert 'data-testid="leads-list-okved-section"' in text
     assert "EMPLOYEES_BAND_FILTERS" in text
     assert "distinctOkvedSections" in text
+    assert 'data-testid="leads-list-group-by"' in text
+    assert "GROUP_BY_OPTIONS" in text
+    assert "groupLeads" in text
+    assert 'data-testid="leads-list-group-header"' in text
     filters = text.split('data-testid="leads-list-filters"', 1)[1].split("<!-- Table -->", 1)[0]
     assert "Сортировка" in filters
     assert "Тир" in filters
