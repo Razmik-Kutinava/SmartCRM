@@ -29,6 +29,8 @@
 		applyVoiceListFilter,
 		PRIORITY_FILTERS,
 		SCORE_RISK_FILTERS,
+		EMPLOYEES_BAND_FILTERS,
+		distinctOkvedSections,
 		SORT_OPTIONS,
 		leadListViewFromVoiceSlots,
 	} from '$lib/leads/leadListFilter.js';
@@ -49,6 +51,8 @@
 	let filterScoreRisk = $state('all');
 	let filterIndustry = $state('');
 	let filterCity = $state('');
+	let filterEmployeesBand = $state('all');
+	let filterOkvedSection = $state('all');
 	let filterMinScore = $state(null);
 	let sortBy = $state('score_desc');
 	let showVoice = $state(false); // голос теперь глобальный — в layout
@@ -132,6 +136,8 @@
 				filterScoreRisk,
 				filterIndustry,
 				filterCity,
+				filterEmployeesBand,
+				filterOkvedSection,
 				sortBy,
 				minScore: filterMinScore,
 			},
@@ -141,21 +147,26 @@
 
 	let showListMenu = $state(false);
 
+	const okvedSectionOptions = $derived(distinctOkvedSections(leads));
+
 	const listKpi = $derived.by(() => {
 		const cfg = getCachedCrmConfig();
 		let hot = 0;
 		let warnings = 0;
 		let scoreSum = 0;
+		let portraitSum = 0;
 		for (const l of filtered) {
 			const tier = leadPriorityTier(l.score, cfg);
 			if (tier.key === 'high' || tier.key === 'critical') hot += 1;
 			if (l.hasScoreWarnings) warnings += 1;
 			scoreSum += Number(l.score) || 0;
+			portraitSum += Number(l.portraitScore) || 0;
 		}
 		return {
 			hot,
 			warnings,
 			avg: filtered.length ? Math.round(scoreSum / filtered.length) : 0,
+			portraitAvg: filtered.length ? Math.round(portraitSum / filtered.length) : 0,
 		};
 	});
 
@@ -167,6 +178,8 @@
 			|| filterScoreRisk !== 'all'
 			|| filterIndustry
 			|| filterCity
+			|| filterEmployeesBand !== 'all'
+			|| filterOkvedSection !== 'all'
 			|| filterMinScore != null,
 		),
 	);
@@ -178,6 +191,8 @@
 		filterScoreRisk = 'all';
 		filterIndustry = '';
 		filterCity = '';
+		filterEmployeesBand = 'all';
+		filterOkvedSection = 'all';
 		filterMinScore = null;
 		sortBy = 'score_desc';
 	}
@@ -760,6 +775,7 @@
 		<span><span class="text-amber-400 font-semibold">{listKpi.hot}</span> горячих</span>
 		<span><span class="text-orange-400 font-semibold">{listKpi.warnings}</span> с предупрежд.</span>
 		<span>ср. балл <span class="text-green-400 font-semibold">{listKpi.avg}</span></span>
+		<span>портрет <span class="text-sky-400 font-semibold">{listKpi.portraitAvg}%</span></span>
 		{#if bitrixStats}
 			<span class="hidden sm:inline text-gray-600">
 				B24: {bitrixStats.local_bitrix_leads_count ?? '—'} / {bitrixStats.bitrix_total ?? '—'}
@@ -813,6 +829,31 @@
 					data-testid="leads-filter-score-risk"
 				>
 					{#each SCORE_RISK_FILTERS as opt}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="min-w-[7rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Размер</span>
+				<select
+					bind:value={filterEmployeesBand}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-employees-band"
+				>
+					{#each EMPLOYEES_BAND_FILTERS as opt}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="min-w-[7rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">ОКВЭД сек.</span>
+				<select
+					bind:value={filterOkvedSection}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-okved-section"
+				>
+					<option value="all">Все секции</option>
+					{#each okvedSectionOptions as opt (opt.id)}
 						<option value={opt.id}>{opt.label}</option>
 					{/each}
 				</select>
@@ -909,6 +950,13 @@
 						<a href="/leads/{lead.id}" class="font-medium text-white hover:text-indigo-400 transition-colors">
 							{lead.company}
 						</a>
+						{#if lead.okvedMain || lead.employeesBand}
+							<div class="text-[10px] text-gray-600 mt-0.5 truncate max-w-[14rem]">
+								{#if lead.okvedMain}<span title={lead.okvedName || ''}>ОКВЭД {lead.okvedMain}</span>{/if}
+								{#if lead.okvedMain && lead.employeesBand}<span class="mx-1">·</span>{/if}
+								{#if lead.employeesBand}{lead.employeesBand} сотр.{/if}
+							</div>
+						{/if}
 					</td>
 					<td class="px-4 py-3">
 						<div class="text-gray-300">{lead.contact}</div>

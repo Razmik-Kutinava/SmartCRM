@@ -34,6 +34,11 @@ class Lead(Base):
     employees: Mapped[str] = mapped_column(String(100), default="—")
     industry: Mapped[str] = mapped_column(String(255), default="—")
     industry_verified: Mapped[bool] = mapped_column(default=False)
+    okved_main: Mapped[Optional[str]] = mapped_column(String(32), nullable=True, default=None)
+    okved_name: Mapped[Optional[str]] = mapped_column(String(500), nullable=True, default=None)
+    okved_section: Mapped[Optional[str]] = mapped_column(String(8), nullable=True, default=None)
+    employees_band: Mapped[Optional[str]] = mapped_column(String(32), nullable=True, default=None)
+    portrait_score: Mapped[int] = mapped_column(Integer, default=0)
     products_owned: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
     contacts: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
     city: Mapped[str] = mapped_column(String(255), default="—")
@@ -119,6 +124,11 @@ class Lead(Base):
             "employees": self.employees,
             "industry": self.industry,
             "industryVerified": bool(getattr(self, "industry_verified", False)),
+            "okvedMain": self.okved_main or "",
+            "okvedName": self.okved_name or "",
+            "okvedSection": self.okved_section or "",
+            "employeesBand": self.employees_band or "",
+            "portraitScore": int(self.portrait_score or 0),
             "productsOwned": list(getattr(self, "products_owned", None) or []),
             "contacts": contacts_for_api(
                 {

@@ -76,6 +76,18 @@ export function enrichResultToLeadPatch(result, lead = null) {
 	if (passport.city && cityEmpty) patch.city = passport.city;
 	if (passport.industry && industryEmpty) patch.industry = passport.industry;
 
+	const profKeys = [
+		['okved_main', 'okvedMain'],
+		['okved_name', 'okvedName'],
+		['okved_section', 'okvedSection'],
+		['employees_band', 'employeesBand'],
+		['portrait_score', 'portraitScore'],
+	];
+	for (const [snake, camel] of profKeys) {
+		if (passport[snake] != null && passport[snake] !== '') patch[camel] = passport[snake];
+		if (passport[camel] != null && passport[camel] !== '') patch[camel] = passport[camel];
+	}
+
 	const co = passport.checko?.company || {};
 	if (co.employees_count != null && (!lead?.employees || lead.employees === '—')) {
 		patch.employees = String(co.employees_count);

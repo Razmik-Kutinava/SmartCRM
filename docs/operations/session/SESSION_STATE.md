@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-19 | Действие: сегментация лидов — lead_profile (ОКВЭД normalize, employees_band, portrait_score), колонки Lead, sync CRUD/enrich/CSV/B24, фильтры list, backfill script; pytest 28+ PASS. | Коммит: `c799e1c` | Хвост A: backfill на прод не запускали; UI в браузере не проверяли | Хвост B: сворачиваемые группы в списке — BACKLOG | Хвост C: нет | Статус: done
+
 2026-06-19 | Действие: /leads/list — шапка (Новый лид + ⋯ импорт), KPI, фильтры с подписями, сброс; pytest smoke 4+5 PASS. | Коммит: `20edfdb` | Хвост A: апрув в браузере | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-19 | Действие: карточка лида — хаб плиток 2×3/3×2 + slide-over ~65% (LeadHubTile, LeadSlideOver, leadHubPreview); вкладки убраны; ?panel= deep link; pytest smoke 9 PASS. | Коммит: `2f6b55c` | Хвост A: апрув UI в браузере не делали | Хвост B: нет | Хвост C: нет | Статус: done

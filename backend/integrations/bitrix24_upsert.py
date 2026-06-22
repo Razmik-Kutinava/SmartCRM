@@ -48,6 +48,9 @@ async def upsert_bitrix_lead_row(db: AsyncSession, row: dict) -> str:
             if k == "score":
                 continue
             setattr(lead, k, v)
+        from core.lead_profile import sync_lead_profile
+
+        sync_lead_profile(lead)
         try:
             await sync_bitrix_timeline(db, lead.id, b_id, user_names=user_names)
         except Exception as e:
@@ -56,6 +59,9 @@ async def upsert_bitrix_lead_row(db: AsyncSession, row: dict) -> str:
     new_lead = Lead(**fields)
     db.add(new_lead)
     await db.flush()
+    from core.lead_profile import sync_lead_profile
+
+    sync_lead_profile(new_lead)
     try:
         await sync_bitrix_timeline(db, new_lead.id, b_id, user_names=user_names)
     except Exception as e:

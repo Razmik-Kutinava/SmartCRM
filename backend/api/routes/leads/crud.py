@@ -57,6 +57,10 @@ async def list_industries(db: AsyncSession = Depends(get_db)):
 async def create_lead(body: LeadCreate, db: AsyncSession = Depends(get_db)):
     lead = Lead(**dump_lead_create(body))
     db.add(lead)
+    await db.flush()
+    from core.lead_profile import sync_lead_profile
+
+    sync_lead_profile(lead)
     await db.commit()
     await db.refresh(lead)
     logger.info("Лид создан: %s (id=%s)", lead.company, lead.id)
@@ -147,6 +151,9 @@ async def update_lead(
             setattr(lead, field, Decimal(str(value)) if value is not None else None)
         else:
             setattr(lead, field, value)
+    from core.lead_profile import sync_lead_profile
+
+    sync_lead_profile(lead)
     after_snap = {k: getattr(lead, k) for k in TRACKED_ORM_FIELDS}
     await append_lead_field_audits(db, lead.id, before_snap, after_snap, actor_from_request(request))
     if "stage" in data and str(data.get("stage") or "").strip() != str(old_stage or "").strip():

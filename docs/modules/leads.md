@@ -62,6 +62,14 @@
 - **`GET/POST /api/leads/{id}/communications`** — лог касаний (тип, текст, автор, время); при POST дополнительно пишется строка аудита с `eventType=communication`.
 - Источник правды по записям — PostgreSQL, модель **`Lead`** (`backend/db/models/lead.py`), поля в т.ч. `checko_json`, `tech_json`, `financials_json` для обогащения.
 
+### Портрет лида (ОКВЭД, размер, полнота)
+
+- **`core/lead_profile.py`**: `normalize_okved_code` (62.01, 6201 → единый формат), `okved_section` (первые 2 цифры), `employees_band` (1-50 … 1000+), `portrait_score` (0–100 по заполненности карточки).
+- Колонки в **`Lead`**: `okved_main`, `okved_name`, `okved_section`, `employees_band`, `portrait_score` — синхронизируются при create/update, enrich (Checko), CSV import, Bitrix upsert (`sync_lead_profile`).
+- **Список `/leads/list`**: фильтры «Размер» и «ОКВЭД сек.»; KPI «портрет N%»; под компанией — `ОКВЭД · размер`.
+- **Backfill** существующих лидов: `cd backend && python scripts/backfill_lead_profile.py` (после деплоя API с новыми колонками).
+- Сегменты рассылок: `lead_segment_query` — фильтры `employees_band`, `okved_section`, `min_portrait_score`.
+
 ### Конфиг CRM для UI
 
 - **`GET /api/crm/config`** — JSON для фронтенда: `stages`, `priority_thresholds`, `score_range`, `default_new_lead_score`. Реализация: `backend/api/routes/crm.py`, данные из `core.crm_settings_store.load_settings()`.
@@ -88,4 +96,5 @@
 - Перенос полного дерева Svelte из **`routes/crm`** в **`routes/leads`** с заменой ссылок и редирект-only деревом под **`routes/crm`**.
 - Добавлены **`GET /api/crm/config`**, расширены **`crmStages.js`**, колонка приоритета и бейдж на карточке.
 - P3 (референс CRM points): **`approvals`**, **`/communications`**, расширение аудита; UI чеклиста апрувов и касаний на **`/leads/[id]`**.
+- Ф4: портрет лида — нормализация ОКВЭД, `employees_band`, `portrait_score`, фильтры списка и CSV.
 - Обновлены ссылки с дашборда, лидогенерации и навигации на **`/leads/...`**.

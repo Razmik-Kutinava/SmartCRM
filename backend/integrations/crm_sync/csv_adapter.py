@@ -33,6 +33,11 @@ EXPORT_COLUMNS = [
     "description",
     "inn",
     "ogrn",
+    "okved_main",
+    "okved_name",
+    "okved_section",
+    "employees_band",
+    "portrait_score",
     "bitrix_lead_id",
     "created_at",
 ]
@@ -235,9 +240,16 @@ async def import_leads_from_csv(
                 if k == "score" and not _clean(row.get("score")):
                     continue
                 setattr(existing, k, v)
+            from core.lead_profile import sync_lead_profile
+
+            sync_lead_profile(existing)
             updated += 1
             continue
-        db.add(Lead(**fields))
+        row_lead = Lead(**fields)
+        from core.lead_profile import sync_lead_profile
+
+        sync_lead_profile(row_lead)
+        db.add(row_lead)
         imported += 1
 
     await db.commit()
@@ -281,6 +293,11 @@ def leads_to_csv(leads: list[Lead]) -> str:
                 "description": d.get("description"),
                 "inn": d.get("inn"),
                 "ogrn": d.get("ogrn"),
+                "okved_main": d.get("okvedMain"),
+                "okved_name": d.get("okvedName"),
+                "okved_section": d.get("okvedSection"),
+                "employees_band": d.get("employeesBand"),
+                "portrait_score": d.get("portraitScore"),
                 "bitrix_lead_id": d.get("bitrixLeadId"),
                 "created_at": d.get("createdAt"),
             }

@@ -206,9 +206,11 @@ def passport_patch_from_checko(
     checko: dict[str, Any],
     card: dict[str, Any],
 ) -> dict[str, Any]:
+    from core.lead_profile import profile_fields_from_lead_like
+
     fin = checko.get("financials") or {}
     tech = checko.get("tech") or {}
-    return {
+    base = {
         "inn": (card.get("inn") or "").strip() or None,
         "ogrn": (card.get("ogrn") or "").strip() or None,
         "checko": checko,
@@ -216,7 +218,18 @@ def passport_patch_from_checko(
         "tech": tech,
         "city": (card.get("city") or "").strip() or None,
         "industry": (card.get("okved_name") or "").strip() or None,
+        "employees": card.get("employees_count"),
     }
+    prof = profile_fields_from_lead_like({**base, "checko_json": checko})
+    out = dict(base)
+    for key in ("okved_main", "okved_name", "okved_section", "employees_band", "portrait_score"):
+        if prof.get(key) is not None:
+            out[key] = prof[key]
+    if prof.get("industry"):
+        out["industry"] = prof["industry"]
+    if prof.get("employees"):
+        out["employees"] = prof["employees"]
+    return out
 
 
 def enrich_fields_from_card(card: dict[str, Any], fin: dict[str, Any]) -> dict[str, str]:

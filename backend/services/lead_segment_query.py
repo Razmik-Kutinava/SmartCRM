@@ -81,6 +81,25 @@ def lead_matches_segment(lead: Lead, seg: dict[str, Any], config: dict | None = 
     if seg.get("industry_verified") is True:
         if not bool(getattr(lead, "industry_verified", False)):
             return False
+    band = (seg.get("employees_band") or seg.get("employeesBand") or "").strip()
+    if band and band != "all":
+        lead_band = (getattr(lead, "employees_band", None) or "").strip()
+        if lead_band != band:
+            return False
+    okved_sec = (seg.get("okved_section") or seg.get("okvedSection") or "").strip()
+    if okved_sec and okved_sec != "all":
+        lead_sec = (getattr(lead, "okved_section", None) or "").strip()
+        if lead_sec != okved_sec:
+            return False
+    min_portrait = seg.get("min_portrait_score") if seg.get("min_portrait_score") is not None else seg.get("minPortraitScore")
+    if min_portrait is not None and min_portrait != "":
+        try:
+            mp = int(min_portrait)
+            ps = int(getattr(lead, "portrait_score", 0) or 0)
+            if ps < mp:
+                return False
+        except (TypeError, ValueError):
+            pass
     q = (seg.get("search") or seg.get("query") or "").strip().lower()
     if q:
         blob = " ".join(

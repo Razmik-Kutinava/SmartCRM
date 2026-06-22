@@ -96,6 +96,11 @@ class LeadPatch(BaseModel):
     financials_json: Optional[Any] = Field(
         None, validation_alias=AliasChoices("financialsJson", "financials_json")
     )
+    okved_main: Optional[str] = Field(None, validation_alias=AliasChoices("okvedMain", "okved_main"))
+    okved_name: Optional[str] = Field(None, validation_alias=AliasChoices("okvedName", "okved_name"))
+    okved_section: Optional[str] = Field(None, validation_alias=AliasChoices("okvedSection", "okved_section"))
+    employees_band: Optional[str] = Field(None, validation_alias=AliasChoices("employeesBand", "employees_band"))
+    portrait_score: Optional[int] = Field(None, validation_alias=AliasChoices("portraitScore", "portrait_score"))
 
 
 class LookalikeCandidate(BaseModel):

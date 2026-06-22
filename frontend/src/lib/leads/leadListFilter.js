@@ -79,6 +79,27 @@ export const SCORE_RISK_FILTERS = [
 	{ id: 'divergent', label: 'Расхождение с подсказкой' },
 ];
 
+export const EMPLOYEES_BAND_FILTERS = [
+	{ id: 'all', label: 'Любой размер' },
+	{ id: '1-50', label: '1–50 сотр.' },
+	{ id: '51-250', label: '51–250' },
+	{ id: '251-1000', label: '251–1000' },
+	{ id: '1000+', label: '1000+' },
+];
+
+/** Уникальные секции ОКВЭД (первые 2 цифры) из списка лидов. */
+export function distinctOkvedSections(leads) {
+	const counts = new Map();
+	for (const l of leads || []) {
+		const s = String(l.okvedSection || '').trim();
+		if (!s) continue;
+		counts.set(s, (counts.get(s) || 0) + 1);
+	}
+	return [...counts.entries()]
+		.sort((a, b) => a[0].localeCompare(b[0], 'ru'))
+		.map(([id, count]) => ({ id, label: `Секция ${id} (${count})` }));
+}
+
 const PRIORITY_RANK = { critical: 4, high: 3, medium: 2, low: 1 };
 
 export function priorityRank(tierKey) {
@@ -118,6 +139,8 @@ export function filterLeads(
 		filterScoreRisk = 'all',
 		filterIndustry = '',
 		filterCity = '',
+		filterEmployeesBand = 'all',
+		filterOkvedSection = 'all',
 		minScore = null,
 	},
 	config = null,
@@ -136,6 +159,14 @@ export function filterLeads(
 		}
 		if (!fieldContains(l.industry, filterIndustry)) return false;
 		if (!fieldContains(l.city, filterCity)) return false;
+		if (filterEmployeesBand !== 'all') {
+			const band = String(l.employeesBand || '').trim();
+			if (band !== filterEmployeesBand) return false;
+		}
+		if (filterOkvedSection !== 'all') {
+			const sec = String(l.okvedSection || '').trim();
+			if (sec !== filterOkvedSection) return false;
+		}
 		return leadMatchesSearch(l, search);
 	});
 }
