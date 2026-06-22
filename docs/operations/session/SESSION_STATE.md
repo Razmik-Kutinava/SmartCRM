@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-22 | Действие: Битрикс UF ОКВЭД/сотрудники → lead_profile; resync_bitrix_lead_profiles.py; pytest 12 PASS; import skip (нет webhook), backfill 0. | Коммит: `464fe88` | Хвост A: re-import на проде с BITRIX24_WEBHOOK_URL | Хвост B: нет | Хвост C: нет | Статус: done
+
 2026-06-22 | Действие: группировка list (groupLeads ОКВЭД/размер/этап), backfill 3230/386, DevTools фильтры+группы OK; pytest 13 PASS. | Коммит: `d3be5c9` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-22 | Действие: сегментация лидов — lead_profile (ОКВЭД normalize, employees_band, portrait_score), колонки Lead, sync CRUD/enrich/CSV/B24, фильтры list, backfill script; pytest 28+ PASS. | Коммит: `28517cd` | Хвост A: backfill на прод не запускали; UI в браузере не проверяли | Хвост B: сворачиваемые группы в списке — BACKLOG | Хвост C: нет | Статус: done
