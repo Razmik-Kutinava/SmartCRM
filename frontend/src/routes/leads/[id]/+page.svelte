@@ -750,7 +750,7 @@
 	{@const _tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
 	<!-- Единая шапка: назад + название + мета + действия -->
 	<header
-		class="flex items-start justify-between gap-3 px-4 sm:px-6 pt-[14px] pb-[14px] border-b border-gray-800 bg-gray-900 shrink-0"
+		class="flex items-start justify-between gap-3 px-4 sm:px-6 pt-[16px] pb-[19px] border-b border-gray-800 bg-gray-900 shrink-0"
 		data-testid="lead-card-header"
 	>
 		<div class="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
