@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[продукты Битрикс + плитка карточки] | Статус: ✅ done`
+
+**2026-06-22:** `lead_products` (цена, статус sold/pipeline/owned) из Битрикс UF/productrows/сделок; плитка «Продукты» в хабе + `LeadProductsPanel`; скрипт `resync_bitrix_lead_products.py`; backfill offline 0 (нет UF в tech_json); DevTools плитка OK; pytest 23 PASS. На проде: webhook → re-import или `resync_bitrix_lead_products.py`. Коммит: `pending`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[отрасли из ОКВЭД — industry_bucket] | Статус: ✅ done`
 
 **2026-06-22:** Маппинг `okved_industry_map` (секция ОКВЭД → отрасль CRM); колонка `industry_bucket` + auto-sync; backfill 3230/158; фильтр «Отрасль» + группировка на `/leads/list`; DevTools OK (селект + group industry_bucket). Коммит: `0a58b61`. Следующий: апрув группировки по отрасли на полной базе.

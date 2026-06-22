@@ -31,6 +31,7 @@ async def test_patch_products_owned(client):
     assert patch_r.status_code == 200
     data = patch_r.json()
     assert data.get("productsOwned") == ["MaxPatrol VM", "OpManager"]
+    assert len(data.get("leadProducts") or []) == 2
 
 
 @pytest.mark.asyncio

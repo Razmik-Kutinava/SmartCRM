@@ -41,6 +41,7 @@ class Lead(Base):
     employees_band: Mapped[Optional[str]] = mapped_column(String(32), nullable=True, default=None)
     portrait_score: Mapped[int] = mapped_column(Integer, default=0)
     products_owned: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
+    lead_products: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
     contacts: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
     city: Mapped[str] = mapped_column(String(255), default="—")
     responsible: Mapped[str] = mapped_column(String(255), default="Я")
@@ -132,6 +133,7 @@ class Lead(Base):
             "employeesBand": self.employees_band or "",
             "portraitScore": int(self.portrait_score or 0),
             "productsOwned": list(getattr(self, "products_owned", None) or []),
+            "leadProducts": list(getattr(self, "lead_products", None) or []),
             "contacts": contacts_for_api(
                 {
                     "contacts": normalize_contacts(getattr(self, "contacts", None)),

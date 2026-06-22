@@ -45,6 +45,8 @@ def test_lead_card_hub_layout():
     assert 'data-testid="lead-card-overview"' in text
     assert 'data-testid="lead-card-main"' in text
     assert "LeadHubTile" in text
+    assert "LeadProductsPanel" in text
+    assert "openPanel === 'products'" in text
     assert "LeadSlideOver" in text
     assert "buildHubTilePreviews" in text
     assert "grid-cols-2 lg:grid-cols-3" in text
@@ -135,6 +137,8 @@ def test_lead_hub_preview_module():
     assert "buildHubTilePreviews" in text
     assert "'stages'" in text
     assert "'passport'" in text
+    assert "'products'" in text
+    assert "hubProductsPreview" in text
     assert "dealPathTotals" in text
     assert "passportHasData" in text
     assert len([line for line in text.splitlines() if "id:" in line and "icon:" in line]) >= 7

@@ -184,6 +184,20 @@ async def enrich_fields_from_bitrix_row(row: dict) -> dict[str, Any]:
     if products:
         extra["products_owned"] = products
 
+    try:
+        from integrations.bitrix24_products import fetch_bitrix_lead_products
+        from core.lead_products import products_owned_names
+
+        b_id = int(row["ID"])
+        lead_products = await fetch_bitrix_lead_products(b_id, row)
+        if lead_products:
+            extra["lead_products"] = lead_products
+            owned = products_owned_names(lead_products)
+            if owned:
+                extra["products_owned"] = owned
+    except Exception as e:
+        logger.warning("fetch_bitrix_lead_products #%s: %s", row.get("ID"), e)
+
     industry = uf_by_hint(row, "industry", "отрасл", "сфера")
     if company and isinstance(company, dict):
         if not industry:

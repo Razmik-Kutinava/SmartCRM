@@ -47,6 +47,7 @@
 	import LeadPassportPanel from '../../../components/LeadPassportPanel.svelte';
 	import LeadSlideOver from '../../../components/LeadSlideOver.svelte';
 	import LeadHubTile from '../../../components/LeadHubTile.svelte';
+	import LeadProductsPanel from '../../../components/LeadProductsPanel.svelte';
 	import { passportHasData } from '$lib/leads/leadPassport.js';
 	import { buildHubTilePreviews, PANEL_TITLES } from '$lib/leads/leadHubPreview.js';
 
@@ -960,6 +961,8 @@
 					</div>
 			</div>
 
+			{:else if openPanel === 'products'}
+				<LeadProductsPanel {lead} />
 			{:else if openPanel === 'card'}
 				<div class="min-w-0" data-testid="lead-card-overview-card">
 					<div class="space-y-5 min-w-0" data-testid="lead-card-overview-center">

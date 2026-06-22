@@ -1,6 +1,4 @@
 """bitrix24_related — enrich из company/contact/requisites."""
-from __future__ import annotations
-
 from unittest.mock import AsyncMock
 
 import pytest
@@ -46,6 +44,19 @@ async def test_enrich_fields_modum_like(monkeypatch):
     monkeypatch.setattr(
         "integrations.bitrix24_related._fetch_requisites", fake_req
     )
+    monkeypatch.setattr(
+        "integrations.bitrix24_products.fetch_bitrix_lead_products",
+        AsyncMock(return_value=[
+            {
+                "name": "EventLog Analyzer",
+                "price": 120000,
+                "currency": "RUB",
+                "quantity": 1,
+                "status": "owned",
+                "source": "bitrix_uf",
+            }
+        ]),
+    )
 
     from integrations.bitrix24_related import enrich_fields_from_bitrix_row
 
@@ -56,6 +67,8 @@ async def test_enrich_fields_modum_like(monkeypatch):
     assert extra["contact"] == "Сергей Баринов"
     assert extra["email"] == "barinov@modum.pro"
     assert extra["products_owned"] == ["EventLog Analyzer"]
+    assert extra["lead_products"][0]["name"] == "EventLog Analyzer"
+    assert extra["lead_products"][0]["price"] == 120000
     assert extra["contacts"][0]["role"] == "lpr"
     assert extra["okved_main"] == "62.01"
     assert extra["okved_section"] == "62"

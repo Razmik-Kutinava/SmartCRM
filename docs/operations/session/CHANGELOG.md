@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-22 — Ф4 лиды: продукты из Битрикс + плитка в карточке
+
+**Было:** только `products_owned` строками из UF; в UI — textarea в slide-over, без цены и статуса. **Стало:** `lead_products` JSON (название, цена, статус sold/pipeline/owned); загрузка из UF + `crm.lead.productrows` + сделок; плитка «Продукты» в хабе; `resync_bitrix_lead_products.py`; pytest 23+ PASS; DevTools: плитка OK.
+
 ## 2026-06-22 — Ф4 лиды: отрасли из ОКВЭД (industry_bucket)
 
 **Было:** отрасль — свободный текст; фильтр только substring/голос; группировки по отрасли нет. **Стало:** `okved_industry_map` (секция 01–99 → bucket); колонка `industry_bucket` + sync в `lead_profile`; backfill 3230/158; селект «Отрасль» + группировка на `/leads/list`; сегменты по `industry_bucket`; DevTools: фильтр и group-by OK; pytest 38+ PASS.

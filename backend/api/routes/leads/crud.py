@@ -114,6 +114,17 @@ async def update_lead(
         from services.lead_products_owned import normalize_products_owned
 
         data["products_owned"] = normalize_products_owned(data["products_owned"])
+        if "lead_products" not in data:
+            from core.lead_products import normalize_lead_products
+
+            data["lead_products"] = normalize_lead_products(data["products_owned"])
+    if "lead_products" in data:
+        from core.lead_products import normalize_lead_products, products_owned_names
+
+        normalized = normalize_lead_products(data["lead_products"])
+        data["lead_products"] = normalized
+        if "products_owned" not in data:
+            data["products_owned"] = products_owned_names(normalized)
     if "contacts" in data:
         contact_sync = apply_contacts_patch(lead, data["contacts"])
         data["contacts"] = contact_sync["contacts"]

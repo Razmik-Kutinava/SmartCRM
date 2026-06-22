@@ -1,10 +1,12 @@
 /** Превью для плиток хаба карточки лида. */
 import { dealPathTotals, dealPathNextStep } from '$lib/leads/leadDealPathUi.js';
 import { passportHasData } from '$lib/leads/leadPassport.js';
+import { hubProductsPreview } from '$lib/leads/leadProducts.js';
 import { slaStatus } from '$lib/tasks/taskSla.js';
 
 export const HUB_PANELS = [
 	{ id: 'stages', icon: '📊', title: 'Стадии и документы', accent: 'indigo' },
+	{ id: 'products', icon: '📦', title: 'Продукты', accent: 'emerald' },
 	{ id: 'card', icon: '👤', title: 'Карточка клиента', accent: 'emerald' },
 	{ id: 'activity', icon: '⚡', title: 'Действия и история', accent: 'violet' },
 	{ id: 'passport', icon: '🛂', title: 'Паспорт компании', accent: 'sky' },
@@ -31,6 +33,7 @@ export function buildHubTilePreviews(ctx) {
 	}).length;
 
 	const lastComm = comms[0]?.content || comms[0]?.body || '';
+	const productsHub = hubProductsPreview(lead);
 	const previews = {
 		stages: {
 			preview: next?.title ? `Следующий шаг: ${next.title}` : `Этап: ${lead.stage || '—'}`,
@@ -42,6 +45,7 @@ export function buildHubTilePreviews(ctx) {
 				.join(' · ') || 'Контакты и реквизиты',
 			meta: lead.inn ? `ИНН ${lead.inn}` : lead.website !== '—' ? lead.website : '',
 		},
+		products: productsHub,
 		activity: {
 			preview: lastComm ? String(lastComm).slice(0, 120) : 'Касания, комментарии, лента',
 			meta: comms.length ? `${comms.length} записей в ленте` : 'Добавить касание',

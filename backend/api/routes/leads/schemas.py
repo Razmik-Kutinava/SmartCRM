@@ -79,6 +79,9 @@ class LeadPatch(BaseModel):
     products_owned: Optional[list[str]] = Field(
         None, validation_alias=AliasChoices("productsOwned", "products_owned")
     )
+    lead_products: Optional[list[dict[str, Any]]] = Field(
+        None, validation_alias=AliasChoices("leadProducts", "lead_products")
+    )
     city: Optional[str] = None
     responsible: Optional[str] = None
     next_call: Optional[str] = None
