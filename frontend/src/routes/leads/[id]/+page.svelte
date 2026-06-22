@@ -44,7 +44,10 @@
 	import LeadScoreAdvisoryPanel from '../../../components/LeadScoreAdvisoryPanel.svelte';
 	import LeadActivityPanel from '../../../components/LeadActivityPanel.svelte';
 	import LeadPassportPanel from '../../../components/LeadPassportPanel.svelte';
+	import LeadSlideOver from '../../../components/LeadSlideOver.svelte';
+	import LeadHubTile from '../../../components/LeadHubTile.svelte';
 	import { passportHasData } from '$lib/leads/leadPassport.js';
+	import { buildHubTilePreviews, PANEL_TITLES } from '$lib/leads/leadHubPreview.js';
 
 	let lead = $state(null);
 	let notFound = $state(false);
@@ -97,6 +100,11 @@
 		pullLead();
 		loadIndustryOptions();
 		loadSlaCatalog();
+		const panel = get(page).url.searchParams.get('panel');
+		if (panel && PANEL_TITLES[panel]) {
+			openPanel = panel;
+			if (panel === 'emails') loadEmails();
+		}
 		return page.subscribe(pullLead);
 	});
 
@@ -467,7 +475,17 @@
 		}
 	}
 
-	let activeTab = $state('overview');
+	let openPanel = $state(null);
+
+	const hubTiles = $derived(
+		buildHubTilePreviews({
+			lead,
+			leadTasksList,
+			leadComms,
+			leadThreads,
+			agentHistory,
+		})
+	);
 
 	let leadTasksList = $state([]);
 	let leadTasksLoading = $state(false);
@@ -627,10 +645,20 @@
 		}
 	}
 
-	function onTabChange(tab) {
-		activeTab = tab;
-		if (tab === 'emails') loadEmails();
-		if (tab === 'overview') loadLeadTasks();
+	function openHubPanel(panel) {
+		openPanel = panel;
+		if (panel === 'emails') loadEmails();
+		if (panel === 'tasks' || panel === 'activity' || panel === 'stages') loadLeadTasks();
+		if (panel === 'activity') loadLeadActivity();
+		const url = new URL(get(page).url);
+		if (panel) url.searchParams.set('panel', panel);
+		else url.searchParams.delete('panel');
+		const q = url.searchParams.toString();
+		goto(`${url.pathname}${q ? `?${q}` : ''}`, { replaceState: true, keepFocus: true, noScroll: true });
+	}
+
+	function closeHubPanel() {
+		openHubPanel(null);
 	}
 
 	// ─── Compose ────────────────────────────────────────────────
@@ -748,7 +776,7 @@
 				title="Написать"
 				aria-label="Написать"
 				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
-				onclick={() => { onTabChange('emails'); openCompose(lead.email, ''); }}
+				onclick={() => { openHubPanel('emails'); openCompose(lead.email, ''); }}
 			>✉️</button>
 			<button
 				type="button"
@@ -827,23 +855,8 @@
 	{/if}
 
 	<div class="flex-1 flex flex-col overflow-hidden min-h-0" data-testid="lead-card-main">
-		<div class="flex gap-1 sm:gap-4 px-4 sm:px-6 pt-3 border-b border-gray-800 shrink-0 overflow-x-auto">
-			{#each [['overview', 'Обзор'], ['passport', 'Паспорт'], ['tasks', 'Задачи'], ['emails', 'Письма'], ['agents', 'Агенты']] as [id, label]}
-				<button
-					type="button"
-					onclick={() => onTabChange(id)}
-					class="pb-3 px-1 text-sm whitespace-nowrap transition-colors border-b-2 {activeTab === id
-						? 'text-white border-indigo-500'
-						: 'text-gray-500 border-transparent hover:text-gray-300'}"
-				>{label}</button>
-			{/each}
-		</div>
-
-		<div class="flex-1 overflow-y-auto p-4 sm:p-6">
-
-			{#if activeTab === 'overview'}
-			<div class="w-full space-y-4" data-testid="lead-card-overview">
-				<!-- Шапка лида -->
+		<div class="flex-1 overflow-y-auto p-4 sm:p-6" data-testid="lead-card-hub">
+			<div class="w-full space-y-5" data-testid="lead-card-overview">
 				<div class="rounded-2xl border border-gray-800 bg-gray-900/60 px-4 py-3 sm:px-5">
 					<div class="text-lg font-bold text-white">{lead.company}</div>
 					<div class="text-sm text-gray-400 mt-0.5">{lead.contact} · {lead.position}</div>
@@ -851,20 +864,39 @@
 						<span class="text-green-400 font-bold text-sm">{lead.score}/100</span>
 						<span class="px-2 py-0.5 rounded text-xs font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
 						<span class="text-xs text-gray-500">· {lead.stage}</span>
+						{#if lead.inn}
+							<span class="text-xs text-gray-500">· ИНН {lead.inn}</span>
+						{/if}
 					</div>
 				</div>
 
-				<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-5 items-start">
-				<!-- 1. Стадии и документы -->
-				<div
-					class="rounded-2xl border border-indigo-900/50 bg-gray-950/80 shadow-lg shadow-indigo-950/20 min-w-0 flex flex-col"
-					data-testid="lead-card-overview-stages"
-				>
-					<div class="px-4 py-3 border-b border-indigo-900/40 bg-indigo-950/25 flex items-center gap-2">
-						<span class="text-base" aria-hidden="true">📊</span>
-						<h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-200">Стадии и документы</h2>
-					</div>
-					<div class="p-4 space-y-4 min-w-0" data-testid="lead-card-overview-left">
+				<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" data-testid="lead-card-hub-grid">
+					{#each hubTiles as tile (tile.id)}
+						<LeadHubTile
+							icon={tile.icon}
+							title={tile.title}
+							preview={tile.preview}
+							meta={tile.meta}
+							accent={tile.accent}
+							testId="lead-hub-tile-{tile.id}"
+							onclick={() => openHubPanel(tile.id)}
+						/>
+					{/each}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<LeadSlideOver
+		open={!!openPanel}
+		title={PANEL_TITLES[openPanel] || ''}
+		subtitle={lead.company}
+		onClose={closeHubPanel}
+		testId="lead-slide-over-{openPanel || 'closed'}"
+	>
+			{#if openPanel === 'stages'}
+			<div class="space-y-4 min-w-0" data-testid="lead-card-overview-stages">
+					<div class="p-0 space-y-4 min-w-0" data-testid="lead-card-overview-left">
 					<div class="space-y-2" data-testid="lead-card-stages">
 						<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Этап воронки</div>
 						<div class="flex flex-wrap gap-1.5">
@@ -915,18 +947,11 @@
 						</p>
 					{/if}
 					</div>
-				</div>
+			</div>
 
-				<!-- 2. Карточка клиента -->
-				<div
-					class="rounded-2xl border border-emerald-900/45 bg-gray-950/80 shadow-lg shadow-emerald-950/15 min-w-0 xl:sticky xl:top-4"
-					data-testid="lead-card-overview-card"
-				>
-					<div class="px-4 py-3 border-b border-emerald-900/35 bg-emerald-950/20 flex items-center gap-2">
-						<span class="text-base" aria-hidden="true">👤</span>
-						<h2 class="text-xs font-semibold uppercase tracking-wider text-emerald-200">Карточка клиента</h2>
-					</div>
-					<div class="p-4 space-y-5 min-w-0 max-h-[calc(100vh-14rem)] overflow-y-auto" data-testid="lead-card-overview-center">
+			{:else if openPanel === 'card'}
+				<div class="min-w-0" data-testid="lead-card-overview-card">
+					<div class="space-y-5 min-w-0" data-testid="lead-card-overview-center">
 				<div class="space-y-2">
 					<div class="space-y-2 text-sm">
 						<label class="block">
@@ -1001,7 +1026,7 @@
 							<button
 								type="button"
 								class="text-xs text-indigo-400 hover:text-indigo-300 text-left"
-								onclick={() => { onTabChange('emails'); openCompose(lead.email); }}
+								onclick={() => { openHubPanel('emails'); openCompose(lead.email); }}
 							>✉ Написать на {lead.email}</button>
 						{/if}
 						<button
@@ -1068,16 +1093,9 @@
 					</div>
 				</div>
 
-				<!-- 3. Действия и история -->
-				<div
-					class="rounded-2xl border border-violet-900/45 bg-gray-950/80 shadow-lg shadow-violet-950/15 min-w-0 flex flex-col"
-					data-testid="lead-card-overview-activity"
-				>
-					<div class="px-4 py-3 border-b border-violet-900/35 bg-violet-950/20 flex items-center gap-2">
-						<span class="text-base" aria-hidden="true">⚡</span>
-						<h2 class="text-xs font-semibold uppercase tracking-wider text-violet-200">Действия и история</h2>
-					</div>
-					<div class="p-4 min-w-0 flex-1" data-testid="lead-card-overview-right">
+			{:else if openPanel === 'activity'}
+				<div class="min-w-0" data-testid="lead-card-overview-activity">
+					<div class="min-w-0 flex-1" data-testid="lead-card-overview-right">
 						<LeadActivityPanel
 							leadId={lead.id}
 							relatedLead={lead.company}
@@ -1091,10 +1109,8 @@
 						/>
 					</div>
 				</div>
-				</div>
-			</div>
 
-			{:else if activeTab === 'tasks'}
+			{:else if openPanel === 'tasks'}
 					<div class="mb-4 rounded-xl border border-gray-800 bg-gray-900/80 p-4 space-y-2" data-testid="lead-sla-protocol">
 						<div class="text-sm font-medium text-white">SLA-протокол</div>
 						<select
@@ -1163,7 +1179,7 @@
 					</div>
 
 				<!-- ── ПИСЬМА ── -->
-				{:else if activeTab === 'emails'}
+				{:else if openPanel === 'emails'}
 					<div class="flex flex-col h-full gap-4">
 
 						<!-- шапка таба -->
@@ -1237,7 +1253,7 @@
 					</div>
 
 				<!-- ── АГЕНТЫ ── -->
-				{:else if activeTab === 'agents'}
+				{:else if openPanel === 'agents'}
 					<div class="space-y-4">
 						<div class="flex items-center justify-between">
 							<p class="text-sm text-gray-400">Агент читает переписку с клиентом и действует по настроенным правилам</p>
@@ -1410,7 +1426,7 @@
 					</div>
 
 				<!-- ── ПАСПОРТ КЛИЕНТА ── -->
-				{:else if activeTab === 'passport'}
+				{:else if openPanel === 'passport'}
 					{#if !passportHasData(lead)}
 						<div class="text-center py-12 text-gray-600 text-sm" data-testid="lead-passport-empty">
 							Паспорт пуст. Укажите ИНН, создайте лид через Лидогенератор или нажмите ✨ Обогатить.
@@ -1419,9 +1435,7 @@
 						<LeadPassportPanel {lead} />
 					{/if}
 				{/if}
-
-			</div>
-	</div>
+	</LeadSlideOver>
 {:else}
 	<div class="flex flex-col items-center justify-center flex-1 p-8 text-gray-500 text-sm">Загрузка…</div>
 {/if}

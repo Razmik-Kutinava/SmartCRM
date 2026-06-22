@@ -1,10 +1,13 @@
-"""Контракт карточки лида /leads/[id] — industryOptions и breakdown."""
+"""Контракт карточки лида /leads/[id] — хаб, slide-over, industryOptions."""
 from __future__ import annotations
 
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[3]
 _LEAD_CARD = _REPO / "frontend" / "src" / "routes" / "leads" / "[id]" / "+page.svelte"
+_HUB_PREVIEW = _REPO / "frontend" / "src" / "lib" / "leads" / "leadHubPreview.js"
+_HUB_TILE = _REPO / "frontend" / "src" / "components" / "LeadHubTile.svelte"
+_SLIDE_OVER = _REPO / "frontend" / "src" / "components" / "LeadSlideOver.svelte"
 _DEAL_PATH_PANEL = _REPO / "frontend" / "src" / "components" / "LeadDealPathPanel.svelte"
 _SCORE_ADVISORY_PANEL = _REPO / "frontend" / "src" / "components" / "LeadScoreAdvisoryPanel.svelte"
 
@@ -25,40 +28,54 @@ def test_lead_card_score_breakdown_marker():
     assert "LeadScoreAdvisoryPanel" in text
     assert 'data-testid="lead-score-advisory-panel"' in panel
     assert 'data-testid="lead-score-breakdown"' in panel
-    overview = text.split('data-testid="lead-card-overview"', 1)[1].split("{:else if activeTab === 'tasks'}", 1)[0]
-    center = overview.split('data-testid="lead-card-overview-center"', 1)[1]
-    assert "Подсказка (не меняет балл" not in overview.split("lead-card-overview-stages", 1)[0]
-    assert "LeadScoreAdvisoryPanel" in center
+    card_panel = text.split("openPanel === 'card'", 1)[1].split("openPanel === 'activity'", 1)[0]
+    assert "LeadScoreAdvisoryPanel" in card_panel
+    stages_panel = text.split("openPanel === 'stages'", 1)[1].split("openPanel === 'card'", 1)[0]
+    assert "Подсказка (не меняет балл" not in stages_panel
 
 
-def test_lead_card_overview_three_column_layout():
-    """Обзор: три колонки — стадии | карточка | действия."""
+def test_lead_card_hub_layout():
+    """Хаб: компактная шапка + плитки 2×3 / 3×2; контент в slide-over."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
+    assert 'data-testid="lead-card-hub"' in text
+    assert 'data-testid="lead-card-hub-grid"' in text
     assert 'data-testid="lead-card-overview"' in text
-    assert 'data-testid="lead-card-overview-stages"' in text
-    assert 'data-testid="lead-card-overview-card"' in text
-    assert 'data-testid="lead-card-overview-activity"' in text
-    assert 'data-testid="lead-card-overview-center"' in text
-    assert 'data-testid="lead-card-overview-right"' in text
     assert 'data-testid="lead-card-main"' in text
-    assert "xl:grid-cols-3" in text
-    assert "lg:grid-cols-2" not in text.split('data-testid="lead-card-overview"', 1)[1].split(
-        "{:else if activeTab === 'tasks'}", 1
+    assert "LeadHubTile" in text
+    assert "LeadSlideOver" in text
+    assert "buildHubTilePreviews" in text
+    assert "grid-cols-2 lg:grid-cols-3" in text
+    assert "xl:grid-cols-3" not in text.split('data-testid="lead-card-hub"', 1)[1].split(
+        "<LeadSlideOver", 1
     )[0]
-    overview = text.split('data-testid="lead-card-overview"', 1)[1].split("{:else if activeTab === 'tasks'}", 1)[0]
-    stages = overview.split('data-testid="lead-card-overview-stages"', 1)[1].split(
-        'data-testid="lead-card-overview-card"', 1
+    hub = text.split('data-testid="lead-card-hub"', 1)[1].split("<LeadSlideOver", 1)[0]
+    assert "LeadDealPathPanel" not in hub
+    assert "LeadActivityPanel" not in hub
+    assert "LeadContactsPanel" not in hub
+
+
+def test_lead_card_panels_in_slide_over():
+    """Панели стадий/карточки/действий — внутри openPanel, не на хабе."""
+    text = _LEAD_CARD.read_text(encoding="utf-8")
+    slide = text.split("<LeadSlideOver", 1)[1].split("</LeadSlideOver>", 1)[0]
+    assert 'data-testid="lead-card-overview-stages"' in slide
+    assert 'data-testid="lead-card-overview-card"' in slide
+    assert 'data-testid="lead-card-overview-activity"' in slide
+    assert 'data-testid="lead-card-overview-center"' in slide
+    assert 'data-testid="lead-card-overview-right"' in slide
+    stages = slide.split('data-testid="lead-card-overview-stages"', 1)[1].split(
+        "openPanel === 'card'", 1
     )[0]
-    center = overview.split('data-testid="lead-card-overview-center"', 1)[1].split(
-        'data-testid="lead-card-overview-activity"', 1
+    center = slide.split('data-testid="lead-card-overview-center"', 1)[1].split(
+        "openPanel === 'activity'", 1
     )[0]
-    activity = overview.split('data-testid="lead-card-overview-activity"', 1)[1]
+    activity = slide.split('data-testid="lead-card-overview-activity"', 1)[1].split(
+        "openPanel === 'tasks'", 1
+    )[0]
     assert "LeadDealPathPanel" in stages
     assert "LeadActivityPanel" not in stages
     assert "LeadContactsPanel" in center
     assert "Суммы сделки" in center
-    assert "Карточка клиента" in overview
-    assert "Действия и история" in overview
     assert "LeadActivityPanel" in activity
     assert "LeadDealPathPanel" not in activity
 
@@ -70,16 +87,12 @@ def test_lead_card_toolbar_compact():
     assert "flex-nowrap" in text
 
 
-def test_lead_card_stages_in_first_column():
-    """Этапы и путь сделки — первая колонка, не в карточке и не в действиях."""
+def test_lead_card_stages_in_stages_panel():
+    """Этапы и путь сделки — панель stages в slide-over."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert text.count('data-testid="lead-card-stages"') == 1
-    stages = text.split('data-testid="lead-card-overview-stages"', 1)[1].split(
-        'data-testid="lead-card-overview-card"', 1
-    )[0]
-    center = text.split('data-testid="lead-card-overview-center"', 1)[1].split(
-        'data-testid="lead-card-overview-activity"', 1
-    )[0]
+    stages = text.split("openPanel === 'stages'", 1)[1].split("openPanel === 'card'", 1)[0]
+    center = text.split("openPanel === 'card'", 1)[1].split("openPanel === 'activity'", 1)[0]
     assert 'data-testid="lead-card-stages"' in stages
     assert 'data-testid="lead-card-stages"' not in center
     assert "LeadDealPathPanel" in stages
@@ -96,3 +109,24 @@ def test_lead_card_deal_path_and_hints_ui():
     assert "lead.dealPath" in text
     assert "Апрувы и документы" not in text
     assert "Сохранить документы" not in panel
+
+
+def test_lead_hub_preview_module():
+    """Превью плиток: 7 панелей, мета стадий и задач."""
+    text = _HUB_PREVIEW.read_text(encoding="utf-8")
+    assert "export const HUB_PANELS" in text
+    assert "buildHubTilePreviews" in text
+    assert "'stages'" in text
+    assert "'passport'" in text
+    assert "dealPathTotals" in text
+    assert "passportHasData" in text
+    assert len([line for line in text.splitlines() if "id:" in line and "icon:" in line]) >= 7
+
+
+def test_lead_hub_tile_and_slide_over_components():
+    tile = _HUB_TILE.read_text(encoding="utf-8")
+    slide = _SLIDE_OVER.read_text(encoding="utf-8")
+    assert 'data-testid={testId}' in tile
+    assert "line-clamp-2" in tile
+    assert "lg:w-[68%]" in slide or "xl:w-[62%]" in slide
+    assert 'data-testid="{testId}-close"' in slide
