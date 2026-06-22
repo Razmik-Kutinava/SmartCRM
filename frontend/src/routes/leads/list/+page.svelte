@@ -139,6 +139,53 @@
 		),
 	);
 
+	let showListMenu = $state(false);
+
+	const listKpi = $derived.by(() => {
+		const cfg = getCachedCrmConfig();
+		let hot = 0;
+		let warnings = 0;
+		let scoreSum = 0;
+		for (const l of filtered) {
+			const tier = leadPriorityTier(l.score, cfg);
+			if (tier.key === 'high' || tier.key === 'critical') hot += 1;
+			if (l.hasScoreWarnings) warnings += 1;
+			scoreSum += Number(l.score) || 0;
+		}
+		return {
+			hot,
+			warnings,
+			avg: filtered.length ? Math.round(scoreSum / filtered.length) : 0,
+		};
+	});
+
+	const filtersActive = $derived(
+		Boolean(
+			search.trim()
+			|| filterStage !== 'all'
+			|| filterPriority !== 'all'
+			|| filterScoreRisk !== 'all'
+			|| filterIndustry
+			|| filterCity
+			|| filterMinScore != null,
+		),
+	);
+
+	function resetListFilters() {
+		search = '';
+		filterStage = 'all';
+		filterPriority = 'all';
+		filterScoreRisk = 'all';
+		filterIndustry = '';
+		filterCity = '';
+		filterMinScore = null;
+		sortBy = 'score_desc';
+	}
+
+	function closeListMenu() {
+		showListMenu = false;
+	}
+
 	function notify(text, type = 'success') {
 		notification = { text, type };
 		setTimeout(() => notification = null, 4000);
@@ -605,76 +652,213 @@
 	}
 </script>
 
-<!-- Header -->
-<div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900 shrink-0">
-	<div>
-		<h1 class="text-lg font-semibold text-white">Список лидов</h1>
-		<p class="text-xs text-gray-500">{filtered.length} из {leads.length}</p>
-		{#if bitrixStats}
-			<p class="text-[11px] text-gray-600 mt-0.5" title={bitrixStats.hint || ''}>
-				Битрикс (≥2023): <span class="text-gray-400">{bitrixStats.bitrix_total ?? '—'}</span>
-				· У нас Bitrix-ID: <span class="text-gray-400">{bitrixStats.local_bitrix_leads_count ?? '—'}</span>
+<!-- Шапка + фильтры -->
+<header
+	class="shrink-0 border-b border-gray-800 bg-gray-900 overflow-visible"
+	data-testid="leads-list-header"
+>
+	<div class="flex items-start justify-between gap-3 px-4 sm:px-6 pt-[18px] pb-3">
+		<div class="min-w-0">
+			<h1 class="text-lg font-bold text-white leading-tight">Список лидов</h1>
+			<p class="text-xs text-gray-500 mt-0.5" data-testid="leads-list-count">
+				<span class="text-gray-400">{filtered.length.toLocaleString('ru-RU')}</span>
+				{filtered.length === leads.length ? 'лидов' : `показано · ${leads.length.toLocaleString('ru-RU')} всего`}
 			</p>
+		</div>
+		<div class="flex items-center gap-2 shrink-0 pt-0.5">
+			<button
+				type="button"
+				onclick={() => openLeadCreateModal({
+					source: 'Список лидов',
+					onCreated: (created) => {
+						leads = [created, ...leads.filter((l) => l.id !== created.id)];
+						notify(`✓ Лид сохранён: ${created.company}`);
+					},
+				})}
+				class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-sm font-medium text-white rounded-xl shadow-lg shadow-indigo-950/40 transition-colors"
+				data-testid="leads-list-create-lead"
+			>+ Новый лид</button>
+			<div class="relative">
+				<button
+					type="button"
+					class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xl leading-none transition-colors"
+					data-testid="leads-list-more-menu"
+					aria-label="Импорт и экспорт"
+					aria-expanded={showListMenu}
+					onclick={() => { showListMenu = !showListMenu; }}
+				>⋯</button>
+				{#if showListMenu}
+					<button
+						type="button"
+						class="fixed inset-0 z-30 cursor-default"
+						aria-label="Закрыть меню"
+						onclick={closeListMenu}
+					></button>
+					<div
+						class="absolute right-0 top-full mt-1.5 z-40 w-56 rounded-xl border border-gray-700 bg-gray-950 shadow-2xl py-1.5"
+						data-testid="leads-list-more-panel"
+					>
+						<p class="px-3 py-1.5 text-[10px] uppercase tracking-wider text-gray-600">Импорт</p>
+						<button
+							type="button"
+							disabled={bitrixImporting}
+							onclick={() => { closeListMenu(); runBitrixImport(); }}
+							class="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
+							data-testid="leads-bitrix-import"
+							title="Нужен BITRIX24_WEBHOOK_URL на сервере"
+						>{bitrixImporting ? '⏳ Битрикс24…' : '📤 Битрикс24'}</button>
+						<button
+							type="button"
+							disabled={amoImporting}
+							onclick={() => { closeListMenu(); runAmoImport(); }}
+							class="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
+							data-testid="leads-amo-import"
+						>{amoImporting ? '⏳ AmoCRM…' : '📤 AmoCRM'}</button>
+						<button
+							type="button"
+							disabled={hubspotImporting}
+							onclick={() => { closeListMenu(); runHubspotImport(); }}
+							class="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
+							data-testid="leads-hubspot-import"
+						>{hubspotImporting ? '⏳ HubSpot…' : '📤 HubSpot'}</button>
+						<input
+							bind:this={csvInput}
+							type="file"
+							accept=".csv,text/csv"
+							class="hidden"
+							data-testid="leads-csv-input"
+							onchange={onCsvFileChange}
+						/>
+						<button
+							type="button"
+							disabled={csvImporting}
+							onclick={() => { closeListMenu(); csvInput?.click(); }}
+							class="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
+							data-testid="leads-csv-import"
+						>{csvImporting ? '⏳ CSV…' : '📥 Импорт CSV'}</button>
+						<div class="my-1 border-t border-gray-800"></div>
+						<button
+							type="button"
+							disabled={csvExporting || leads.length === 0}
+							onclick={() => { closeListMenu(); runCsvExport(); }}
+							class="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
+							data-testid="leads-csv-export"
+						>{csvExporting ? '⏳…' : '📤 Экспорт CSV'}</button>
+						{#if bitrixStats}
+							<div class="mt-1 mx-2 px-2 py-2 rounded-lg bg-gray-900 border border-gray-800 text-[11px] text-gray-500 leading-snug" data-testid="leads-bitrix-stats">
+								B24 (≥2023): <span class="text-gray-400">{bitrixStats.bitrix_total ?? '—'}</span>
+								· у нас: <span class="text-gray-400">{bitrixStats.local_bitrix_leads_count ?? '—'}</span>
+							</div>
+						{/if}
+					</div>
+				{/if}
+			</div>
+		</div>
+	</div>
+
+	<div class="px-4 sm:px-6 pb-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-gray-500" data-testid="leads-list-kpi">
+		<span><span class="text-amber-400 font-semibold">{listKpi.hot}</span> горячих</span>
+		<span><span class="text-orange-400 font-semibold">{listKpi.warnings}</span> с предупрежд.</span>
+		<span>ср. балл <span class="text-green-400 font-semibold">{listKpi.avg}</span></span>
+		{#if bitrixStats}
+			<span class="hidden sm:inline text-gray-600">
+				B24: {bitrixStats.local_bitrix_leads_count ?? '—'} / {bitrixStats.bitrix_total ?? '—'}
+			</span>
 		{/if}
 	</div>
-	<div class="flex items-center gap-2">
-		<button
-			type="button"
-			disabled={bitrixImporting}
-			onclick={runBitrixImport}
-			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
-			title="Нужен BITRIX24_WEBHOOK_URL на сервере"
-		>{bitrixImporting ? '⏳ Битрикс24…' : '📤 Битрикс24'}</button>
-		<button
-			type="button"
-			disabled={amoImporting}
-			onclick={runAmoImport}
-			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
-			title="AMO_SUBDOMAIN + AMO_ACCESS_TOKEN"
-		>{amoImporting ? '⏳ Amo…' : '📤 AmoCRM'}</button>
-		<button
-			type="button"
-			disabled={hubspotImporting}
-			onclick={runHubspotImport}
-			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
-			title="HUBSPOT_ACCESS_TOKEN"
-		>{hubspotImporting ? '⏳ HS…' : '📤 HubSpot'}</button>
-		<input
-			bind:this={csvInput}
-			type="file"
-			accept=".csv,text/csv"
-			class="hidden"
-			data-testid="leads-csv-input"
-			onchange={onCsvFileChange}
-		/>
-		<button
-			type="button"
-			disabled={csvImporting}
-			onclick={() => csvInput?.click()}
-			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
-			data-testid="leads-csv-import"
-		>{csvImporting ? '⏳ CSV…' : '📥 Импорт CSV'}</button>
-		<button
-			type="button"
-			disabled={csvExporting || leads.length === 0}
-			onclick={runCsvExport}
-			class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg"
-			data-testid="leads-csv-export"
-		>{csvExporting ? '⏳…' : '📤 Экспорт CSV'}</button>
-		<button
-			type="button"
-			onclick={() => openLeadCreateModal({
-				source: 'Список лидов',
-				onCreated: (created) => {
-					leads = [created, ...leads.filter((l) => l.id !== created.id)];
-					notify(`✓ Лид сохранён: ${created.company}`);
-				},
-			})}
-			class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-sm text-white rounded-lg"
-			data-testid="leads-list-create-lead"
-		>+ Новый лид</button>
+
+	<div class="flex flex-col gap-2.5 px-4 sm:px-6 pt-1 pb-3 border-t border-gray-800/80" data-testid="leads-list-filters">
+		<div class="flex items-end gap-2 sm:gap-3 flex-wrap">
+			<label class="flex-1 min-w-[12rem] max-w-md">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Поиск</span>
+				<input
+					bind:value={search}
+					placeholder="Компания, контакт, город…"
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-2 placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-search"
+				/>
+			</label>
+			<label class="min-w-[7.5rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Сортировка</span>
+				<select
+					bind:value={sortBy}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					aria-label="Сортировка"
+					data-testid="leads-list-sort"
+				>
+					{#each SORT_OPTIONS as opt}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="min-w-[7.5rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Тир</span>
+				<select
+					bind:value={filterPriority}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					aria-label="Фильтр тира"
+					data-testid="leads-list-tier"
+				>
+					{#each PRIORITY_FILTERS as opt}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="min-w-[8.5rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Подсказка балла</span>
+				<select
+					bind:value={filterScoreRisk}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					aria-label="Фильтр по подсказке балла"
+					data-testid="leads-filter-score-risk"
+				>
+					{#each SCORE_RISK_FILTERS as opt}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
+			{#if filtersActive}
+				<button
+					type="button"
+					class="px-3 py-2 text-xs rounded-lg border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-colors mb-0.5"
+					data-testid="leads-list-reset-filters"
+					onclick={resetListFilters}
+				>Сбросить</button>
+			{/if}
+		</div>
+		<div class="flex gap-1 flex-wrap" data-testid="leads-list-stage-chips">
+			{#each stages as stage}
+				<button
+					type="button"
+					onclick={() => filterStage = stage}
+					class="px-2.5 py-1 text-xs rounded-lg transition-colors
+						{filterStage === stage ? 'bg-indigo-600 text-white shadow-md shadow-indigo-950/50' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'}"
+				>{stage === 'all' ? 'Все этапы' : stage}</button>
+			{/each}
+		</div>
+		{#if filterIndustry || filterCity}
+			<div class="flex gap-2 flex-wrap items-center">
+				<span class="text-[11px] text-gray-500 uppercase tracking-wide">Голос</span>
+				{#if filterIndustry}
+					<button
+						type="button"
+						class="px-2 py-0.5 text-xs rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 hover:bg-cyan-900"
+						onclick={() => filterIndustry = ''}
+						title="Сбросить отрасль"
+					>Отрасль: {filterIndustry} ✕</button>
+				{/if}
+				{#if filterCity}
+					<button
+						type="button"
+						class="px-2 py-0.5 text-xs rounded-full bg-violet-950 text-violet-300 border border-violet-800 hover:bg-violet-900"
+						onclick={() => filterCity = ''}
+						title="Сбросить город"
+					>Город: {filterCity} ✕</button>
+				{/if}
+			</div>
+		{/if}
 	</div>
-</div>
+</header>
 
 <!-- API error banner -->
 {#if apiError}
@@ -692,75 +876,6 @@
 		{notification.text}
 	</div>
 {/if}
-
-<!-- Filters -->
-<div class="flex flex-col gap-2 px-6 py-3 border-b border-gray-800 bg-gray-900 shrink-0">
-	<div class="flex items-center gap-3 flex-wrap">
-		<input
-			bind:value={search}
-			placeholder="Поиск: компания, контакт, город…"
-			class="flex-1 min-w-[12rem] max-w-xs bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-1.5 placeholder-gray-500 focus:outline-none focus:border-indigo-500"
-		/>
-		<select
-			bind:value={sortBy}
-			class="bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-indigo-500"
-			aria-label="Сортировка"
-		>
-			{#each SORT_OPTIONS as opt}
-				<option value={opt.id}>{opt.label}</option>
-			{/each}
-		</select>
-		<select
-			bind:value={filterPriority}
-			class="bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-indigo-500"
-			aria-label="Фильтр приоритета"
-		>
-			{#each PRIORITY_FILTERS as opt}
-				<option value={opt.id}>{opt.label}</option>
-			{/each}
-		</select>
-		<select
-			bind:value={filterScoreRisk}
-			class="bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-indigo-500"
-			aria-label="Фильтр по подсказке балла"
-			data-testid="leads-filter-score-risk"
-		>
-			{#each SCORE_RISK_FILTERS as opt}
-				<option value={opt.id}>{opt.label}</option>
-			{/each}
-		</select>
-	</div>
-	<div class="flex gap-1 flex-wrap">
-		{#each stages as stage}
-			<button
-				onclick={() => filterStage = stage}
-				class="px-2.5 py-1 text-xs rounded-lg transition-colors
-					{filterStage === stage ? 'bg-indigo-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'}"
-			>{stage === 'all' ? 'Все этапы' : stage}</button>
-		{/each}
-	</div>
-	{#if filterIndustry || filterCity}
-		<div class="flex gap-2 flex-wrap items-center">
-			<span class="text-[11px] text-gray-500 uppercase tracking-wide">Голосовые фильтры</span>
-			{#if filterIndustry}
-				<button
-					type="button"
-					class="px-2 py-0.5 text-xs rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 hover:bg-cyan-900"
-					onclick={() => filterIndustry = ''}
-					title="Сбросить отрасль"
-				>Отрасль: {filterIndustry} ✕</button>
-			{/if}
-			{#if filterCity}
-				<button
-					type="button"
-					class="px-2 py-0.5 text-xs rounded-full bg-violet-950 text-violet-300 border border-violet-800 hover:bg-violet-900"
-					onclick={() => filterCity = ''}
-					title="Сбросить город"
-				>Город: {filterCity} ✕</button>
-			{/if}
-		</div>
-	{/if}
-</div>
 
 <!-- Table -->
 <div class="flex-1 overflow-y-auto">
