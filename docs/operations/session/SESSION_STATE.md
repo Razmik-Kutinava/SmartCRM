@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-19 | Действие: карточка — единая шапка (назад + название + мета + toolbar), убран дубль summary в хабе; PRD_MAP UX; pytest smoke 10 PASS. | Коммит: `PENDING` | Хвост A: апрув в браузере | Хвост B: нет | Хвост C: нет | Статус: done
+
 2026-06-19 | Действие: карточка лида — хаб плиток 2×3/3×2 + slide-over ~65% (LeadHubTile, LeadSlideOver, leadHubPreview); вкладки убраны; ?panel= deep link; pytest smoke 9 PASS. | Коммит: `2f6b55c` | Хвост A: апрув UI в браузере не делали | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-22 | Действие: enrich → полный паспорт checko_json (Checko+BuiltWith, passport PATCH, фильтр телефонов); pytest rag+lib+leads API 14 PASS. | Коммит: `5c17439` | Хвост A: live Checko на Hochland в браузере не проверяли | Хвост B: вакансии/налоги/история — BACKLOG | Хвост C: нет | Статус: done

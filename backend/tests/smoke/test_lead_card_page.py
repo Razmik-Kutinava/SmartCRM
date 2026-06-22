@@ -35,8 +35,11 @@ def test_lead_card_score_breakdown_marker():
 
 
 def test_lead_card_hub_layout():
-    """Хаб: компактная шапка + плитки 2×3 / 3×2; контент в slide-over."""
+    """Хаб: одна шапка + плитки 2×3 / 3×2; без дубля summary-карточки."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
+    assert 'data-testid="lead-card-header"' in text
+    assert 'data-testid="lead-card-header-meta"' in text
+    assert 'data-testid="lead-card-back"' in text
     assert 'data-testid="lead-card-hub"' in text
     assert 'data-testid="lead-card-hub-grid"' in text
     assert 'data-testid="lead-card-overview"' in text
@@ -52,6 +55,27 @@ def test_lead_card_hub_layout():
     assert "LeadDealPathPanel" not in hub
     assert "LeadActivityPanel" not in hub
     assert "LeadContactsPanel" not in hub
+    assert hub.count("{lead.company}") == 0
+
+
+def test_lead_card_unified_header():
+    """Мета лида только в шапке, не дублируется карточкой в хабе."""
+    text = _LEAD_CARD.read_text(encoding="utf-8")
+    header = text.split('data-testid="lead-card-header"', 1)[1].split("</header>", 1)[0]
+    hub = text.split('data-testid="lead-card-hub"', 1)[1].split("<LeadSlideOver", 1)[0]
+    assert "{lead.company}" in header
+    assert "priorityTierBadgeClass(_tier)" in header
+    assert "lead.inn" in header
+    assert "rounded-2xl border border-gray-800 bg-gray-900/60" not in hub
+    assert header.count("{lead.company}") == 1
+
+
+def test_lead_card_toolbar_compact():
+    """Шапка: иконки + title, одна полоска."""
+    text = _LEAD_CARD.read_text(encoding="utf-8")
+    assert 'data-testid="lead-card-toolbar"' in text
+    assert "flex-nowrap" in text
+    assert 'data-testid="lead-card-header"' in text
 
 
 def test_lead_card_panels_in_slide_over():
@@ -78,13 +102,6 @@ def test_lead_card_panels_in_slide_over():
     assert "Суммы сделки" in center
     assert "LeadActivityPanel" in activity
     assert "LeadDealPathPanel" not in activity
-
-
-def test_lead_card_toolbar_compact():
-    """Шапка: иконки + title, одна строка."""
-    text = _LEAD_CARD.read_text(encoding="utf-8")
-    assert 'data-testid="lead-card-toolbar"' in text
-    assert "flex-nowrap" in text
 
 
 def test_lead_card_stages_in_stages_panel():

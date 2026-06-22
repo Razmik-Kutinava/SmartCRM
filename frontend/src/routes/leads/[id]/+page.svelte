@@ -748,14 +748,34 @@
 	</div>
 {:else if lead}
 	{@const _tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
-	<!-- Header -->
-	<div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900 shrink-0">
-		<div class="flex items-center gap-3">
-			<a href="/leads/list" class="text-gray-500 hover:text-white transition-colors text-sm">← Лиды</a>
-			<span class="text-gray-700">/</span>
-			<span class="text-sm text-white font-medium">{lead.company}</span>
+	<!-- Единая шапка: назад + название + мета + действия -->
+	<header
+		class="flex items-start justify-between gap-3 px-4 sm:px-6 py-3 border-b border-gray-800 bg-gray-900 shrink-0"
+		data-testid="lead-card-header"
+	>
+		<div class="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
+			<a
+				href="/leads/list"
+				class="shrink-0 mt-0.5 text-gray-500 hover:text-white transition-colors text-sm"
+				data-testid="lead-card-back"
+			>← Лиды</a>
+			<div class="min-w-0">
+				<h1 class="text-base sm:text-lg font-bold text-white truncate leading-tight">{lead.company}</h1>
+				<p class="text-[11px] sm:text-xs text-gray-500 mt-0.5 leading-snug flex flex-wrap items-center gap-x-1.5 gap-y-0.5" data-testid="lead-card-header-meta">
+					{#if lead.contact && lead.contact !== '—'}
+						<span>{lead.contact}{#if lead.position && lead.position !== '—'} · {lead.position}{/if}</span>
+						<span class="text-gray-700" aria-hidden="true">·</span>
+					{/if}
+					<span class="text-green-400 font-semibold">{lead.score}/100</span>
+					<span class="px-1.5 py-px rounded text-[10px] font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
+					<span>{lead.stage}</span>
+					{#if lead.inn}
+						<span>ИНН {lead.inn}</span>
+					{/if}
+				</p>
+			</div>
 		</div>
-		<div class="flex items-center gap-1 flex-nowrap shrink-0" data-testid="lead-card-toolbar">
+		<div class="flex items-center gap-0.5 sm:gap-1 flex-nowrap shrink-0 overflow-x-auto max-w-[52%] sm:max-w-none pb-0.5" data-testid="lead-card-toolbar">
 			<button
 				type="button"
 				data-testid="lead-card-enrich"
@@ -849,27 +869,14 @@
 				onclick={deleteCurrentLead}
 			>{deleteBusy ? '…' : '🗑'}</button>
 		</div>
-	</div>
+	</header>
 	{#if enrichMsg}
 		<div class="px-6 py-1.5 text-xs border-b border-gray-800 bg-gray-900/80 text-gray-400" data-testid="lead-card-enrich-msg">{enrichMsg}</div>
 	{/if}
 
 	<div class="flex-1 flex flex-col overflow-hidden min-h-0" data-testid="lead-card-main">
 		<div class="flex-1 overflow-y-auto p-4 sm:p-6" data-testid="lead-card-hub">
-			<div class="w-full space-y-5" data-testid="lead-card-overview">
-				<div class="rounded-2xl border border-gray-800 bg-gray-900/60 px-4 py-3 sm:px-5">
-					<div class="text-lg font-bold text-white">{lead.company}</div>
-					<div class="text-sm text-gray-400 mt-0.5">{lead.contact} · {lead.position}</div>
-					<div class="flex items-center gap-2 mt-2 flex-wrap">
-						<span class="text-green-400 font-bold text-sm">{lead.score}/100</span>
-						<span class="px-2 py-0.5 rounded text-xs font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
-						<span class="text-xs text-gray-500">· {lead.stage}</span>
-						{#if lead.inn}
-							<span class="text-xs text-gray-500">· ИНН {lead.inn}</span>
-						{/if}
-					</div>
-				</div>
-
+			<div class="w-full" data-testid="lead-card-overview">
 				<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" data-testid="lead-card-hub-grid">
 					{#each hubTiles as tile (tile.id)}
 						<LeadHubTile
