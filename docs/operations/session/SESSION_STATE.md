@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-22 | Действие: дела в списке — lead_task_list_flags, сортировка tasks_urgent, фильтры Дела, KPI+бейдж, fix due в карточке; pytest crm_leads 30 + unit/smoke 11 PASS. | Коммит: `pending` | Хвост A: апрув в браузере | Хвост B: нет | Хвост C: нет | Статус: done
+2026-06-22 | Действие: дела в списке — lead_task_list_flags, сортировка tasks_urgent, фильтры Дела, KPI+бейдж, fix due в карточке; pytest crm_leads 30 + unit/smoke 11 PASS. | Коммит: `cb3c63b` | Хвост A: апрув в браузере | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-22 | Действие: Битрикс UF ОКВЭД/сотрудники → lead_profile; resync_bitrix_lead_profiles.py; pytest 12 PASS; import skip (нет webhook), backfill 0. | Коммит: `464fe88` | Хвост A: re-import на проде с BITRIX24_WEBHOOK_URL | Хвост B: нет | Хвост C: нет | Статус: done
 
