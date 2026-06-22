@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[массовый resync продуктов Битрикс API] | Статус: 🔄 in_progress`
 
-**2026-06-22:** Расширен `bitrix24_products` — `crm.lead.get`, productrows, сделки, **КП** (`crm.quote.*`), `crm.product.get`, OPPORTUNITY; `resync_bitrix_lead_products.py` — `.env`, `--workers`, батчи; smoke 5/5; **полный resync ~3225 лидов в фоне** (`--workers 6`); на момент коммита ~140+ лидов с `lead_products`. Команда: `cd backend && python -u scripts/resync_bitrix_lead_products.py --workers 6 --delay-ms 8 --batch-size 80`. Коммит: `14a274c`.
+**2026-06-22:** Расширен `bitrix24_products` — `crm.lead.get`, productrows, сделки, **КП** (`crm.quote.*`), `crm.product.get`, OPPORTUNITY; `resync_bitrix_lead_products.py` — `.env`, `--workers`, батчи; smoke 5/5; **полный resync ~3225 лидов в фоне** (`--workers 6`); на момент коммита ~140+ лидов с `lead_products`. Команда: `cd backend && python -u scripts/resync_bitrix_lead_products.py --workers 6 --delay-ms 8 --batch-size 80`. Коммит: `164be96`.
 
 ---
 
