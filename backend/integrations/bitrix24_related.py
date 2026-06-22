@@ -4,9 +4,13 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from core.lead_profile import okved_section
+
 from .bitrix24_uf import (
     extract_domain_from_row,
+    extract_employees_from_row,
     extract_inn_from_row,
+    extract_okved_from_row,
     extract_products_from_row,
     normalize_inn,
     normalize_ogrn,
@@ -190,6 +194,25 @@ async def enrich_fields_from_bitrix_row(row: dict) -> dict[str, Any]:
                 extra["website"] = normalize_website(cw)
     if industry and industry != "—":
         extra["industry"] = industry[:255]
+
+    okved_code, okved_name = extract_okved_from_row(row)
+    if company and isinstance(company, dict) and not okved_code:
+        c_code, c_name = extract_okved_from_row(company)
+        okved_code = okved_code or c_code
+        okved_name = okved_name or c_name
+    if okved_code:
+        extra["okved_main"] = okved_code
+        if okved_name:
+            extra["okved_name"] = okved_name[:500]
+        extra["okved_section"] = okved_section(okved_code)
+        if not extra.get("industry"):
+            extra["industry"] = (okved_name or okved_code)[:255]
+
+    employees = extract_employees_from_row(row)
+    if not employees and company and isinstance(company, dict):
+        employees = extract_employees_from_row(company)
+    if employees and employees != "—":
+        extra["employees"] = employees[:100]
 
     contacts: list[dict] = []
     if contact and isinstance(contact, dict) and ctid:

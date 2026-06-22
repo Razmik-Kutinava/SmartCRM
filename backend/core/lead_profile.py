@@ -148,6 +148,12 @@ def profile_fields_from_lead_like(lead: dict[str, Any]) -> dict[str, Any]:
         checko = _parse_checko(lead.get("checko_json"))
 
     okved_main, okved_name, okved_section_code = okved_from_checko(checko if isinstance(checko, dict) else {})
+    if not okved_main:
+        okved_main = normalize_okved_code(lead.get("okved_main") or lead.get("okvedMain") or "")
+    if not okved_name:
+        okved_name = str(lead.get("okved_name") or lead.get("okvedName") or "").strip()
+    if okved_main and not okved_section_code:
+        okved_section_code = okved_section(okved_main)
 
     emp_raw = lead.get("employees")
     if checko and isinstance(checko.get("company"), dict):
@@ -203,6 +209,8 @@ def sync_lead_profile(lead: Any) -> dict[str, Any]:
         "checko_json": raw_checko,
         "products_owned": getattr(lead, "products_owned", None),
         "okved_main": getattr(lead, "okved_main", None),
+        "okved_name": getattr(lead, "okved_name", None),
+        "okved_section": getattr(lead, "okved_section", None),
     }
     patch = profile_fields_from_lead_like(payload)
     for key in ("okved_main", "okved_name", "okved_section", "employees_band", "portrait_score"):

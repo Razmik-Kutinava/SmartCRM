@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-22 — Ф4 лиды: ОКВЭД из Битрикс UF (без Checko)
+
+**Было:** ОКВЭД только из checko_json; B24 отдавал ИНН, но не ОКВЭД UF. **Стало:** `extract_okved_from_row` / `extract_employees_from_row`; enrich в `bitrix24_related`; `lead_profile` fallback с колонок лида; скрипт `resync_bitrix_lead_profiles.py`; pytest 12 PASS.
+
 ## 2026-06-22 — Ф4 лиды: группировка списка + backfill портрета
 
 **Было:** только фильтры ОКВЭД/размер; backfill не гоняли; группировка в BACKLOG. **Стало:** `groupLeads` + селект «Группировка» (ОКВЭД/размер/этап) со сворачиваемыми заголовками; backfill 3230 лидов / 386 обновлено; DevTools: фильтры и группы OK; pytest 13+ PASS.

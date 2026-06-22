@@ -94,6 +94,60 @@ def extract_products_from_row(row: dict) -> list[str]:
     return [p.strip() for p in parts if p.strip()][:20]
 
 
+def _parse_okved_text(raw: str) -> tuple[str, str]:
+    """«62.01», «62.01 — Разработка ПО», «6201» → (код, название)."""
+    from core.lead_profile import normalize_okved_code
+
+    text = (raw or "").strip()
+    if not text:
+        return "", ""
+    if text.startswith("{"):
+        try:
+            import json
+
+            obj = json.loads(text)
+            if isinstance(obj, dict):
+                code = normalize_okved_code(obj.get("Код") or obj.get("code") or obj.get("CODE") or "")
+                name = str(obj.get("Наим") or obj.get("name") or obj.get("NAME") or "").strip()
+                return code, name
+        except Exception:
+            pass
+    if re.match(r"^\d", text):
+        parts = re.split(r"\s*[—–\-]\s*|\s+", text, maxsplit=1)
+        code = normalize_okved_code(parts[0])
+        name = parts[1].strip() if len(parts) > 1 else ""
+        return code, name
+    return "", text[:500]
+
+
+def extract_okved_from_row(row: dict) -> tuple[str, str]:
+    """ОКВЭД из UF лида/компании Битрикс24."""
+    for key in (
+        "UF_CRM_OKVED",
+        "UF_CRM_OKVED_CODE",
+        "UF_CRM_MAIN_OKVED",
+        "UF_OKVED",
+        "UF_OKVED_CODE",
+    ):
+        v = _uf_raw(row.get(key))
+        if v:
+            return _parse_okved_text(v)
+    hinted = uf_by_hint(row, "okved", "оквэд", "оквед")
+    if hinted:
+        return _parse_okved_text(hinted)
+    return "", ""
+
+
+def extract_employees_from_row(row: dict) -> str:
+    """Число сотрудников из UF (строка для Lead.employees)."""
+    for key in ("UF_CRM_EMPLOYEES", "UF_CRM_EMPLOYEES_COUNT", "UF_EMPLOYEES", "UF_STAFF"):
+        v = _uf_raw(row.get(key))
+        if v:
+            return v[:100]
+    hinted = uf_by_hint(row, "employee", "сотруд", "штат", "staff")
+    return hinted[:100] if hinted else ""
+
+
 def normalize_website(value: str) -> str:
     w = (value or "").strip()
     if not w or w in ("—", "-"):

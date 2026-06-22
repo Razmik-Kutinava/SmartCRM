@@ -66,6 +66,8 @@
 
 - **`core/lead_profile.py`**: `normalize_okved_code` (62.01, 6201 → единый формат), `okved_section` (первые 2 цифры), `employees_band` (1-50 … 1000+), `portrait_score` (0–100 по заполненности карточки).
 - Колонки в **`Lead`**: `okved_main`, `okved_name`, `okved_section`, `employees_band`, `portrait_score` — синхронизируются при create/update, enrich (Checko), CSV import, Bitrix upsert (`sync_lead_profile`).
+- **Битрикс24:** ИНН/ОГРН из реквизитов; **ОКВЭД и число сотрудников** из UF (`UF_CRM_OKVED`, `UF_CRM_OKVED_CODE`, hint `оквэд` / `сотруд`) на лиде и связанной компании — без Checko.
+- **Re-sync:** `cd backend && python scripts/resync_bitrix_lead_profiles.py` (нужен `BITRIX24_WEBHOOK_URL`) → import + backfill.
 - **Список `/leads/list`**: фильтры «Размер» и «ОКВЭД сек.»; **группировка** (ОКВЭД секция / размер / этап) со сворачиваемыми заголовками; KPI «портрет N%»; под компанией — `ОКВЭД · размер`.
 - **Backfill** существующих лидов: `cd backend && python scripts/backfill_lead_profile.py` (после деплоя API с новыми колонками).
 - Сегменты рассылок: `lead_segment_query` — фильтры `employees_band`, `okved_section`, `min_portrait_score`.

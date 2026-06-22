@@ -62,6 +62,16 @@ def test_compute_portrait_score_fuller_is_higher():
     assert rich > sparse
 
 
+def test_profile_fields_from_direct_okved_without_checko():
+    prof = profile_fields_from_lead_like({
+        "inn": "7707083893",
+        "okved_main": "10.51",
+        "okved_name": "Молоко",
+    })
+    assert prof["okved_main"] == "10.51"
+    assert prof["okved_section"] == "10"
+
+
 def test_sync_lead_profile_on_orm():
     from db.models.lead import Lead
 

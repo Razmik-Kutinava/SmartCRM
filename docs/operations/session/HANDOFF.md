@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[Битрикс ОКВЭД UF + resync] | Статус: ✅ done`
+
+**2026-06-22:** Маппинг ОКВЭД/сотрудников из UF Битрикс (`bitrix24_uf`); `resync_bitrix_lead_profiles.py` (import+backfill); `lead_profile` читает okved с лида без checko_json; pytest 12 PASS. Import на машине без `BITRIX24_WEBHOOK_URL` — skip, backfill 0. На проде: задать webhook → `python scripts/resync_bitrix_lead_profiles.py`. Коммит: `PLACEHOLDER`. Следующий: re-import с webhook.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[группировка + backfill портрета] | Статус: ✅ done`
 
 **2026-06-22:** Группировка `/leads/list` (ОКВЭД/размер/этап, сворачиваемые заголовки); backfill `3230` лидов / `386` обновлено; DevTools: фильтры размер/ОКВЭД + group-by OK; pytest 13 PASS. Коммит: `d3be5c9`, ops `f747d3e`. Следующий: обход 3000+ производительность; enrich для ОКВЭД у остальных лидов.

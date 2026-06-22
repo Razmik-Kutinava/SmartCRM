@@ -15,6 +15,7 @@ async def test_enrich_fields_modum_like(monkeypatch):
         "CONTACT_ID": "77",
         "UF_CRM_DOMAIN": "modum.pro",
         "UF_CRM_PRODUCTS": "EventLog Analyzer",
+        "UF_CRM_OKVED": "62.01 — Разработка ПО",
         "EMAIL": [{"VALUE": "old@lead.ru"}],
     }
 
@@ -56,6 +57,8 @@ async def test_enrich_fields_modum_like(monkeypatch):
     assert extra["email"] == "barinov@modum.pro"
     assert extra["products_owned"] == ["EventLog Analyzer"]
     assert extra["contacts"][0]["role"] == "lpr"
+    assert extra["okved_main"] == "62.01"
+    assert extra["okved_section"] == "62"
 
 
 def test_merge_does_not_wipe_inn():

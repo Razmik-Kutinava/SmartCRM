@@ -78,6 +78,7 @@
 | `smoke_leadgen_autosave.py` | Смоук автосейв в CRM при скор ≥ порога (PRD_MAP leadgen autosave) |
 | `run_zone_regression.py` | Регрессия по зонам (crm_leads, leadgen, …) |
 | `backfill_lead_profile.py` | Backfill `okved_*`, `employees_band`, `portrait_score` у существующих лидов из `checko_json` |
+| `resync_bitrix_lead_profiles.py` | Re-import Битрикс (ИНН/ОКВЭД UF) + backfill портрета без Checko |
 | `_resplit_leadgen_pkgs.py` | One-off: пересборка pipeline/checko пакетов |
 
 Вывод скриптов → `data/artifacts/`, не в корень репо.
