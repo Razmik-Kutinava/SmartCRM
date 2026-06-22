@@ -13,6 +13,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `company_search.py` | Поиск компании по запросу |
 | `prospect.py` | prospect + `enrich_lead` |
 | `enrich_sources.py` | Checko/ИНН, таргет-запросы, парсинг сайта, fetch URL из поиска |
+| `checko_passport.py` | Сборка и merge `checko_json` для enrich (связи, финансы, tech) |
 | `brave_limit.py` | Кэш и semaphore Brave (429) |
 | `rag_queries.py` | Запросы к Chroma |
 | `relevance.py` | Score релевантности для авто-чанков |

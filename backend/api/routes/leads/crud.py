@@ -1,4 +1,5 @@
 """CRUD и связанные read-эндпоинты лидов (handlers без отдельного APIRouter)."""
+import json
 import logging
 from decimal import Decimal
 
@@ -100,6 +101,9 @@ async def update_lead(
     if not lead:
         raise HTTPException(404, detail="Лид не найден")
     data = body.model_dump(exclude_unset=True, exclude_none=False)
+    for json_field in ("checko_json", "tech_json", "financials_json"):
+        if json_field in data and isinstance(data[json_field], dict):
+            data[json_field] = json.dumps(data[json_field], ensure_ascii=False, default=str)
     if "products_owned" in data:
         from services.lead_products_owned import normalize_products_owned
 

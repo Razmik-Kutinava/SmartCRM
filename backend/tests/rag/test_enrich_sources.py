@@ -29,6 +29,8 @@ def test_merge_enriched_keeps_checko():
 async def test_checko_enrich_by_inn_mock(monkeypatch):
     async def fake_company(inn):
         return {
+            "inn": inn,
+            "ogrn": "1027700132195",
             "name": "ООО Тест",
             "dadata_phones": ["+7 495 111-22-33"],
             "dadata_emails": ["info@test.ru"],
@@ -36,23 +38,32 @@ async def test_checko_enrich_by_inn_mock(monkeypatch):
             "address": "Москва",
             "director": "Иванов И.И.",
             "okved_name": "Разработка ПО",
+            "related_companies": [],
+            "licenses": [],
+            "founders": [],
         }
 
     async def fake_profile(inn):
         return {"revenue": 150_000_000}
 
+    async def fake_tech(domain):
+        return {}
+
     monkeypatch.setattr("leadgen.modules.checko._available", lambda: True)
     monkeypatch.setattr("leadgen.modules.checko.fetch_company", fake_company)
     monkeypatch.setattr("leadgen.modules.checko.fetch_full_profile", fake_profile)
+    monkeypatch.setattr("leadgen.modules.builtwith.fetch_tech_stack", fake_tech)
 
     from rag.search.enrich_sources import checko_enrich_by_inn
 
-    fields, raw = await checko_enrich_by_inn("7707083893")
+    fields, raw, passport = await checko_enrich_by_inn("7707083893")
     assert fields["phone"].startswith("+7")
     assert fields["website"].startswith("https://")
     assert fields["decision_maker"] == "Иванов И.И."
     assert "revenue" in fields
     assert raw
+    assert passport["inn"] == "7707083893"
+    assert passport["checko"]["company"]["director"] == "Иванов И.И."
 
 
 @pytest.mark.asyncio

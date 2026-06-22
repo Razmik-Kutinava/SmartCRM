@@ -189,12 +189,21 @@ async def enrich_lead(lead: dict, *, force: bool = False) -> dict[str, Any]:
         scrape_website_contacts,
         targeted_enrich_queries,
     )
+    from .checko_passport import parse_checko_json
 
     pre_enriched: dict[str, str] = {}
     checko_raw: list[dict] = []
+    passport_patch: dict[str, Any] = {}
     inn = lead.get("inn") or lead.get("INN")
+    existing_checko = parse_checko_json(
+        lead.get("existing_checko") or lead.get("checko") or lead.get("checko_json")
+    )
     if inn:
-        pre_enriched, checko_raw = await checko_enrich_by_inn(str(inn))
+        pre_enriched, checko_raw, passport_patch = await checko_enrich_by_inn(
+            str(inn),
+            existing_checko=existing_checko or None,
+            website=str(lead.get("website") or ""),
+        )
 
     # Определяем какие поля нужно обогатить
     missing: list[str] = []
@@ -204,6 +213,16 @@ async def enrich_lead(lead: dict, *, force: bool = False) -> dict[str, Any]:
             missing.append(field)
 
     if not missing:
+        if passport_patch:
+            result = {
+                "enriched": pre_enriched,
+                "passport": passport_patch,
+                "missing_fields": [],
+                "raw_results": checko_raw,
+                "providers_used": ["checko"] if checko_raw else [],
+            }
+            cache_key = set_enrich_cached(lead, result)
+            return {**result, "cached": False, "cache_key": cache_key}
         empty = {"enriched": {}, "raw_results": [], "missing_fields": []}
         cache_key = set_enrich_cached(lead, empty)
         return {**empty, "cached": False, "cache_key": cache_key}
@@ -332,6 +351,8 @@ async def enrich_lead(lead: dict, *, force: bool = False) -> dict[str, Any]:
         "raw_results":    deduped,
         "providers_used": sources,
     }
+    if passport_patch:
+        result["passport"] = passport_patch
     cache_key = set_enrich_cached(lead, result)
     return {**result, "cached": False, "cache_key": cache_key}
 

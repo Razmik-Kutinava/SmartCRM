@@ -123,6 +123,37 @@ async def test_update_lead_amount_rub_camelcase(client):
 
 
 @pytest.mark.asyncio
+async def test_update_lead_checko_json_camelcase(client):
+    """PATCH checkoJson/inn/ogrn — паспорт после enrich."""
+    create_r = await client.post(
+        "/api/leads",
+        json={"company": "Паспорт PATCH", "inn": "5040048921"},
+    )
+    lead_id = create_r.json()["id"]
+    checko = {
+        "company": {
+            "phones": ["+7 495 000-00-00"],
+            "related_companies": [{"inn": "1", "name": "Связь"}],
+        },
+        "financials": {"revenue": 1_000_000_000, "arbitration_count": 0},
+    }
+    patch_r = await client.patch(
+        f"/api/leads/{lead_id}",
+        json={
+            "checkoJson": checko,
+            "financialsJson": checko["financials"],
+            "inn": "5040048921",
+            "ogrn": "1025040048921",
+        },
+    )
+    assert patch_r.status_code == 200
+    data = patch_r.json()
+    assert data["inn"] == "5040048921"
+    assert data["checko"]["company"]["phones"][0].startswith("+7")
+    assert len(data["checko"]["company"]["related_companies"]) == 1
+
+
+@pytest.mark.asyncio
 async def test_update_lead_stage(client):
     """PATCH обновляет этап воронки."""
     create_r = await client.post("/api/leads", json={"company": "Сменить этап"})

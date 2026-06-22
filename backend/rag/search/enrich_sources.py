@@ -41,73 +41,20 @@ def _fmt_revenue(val: Any) -> str | None:
     return f"{int(n):,} ₽".replace(",", " ")
 
 
-async def checko_enrich_by_inn(inn: str) -> tuple[dict[str, str], list[dict]]:
-    """Checko по ИНН → поля enrich + сырые блоки для LLM."""
-    inn = re.sub(r"\D", "", str(inn or ""))
-    if len(inn) not in (10, 12):
-        return {}, []
+async def checko_enrich_by_inn(
+    inn: str,
+    *,
+    existing_checko: dict | None = None,
+    website: str | None = None,
+) -> tuple[dict[str, str], list[dict], dict]:
+    """Checko по ИНН → поля enrich + сниппеты + патч паспорта."""
+    from .checko_passport import load_checko_for_enrich
 
-    try:
-        from leadgen.modules.checko import _available, fetch_company, fetch_full_profile
-    except ImportError:
-        return {}, []
-
-    if not _available():
-        return {}, []
-
-    enriched: dict[str, str] = {}
-    raw: list[dict] = []
-
-    try:
-        card = await fetch_company(inn)
-        if card:
-            phones = card.get("dadata_phones") or []
-            emails = card.get("dadata_emails") or []
-            if phones:
-                enriched["phone"] = str(phones[0])
-            if emails:
-                enriched["email"] = str(emails[0])
-            if card.get("website"):
-                w = str(card["website"]).strip()
-                if w and not w.startswith("http"):
-                    w = f"https://{w}"
-                enriched["website"] = w
-            if card.get("address"):
-                enriched["address"] = str(card["address"])
-            if card.get("director"):
-                enriched["decision_maker"] = str(card["director"])
-            if card.get("okved_name"):
-                enriched["description"] = str(card["okved_name"])[:500]
-            raw.append({
-                "title": f"Checko: {card.get('name') or inn}",
-                "snippet": " · ".join(
-                    p for p in [
-                        f"ИНН {inn}",
-                        card.get("address"),
-                        card.get("director"),
-                        card.get("website"),
-                    ] if p
-                )[:700],
-                "url": "",
-                "date": "",
-                "source": "checko",
-            })
-
-        fin = await fetch_full_profile(inn)
-        rev = _fmt_revenue(fin.get("revenue"))
-        if rev:
-            enriched["revenue"] = rev
-            raw.append({
-                "title": f"Checko финансы {inn}",
-                "snippet": f"Выручка: {rev}",
-                "url": "",
-                "date": "",
-                "source": "checko_finance",
-            })
-    except Exception as e:
-        logger.warning("checko_enrich_by_inn(%s): %s", inn, e)
-
-    return enriched, raw
+    return await load_checko_for_enrich(
+        inn,
+        existing_checko=existing_checko,
+        website=website,
+    )
 
 
 def _normalize_site_url(website: str) -> str | None:

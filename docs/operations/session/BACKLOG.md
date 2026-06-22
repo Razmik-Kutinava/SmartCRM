@@ -43,6 +43,8 @@
 
 ## Записи
 
+[2026-06-22] | PRD_MAP: «Карточка — enrich, паспорт» | Отложено: разделы паспорта «Вакансии», «Налоги и сборы», «История изменений» | Причина: Checko API не подключены в enrich (нет fetch в endpoints) | Нужна фаза MAP: 4 | Из шага: enrich→полный checko_json
+
 ### Фаза 4 — авто-суфлёр Стратега (тюнинг, не блокер Ф3)
 
 Чеклист: [`F4_STRATEGIST_SUGGESTER_TUNING.md`](../phase4/agents/F4_STRATEGIST_SUGGESTER_TUNING.md)

@@ -1,7 +1,7 @@
 /** One-click enrich на карточке лида → enrich-lead → PATCH. */
 import { apiPost } from '$lib/api.js';
 import { apiUpdateLead } from '$lib/leadsStorage.js';
-import { enrichedToLeadPatch, leadToEnrichPayload } from '$lib/search/enrichLeadApply.js';
+import { enrichedToLeadPatch, enrichResultToLeadPatch, leadToEnrichPayload } from '$lib/search/enrichLeadApply.js';
 
 export async function enrichLeadOnCard(lead, { force = false } = {}) {
 	if (!lead?.id) throw new Error('Нет лида');
@@ -14,7 +14,7 @@ export async function enrichLeadOnCard(lead, { force = false } = {}) {
 		throw new Error(data.detail || data.error || `HTTP ${r.status}`);
 	}
 
-	const patch = enrichedToLeadPatch(data.enriched || {});
+	const patch = enrichResultToLeadPatch(data, lead);
 	if (!Object.keys(patch).length) {
 		return { data, patch: {}, applied: false };
 	}

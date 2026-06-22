@@ -85,6 +85,17 @@ class LeadPatch(BaseModel):
     description: Optional[str] = None
     contacts: Optional[list[dict[str, Any]]] = None
     approvals: Optional[dict[str, Any]] = None
+    inn: Optional[str] = None
+    ogrn: Optional[str] = None
+    checko_json: Optional[Any] = Field(
+        None, validation_alias=AliasChoices("checkoJson", "checko_json")
+    )
+    tech_json: Optional[Any] = Field(
+        None, validation_alias=AliasChoices("techJson", "tech_json")
+    )
+    financials_json: Optional[Any] = Field(
+        None, validation_alias=AliasChoices("financialsJson", "financials_json")
+    )
 
 
 class LookalikeCandidate(BaseModel):
