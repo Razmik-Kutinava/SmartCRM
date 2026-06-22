@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[Битрикс история + задачи/встречи] | Статус: ✅ done`
 
-**2026-06-22:** `bitrix24_tasks.py` — встречи/дела (`crm.activity`, `tasks.task`) → `tasks`; `resync_bitrix_lead_engagement.py` (история + задачи, `--timeline-only`/`--tasks-only`); upsert+poll синкают оба слоя; pytest 30+ PASS; доки `docs/modules/leads.md`, PRD_MAP. Массовый прогон: `python -u scripts/resync_bitrix_lead_engagement.py --workers 4 --batch-size 40`. Коммит: `<hash>`.
+**2026-06-22:** `bitrix24_tasks.py` — встречи/дела (`crm.activity`, `tasks.task`) → `tasks`; `resync_bitrix_lead_engagement.py` (история + задачи, `--timeline-only`/`--tasks-only`); upsert+poll синкают оба слоя; pytest 30+ PASS; доки `docs/modules/leads.md`, PRD_MAP. Массовый прогон: `python -u scripts/resync_bitrix_lead_engagement.py --workers 4 --batch-size 40`. Коммит: `c9e0cb8`.
 
 ---
 
