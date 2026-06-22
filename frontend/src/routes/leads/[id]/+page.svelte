@@ -750,7 +750,7 @@
 	{@const _tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
 	<!-- Единая шапка: назад + название + мета + действия -->
 	<header
-		class="flex items-start justify-between gap-3 px-4 sm:px-6 pt-[16px] pb-[19px] border-b border-gray-800 bg-gray-900 shrink-0"
+		class="flex items-start justify-between gap-3 px-4 sm:px-6 pt-[18px] pb-[19px] border-b border-gray-800 bg-gray-900 shrink-0 overflow-visible"
 		data-testid="lead-card-header"
 	>
 		<div class="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
@@ -775,7 +775,7 @@
 				</p>
 			</div>
 		</div>
-		<div class="flex items-center gap-0.5 sm:gap-1 flex-nowrap shrink-0 overflow-x-auto max-w-[52%] sm:max-w-none" data-testid="lead-card-toolbar">
+		<div class="flex items-center gap-0.5 sm:gap-1 flex-nowrap shrink-0 overflow-x-auto max-w-[52%] sm:max-w-none pt-1.5 pb-0.5" data-testid="lead-card-toolbar">
 			<button
 				type="button"
 				data-testid="lead-card-enrich"
@@ -808,7 +808,7 @@
 			>
 				🔗
 				{#if nurtureChainCount > 0}
-					<span class="absolute -top-1 -right-1 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-indigo-500 text-[10px] leading-[1.1rem] text-center font-bold">{nurtureChainCount}</span>
+					<span class="absolute top-0 right-0 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-indigo-500 text-[10px] leading-[1.1rem] text-center font-bold translate-x-1/4 -translate-y-1/4">{nurtureChainCount}</span>
 				{/if}
 			</button>
 			<button
