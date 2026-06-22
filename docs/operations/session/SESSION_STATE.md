@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-22 | Действие: продукты Битрикс — lead_products, bitrix24_products, плитка+панель UI, resync script; DevTools OK; pytest 23 PASS; backfill offline 0. | Коммит: `pending` | Хвост A: на проде re-import с webhook для цен | Хвост B: нет | Хвост C: нет | Статус: done
+2026-06-22 | Действие: продукты Битрикс — lead_products, bitrix24_products, плитка+панель UI, resync script; DevTools OK; pytest 23 PASS; backfill offline 0. | Коммит: `bffbf62` | Хвост A: на проде re-import с webhook для цен | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-22 | Действие: отрасли из ОКВЭД — okved_industry_map, industry_bucket, фильтр+группировка list, backfill 3230/158, DevTools OK; pytest 38 PASS. | Коммит: `0a58b61` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 

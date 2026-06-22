@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[продукты Битрикс + плитка карточки] | Статус: ✅ done`
 
-**2026-06-22:** `lead_products` (цена, статус sold/pipeline/owned) из Битрикс UF/productrows/сделок; плитка «Продукты» в хабе + `LeadProductsPanel`; скрипт `resync_bitrix_lead_products.py`; backfill offline 0 (нет UF в tech_json); DevTools плитка OK; pytest 23 PASS. На проде: webhook → re-import или `resync_bitrix_lead_products.py`. Коммит: `pending`.
+**2026-06-22:** `lead_products` (цена, статус sold/pipeline/owned) из Битрикс UF/productrows/сделок; плитка «Продукты» в хабе + `LeadProductsPanel`; скрипт `resync_bitrix_lead_products.py`; backfill offline 0 (нет UF в tech_json); DevTools плитка OK; pytest 23 PASS. На проде: webhook → re-import или `resync_bitrix_lead_products.py`. Коммит: `bffbf62`.
 
 ---
 
