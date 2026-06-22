@@ -120,6 +120,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `integrations/test_bitrix24_uf.py` | ИНН/домен/продукты из UF |
 | `integrations/test_bitrix24_related.py` | company/contact/requisites enrich |
 | `integrations/test_bitrix24_timeline.py` | Таймлайн → communications |
+| `integrations/test_bitrix24_tasks.py` | Встречи/дела Битрикс → tasks |
 | `integrations/test_bitrix_sync_state.py` | sync state + poll skip + upsert mock |
 | `integrations/test_bitrix_webhook.py` | Исходящий вебхук ONCRMLEADADD |
 | `integrations/test_telegram.py` | Telegram: config, send_message mock, /start, notify lead hunt |

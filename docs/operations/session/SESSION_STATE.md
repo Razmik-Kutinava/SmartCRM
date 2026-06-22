@@ -4,7 +4,9 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-22 | Действие: массовый resync продуктов — bitrix24_products (lead.get, КП, product.get, OPPORTUNITY); resync --workers + load_dotenv; pytest 5 PASS; фоновый прогон 3225 лидов (~140+ с продуктами на момент коммита). | Коммит: `14a274c` | Хвост A: полный resync 3225 в фоне не дождались | Хвост B: нет | Хвост C: нет | Статус: in_progress
+2026-06-22 | Действие: Битрикс история+задачи — bitrix24_tasks, resync_bitrix_lead_engagement, upsert sync; pytest 30 PASS; docs leads.md+PRD_MAP. | Коммит: `<hash>` | Хвост A: mass resync 3225 в фоне | Хвост B: нет | Хвост C: нет | Статус: done
+
+2026-06-22 | Действие: массовый resync продуктов — bitrix24_products (lead.get, КП, product.get, OPPORTUNITY); resync --workers + load_dotenv; pytest 5 PASS; фоновый прогон 3225 лидов (~140+ с продуктами на момент коммита). | Коммит: `164be96` | Хвост A: полный resync 3225 в фоне не дождались | Хвост B: нет | Хвост C: нет | Статус: in_progress
 
 2026-06-22 | Действие: продукты Битрикс — lead_products, bitrix24_products, плитка+панель UI, resync script; DevTools OK; pytest 23 PASS; backfill offline 0. | Коммит: `bffbf62` | Хвост A: на проде re-import с webhook для цен | Хвост B: нет | Хвост C: нет | Статус: done
 

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-22 — Ф4 лиды: Битрикс история + задачи/встречи
+
+**Было:** таймлайн только при upsert (на 3225 лидах пусто); встречи Битрикс не попадали в `/leads/tasks`. **Стало:** `bitrix24_tasks` (activity + tasks.task → `tasks`); mass-resync `resync_bitrix_lead_engagement.py`; upsert тянет историю и дела; доки в `leads.md`; pytest 30+ PASS.
+
 ## 2026-06-22 — Ф4 лиды: массовый resync продуктов из Битрикс API
 
 **Было:** offline backfill 0 (нет UF в `tech_json`); resync без `.env` и без КП. **Стало:** `fetch_bitrix_lead_products` тянет lead row, productrows, сделки, **коммерческие предложения**, имена из `crm.product.get`, сумму OPPORTUNITY; `resync_bitrix_lead_products.py` — `load_dotenv`, `--workers`/`--batch-size`, параллельный fetch; pytest 5 PASS; полный прогон 3225 b24-лидов через webhook (фон).

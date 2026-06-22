@@ -50,6 +50,10 @@ async def test_upsert_bitrix_lead_row_imports_new(db_session, monkeypatch):
         "integrations.bitrix24_timeline.sync_bitrix_timeline",
         new_callable=AsyncMock,
         return_value=0,
+    ), patch(
+        "integrations.bitrix24_tasks.sync_bitrix_tasks",
+        new_callable=AsyncMock,
+        return_value=0,
     ):
         action = await bitrix24_sync.upsert_bitrix_lead_row(db_session, row)
     assert action == "imported"

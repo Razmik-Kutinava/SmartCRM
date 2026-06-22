@@ -7,6 +7,7 @@
 | `bitrix24_related.py` | company/contact/requisites → enrich полей Lead |
 | `bitrix24_products.py` | productrows лида/сделок/КП + UF + opportunity → `lead_products` |
 | `bitrix24_timeline.py` | activity + comments → `lead_communication_logs` |
+| `bitrix24_tasks.py` | встречи/дела (`crm.activity`, `tasks.task`) → `tasks` |
 | `bitrix24_upsert.py` | upsert лида + таймлайн (общий для import/webhook/poll) |
 | `bitrix24_sync.py` | Один лид (upsert), фоновый опрос, состояние синка |
 | `telegram/` | Бот: уведомления lead hunt, команды /status /queue, polling |

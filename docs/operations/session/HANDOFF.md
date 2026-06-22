@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[Битрикс история + задачи/встречи] | Статус: ✅ done`
+
+**2026-06-22:** `bitrix24_tasks.py` — встречи/дела (`crm.activity`, `tasks.task`) → `tasks`; `resync_bitrix_lead_engagement.py` (история + задачи, `--timeline-only`/`--tasks-only`); upsert+poll синкают оба слоя; pytest 30+ PASS; доки `docs/modules/leads.md`, PRD_MAP. Массовый прогон: `python -u scripts/resync_bitrix_lead_engagement.py --workers 4 --batch-size 40`. Коммит: `<hash>`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[массовый resync продуктов Битрикс API] | Статус: 🔄 in_progress`
 
 **2026-06-22:** Расширен `bitrix24_products` — `crm.lead.get`, productrows, сделки, **КП** (`crm.quote.*`), `crm.product.get`, OPPORTUNITY; `resync_bitrix_lead_products.py` — `.env`, `--workers`, батчи; smoke 5/5; **полный resync ~3225 лидов в фоне** (`--workers 6`); на момент коммита ~140+ лидов с `lead_products`. Команда: `cd backend && python -u scripts/resync_bitrix_lead_products.py --workers 6 --delay-ms 8 --batch-size 80`. Коммит: `164be96`.

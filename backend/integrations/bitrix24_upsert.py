@@ -11,6 +11,7 @@ from integrations.bitrix24 import row_to_lead_fields
 from integrations.bitrix24 import _load_source_names, _load_status_names, _load_user_names
 from integrations.bitrix24_related import enrich_fields_from_bitrix_row, merge_bitrix_field_updates
 from integrations.bitrix24_timeline import sync_bitrix_timeline
+from integrations.bitrix24_tasks import sync_bitrix_tasks
 
 logger = logging.getLogger(__name__)
 
@@ -53,8 +54,11 @@ async def upsert_bitrix_lead_row(db: AsyncSession, row: dict) -> str:
         sync_lead_profile(lead)
         try:
             await sync_bitrix_timeline(db, lead.id, b_id, user_names=user_names)
+            await sync_bitrix_tasks(
+                db, lead.id, b_id, company_name=lead.company or "", user_names=user_names
+            )
         except Exception as e:
-            logger.warning("sync_bitrix_timeline #%s: %s", b_id, e)
+            logger.warning("sync_bitrix_engagement #%s: %s", b_id, e)
         return "updated"
     new_lead = Lead(**fields)
     db.add(new_lead)
@@ -64,6 +68,9 @@ async def upsert_bitrix_lead_row(db: AsyncSession, row: dict) -> str:
     sync_lead_profile(new_lead)
     try:
         await sync_bitrix_timeline(db, new_lead.id, b_id, user_names=user_names)
+        await sync_bitrix_tasks(
+            db, new_lead.id, b_id, company_name=new_lead.company or "", user_names=user_names
+        )
     except Exception as e:
-        logger.warning("sync_bitrix_timeline new #%s: %s", b_id, e)
+        logger.warning("sync_bitrix_engagement new #%s: %s", b_id, e)
     return "imported"
