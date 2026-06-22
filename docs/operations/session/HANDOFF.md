@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[сегментация ОКВЭД + portrait] | Статус: ✅ done`
 
-**2026-06-19:** Нормализация ОКВЭД (`okved_main`/`okved_section`), `employees_band`, `portrait_score` в БД + sync (CRUD, enrich, CSV, B24); фильтры «Размер» и «ОКВЭД сек.» на `/leads/list`; backfill-скрипт; pytest 28+ PASS. Коммит: `28517cd`. После рестарта API: `python scripts/backfill_lead_profile.py`. Следующий: апрув фильтров в браузере; при 3000+ — обход производительности.
+**2026-06-22:** Нормализация ОКВЭД (`okved_main`/`okved_section`), `employees_band`, `portrait_score` в БД + sync (CRUD, enrich, CSV, B24); фильтры «Размер» и «ОКВЭД сек.» на `/leads/list`; backfill-скрипт; pytest 28+ PASS. Коммит: `28517cd`. После рестарта API: `python scripts/backfill_lead_profile.py`. Следующий: апрув фильтров в браузере; при 3000+ — обход производительности.
 
 ---
 
