@@ -87,7 +87,7 @@ def extract_products_from_row(row: dict) -> list[str]:
             raw = v
             break
     if not raw:
-        raw = uf_by_hint(row, "product", "продукт", "products")
+        raw = uf_by_hint(row, "product", "продукт", "products", "manageengine", "positive", "кп")
     if not raw:
         return []
     parts = re.split(r"[,;|\n]+", raw)

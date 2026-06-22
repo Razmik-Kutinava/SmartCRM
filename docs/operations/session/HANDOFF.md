@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[массовый resync продуктов Битрикс API] | Статус: 🔄 in_progress`
+
+**2026-06-22:** Расширен `bitrix24_products` — `crm.lead.get`, productrows, сделки, **КП** (`crm.quote.*`), `crm.product.get`, OPPORTUNITY; `resync_bitrix_lead_products.py` — `.env`, `--workers`, батчи; smoke 5/5; **полный resync ~3225 лидов в фоне** (`--workers 6`); на момент коммита ~140+ лидов с `lead_products`. Команда: `cd backend && python -u scripts/resync_bitrix_lead_products.py --workers 6 --delay-ms 8 --batch-size 80`. Коммит: `14a274c`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[продукты Битрикс + плитка карточки] | Статус: ✅ done`
 
 **2026-06-22:** `lead_products` (цена, статус sold/pipeline/owned) из Битрикс UF/productrows/сделок; плитка «Продукты» в хабе + `LeadProductsPanel`; скрипт `resync_bitrix_lead_products.py`; backfill offline 0 (нет UF в tech_json); DevTools плитка OK; pytest 23 PASS. На проде: webhook → re-import или `resync_bitrix_lead_products.py`. Коммит: `bffbf62`.

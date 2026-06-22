@@ -29,6 +29,10 @@ def test_products_from_tech_json():
 @pytest.mark.asyncio
 async def test_fetch_bitrix_lead_products_merges(monkeypatch):
     monkeypatch.setattr(
+        "integrations.bitrix24_products._fetch_lead_row",
+        AsyncMock(return_value={"ID": "1", "UF_CRM_PRODUCTS": "EventLog Analyzer, OpManager"}),
+    )
+    monkeypatch.setattr(
         "integrations.bitrix24_products._fetch_lead_product_rows",
         AsyncMock(return_value=[]),
     )
@@ -36,12 +40,13 @@ async def test_fetch_bitrix_lead_products_merges(monkeypatch):
         "integrations.bitrix24_products._fetch_deal_product_rows",
         AsyncMock(return_value=[]),
     )
+    monkeypatch.setattr(
+        "integrations.bitrix24_products._fetch_quote_product_rows",
+        AsyncMock(return_value=[]),
+    )
 
     from integrations.bitrix24_products import fetch_bitrix_lead_products
 
-    rows = await fetch_bitrix_lead_products(
-        1,
-        {"ID": "1", "UF_CRM_PRODUCTS": "EventLog Analyzer, OpManager"},
-    )
+    rows = await fetch_bitrix_lead_products(1, None)
     assert len(rows) == 2
     assert rows[0]["status"] == "owned"
