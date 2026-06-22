@@ -5,6 +5,8 @@ import json
 import re
 from typing import Any
 
+from core.okved_industry_map import resolve_industry_bucket
+
 _EMPLOYEE_NUM_RE = re.compile(r"(\d+)")
 
 EMPLOYEES_BANDS: tuple[tuple[int, str], ...] = (
@@ -163,7 +165,13 @@ def profile_fields_from_lead_like(lead: dict[str, Any]) -> dict[str, Any]:
 
     band = employees_band(emp_raw)
     industry = lead.get("industry") or ""
-    if _is_empty(industry) and okved_name:
+    industry_bucket = resolve_industry_bucket(
+        okved_section=okved_section_code or lead.get("okved_section") or lead.get("okvedSection"),
+        industry=industry,
+    )
+    if _is_empty(industry) and industry_bucket:
+        industry = industry_bucket
+    elif _is_empty(industry) and okved_name:
         industry = okved_name
 
     draft = {
@@ -175,6 +183,8 @@ def profile_fields_from_lead_like(lead: dict[str, Any]) -> dict[str, Any]:
         "employees_band": band,
         "employeesBand": band,
         "industry": industry,
+        "industry_bucket": industry_bucket,
+        "industryBucket": industry_bucket,
     }
     portrait = compute_portrait_score(draft)
 
@@ -183,6 +193,7 @@ def profile_fields_from_lead_like(lead: dict[str, Any]) -> dict[str, Any]:
         "okved_name": okved_name or None,
         "okved_section": okved_section_code or None,
         "employees_band": band or None,
+        "industry_bucket": industry_bucket or None,
         "portrait_score": portrait,
     }
     if _is_empty(lead.get("industry")) and industry and not _is_empty(industry):
@@ -213,12 +224,19 @@ def sync_lead_profile(lead: Any) -> dict[str, Any]:
         "okved_section": getattr(lead, "okved_section", None),
     }
     patch = profile_fields_from_lead_like(payload)
-    for key in ("okved_main", "okved_name", "okved_section", "employees_band", "portrait_score"):
+    for key in (
+        "okved_main",
+        "okved_name",
+        "okved_section",
+        "employees_band",
+        "industry_bucket",
+        "portrait_score",
+    ):
         setattr(lead, key, patch.get(key))
-    if patch.get("industry") and _is_empty(getattr(lead, "industry", None)):
+    if patch.get("industry_bucket") and not getattr(lead, "industry_verified", False):
+        lead.industry = patch["industry_bucket"]
+    elif patch.get("industry") and _is_empty(getattr(lead, "industry", None)):
         lead.industry = patch["industry"]
-        if not getattr(lead, "industry_verified", False):
-            lead.industry_verified = False
     if patch.get("employees") and _is_empty(getattr(lead, "employees", None)):
         lead.employees = patch["employees"]
     return patch

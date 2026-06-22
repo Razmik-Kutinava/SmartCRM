@@ -325,3 +325,21 @@ async def test_list_leads_includes_task_flags(client):
     assert "nextTaskTitle" in row
     assert row["nextTaskTitle"] == "Позвонить сегодня"
     assert row["taskDueToday"] is True
+
+
+@pytest.mark.asyncio
+async def test_list_leads_includes_industry_bucket(client):
+    """GET /api/leads — industryBucket из ОКВЭД."""
+    create_r = await client.post(
+        "/api/leads",
+        json={"company": "Bucket IT", "stage": "Новый"},
+    )
+    assert create_r.status_code == 201
+    lead_id = create_r.json()["id"]
+    patch_r = await client.patch(f"/api/leads/{lead_id}", json={"okved_main": "62.01"})
+    assert patch_r.status_code == 200
+
+    r = await client.get("/api/leads")
+    assert r.status_code == 200
+    row = next(l for l in r.json() if l["id"] == lead_id)
+    assert row.get("industryBucket") == "IT и телеком"

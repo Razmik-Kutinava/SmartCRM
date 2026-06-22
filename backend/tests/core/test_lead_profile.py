@@ -40,7 +40,8 @@ def test_profile_from_checko_company():
     assert prof["okved_section"] == "10"
     assert prof["okved_name"] == "Производство молока"
     assert prof["employees_band"] == "251-1000"
-    assert prof["industry"] == "Производство молока"
+    assert prof["industry_bucket"] == "Производство"
+    assert prof["industry"] == "Производство"
     assert prof["portrait_score"] >= 30
 
 
@@ -83,4 +84,5 @@ def test_sync_lead_profile_on_orm():
     assert lead.okved_main == "62.01"
     assert lead.okved_section == "62"
     assert lead.employees_band == "1-50"
-    assert lead.industry == "Разработка ПО"
+    assert lead.industry_bucket == "IT и телеком"
+    assert lead.industry == "IT и телеком"

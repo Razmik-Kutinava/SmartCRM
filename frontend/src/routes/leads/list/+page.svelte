@@ -34,6 +34,8 @@
 		taskDueBadgeForLead,
 		GROUP_BY_OPTIONS,
 		distinctOkvedSections,
+		distinctIndustryBuckets,
+		INDUSTRY_BUCKET_OPTIONS,
 		groupLeads,
 		SORT_OPTIONS,
 		leadListViewFromVoiceSlots,
@@ -57,6 +59,7 @@
 	let filterCity = $state('');
 	let filterEmployeesBand = $state('all');
 	let filterOkvedSection = $state('all');
+	let filterIndustryBucket = $state('all');
 	let filterTaskDue = $state('all');
 	let filterMinScore = $state(null);
 	let groupBy = $state('none');
@@ -146,6 +149,7 @@
 				filterCity,
 				filterEmployeesBand,
 				filterOkvedSection,
+				filterIndustryBucket,
 				filterTaskDue,
 				sortBy,
 				minScore: filterMinScore,
@@ -157,6 +161,7 @@
 	let showListMenu = $state(false);
 
 	const okvedSectionOptions = $derived(distinctOkvedSections(leads));
+	const industryBucketOptions = $derived(distinctIndustryBuckets(leads));
 
 	const listGroups = $derived(groupLeads(filtered, groupBy));
 
@@ -209,6 +214,7 @@
 			|| filterCity
 			|| filterEmployeesBand !== 'all'
 			|| filterOkvedSection !== 'all'
+			|| filterIndustryBucket !== 'all'
 			|| filterTaskDue !== 'all'
 			|| filterMinScore != null,
 		),
@@ -223,6 +229,7 @@
 		filterCity = '';
 		filterEmployeesBand = 'all';
 		filterOkvedSection = 'all';
+		filterIndustryBucket = 'all';
 		filterTaskDue = 'all';
 		filterMinScore = null;
 		sortBy = 'tasks_urgent';
@@ -878,6 +885,19 @@
 					data-testid="leads-list-employees-band"
 				>
 					{#each EMPLOYEES_BAND_FILTERS as opt}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="min-w-[8rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Отрасль</span>
+				<select
+					bind:value={filterIndustryBucket}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-industry-bucket"
+				>
+					<option value="all">Все отрасли</option>
+					{#each industryBucketOptions as opt (opt.id)}
 						<option value={opt.id}>{opt.label}</option>
 					{/each}
 				</select>

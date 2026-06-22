@@ -6,23 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models import Lead
 
-FIXED_INDUSTRIES: tuple[str, ...] = (
-    "IT и телеком",
-    "Финансы и страхование",
-    "Ритейл и e-commerce",
-    "Производство",
-    "Строительство",
-    "Транспорт и логистика",
-    "Государственный сектор",
-    "Образование",
-    "Медицина и фарма",
-    "Энергетика",
-    "Нефть и газ",
-    "HoReCa",
-    "Агропром",
-    "Медиа и реклама",
-    "Другое",
-)
+from core.okved_industry_map import INDUSTRY_BUCKETS
+
+FIXED_INDUSTRIES: tuple[str, ...] = INDUSTRY_BUCKETS
 
 
 def is_industry_empty(value: str | None) -> bool:

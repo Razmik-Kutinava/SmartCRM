@@ -5,6 +5,8 @@ EMPTY = "__empty__"
 
 
 def group_key(lead: dict, group_by: str) -> str:
+    if group_by == "industry_bucket":
+        return str(lead.get("industryBucket") or lead.get("industry") or "").strip() or EMPTY
     if group_by == "okved_section":
         return str(lead.get("okvedSection") or "").strip() or EMPTY
     if group_by == "employees_band":
@@ -32,6 +34,18 @@ def group_leads(leads: list[dict], group_by: str = "none") -> list[dict]:
             label = f"Секция {k}"
         out.append({"key": k, "label": label, "leads": rows, "count": len(rows)})
     return out
+
+
+def test_group_by_industry_bucket():
+    leads = [
+        {"id": 1, "industryBucket": "IT и телеком"},
+        {"id": 2, "industryBucket": "Производство"},
+        {"id": 3, "industryBucket": "IT и телеком"},
+    ]
+    groups = group_leads(leads, "industry_bucket")
+    assert len(groups) == 2
+    it = next(g for g in groups if g["key"] == "IT и телеком")
+    assert it["count"] == 2
 
 
 def test_group_by_okved_section():

@@ -34,6 +34,7 @@ export function leadListViewFromVoiceSlots(slots = {}) {
 		sortBy: 'score_desc',
 		search: q,
 		filterIndustry: '',
+		filterIndustryBucket: 'all',
 		filterCity: '',
 	};
 	if (f === 'hot' || f === 'горячих') {
@@ -48,7 +49,11 @@ export function leadListViewFromVoiceSlots(slots = {}) {
 		out.filterStage = 'Выигран';
 	}
 	if (slots.stage) out.filterStage = normalizeStage(slots.stage);
-	if (slots.industry) out.filterIndustry = String(slots.industry).trim();
+	if (slots.industry) {
+		const bucket = resolveIndustryBucketFilter(slots.industry);
+		if (bucket) out.filterIndustryBucket = bucket;
+		else out.filterIndustry = String(slots.industry).trim();
+	}
 	if (slots.city) out.filterCity = String(slots.city).trim();
 	return out;
 }
@@ -61,6 +66,7 @@ export function applyVoiceListFilter(view = {}) {
 		sortBy: view.sortBy ?? 'score_desc',
 		search: view.search ?? '',
 		filterIndustry: view.industry ?? view.filterIndustry ?? '',
+		filterIndustryBucket: view.filterIndustryBucket ?? view.industryBucket ?? 'all',
 		filterCity: view.city ?? view.filterCity ?? '',
 		minScore: view.minScore != null && view.minScore !== '' ? Number(view.minScore) : null,
 	};
@@ -88,8 +94,29 @@ export const EMPLOYEES_BAND_FILTERS = [
 	{ id: '1000+', label: '1000+' },
 ];
 
+/** Укрупнённые отрасли (синхрон с backend/core/okved_industry_map.py). */
+export const INDUSTRY_BUCKET_OPTIONS = [
+	{ id: 'all', label: 'Все отрасли' },
+	{ id: 'IT и телеком', label: 'IT и телеком' },
+	{ id: 'Финансы и страхование', label: 'Финансы и страхование' },
+	{ id: 'Ритейл и e-commerce', label: 'Ритейл и e-commerce' },
+	{ id: 'Производство', label: 'Производство' },
+	{ id: 'Строительство', label: 'Строительство' },
+	{ id: 'Транспорт и логистика', label: 'Транспорт и логистика' },
+	{ id: 'Государственный сектор', label: 'Государственный сектор' },
+	{ id: 'Образование', label: 'Образование' },
+	{ id: 'Медицина и фарма', label: 'Медицина и фарма' },
+	{ id: 'Энергетика', label: 'Энергетика' },
+	{ id: 'Нефть и газ', label: 'Нефть и газ' },
+	{ id: 'HoReCa', label: 'HoReCa' },
+	{ id: 'Агропром', label: 'Агропром' },
+	{ id: 'Медиа и реклама', label: 'Медиа и реклама' },
+	{ id: 'Другое', label: 'Другое' },
+];
+
 export const GROUP_BY_OPTIONS = [
 	{ id: 'none', label: 'Без группировки' },
+	{ id: 'industry_bucket', label: 'Отрасль' },
 	{ id: 'okved_section', label: 'ОКВЭД секция' },
 	{ id: 'employees_band', label: 'Размер компании' },
 	{ id: 'stage', label: 'Этап' },
@@ -97,8 +124,27 @@ export const GROUP_BY_OPTIONS = [
 
 const EMPTY_GROUP_KEY = '__empty__';
 
+function resolveIndustryBucketFilter(text) {
+	const t = String(text || '').trim();
+	if (!t) return '';
+	const low = t.toLowerCase();
+	const exact = INDUSTRY_BUCKET_OPTIONS.find(
+		(o) => o.id !== 'all' && o.id.toLowerCase() === low,
+	);
+	if (exact) return exact.id;
+	for (const opt of INDUSTRY_BUCKET_OPTIONS) {
+		if (opt.id === 'all') continue;
+		if (opt.id.toLowerCase().includes(low) || low.includes(opt.id.toLowerCase().split(' ')[0])) {
+			return opt.id;
+		}
+	}
+	return '';
+}
+
 function groupKeyForLead(lead, groupBy) {
 	switch (groupBy) {
+		case 'industry_bucket':
+			return String(lead.industryBucket || lead.industry || '').trim() || EMPTY_GROUP_KEY;
 		case 'okved_section':
 			return String(lead.okvedSection || '').trim() || EMPTY_GROUP_KEY;
 		case 'employees_band':
@@ -113,6 +159,7 @@ function groupKeyForLead(lead, groupBy) {
 /** Подпись заголовка группы для UI. */
 export function groupLabelForKey(key, groupBy) {
 	if (!key || key === EMPTY_GROUP_KEY) {
+		if (groupBy === 'industry_bucket') return 'Без отрасли';
 		if (groupBy === 'okved_section') return 'Без ОКВЭД';
 		if (groupBy === 'employees_band') return 'Размер не указан';
 		if (groupBy === 'stage') return 'Без этапа';
@@ -151,6 +198,19 @@ export function groupLeads(leads, groupBy = 'none') {
 			count: rows.length,
 		};
 	});
+}
+
+/** Счётчики отраслей (industryBucket) в текущем списке. */
+export function distinctIndustryBuckets(leads) {
+	const counts = new Map();
+	for (const l of leads || []) {
+		const b = String(l.industryBucket || l.industry || '').trim();
+		if (!b || b === '—') continue;
+		counts.set(b, (counts.get(b) || 0) + 1);
+	}
+	return [...counts.entries()]
+		.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ru'))
+		.map(([id, count]) => ({ id, label: `${id} (${count})` }));
 }
 
 /** Уникальные секции ОКВЭД (первые 2 цифры) из списка лидов. */
@@ -228,6 +288,7 @@ export function filterLeads(
 		filterCity = '',
 		filterEmployeesBand = 'all',
 		filterOkvedSection = 'all',
+		filterIndustryBucket = 'all',
 		filterTaskDue = 'all',
 		minScore = null,
 	},
@@ -254,6 +315,10 @@ export function filterLeads(
 		if (filterOkvedSection !== 'all') {
 			const sec = String(l.okvedSection || '').trim();
 			if (sec !== filterOkvedSection) return false;
+		}
+		if (filterIndustryBucket !== 'all') {
+			const bucket = String(l.industryBucket || l.industry || '').trim();
+			if (bucket !== filterIndustryBucket) return false;
 		}
 		if (filterTaskDue === 'today' && !l.taskDueToday) return false;
 		if (filterTaskDue === 'overdue' && !l.taskOverdue) return false;

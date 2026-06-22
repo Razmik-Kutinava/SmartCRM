@@ -91,6 +91,11 @@ def lead_matches_segment(lead: Lead, seg: dict[str, Any], config: dict | None = 
         lead_sec = (getattr(lead, "okved_section", None) or "").strip()
         if lead_sec != okved_sec:
             return False
+    industry_bucket = (seg.get("industry_bucket") or seg.get("industryBucket") or "").strip()
+    if industry_bucket and industry_bucket != "all":
+        lead_bucket = (getattr(lead, "industry_bucket", None) or "").strip()
+        if lead_bucket != industry_bucket:
+            return False
     min_portrait = seg.get("min_portrait_score") if seg.get("min_portrait_score") is not None else seg.get("minPortraitScore")
     if min_portrait is not None and min_portrait != "":
         try:

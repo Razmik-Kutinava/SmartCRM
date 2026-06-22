@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[отрасли из ОКВЭД — industry_bucket] | Статус: ✅ done`
+
+**2026-06-22:** Маппинг `okved_industry_map` (секция ОКВЭД → отрасль CRM); колонка `industry_bucket` + auto-sync; backfill 3230/158; фильтр «Отрасль» + группировка на `/leads/list`; DevTools OK (селект + group industry_bucket). Коммит: `pending`. Следующий: апрув группировки по отрасли на полной базе.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[дела в списке /leads/list] | Статус: ✅ done`
 
 **2026-06-22:** Видимость задач в списке — `lead_task_list_flags` (API), сортировка «Дела срочные» по умолчанию, фильтры today/overdue/open, KPI + бейдж в строке, `/leads/tasks?filter=today`; фикс даты при создании задачи в карточке; pytest crm_leads 30 + smoke 11 PASS. Коммит: `cb3c63b`, ops `eff4cf4`. Следующий: апрув в браузере на реальных лидах с задачами.

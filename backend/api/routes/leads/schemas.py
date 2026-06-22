@@ -101,6 +101,7 @@ class LeadPatch(BaseModel):
     okved_section: Optional[str] = Field(None, validation_alias=AliasChoices("okvedSection", "okved_section"))
     employees_band: Optional[str] = Field(None, validation_alias=AliasChoices("employeesBand", "employees_band"))
     portrait_score: Optional[int] = Field(None, validation_alias=AliasChoices("portraitScore", "portrait_score"))
+    industry_bucket: Optional[str] = Field(None, validation_alias=AliasChoices("industryBucket", "industry_bucket"))
 
 
 class LookalikeCandidate(BaseModel):

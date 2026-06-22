@@ -40,6 +40,11 @@ def test_leads_list_filters_labeled():
     assert 'data-testid="leads-list-reset-filters"' in text
     assert 'data-testid="leads-list-employees-band"' in text
     assert 'data-testid="leads-list-okved-section"' in text
+    assert 'data-testid="leads-list-industry-bucket"' in text
+    assert "distinctIndustryBuckets" in text
+    assert "INDUSTRY_BUCKET_OPTIONS" in text
+    assert "filterIndustryBucket" in text
+    assert "industryBucket" in text
     assert "EMPLOYEES_BAND_FILTERS" in text
     assert "distinctOkvedSections" in text
     assert 'data-testid="leads-list-group-by"' in text

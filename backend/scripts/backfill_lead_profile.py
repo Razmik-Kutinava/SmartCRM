@@ -21,9 +21,9 @@ async def main() -> int:
     async with SessionLocal() as db:
         rows = (await db.execute(select(Lead).order_by(Lead.id))).scalars().all()
         for lead in rows:
-            before = (lead.okved_main, lead.employees_band, lead.portrait_score)
+            before = (lead.okved_main, lead.industry_bucket, lead.employees_band, lead.portrait_score)
             sync_lead_profile(lead)
-            after = (lead.okved_main, lead.employees_band, lead.portrait_score)
+            after = (lead.okved_main, lead.industry_bucket, lead.employees_band, lead.portrait_score)
             if before != after:
                 updated += 1
         await db.commit()

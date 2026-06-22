@@ -34,6 +34,7 @@ class Lead(Base):
     employees: Mapped[str] = mapped_column(String(100), default="—")
     industry: Mapped[str] = mapped_column(String(255), default="—")
     industry_verified: Mapped[bool] = mapped_column(default=False)
+    industry_bucket: Mapped[Optional[str]] = mapped_column(String(64), nullable=True, default=None)
     okved_main: Mapped[Optional[str]] = mapped_column(String(32), nullable=True, default=None)
     okved_name: Mapped[Optional[str]] = mapped_column(String(500), nullable=True, default=None)
     okved_section: Mapped[Optional[str]] = mapped_column(String(8), nullable=True, default=None)
@@ -124,6 +125,7 @@ class Lead(Base):
             "employees": self.employees,
             "industry": self.industry,
             "industryVerified": bool(getattr(self, "industry_verified", False)),
+            "industryBucket": self.industry_bucket or "",
             "okvedMain": self.okved_main or "",
             "okvedName": self.okved_name or "",
             "okvedSection": self.okved_section or "",
