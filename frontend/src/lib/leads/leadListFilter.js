@@ -2,6 +2,7 @@
 import { leadPriorityTier } from '$lib/crmStages.js';
 
 export const SORT_OPTIONS = [
+	{ id: 'tasks_urgent', label: 'Дела срочные ↑' },
 	{ id: 'score_desc', label: 'Балл ↓' },
 	{ id: 'score_asc', label: 'Балл ↑' },
 	{ id: 'priority_desc', label: 'Приоритет ↓' },
@@ -165,6 +166,27 @@ export function distinctOkvedSections(leads) {
 		.map(([id, count]) => ({ id, label: `Секция ${id} (${count})` }));
 }
 
+export const TASK_DUE_FILTERS = [
+	{ id: 'all', label: 'Все дела' },
+	{ id: 'today', label: 'Дело сегодня' },
+	{ id: 'overdue', label: 'Просрочено' },
+	{ id: 'has_open', label: 'Есть открытые' },
+];
+
+const TASK_URGENCY_RANK = { overdue: 0, today: 1, upcoming: 2, open: 3, none: 4 };
+
+export function taskUrgencyRank(lead) {
+	const u = String(lead.taskUrgency || 'none');
+	return TASK_URGENCY_RANK[u] ?? 4;
+}
+
+export function taskDueBadgeForLead(lead) {
+	if (lead.taskOverdue) return { label: 'Просрочено', cls: 'text-red-400 bg-red-950/60 border-red-900/50' };
+	if (lead.taskDueToday) return { label: 'Сегодня', cls: 'text-amber-300 bg-amber-950/50 border-amber-900/40' };
+	if (Number(lead.openTaskCount) > 0) return { label: 'Есть дела', cls: 'text-sky-400/90 bg-sky-950/40 border-sky-900/40' };
+	return null;
+}
+
 const PRIORITY_RANK = { critical: 4, high: 3, medium: 2, low: 1 };
 
 export function priorityRank(tierKey) {
@@ -206,6 +228,7 @@ export function filterLeads(
 		filterCity = '',
 		filterEmployeesBand = 'all',
 		filterOkvedSection = 'all',
+		filterTaskDue = 'all',
 		minScore = null,
 	},
 	config = null,
@@ -232,6 +255,9 @@ export function filterLeads(
 			const sec = String(l.okvedSection || '').trim();
 			if (sec !== filterOkvedSection) return false;
 		}
+		if (filterTaskDue === 'today' && !l.taskDueToday) return false;
+		if (filterTaskDue === 'overdue' && !l.taskOverdue) return false;
+		if (filterTaskDue === 'has_open' && !(Number(l.openTaskCount) > 0)) return false;
 		return leadMatchesSearch(l, search);
 	});
 }
@@ -261,6 +287,13 @@ export function sortLeads(leads, sortBy = 'score_desc', config = null) {
 	const companyOf = (l) => String(l.company || '').toLocaleLowerCase('ru');
 
 	switch (sortBy) {
+		case 'tasks_urgent':
+			return rows.sort(
+				(a, b) =>
+					taskUrgencyRank(a) - taskUrgencyRank(b)
+					|| scoreOf(b) - scoreOf(a)
+					|| companyOf(a).localeCompare(companyOf(b), 'ru'),
+			);
 		case 'score_asc':
 			return rows.sort((a, b) => scoreOf(a) - scoreOf(b));
 		case 'warnings_desc':

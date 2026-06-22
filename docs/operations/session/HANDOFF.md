@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[дела в списке /leads/list] | Статус: ✅ done`
+
+**2026-06-22:** Видимость задач в списке — `lead_task_list_flags` (API), сортировка «Дела срочные» по умолчанию, фильтры today/overdue/open, KPI + бейдж в строке, `/leads/tasks?filter=today`; фикс даты при создании задачи в карточке; pytest crm_leads 30 + smoke 11 PASS. Следующий: апрув в браузере на реальных лидах с задачами.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[Битрикс ОКВЭД UF + resync] | Статус: ✅ done`
 
 **2026-06-22:** Маппинг ОКВЭД/сотрудников из UF Битрикс (`bitrix24_uf`); `resync_bitrix_lead_profiles.py` (import+backfill); `lead_profile` читает okved с лида без checko_json; pytest 12 PASS. Import на машине без `BITRIX24_WEBHOOK_URL` — skip, backfill 0. На проде: задать webhook → `python scripts/resync_bitrix_lead_profiles.py`. Коммит: `464fe88`. Следующий: re-import с webhook.

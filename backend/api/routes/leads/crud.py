@@ -12,6 +12,7 @@ from core.lead_approvals import merge_approvals_payload
 from core.lead_contacts import apply_contacts_patch, normalize_contacts
 from core.lead_field_audit_util import TRACKED_ORM_FIELDS, append_lead_field_audits
 from core.lead_score_list_flags import attach_lead_score_flags, load_tasks_by_lead
+from core.lead_task_list_flags import attach_lead_task_flags
 from core.stage_transition import merge_lead_patch_for_validation, validate_stage_transition
 from db.models import EmailMessage, Lead
 from db.models.email import EmailThread
@@ -45,7 +46,8 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
     leads = [lead_row.to_dict() for lead_row in result.scalars().all()]
     settings = crm_settings_store.load_settings()
     tasks_by_lead = await load_tasks_by_lead(db)
-    return attach_lead_score_flags(leads, tasks_by_lead, settings)
+    with_score = attach_lead_score_flags(leads, tasks_by_lead, settings)
+    return attach_lead_task_flags(with_score, tasks_by_lead)
 
 
 async def list_industries(db: AsyncSession = Depends(get_db)):

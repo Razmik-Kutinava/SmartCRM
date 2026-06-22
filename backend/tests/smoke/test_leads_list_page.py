@@ -46,6 +46,10 @@ def test_leads_list_filters_labeled():
     assert "GROUP_BY_OPTIONS" in text
     assert "groupLeads" in text
     assert 'data-testid="leads-list-group-header"' in text
+    assert 'data-testid="leads-list-task-due"' in text
+    assert "TASK_DUE_FILTERS" in text
+    assert "taskDueBadgeForLead" in text
+    assert "tasks_urgent" in text
     filters = text.split('data-testid="leads-list-filters"', 1)[1].split("<!-- Table -->", 1)[0]
     assert "Сортировка" in filters
     assert "Тир" in filters

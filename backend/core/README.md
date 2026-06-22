@@ -82,6 +82,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_stage_hints.py` | Мульти-подсказки по этапу, срокам, докам |
 | `lead_card_context.py` | Даты этапа и касаний для карточки |
 | `lead_score_list_flags.py` | Флаги advisory для списка лидов (`hasScoreWarnings`, `scoreDivergent`) |
+| `lead_task_list_flags.py` | Флаги задач в списке лидов (`taskDueToday`, `taskOverdue`, `nextTaskTitle`) |
 | `lead_priority_tier.py` | Приоритет лида по порогам CRM (зеркало `crmStages.js`) |
 | `lead_profile.py` | Нормализация ОКВЭД, размер компании (`employees_band`), `portrait_score`, sync полей портрета |
 | `lead_field_audit_util.py` | Аудит изменений полей лида |

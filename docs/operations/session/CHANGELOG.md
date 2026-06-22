@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-22 — Ф4 лиды: дела видны в списке
+
+**Было:** при сортировке по скору задачи лида не видны в `/leads/list`; создание задачи в карточке ставило `due: '—'`. **Стало:** `lead_task_list_flags` в GET `/api/leads`; сортировка «Дела срочные» по умолчанию; фильтры «Дела» (сегодня/просроч./открытые); KPI + бейдж в строке; deep link `/leads/tasks?filter=today`; дата по умолчанию при постановке задачи; pytest 41+ PASS (crm_leads + smoke).
+
 ## 2026-06-22 — Ф4 лиды: ОКВЭД из Битрикс UF (без Checko)
 
 **Было:** ОКВЭД только из checko_json; B24 отдавал ИНН, но не ОКВЭД UF. **Стало:** `extract_okved_from_row` / `extract_employees_from_row`; enrich в `bitrix24_related`; `lead_profile` fallback с колонок лида; скрипт `resync_bitrix_lead_profiles.py`; pytest 12 PASS.

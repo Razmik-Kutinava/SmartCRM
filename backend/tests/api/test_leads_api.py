@@ -287,3 +287,41 @@ async def test_list_leads_includes_score_advisory_flags(client):
     assert "suggestedScore" in row
     assert "scoreDelta" in row
     assert row["scoreDivergent"] is True
+
+
+@pytest.mark.asyncio
+async def test_list_leads_includes_task_flags(client):
+    """GET /api/leads — флаги задач для списка (дела сегодня / просрочка)."""
+    import datetime as dt
+
+    today = dt.date.today()
+    due_str = today.strftime("%d.%m.%Y")
+
+    create_r = await client.post(
+        "/api/leads",
+        json={"company": "Флаги задач", "stage": "Новый", "score": 50},
+    )
+    assert create_r.status_code == 201
+    lead_id = create_r.json()["id"]
+
+    task_r = await client.post(
+        "/api/tasks",
+        json={
+            "title": "Позвонить сегодня",
+            "lead_id": lead_id,
+            "related_lead": "Флаги задач",
+            "due": due_str,
+            "sla_due": due_str,
+        },
+    )
+    assert task_r.status_code == 201
+
+    r = await client.get("/api/leads")
+    assert r.status_code == 200
+    row = next(l for l in r.json() if l["id"] == lead_id)
+    assert row["openTaskCount"] == 1
+    assert "taskDueToday" in row
+    assert "taskOverdue" in row
+    assert "nextTaskTitle" in row
+    assert row["nextTaskTitle"] == "Позвонить сегодня"
+    assert row["taskDueToday"] is True

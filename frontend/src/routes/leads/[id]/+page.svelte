@@ -31,6 +31,7 @@
 	import { buildMoneyPatch, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
+	import { formatRuDate } from '$lib/leads/leadActivityTasks.js';
 	import { enrichLeadOnCard } from '$lib/search/enrichLeadOnCard.js';
 	import { openLeadMailing } from '$lib/leads/leadMailingUi.js';
 	import { openLeadIndustryModal } from '$lib/leads/leadIndustryUi.js';
@@ -379,15 +380,18 @@
 		if (!lead || leadTaskSaving) return;
 		const title = prompt('Название задачи:');
 		if (!title?.trim()) return;
-		const sla = prompt('SLA до (ДД.ММ.ГГГГ, необязательно):') || '';
+		const dueDefault = formatRuDate(new Date());
+		const dueRaw = prompt(`Срок (ДД.ММ.ГГГГ, Enter = сегодня):`, dueDefault);
+		if (dueRaw === null) return;
+		const due = (dueRaw.trim() || dueDefault);
 		leadTaskSaving = true;
 		try {
 			await createTask({
 				title: title.trim(),
 				lead_id: lead.id,
 				related_lead: lead.company,
-				sla_due: sla.trim() || null,
-				due: '—',
+				due,
+				sla_due: due,
 			});
 			await loadLeadTasks();
 		} catch (e) {

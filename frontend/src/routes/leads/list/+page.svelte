@@ -30,6 +30,8 @@
 		PRIORITY_FILTERS,
 		SCORE_RISK_FILTERS,
 		EMPLOYEES_BAND_FILTERS,
+		TASK_DUE_FILTERS,
+		taskDueBadgeForLead,
 		GROUP_BY_OPTIONS,
 		distinctOkvedSections,
 		groupLeads,
@@ -55,11 +57,12 @@
 	let filterCity = $state('');
 	let filterEmployeesBand = $state('all');
 	let filterOkvedSection = $state('all');
+	let filterTaskDue = $state('all');
 	let filterMinScore = $state(null);
 	let groupBy = $state('none');
 	/** @type {string[]} */
 	let collapsedGroupKeys = $state([]);
-	let sortBy = $state('score_desc');
+	let sortBy = $state('tasks_urgent');
 	let showVoice = $state(false); // голос теперь глобальный — в layout
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
 	let apiError = $state(false); // флаг недоступности API
@@ -143,6 +146,7 @@
 				filterCity,
 				filterEmployeesBand,
 				filterOkvedSection,
+				filterTaskDue,
 				sortBy,
 				minScore: filterMinScore,
 			},
@@ -174,10 +178,14 @@
 		let warnings = 0;
 		let scoreSum = 0;
 		let portraitSum = 0;
+		let tasksToday = 0;
+		let tasksOverdue = 0;
 		for (const l of filtered) {
 			const tier = leadPriorityTier(l.score, cfg);
 			if (tier.key === 'high' || tier.key === 'critical') hot += 1;
 			if (l.hasScoreWarnings) warnings += 1;
+			if (l.taskDueToday) tasksToday += 1;
+			if (l.taskOverdue) tasksOverdue += 1;
 			scoreSum += Number(l.score) || 0;
 			portraitSum += Number(l.portraitScore) || 0;
 		}
@@ -186,6 +194,8 @@
 			warnings,
 			avg: filtered.length ? Math.round(scoreSum / filtered.length) : 0,
 			portraitAvg: filtered.length ? Math.round(portraitSum / filtered.length) : 0,
+			tasksToday,
+			tasksOverdue,
 		};
 	});
 
@@ -199,6 +209,7 @@
 			|| filterCity
 			|| filterEmployeesBand !== 'all'
 			|| filterOkvedSection !== 'all'
+			|| filterTaskDue !== 'all'
 			|| filterMinScore != null,
 		),
 	);
@@ -212,8 +223,9 @@
 		filterCity = '';
 		filterEmployeesBand = 'all';
 		filterOkvedSection = 'all';
+		filterTaskDue = 'all';
 		filterMinScore = null;
-		sortBy = 'score_desc';
+		sortBy = 'tasks_urgent';
 	}
 
 	function closeListMenu() {
@@ -795,6 +807,12 @@
 		<span><span class="text-orange-400 font-semibold">{listKpi.warnings}</span> с предупрежд.</span>
 		<span>ср. балл <span class="text-green-400 font-semibold">{listKpi.avg}</span></span>
 		<span>портрет <span class="text-sky-400 font-semibold">{listKpi.portraitAvg}%</span></span>
+		<a href="/leads/tasks?filter=today" class="hover:text-amber-200 transition-colors">
+			<span class="text-amber-300 font-semibold">{listKpi.tasksToday}</span> дел сегодня
+		</a>
+		<a href="/leads/tasks?filter=overdue" class="hover:text-red-300 transition-colors">
+			<span class="text-red-400 font-semibold">{listKpi.tasksOverdue}</span> просроч.
+		</a>
 		{#if bitrixStats}
 			<span class="hidden sm:inline text-gray-600">
 				B24: {bitrixStats.local_bitrix_leads_count ?? '—'} / {bitrixStats.bitrix_total ?? '—'}
@@ -873,6 +891,18 @@
 				>
 					<option value="all">Все секции</option>
 					{#each okvedSectionOptions as opt (opt.id)}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="min-w-[8rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Дела</span>
+				<select
+					bind:value={filterTaskDue}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-task-due"
+				>
+					{#each TASK_DUE_FILTERS as opt}
 						<option value={opt.id}>{opt.label}</option>
 					{/each}
 				</select>
@@ -995,12 +1025,25 @@
 				{#if groupBy === 'none' || !collapsedGroupKeys.includes(group.key)}
 					{#each group.leads as lead, i}
 				{@const tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
+				{@const taskBadge = taskDueBadgeForLead(lead)}
 				<tr class="hover:bg-gray-800/30 transition-colors group">
 					<td class="px-6 py-3 text-gray-600 text-xs">{i + 1}</td>
 					<td class="px-4 py-3">
 						<a href="/leads/{lead.id}" class="font-medium text-white hover:text-indigo-400 transition-colors">
 							{lead.company}
 						</a>
+						{#if taskBadge}
+							<div class="mt-1 flex flex-wrap items-center gap-1 max-w-[14rem]">
+								<span
+									class="inline-block px-1.5 py-0.5 rounded text-[10px] border {taskBadge.cls}"
+									data-testid="leads-list-task-badge"
+									title={lead.nextTaskTitle ? `${lead.nextTaskTitle}${lead.nextTaskDue ? ` · ${lead.nextTaskDue}` : ''}` : ''}
+								>{taskBadge.label}</span>
+								{#if lead.nextTaskTitle}
+									<span class="text-[10px] text-gray-600 truncate" title={lead.nextTaskTitle}>{lead.nextTaskTitle}</span>
+								{/if}
+							</div>
+						{/if}
 						{#if lead.okvedMain || lead.employeesBand}
 							<div class="text-[10px] text-gray-600 mt-0.5 truncate max-w-[14rem]">
 								{#if lead.okvedMain}<span title={lead.okvedName || ''}>ОКВЭД {lead.okvedMain}</span>{/if}

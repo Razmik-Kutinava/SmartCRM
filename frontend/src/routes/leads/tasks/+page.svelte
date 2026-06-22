@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { fetchLeads } from '$lib/leadsStorage.js';
 	import { createTask as apiCreateTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
@@ -33,7 +34,13 @@
 		}
 	}
 
-	onMount(load);
+	onMount(() => {
+		const q = $page.url.searchParams.get('filter');
+		if (q && ['all', 'today', 'overdue', 'open', 'escalated'].includes(q)) {
+			filter = q;
+		}
+		load();
+	});
 
 	async function submitTaskForm(ev) {
 		ev?.preventDefault();
