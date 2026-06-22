@@ -750,7 +750,7 @@
 	{@const _tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
 	<!-- Единая шапка: назад + название + мета + действия -->
 	<header
-		class="flex items-start justify-between gap-3 px-4 sm:px-6 py-3 border-b border-gray-800 bg-gray-900 shrink-0"
+		class="flex items-start justify-between gap-3 px-4 sm:px-6 pt-[14px] pb-[14px] border-b border-gray-800 bg-gray-900 shrink-0"
 		data-testid="lead-card-header"
 	>
 		<div class="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
@@ -775,7 +775,7 @@
 				</p>
 			</div>
 		</div>
-		<div class="flex items-center gap-0.5 sm:gap-1 flex-nowrap shrink-0 overflow-x-auto max-w-[52%] sm:max-w-none pb-0.5" data-testid="lead-card-toolbar">
+		<div class="flex items-center gap-0.5 sm:gap-1 flex-nowrap shrink-0 overflow-x-auto max-w-[52%] sm:max-w-none" data-testid="lead-card-toolbar">
 			<button
 				type="button"
 				data-testid="lead-card-enrich"
