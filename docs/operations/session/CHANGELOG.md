@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-22 — Ф4 интеграции: Битрикс полный маппинг + таймлайн
+
+**Было:** только плоские поля лида; ИНН из UF-эвристики; poll только DATE_CREATE сегодня; комменты Битрикса не в CRM. **Стало:** company/contact/requisites, ИНН/ОГРН, домен, продукты, contacts ЛПР; `crm.activity` + timeline comments → `lead_communication_logs`; poll DATE_MODIFY + local batch; pytest 19 PASS.
+
 ## 2026-06-22 — Ф4 лиды: enrich → полный паспорт (checko_json)
 
 **Было:** ✨ обогащал только phone/email/website/budget; паспорт пустой. **Стало:** по ИНН — `fetch_company` + `fetch_full_profile` + BuiltWith; ответ `passport` → PATCH `checkoJson`/`financialsJson`/`techJson`/`inn`/`ogrn`; связи и финблоки в паспорте; фильтр соц-хендлов в телефонах; pytest PASS.

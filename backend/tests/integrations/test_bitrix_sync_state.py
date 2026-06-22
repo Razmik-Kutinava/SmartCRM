@@ -24,6 +24,8 @@ async def test_run_daily_bitrix_poll_skipped_without_webhook(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_upsert_bitrix_lead_row_imports_new(db_session, monkeypatch):
+    from unittest.mock import AsyncMock
+
     row = {
         "ID": "99",
         "TITLE": "ООО Тест",
@@ -36,8 +38,18 @@ async def test_upsert_bitrix_lead_row_imports_new(db_session, monkeypatch):
         "OPPORTUNITY": "0",
         "CURRENCY_ID": "RUB",
     }
-    with patch.object(bitrix24_sync, "_load_status_names", return_value={}), patch.object(
-        bitrix24_sync, "_load_source_names", return_value={}
-    ), patch.object(bitrix24_sync, "_load_user_names", return_value={}):
+    with patch("integrations.bitrix24._load_status_names", new_callable=AsyncMock, return_value={}), patch(
+        "integrations.bitrix24._load_source_names", new_callable=AsyncMock, return_value={}
+    ), patch(
+        "integrations.bitrix24._load_user_names", new_callable=AsyncMock, return_value={}
+    ), patch(
+        "integrations.bitrix24_related.enrich_fields_from_bitrix_row",
+        new_callable=AsyncMock,
+        return_value={},
+    ), patch(
+        "integrations.bitrix24_timeline.sync_bitrix_timeline",
+        new_callable=AsyncMock,
+        return_value=0,
+    ):
         action = await bitrix24_sync.upsert_bitrix_lead_row(db_session, row)
     assert action == "imported"

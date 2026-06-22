@@ -5,7 +5,7 @@ import asyncio
 import json
 import logging
 import os
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -18,10 +18,9 @@ from integrations.bitrix24 import (
     BitrixWebhookError,
     bitrix_call,
     import_leads_from_bitrix,
-    row_to_lead_fields,
     webhook_base,
 )
-from integrations.bitrix24 import _load_source_names, _load_status_names, _load_user_names
+from integrations.bitrix24_upsert import upsert_bitrix_lead_row
 
 logger = logging.getLogger(__name__)
 _STATE_PATH = Path(__file__).resolve().parent.parent / "data" / "bitrix_sync_state.json"
@@ -51,33 +50,6 @@ async def fetch_bitrix_lead_row(lead_id: int) -> dict[str, Any]:
     return row
 
 
-async def upsert_bitrix_lead_row(db: AsyncSession, row: dict[str, Any]) -> str:
-    status_names = await _load_status_names()
-    source_names = await _load_source_names()
-    user_ids: set[int] = set()
-    uid = row.get("ASSIGNED_BY_ID")
-    if uid is not None:
-        try:
-            user_ids.add(int(uid))
-        except (TypeError, ValueError):
-            pass
-    user_names = await _load_user_names(user_ids)
-    b_id = int(row["ID"])
-    fields = row_to_lead_fields(
-        row, status_names=status_names, user_names=user_names, source_names=source_names
-    )
-    r2 = await db.execute(select(Lead).where(Lead.bitrix_lead_id == b_id))
-    lead = r2.scalar_one_or_none()
-    if lead:
-        for k, v in fields.items():
-            if k == "score":
-                continue
-            setattr(lead, k, v)
-        return "updated"
-    db.add(Lead(**fields))
-    return "imported"
-
-
 async def sync_bitrix_lead_by_id(db: AsyncSession, lead_id: int) -> dict[str, Any]:
     row = await fetch_bitrix_lead_row(lead_id)
     action = await upsert_bitrix_lead_row(db, row)
@@ -92,24 +64,96 @@ async def sync_bitrix_lead_by_id(db: AsyncSession, lead_id: int) -> dict[str, An
     return {"bitrix_lead_id": lead_id, "action": action}
 
 
+async def sync_bitrix_modified_leads(db: AsyncSession, *, modify_days: int = 30) -> dict[str, int]:
+    """Upsert лидов, изменённых в Битриксе за последние N дней."""
+    modify_from = (date.today() - timedelta(days=max(1, modify_days))).isoformat()
+    updated = imported = 0
+    start = 0
+    while True:
+        data = await bitrix_call(
+            "crm.lead.list",
+            {
+                "filter": {">=DATE_MODIFY": modify_from},
+                "select": ["*"],
+                "order": {"DATE_MODIFY": "DESC"},
+                "start": start,
+            },
+        )
+        rows = data.get("result") or []
+        if not rows:
+            break
+        for row in rows:
+            action = await upsert_bitrix_lead_row(db, row)
+            if action == "imported":
+                imported += 1
+            else:
+                updated += 1
+        await db.commit()
+        if "next" not in data or data["next"] is None:
+            break
+        start = int(data["next"])
+    return {"imported": imported, "updated": updated}
+
+
+async def sync_bitrix_local_batch(db: AsyncSession, *, batch_size: int = 25) -> dict[str, int]:
+    """По кругу обновляет пачку локальных лидов с bitrix_lead_id (догонка старых)."""
+    res = await db.execute(
+        select(Lead.bitrix_lead_id, Lead.id)
+        .where(Lead.bitrix_lead_id.isnot(None))
+        .order_by(Lead.id)
+    )
+    pairs = [(int(b), int(lid)) for b, lid in res.fetchall() if b]
+    if not pairs:
+        return {"synced": 0, "total_local": 0}
+    state = read_sync_state()
+    offset = int(state.get("local_batch_offset") or 0) % len(pairs)
+    batch = pairs[offset : offset + batch_size]
+    if not batch:
+        batch = pairs[:batch_size]
+        offset = len(batch)
+    else:
+        offset = (offset + len(batch)) % len(pairs)
+    synced = 0
+    for b_id, _ in batch:
+        try:
+            row = await fetch_bitrix_lead_row(b_id)
+            await upsert_bitrix_lead_row(db, row)
+            synced += 1
+        except Exception as e:
+            logger.warning("local batch sync #%s: %s", b_id, e)
+    await db.commit()
+    write_sync_state({"local_batch_offset": offset})
+    return {"synced": synced, "total_local": len(pairs), "batch_offset": offset}
+
+
 async def run_daily_bitrix_poll() -> dict[str, Any]:
     if not webhook_base():
         return {"skipped": True, "reason": "BITRIX24_WEBHOOK_URL не задан"}
+    modify_days = int((os.getenv("BITRIX_SYNC_MODIFY_DAYS") or "30").strip() or "30")
+    batch_size = int((os.getenv("BITRIX_SYNC_BATCH_SIZE") or "25").strip() or "25")
     async with get_db_session() as db:
-        result = await import_leads_from_bitrix(
+        new_result = await import_leads_from_bitrix(
             db, date_from=date.today().isoformat(), max_items=0
         )
+        mod_result = await sync_bitrix_modified_leads(db, modify_days=modify_days)
+        batch_result = await sync_bitrix_local_batch(db, batch_size=batch_size)
+    merged = {
+        "imported": int(new_result.get("imported") or 0) + int(mod_result.get("imported") or 0),
+        "updated": int(new_result.get("updated") or 0) + int(mod_result.get("updated") or 0),
+        "modify_sync": mod_result,
+        "local_batch": batch_result,
+        "new_today": {
+            "imported": new_result.get("imported"),
+            "updated": new_result.get("updated"),
+        },
+    }
     write_sync_state(
         {
             "last_poll_at": datetime.now(timezone.utc).isoformat(),
-            "last_poll_result": {
-                "imported": result.get("imported"),
-                "updated": result.get("updated"),
-                "total_processed": result.get("total_processed"),
-            },
+            "last_poll_result": merged,
         }
     )
-    return result
+    return merged
 
 
 async def bitrix_poll_loop(stop: asyncio.Event) -> None:
@@ -118,19 +162,18 @@ async def bitrix_poll_loop(stop: asyncio.Event) -> None:
         logger.info("Bitrix auto-sync: выключен (BITRIX_AUTO_SYNC_MINUTES=%s)", minutes)
         return
     logger.info(
-        "Bitrix auto-sync: каждые %s мин, лиды с DATE_CREATE >= сегодня (%s)",
+        "Bitrix auto-sync: каждые %s мин — новые + DATE_MODIFY + local batch",
         minutes,
-        date.today().isoformat(),
     )
     await asyncio.sleep(15)
     while not stop.is_set():
         try:
             r = await run_daily_bitrix_poll()
             logger.info(
-                "Bitrix auto-sync: imported=%s updated=%s processed=%s",
+                "Bitrix auto-sync: imported=%s updated=%s batch=%s",
                 r.get("imported"),
                 r.get("updated"),
-                r.get("total_processed"),
+                r.get("local_batch"),
             )
         except Exception:
             logger.exception("Bitrix auto-sync failed")

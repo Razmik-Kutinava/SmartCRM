@@ -2,7 +2,9 @@
 
 **Порядок в MAP:** после «Дашборд», **перед** «Лиды». Сначала подключение и импорт базы, потом обход `/leads/*`.
 
-**Статус:** план и acceptance зафиксированы (2026-06-19); **код в работе** — шаг 1: `/ops/integrations`.
+**Статус:** план и acceptance зафиксированы (2026-06-19); **код в работе** — шаг 1: `/ops/integrations`; **2026-06-22:** расширенный маппинг Битрикс → Lead (ИНН/реквизиты/контакты/таймлайн).
+
+**Шаг 2026-06-22 (код ✅):** `bitrix24_uf` + `bitrix24_related` + `bitrix24_timeline` + `bitrix24_upsert` — company/contact/requisites, UF домен/продукты, комментарии и активности в `lead_communication_logs`; poll: DATE_MODIFY + local batch.
 
 **Тюнинг-план:** [`F4_PLATFORM_TUNING.md`](F4_PLATFORM_TUNING.md) · код: `backend/integrations/` · кнопки импорта: `/leads/list`.
 

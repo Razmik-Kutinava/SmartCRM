@@ -40,3 +40,4 @@ def test_row_to_lead_fields_maps_core_and_amount_rub():
     assert fields["city"] == "Москва"
     assert fields["responsible"] == "Менеджер"
     assert fields["score"] == 50
+    assert fields["inn"] == "7707083893"

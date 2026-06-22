@@ -114,6 +114,9 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `test_email_sync.py` | Live IMAP только при `EMAIL_SYNC_LIVE=1` |
 | `test_bitrix_integration.py` | Битрикс live (REST вебхук) |
 | `integrations/test_bitrix_row_map.py` | Маппинг полей Битрикс → Lead |
+| `integrations/test_bitrix24_uf.py` | ИНН/домен/продукты из UF |
+| `integrations/test_bitrix24_related.py` | company/contact/requisites enrich |
+| `integrations/test_bitrix24_timeline.py` | Таймлайн → communications |
 | `integrations/test_bitrix_sync_state.py` | sync state + poll skip + upsert mock |
 | `integrations/test_bitrix_webhook.py` | Исходящий вебхук ONCRMLEADADD |
 | `integrations/test_telegram.py` | Telegram: config, send_message mock, /start, notify lead hunt |

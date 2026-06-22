@@ -197,15 +197,9 @@ def _budget(row: dict) -> str:
 
 
 def _guess_inn(row: dict) -> Optional[str]:
-    inn_re = re.compile(r"^\d{10}(\d{2})?$")
-    for key, val in row.items():
-        if not str(key).startswith("UF_"):
-            continue
-        if isinstance(val, list) and val and isinstance(val[0], dict):
-            val = val[0].get("VALUE")
-        if isinstance(val, str) and inn_re.match(val.strip()):
-            return val.strip()
-    return None
+    from .bitrix24_uf import extract_inn_from_row
+
+    return extract_inn_from_row(row)
 
 
 def _contact_name(row: dict) -> str:
@@ -535,31 +529,15 @@ async def import_leads_from_bitrix(
                 break
             total_processed += 1
             try:
-                b_id = int(row["ID"])
-                fields = row_to_lead_fields(
-                    row,
-                    status_names=status_names,
-                    user_names=user_names,
-                    source_names=source_names,
-                )
+                from integrations.bitrix24_upsert import upsert_bitrix_lead_row
 
-                if b_id in existing_ids:
-                    r2 = await db.execute(select(Lead).where(Lead.bitrix_lead_id == b_id))
-                    lead = r2.scalar_one_or_none()
-                    if lead:
-                        for k, v in fields.items():
-                            if k == "score":
-                                continue
-                            setattr(lead, k, v)
-                        updated += 1
-                    else:
-                        skipped += 1
-                else:
-                    lead = Lead(**fields)
-                    db.add(lead)
+                action = await upsert_bitrix_lead_row(db, row)
+                b_id = int(row["ID"])
+                if action == "imported":
                     existing_ids.add(b_id)
                     imported += 1
-
+                else:
+                    updated += 1
             except Exception as e:
                 errors.append(f"lead {row.get('ID')}: {e}")
                 logger.exception("import row")
