@@ -1,8 +1,14 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[мультиконтакты Битрикс] | Статус: ✅ done`
+
+**2026-06-19:** `crm.lead.contact.items.get` → все контакты в `lead.contacts[]` (телефоны/email); primary → ЛПР + плоские поля; `merge_bitrix_contacts` — ручные CRM не затираются при upsert; pytest 10 PASS (5 контактов X5-like). **Следующий шаг 3:** сумма+валюта OPPORTUNITY / `amount_rub` для USD. Коммит: `TBD`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[UF Битрикс → bitrix_extra] | Статус: ✅ done`
 
-**2026-06-19:** Маппинг UF лицензии/подписки/поставки → колонка `bitrix_extra` (JSONB); `core/lead_bitrix_extra.py`, `extract_bitrix_extra_from_row`, enrich+merge в upsert; API `bitrixExtra`; offline из `tech_json.bitrix24.uf`; pytest 14 PASS (X5-like). **Следующий шаг 2:** UI плитка «Лицензия / подписка» в карточке. Коммит: `503914d`.
+**2026-06-19:** Маппинг UF лицензии/подписки/поставки → колонка `bitrix_extra` (JSONB); `core/lead_bitrix_extra.py`, `extract_bitrix_extra_from_row`, enrich+merge в upsert; API `bitrixExtra`; offline из `tech_json.bitrix24.uf`; pytest 14 PASS (X5-like). Коммит: `503914d`.
 
 ---
 

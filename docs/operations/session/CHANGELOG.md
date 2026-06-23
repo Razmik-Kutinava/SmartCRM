@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Ф4 лиды: мультиконтакты из Битрикс
+
+**Было:** только `CONTACT_ID` → 1 контакт в `contacts[]` (X5: 1 вместо 5+). **Стало:** `crm.lead.contact.items.get` + параллельный `crm.contact.get`; все телефоны/email; primary → `lpr`; `merge_bitrix_contacts` при upsert сохраняет ручные контакты CRM; pytest 10 PASS.
+
 ## 2026-06-19 — Ф4 лиды: UF Битрикс → `bitrix_extra`
 
 **Было:** UF подписки/лицензии/поставки только в `tech_json`, в API и UI не отдавались; фильтры по датам подписки невозможны. **Стало:** колонка `leads.bitrix_extra` (JSONB); `lead_bitrix_extra` + расширен `bitrix24_uf`/`enrich_fields_from_bitrix_row`; merge без затирания; `bitrixExtra` в `Lead.to_dict()`; offline backfill из `tech_json`; pytest 14 PASS (лид X5-подобный).

@@ -6,6 +6,7 @@ from core.lead_contacts import (
     contacts_for_api,
     has_established_lpr,
     is_lpr_contact_complete,
+    merge_bitrix_contacts,
     normalize_contacts,
 )
 
@@ -56,3 +57,35 @@ def test_apply_contacts_patch_sets_lpr_approval():
     assert patch["approvals"]["lprEstablished"] is True
     assert patch["contact"] == "Алексей"
     assert patch["email"] == "a@b.ru"
+
+
+def test_merge_bitrix_contacts_keeps_manual():
+    existing = [
+        {"id": "b24-contact-1", "name": "Старый", "role": "lpr", "phones": [], "emails": [], "messengers": []},
+        {"id": "crm-uuid", "name": "Ручной", "role": "it", "phones": ["+7111"], "emails": [], "messengers": []},
+    ]
+    incoming = [
+        {
+            "id": "b24-contact-2",
+            "name": "Новый ЛПР",
+            "role": "lpr",
+            "position": "ГД",
+            "phones": ["+7222"],
+            "emails": ["new@co.ru"],
+            "messengers": [],
+        },
+        {
+            "id": "b24-contact-3",
+            "name": "Коллега",
+            "role": "other",
+            "position": "",
+            "phones": [],
+            "emails": ["c@co.ru"],
+            "messengers": [],
+        },
+    ]
+    merged = merge_bitrix_contacts(existing, incoming)
+    assert len(merged) == 3
+    assert merged[0]["id"] == "b24-contact-2"
+    assert merged[-1]["id"] == "crm-uuid"
+    assert merged[-1]["name"] == "Ручной"

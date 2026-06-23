@@ -529,7 +529,6 @@
 - [x] **Битрикс расширенный маппинг** — ИНН/реквизиты/контакт/домен/продукты + таймлайн в «Действия»; poll DATE_MODIFY + local batch · код 2026-06-22 · апрув ждём
 - [x] **Битрикс история + дела:** mass-resync `resync_bitrix_lead_engagement.py`; `crm.activity`+comments→история; встречи/задачи→`tasks`; upsert+poll · код 2026-06-22
 - [ ] Smoke + acceptance закрыт · `tests/integrations/`
-
 ### Лиды (обход Ф4)
 
 Детали: [`F4_LEADS_ACCEPTANCE.md`](../operations/phase4/leads/F4_LEADS_ACCEPTANCE.md)
@@ -540,7 +539,8 @@
 - [x] **Дела в списке:** API-флаги `taskDueToday`/`taskOverdue`; сортировка «Дела срочные» по умолчанию; фильтры «сегодня»/«просроч.»/«есть открытые»; KPI + бейдж в строке; `/leads/tasks?filter=today`; фикс даты при создании задачи в карточке · код 2026-06-22
 - [x] **Отрасли из ОКВЭД:** `okved_industry_map` → `industry_bucket`; авто-sync + backfill; фильтр «Отрасль» + группировка на `/leads/list` · код 2026-06-22
 - [x] **Продукты из Битрикс:** `lead_products` (название, цена, статус sold/pipeline/owned); productrows+сделки+КП+UF+OPPORTUNITY; плитка «Продукты»; `resync_bitrix_lead_products.py` (`--workers`, webhook) · код 2026-06-22 · **массовый resync в прогоне**
-- [x] **UF Битрикс → `bitrix_extra`:** подписка до, тип поставки, срок лицензии, резерв, licensing email, сублицензиат, плательщик, менеджер, участник; `lead_bitrix_extra` + enrich upsert; API `bitrixExtra` · код 2026-06-19 · **UI плитка — шаг 2**
+- [x] **UF Битрикс → `bitrix_extra`:** подписка до, тип поставки, срок лицензии, резерв, licensing email, сублицензиат, плательщик, менеджер, участник; `lead_bitrix_extra` + enrich upsert; API `bitrixExtra` · код 2026-06-19
+- [x] **Мультиконтакты Битрикс:** `crm.lead.contact.items` → `contacts[]`, merge без затирания ручных · код 2026-06-19
 - [ ] **Критично:** карточка end-to-end — сохранение, этап, комментарии, касания, задачи · обход
 - [ ] **Критично:** UX фильтров `/leads/list` — подписи тир/подсказка, меню импорта, KPI · верстка 2026-06-19 · **апрув обход**
 - [ ] **Критично:** UX карточки — хаб плиток + slide-over ~65%; единая шапка (назад + мета + действия), без дубля summary · верстка 2026-06-19 · **апрув обход**

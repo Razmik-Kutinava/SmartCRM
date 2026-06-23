@@ -45,6 +45,10 @@ async def test_enrich_fields_modum_like(monkeypatch):
         "integrations.bitrix24_related._fetch_requisites", fake_req
     )
     monkeypatch.setattr(
+        "integrations.bitrix24_related._fetch_lead_contact_items",
+        AsyncMock(return_value=[]),
+    )
+    monkeypatch.setattr(
         "integrations.bitrix24_products.fetch_bitrix_lead_products",
         AsyncMock(return_value=[
             {
@@ -132,3 +136,117 @@ async def test_enrich_fields_x5_like(monkeypatch):
     assert extra["bitrix_extra"]["delivery_type"] == "Продление поддержки"
     assert extra["bitrix_extra"]["license_registration"] == "Licensing@x5.ru"
     assert extra["bitrix_extra"]["is_repeat_lead"] is True
+
+
+@pytest.mark.asyncio
+async def test_enrich_fields_five_contacts(monkeypatch):
+    row = {
+        "ID": "500",
+        "TITLE": "КОРПОРАТИВНЫЙ ЦЕНТР ИКС 5 (x5.ru)",
+        "COMPANY_ID": "0",
+        "CONTACT_ID": "901",
+    }
+
+    contact_rows = {
+        901: {
+            "ID": "901",
+            "NAME": "Анна",
+            "LAST_NAME": "Иванова",
+            "POST": "CISO",
+            "PHONE": [{"VALUE": "+7 495 111-11-11"}, {"VALUE": "+7 495 111-11-12"}],
+            "EMAIL": [{"VALUE": "anna@x5.ru"}, {"VALUE": "anna.ivanova@x5.ru"}],
+        },
+        902: {
+            "ID": "902",
+            "NAME": "Борис",
+            "LAST_NAME": "Петров",
+            "POST": "ИТ",
+            "PHONE": [{"VALUE": "+7 495 222-22-22"}],
+            "EMAIL": [{"VALUE": "boris@x5.ru"}],
+        },
+        903: {
+            "ID": "903",
+            "NAME": "Вера",
+            "LAST_NAME": "Сидорова",
+            "POST": "Закупки",
+            "PHONE": [{"VALUE": "+7 495 333-33-33"}],
+            "EMAIL": [{"VALUE": "vera@x5.ru"}],
+        },
+        904: {
+            "ID": "904",
+            "NAME": "Глеб",
+            "LAST_NAME": "Козлов",
+            "POST": "Ассистент",
+            "PHONE": [{"VALUE": "+7 495 444-44-44"}],
+            "EMAIL": [{"VALUE": "gleb@x5.ru"}],
+        },
+        905: {
+            "ID": "905",
+            "NAME": "Дина",
+            "LAST_NAME": "Орлова",
+            "POST": "Юрист",
+            "PHONE": [{"VALUE": "+7 495 555-55-55"}],
+            "EMAIL": [{"VALUE": "dina@x5.ru"}],
+        },
+    }
+
+    async def fake_contact(cid):
+        return contact_rows.get(int(cid))
+
+    async def fake_items(lead_id):
+        assert lead_id == 500
+        return [
+            {"contact_id": 901, "sort": 10, "is_primary": True},
+            {"contact_id": 902, "sort": 20, "is_primary": False},
+            {"contact_id": 903, "sort": 30, "is_primary": False},
+            {"contact_id": 904, "sort": 40, "is_primary": False},
+            {"contact_id": 905, "sort": 50, "is_primary": False},
+        ]
+
+    monkeypatch.setattr("integrations.bitrix24_related._fetch_contact", fake_contact)
+    monkeypatch.setattr("integrations.bitrix24_related._fetch_lead_contact_items", fake_items)
+    monkeypatch.setattr(
+        "integrations.bitrix24_related._fetch_requisites",
+        AsyncMock(return_value=[]),
+    )
+    monkeypatch.setattr(
+        "integrations.bitrix24_products.fetch_bitrix_lead_products",
+        AsyncMock(return_value=[]),
+    )
+
+    from integrations.bitrix24_related import enrich_fields_from_bitrix_row, merge_bitrix_field_updates
+
+    extra = await enrich_fields_from_bitrix_row(row)
+    contacts = extra["contacts"]
+    assert len(contacts) == 5
+    assert contacts[0]["id"] == "b24-contact-901"
+    assert contacts[0]["role"] == "lpr"
+    assert contacts[0]["phones"] == ["+7 495 111-11-11", "+7 495 111-11-12"]
+    assert contacts[0]["emails"] == ["anna@x5.ru", "anna.ivanova@x5.ru"]
+    assert contacts[4]["id"] == "b24-contact-905"
+    assert contacts[4]["phones"] == ["+7 495 555-55-55"]
+    assert extra["contact"] == "Анна Иванова"
+    assert extra["email"] == "anna@x5.ru"
+
+    enriched = extra["contacts"]
+
+    class Lead:
+        inn = None
+        ogrn = None
+        contacts = enriched[:2] + [
+            {
+                "id": "crm-manual",
+                "name": "Ручной CRM",
+                "role": "other",
+                "position": "",
+                "phones": ["+7999"],
+                "emails": [],
+                "messengers": [],
+            }
+        ]
+        bitrix_extra = None
+
+    patch = merge_bitrix_field_updates(Lead(), {"contacts": enriched})
+    assert len(patch["contacts"]) == 6
+    assert patch["contacts"][-1]["id"] == "crm-manual"
+    assert patch["contacts"][0]["emails"] == ["anna@x5.ru", "anna.ivanova@x5.ru"]

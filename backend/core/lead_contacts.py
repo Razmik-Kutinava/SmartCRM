@@ -94,6 +94,23 @@ def primary_lpr_contact(contacts: Any) -> dict[str, Any] | None:
     return None
 
 
+def is_bitrix_contact_id(contact_id: Any) -> bool:
+    return str(contact_id or "").startswith("b24-contact-")
+
+
+def merge_bitrix_contacts(existing: Any, incoming: Any) -> list[dict[str, Any]]:
+    """Контакты Битрикс (b24-contact-*) обновляются; ручные контакты CRM сохраняются."""
+    inc = normalize_contacts(incoming)
+    ex = normalize_contacts(existing)
+    if not inc:
+        return ex
+    manual = [c for c in ex if not is_bitrix_contact_id(c.get("id"))]
+    bitrix = [c for c in inc if is_bitrix_contact_id(c.get("id"))]
+    if not bitrix:
+        bitrix = inc
+    return normalize_contacts(bitrix + manual)
+
+
 def legacy_to_contacts(lead: dict[str, Any]) -> list[dict[str, Any]]:
     """Один контакт из плоских полей, если JSON contacts пуст."""
     name = str(lead.get("contact") or "").strip()
