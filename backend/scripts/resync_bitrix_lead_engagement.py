@@ -30,17 +30,30 @@ async def backfill_engagement(
     batch_size: int = 40,
     delay_ms: int = 10,
     workers: int = 4,
+    skip_scope_check: bool = False,
 ) -> dict[str, int]:
     from sqlalchemy import select
 
     from db.models.lead import Lead
     from db.session import SessionLocal
     from integrations.bitrix24 import BitrixWebhookError, webhook_base
-    from integrations.bitrix24_tasks import sync_bitrix_tasks
+    from integrations.bitrix24_tasks import reset_tasks_list_probe, sync_bitrix_tasks
     from integrations.bitrix24_timeline import sync_bitrix_timeline
 
     if not webhook_base():
         raise BitrixWebhookError("BITRIX24_WEBHOOK_URL не задан")
+
+    if tasks and not skip_scope_check:
+        from core.bitrix_webhook_scopes import missing_scopes, probe_webhook_scopes, webhook_setup_hint
+
+        reset_tasks_list_probe()
+        report = await probe_webhook_scopes()
+        missing = missing_scopes(report)
+        if "task" in missing:
+            raise BitrixWebhookError(
+                "Resync задач невозможен: у вебхука нет scope task (tasks.task.list - 401). "
+                + webhook_setup_hint(missing=["crm", "user", "task"])
+            )
 
     stats = {
         "total": 0,
@@ -111,7 +124,22 @@ async def main() -> int:
     parser.add_argument("--batch-size", type=int, default=40)
     parser.add_argument("--delay-ms", type=int, default=10)
     parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--skip-scope-check", action="store_true", help="Не проверять scope task перед resync")
+    parser.add_argument("--check-scopes-only", action="store_true", help="Только probe crm/user/task и выход")
     args = parser.parse_args()
+
+    if args.check_scopes_only:
+        from core.bitrix_webhook_scopes import missing_scopes, probe_webhook_scopes, scope_label, webhook_setup_hint
+
+        report = await probe_webhook_scopes()
+        for scope in ("crm", "user", "task"):
+            print(f"{scope_label(scope)}: {report.get(scope, {}).get('status', '?')}")
+        missing = missing_scopes(report)
+        if missing:
+            print(webhook_setup_hint(missing=missing))
+            return 1
+        print("OK: все scope на месте")
+        return 0
 
     do_tl = not args.tasks_only
     do_tk = not args.timeline_only
@@ -128,6 +156,7 @@ async def main() -> int:
             batch_size=args.batch_size,
             delay_ms=args.delay_ms,
             workers=args.workers,
+            skip_scope_check=args.skip_scope_check,
         )
     except Exception as e:
         print(f"resync_bitrix_lead_engagement FAILED: {e}")

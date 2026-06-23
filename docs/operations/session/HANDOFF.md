@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[webhook scope task + tasks.task.list] | Статус: ✅ done (код) | blocked: scope на портале`
+
+**2026-06-19:** Probe `crm/user/task` (`check_bitrix_webhook_scopes.py`); понятный 401 для `tasks.task.list`; кэш denied + preflight resync; `resync_bitrix_lead_tasks.py`; pytest 10 PASS. **На портале:** включить scope **task** на входящем вебхуке, обновить URL в `.env`, затем `python scripts/resync_bitrix_lead_tasks.py --workers 4`. Live probe: crm/user ok, **task missing**. Коммит: `TBD`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[сумма + валюта OPPORTUNITY] | Статус: ✅ done`
 
 **2026-06-19:** `deal_amount`/`deal_currency` из Битрикс OPPORTUNITY+CURRENCY_ID; API `amount`+`currency`; `amount_rub` только RUB; шапка и панель карточки; pytest 35+ PASS. **Следующий шаг 4:** по плану X5-gap (бейдж «Повторный лид» / UI bitrixExtra). Коммит: `85f88ef`.

@@ -79,7 +79,10 @@
 - Синк при каждом upsert лида (`bitrix24_upsert.py`) и фоновом poll.
 - **Массовый backfill** (как продукты):  
   `cd backend && python -u scripts/resync_bitrix_lead_engagement.py --workers 4 --batch-size 40`  
-  Только история: `--timeline-only`. Только задачи: `--tasks-only`.
+  Только задачи: `--tasks-only`. Только история: `--timeline-only`.
+- **Массовый resync задач** (после включения scope **task** на вебхуке):  
+  `cd backend && python scripts/check_bitrix_webhook_scopes.py`  
+  `cd backend && python -u scripts/resync_bitrix_lead_tasks.py --workers 4 --batch-size 40`
 - Маркеры дедупа: `[b24:act:ID]`, `[b24:task:ID]`, `[b24:comment:ID]` в `note` / `content`.
 
 - **Список `/leads/list`**: фильтры «Размер» и «ОКВЭД сек.»; **группировка** (ОКВЭД секция / размер / этап) со сворачиваемыми заголовками; KPI «портрет N%»; под компанией — `ОКВЭД · размер`.

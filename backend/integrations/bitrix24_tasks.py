@@ -15,6 +15,9 @@ logger = logging.getLogger(__name__)
 
 _MARKER = "[b24:"
 
+# После 401 на tasks.task.list не дёргаем API на каждом лиде.
+_tasks_list_denied = False
+
 _ACTIVITY_LABELS = {
     1: "Встреча",
     2: "Звонок",
@@ -51,6 +54,78 @@ async def _bitrix_call(method: str, params: dict | None = None) -> dict:
     from integrations.bitrix24 import bitrix_call
 
     return await bitrix_call(method, params or {})
+
+
+def _parse_task_rows(data: dict) -> list[dict]:
+    tasks = data.get("result") or {}
+    if isinstance(tasks, dict):
+        tasks = tasks.get("tasks") or tasks.get("items") or []
+    if not isinstance(tasks, list):
+        return []
+    return [r for r in tasks if isinstance(r, dict)]
+
+
+async def _fetch_bitrix_task_rows(bitrix_lead_id: int) -> list[dict]:
+    """tasks.task.list по привязке к лиду; 401 без scope task → пусто + флаг."""
+    global _tasks_list_denied
+    if _tasks_list_denied:
+        return []
+
+    from integrations.bitrix24 import BitrixWebhookError
+    from core.bitrix_webhook_scopes import is_task_scope_error
+
+    lead_tag = f"L_{bitrix_lead_id}"
+    filters: list[dict[str, Any]] = [
+        {"UF_CRM_TASK": lead_tag},
+        {"UF_CRM_TASK": [lead_tag]},
+    ]
+    last_err: Exception | None = None
+
+    for flt in filters:
+        try:
+            data = await _bitrix_call(
+                "tasks.task.list",
+                {
+                    "filter": flt,
+                    "select": [
+                        "ID",
+                        "TITLE",
+                        "DESCRIPTION",
+                        "STATUS",
+                        "DEADLINE",
+                        "RESPONSIBLE_ID",
+                    ],
+                    "order": {"DEADLINE": "ASC"},
+                    "start": 0,
+                },
+            )
+            rows = _parse_task_rows(data)
+            if rows or flt is filters[-1]:
+                return rows
+        except BitrixWebhookError as e:
+            last_err = e
+            if is_task_scope_error(e):
+                _tasks_list_denied = True
+                logger.warning(
+                    "tasks.task.list недоступен для лида %s (нужен scope task на вебхуке): %s",
+                    bitrix_lead_id,
+                    e,
+                )
+                return []
+            raise
+        except Exception as e:
+            last_err = e
+            logger.warning("tasks.task.list lead %s filter %s: %s", bitrix_lead_id, flt, e)
+
+    if last_err:
+        logger.debug("tasks.task.list lead %s: %s", bitrix_lead_id, last_err)
+    return []
+
+
+def reset_tasks_list_probe() -> None:
+    """Сброс кэша 401 (для тестов)."""
+    global _tasks_list_denied
+    _tasks_list_denied = False
 
 
 async def fetch_bitrix_lead_task_items(bitrix_lead_id: int) -> list[dict[str, Any]]:
@@ -98,47 +173,23 @@ async def fetch_bitrix_lead_task_items(bitrix_lead_id: int) -> list[dict[str, An
     except Exception as e:
         logger.warning("crm.activity.list tasks lead %s: %s", bitrix_lead_id, e)
 
-    try:
-        data = await _bitrix_call(
-            "tasks.task.list",
+    for row in await _fetch_bitrix_task_rows(bitrix_lead_id):
+        task_row = row.get("task") if isinstance(row.get("task"), dict) else row
+        tid = int(task_row.get("id") or task_row.get("ID") or 0)
+        if not tid:
+            continue
+        status = int(task_row.get("status") or task_row.get("STATUS") or 0)
+        items.append(
             {
-                "filter": {"UF_CRM_TASK": f"L_{bitrix_lead_id}"},
-                "select": [
-                    "ID",
-                    "TITLE",
-                    "DESCRIPTION",
-                    "STATUS",
-                    "DEADLINE",
-                    "RESPONSIBLE_ID",
-                ],
-            },
+                "kind": "task",
+                "id": tid,
+                "title": str(task_row.get("title") or task_row.get("TITLE") or f"Задача #{tid}")[:500],
+                "note": str(task_row.get("description") or task_row.get("DESCRIPTION") or "").strip()[:2000],
+                "due_dt": _parse_dt(task_row.get("deadline") or task_row.get("DEADLINE")),
+                "status": "done" if status in _B24_TASK_DONE else "open",
+                "assignee_id": task_row.get("responsibleId") or task_row.get("RESPONSIBLE_ID"),
+            }
         )
-        tasks = data.get("result") or {}
-        if isinstance(tasks, dict):
-            tasks = tasks.get("tasks") or tasks.get("items") or []
-        if not isinstance(tasks, list):
-            tasks = []
-        for row in tasks:
-            if not isinstance(row, dict):
-                continue
-            task_row = row.get("task") if isinstance(row.get("task"), dict) else row
-            tid = int(task_row.get("id") or task_row.get("ID") or 0)
-            if not tid:
-                continue
-            status = int(task_row.get("status") or task_row.get("STATUS") or 0)
-            items.append(
-                {
-                    "kind": "task",
-                    "id": tid,
-                    "title": str(task_row.get("title") or task_row.get("TITLE") or f"Задача #{tid}")[:500],
-                    "note": str(task_row.get("description") or task_row.get("DESCRIPTION") or "").strip()[:2000],
-                    "due_dt": _parse_dt(task_row.get("deadline") or task_row.get("DEADLINE")),
-                    "status": "done" if status in _B24_TASK_DONE else "open",
-                    "assignee_id": task_row.get("responsibleId") or task_row.get("RESPONSIBLE_ID"),
-                }
-            )
-    except Exception as e:
-        logger.debug("tasks.task.list lead %s: %s", bitrix_lead_id, e)
 
     return items
 

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Ф4 лиды: webhook scope task (tasks.task.list)
+
+**Было:** `tasks.task.list` → 401 (только `crm`+`user` на вебхуке); задачи Битрикс не импортировались, resync молча пропускал. **Стало:** `bitrix_webhook_scopes` + `check_bitrix_webhook_scopes.py`; ошибка с инструкцией включить **task**; preflight в resync; `resync_bitrix_lead_tasks.py`; pytest 10 PASS. **Оператор:** на портале B24 включить scope task и перезапустить resync.
+
 ## 2026-06-19 — Ф4 лиды: сумма + валюта (OPPORTUNITY)
 
 **Было:** USD/EUR суммы только в `budget` текстом; `amount_rub` пусто для X5 (15 780 $). **Стало:** колонки `deal_amount`/`deal_currency`; API `amount`+`currency`; маппинг Битрикс; merge без затирания; отображение в шапке и панели карточки; analytics `lead_amount_rub` для RUB из `amount`; pytest 35+ PASS.

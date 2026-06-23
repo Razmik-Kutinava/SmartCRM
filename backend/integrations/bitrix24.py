@@ -68,6 +68,17 @@ def _handle_bitrix_http(method: str, r: httpx.Response) -> dict[str, Any]:
     if r.status_code >= 400 or err:
         code = str(err or "")
 
+        from core.bitrix_webhook_scopes import insufficient_scope_message
+
+        scope_msg = insufficient_scope_message(method, code=code, description=desc)
+        if scope_msg and (
+            code == "insufficient_scope"
+            or "insufficient_scope" in combined
+            or "requires higher privileges" in combined
+            or (r.status_code == 401 and method.lower().startswith("tasks."))
+        ):
+            raise BitrixWebhookError(scope_msg) from None
+
         if (
             r.status_code == 401
             and (
@@ -77,8 +88,9 @@ def _handle_bitrix_http(method: str, r: httpx.Response) -> dict[str, Any]:
             )
         ):
             raise BitrixWebhookError(
-                "У вебхука нет прав на CRM (insufficient_scope). В Битрикс24: разработчикам → вебхуки "
-                "→ ваш входящий вебхук → настройка прав: включите «CRM (crm)» и «Пользователи (user)», "
+                "У вебхука нет прав на CRM (insufficient_scope). "
+                "В Битрикс24: разработчикам → вебхуки → ваш входящий вебхук → настройка прав: "
+                "включите «CRM (crm)», «Пользователи (user)» и «Задачи (task)», "
                 "сохраните, скопируйте новый URL в .env как BITRIX24_WEBHOOK_URL и перезапустите бэкенд."
             ) from None
 

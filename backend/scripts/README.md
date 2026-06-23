@@ -80,7 +80,9 @@
 | `backfill_lead_profile.py` | Backfill `okved_*`, `employees_band`, `portrait_score` у существующих лидов из `checko_json` |
 | `resync_bitrix_lead_profiles.py` | Re-import Битрикс (ИНН/ОКВЭД UF) + backfill портрета без Checko |
 | `resync_bitrix_lead_products.py` | Backfill `lead_products` из Битрикс API (UF, productrows, сделки, КП); `.env` → `BITRIX24_WEBHOOK_URL`; `--workers 6 --delay-ms 10` |
-| `resync_bitrix_lead_engagement.py` | Backfill **истории** (`lead_communication_logs`) и **задач/встреч** (`tasks`) из Битрикс; `--timeline-only` / `--tasks-only`; `--workers 4` |
+| `resync_bitrix_lead_engagement.py` | Backfill **истории** (`lead_communication_logs`) и **задач/встреч** (`tasks`) из Битрикс; `--timeline-only` / `--tasks-only`; `--check-scopes-only`; `--workers 4` |
+| `resync_bitrix_lead_tasks.py` | Только задачи/встречи (`tasks.task` + activity); preflight scope **task** |
+| `check_bitrix_webhook_scopes.py` | Probe crm/user/task на входящем вебхуке (401 tasks.task.list) |
 | `_resplit_leadgen_pkgs.py` | One-off: пересборка pipeline/checko пакетов |
 
 Вывод скриптов → `data/artifacts/`, не в корень репо.
