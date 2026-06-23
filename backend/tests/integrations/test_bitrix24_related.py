@@ -79,9 +79,56 @@ def test_merge_does_not_wipe_inn():
         inn = "7707083893"
         ogrn = None
         contacts = [{"id": "x"}]
+        bitrix_extra = {"subscription_end": "01.01.2024"}
 
     from integrations.bitrix24_related import merge_bitrix_field_updates
 
     patch = merge_bitrix_field_updates(Lead(), {"inn": None, "company": "Новое"})
     assert "inn" not in patch
     assert patch["company"] == "Новое"
+
+
+def test_merge_merges_bitrix_extra():
+    class Lead:
+        inn = None
+        ogrn = None
+        contacts = None
+        bitrix_extra = {"subscription_end": "10.01.2025", "manager": "Старый"}
+
+    from integrations.bitrix24_related import merge_bitrix_field_updates
+
+    patch = merge_bitrix_field_updates(
+        Lead(),
+        {"bitrix_extra": {"delivery_type": "Продление", "manager": ""}},
+    )
+    assert patch["bitrix_extra"]["subscription_end"] == "10.01.2025"
+    assert patch["bitrix_extra"]["delivery_type"] == "Продление"
+    assert patch["bitrix_extra"]["manager"] == "Старый"
+
+
+@pytest.mark.asyncio
+async def test_enrich_fields_x5_like(monkeypatch):
+    row = {
+        "ID": "100",
+        "TITLE": "ПОВТОРНЫЙ ЛИД: КОРПОРАТИВНЫЙ ЦЕНТР ИКС 5 (x5.ru) PMP",
+        "COMPANY_ID": "0",
+        "CONTACT_ID": "0",
+        "ADDRESS_COUNTRY": "РОССИЯ",
+        "UF_CRM_SUBSCRIPTION_END": "10.01.2025",
+        "UF_CRM_DELIVERY_TYPE": "Продление поддержки",
+        "UF_CRM_LICENSE_EMAIL": "Licensing@x5.ru",
+        "UF_CRM_MANAGER": "Иванов",
+    }
+
+    monkeypatch.setattr(
+        "integrations.bitrix24_products.fetch_bitrix_lead_products",
+        AsyncMock(return_value=[]),
+    )
+
+    from integrations.bitrix24_related import enrich_fields_from_bitrix_row
+
+    extra = await enrich_fields_from_bitrix_row(row)
+    assert extra["bitrix_extra"]["subscription_end"] == "10.01.2025"
+    assert extra["bitrix_extra"]["delivery_type"] == "Продление поддержки"
+    assert extra["bitrix_extra"]["license_registration"] == "Licensing@x5.ru"
+    assert extra["bitrix_extra"]["is_repeat_lead"] is True

@@ -148,6 +148,13 @@ def extract_employees_from_row(row: dict) -> str:
     return hinted[:100] if hinted else ""
 
 
+def extract_bitrix_extra_from_row(row: dict) -> dict[str, Any]:
+    """Лицензия/подписка/поставка и прочие UF → lead.bitrix_extra."""
+    from core.lead_bitrix_extra import build_bitrix_extra_from_row
+
+    return build_bitrix_extra_from_row(row, uf_raw_fn=_uf_raw, uf_by_hint_fn=uf_by_hint)
+
+
 def normalize_website(value: str) -> str:
     w = (value or "").strip()
     if not w or w in ("—", "-"):

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Ф4 лиды: UF Битрикс → `bitrix_extra`
+
+**Было:** UF подписки/лицензии/поставки только в `tech_json`, в API и UI не отдавались; фильтры по датам подписки невозможны. **Стало:** колонка `leads.bitrix_extra` (JSONB); `lead_bitrix_extra` + расширен `bitrix24_uf`/`enrich_fields_from_bitrix_row`; merge без затирания; `bitrixExtra` в `Lead.to_dict()`; offline backfill из `tech_json`; pytest 14 PASS (лид X5-подобный).
+
 ## 2026-06-22 — Ф4 лиды: Битрикс история + задачи/встречи
 
 **Было:** таймлайн только при upsert (на 3225 лидах пусто); встречи Битрикс не попадали в `/leads/tasks`. **Стало:** `bitrix24_tasks` (activity + tasks.task → `tasks`); mass-resync `resync_bitrix_lead_engagement.py`; upsert тянет историю и дела; доки в `leads.md`; pytest 30+ PASS.

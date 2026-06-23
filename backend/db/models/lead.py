@@ -11,6 +11,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from db.session import Base
 
 from core.lead_approvals import merge_approvals_payload
+from core.lead_bitrix_extra import bitrix_extra_for_api
 from core.lead_contacts import contacts_for_api, normalize_contacts
 
 
@@ -42,6 +43,7 @@ class Lead(Base):
     portrait_score: Mapped[int] = mapped_column(Integer, default=0)
     products_owned: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
     lead_products: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
+    bitrix_extra: Mapped[Optional[dict[str, Any]]] = mapped_column(JSON, nullable=True, default=None)
     contacts: Mapped[Optional[list[Any]]] = mapped_column(JSON, nullable=True, default=None)
     city: Mapped[str] = mapped_column(String(255), default="—")
     responsible: Mapped[str] = mapped_column(String(255), default="Я")
@@ -134,6 +136,7 @@ class Lead(Base):
             "portraitScore": int(self.portrait_score or 0),
             "productsOwned": list(getattr(self, "products_owned", None) or []),
             "leadProducts": list(getattr(self, "lead_products", None) or []),
+            "bitrixExtra": bitrix_extra_for_api(getattr(self, "bitrix_extra", None)),
             "contacts": contacts_for_api(
                 {
                     "contacts": normalize_contacts(getattr(self, "contacts", None)),

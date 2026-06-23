@@ -3,7 +3,7 @@
 | Файл | За что |
 |------|--------|
 | `bitrix24.py` | REST по входящему вебхуку: list/get, маппинг полей, массовый импорт |
-| `bitrix24_uf.py` | ИНН/домен/продукты/ОКВЭД/сотрудники из UF-полей лида |
+| `bitrix24_uf.py` | ИНН/домен/продукты/ОКВЭД/сотрудники/лицензия UF → `bitrix_extra` |
 | `bitrix24_related.py` | company/contact/requisites → enrich полей Lead |
 | `bitrix24_products.py` | productrows лида/сделок/КП + UF + opportunity → `lead_products` |
 | `bitrix24_timeline.py` | activity + comments → `lead_communication_logs` |

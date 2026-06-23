@@ -4,9 +4,11 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from core.lead_bitrix_extra import merge_bitrix_extra
 from core.lead_profile import okved_section
 
 from .bitrix24_uf import (
+    extract_bitrix_extra_from_row,
     extract_domain_from_row,
     extract_employees_from_row,
     extract_inn_from_row,
@@ -252,15 +254,28 @@ async def enrich_fields_from_bitrix_row(row: dict) -> dict[str, Any]:
     if company_title and company_title != "—":
         extra["company"] = company_title[:255]
 
+    bx = extract_bitrix_extra_from_row(row)
+    if bx:
+        extra["bitrix_extra"] = bx
+
     return extra
 
 
 def merge_bitrix_field_updates(existing: Any, patch: dict[str, Any]) -> dict[str, Any]:
-    """Не затирать inn/ogrn/contacts пустыми значениями при upsert."""
+    """Не затирать inn/ogrn/contacts/bitrix_extra пустыми значениями при upsert."""
     out = dict(patch)
     for key in ("inn", "ogrn"):
         if not out.get(key) and getattr(existing, key, None):
             out.pop(key, None)
     if not out.get("contacts") and getattr(existing, "contacts", None):
         out.pop("contacts", None)
+    if "bitrix_extra" in out:
+        merged = merge_bitrix_extra(
+            getattr(existing, "bitrix_extra", None),
+            out.get("bitrix_extra"),
+        )
+        if merged:
+            out["bitrix_extra"] = merged
+        else:
+            out.pop("bitrix_extra", None)
     return out
