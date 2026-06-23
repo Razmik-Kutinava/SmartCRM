@@ -37,7 +37,33 @@ def test_row_to_lead_fields_maps_core_and_amount_rub():
     assert fields["stage"] == "Новый"
     assert fields["source"] == "Сайт"
     assert fields["amount_rub"] == Decimal("150000")
+    assert fields["deal_amount"] == Decimal("150000")
+    assert fields["deal_currency"] == "RUB"
+    assert fields["budget"] == "150000 RUB"
     assert fields["city"] == "Москва"
     assert fields["responsible"] == "Менеджер"
     assert fields["score"] == 50
     assert fields["inn"] == "7707083893"
+
+
+def test_row_to_lead_fields_usd_opportunity():
+    row = {
+        "ID": "99",
+        "TITLE": "X5 PMP",
+        "NAME": "Анна",
+        "LAST_NAME": "Иванова",
+        "STATUS_ID": "NEW",
+        "SOURCE_ID": "WEB",
+        "OPPORTUNITY": "15780",
+        "CURRENCY_ID": "USD",
+    }
+    fields = row_to_lead_fields(
+        row,
+        status_names={"NEW": "Новый"},
+        user_names={},
+        source_names={"WEB": "Сайт"},
+    )
+    assert fields["deal_amount"] == Decimal("15780")
+    assert fields["deal_currency"] == "USD"
+    assert fields["amount_rub"] is None
+    assert fields["budget"] == "15780 USD"

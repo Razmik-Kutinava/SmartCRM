@@ -1,8 +1,14 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[сумма + валюта OPPORTUNITY] | Статус: ✅ done`
+
+**2026-06-19:** `deal_amount`/`deal_currency` из Битрикс OPPORTUNITY+CURRENCY_ID; API `amount`+`currency`; `amount_rub` только RUB; шапка и панель карточки; pytest 35+ PASS. **Следующий шаг 4:** по плану X5-gap (бейдж «Повторный лид» / UI bitrixExtra). Коммит: `TBD`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[мультиконтакты Битрикс] | Статус: ✅ done`
 
-**2026-06-19:** `crm.lead.contact.items.get` → все контакты в `lead.contacts[]` (телефоны/email); primary → ЛПР + плоские поля; `merge_bitrix_contacts` — ручные CRM не затираются при upsert; pytest 10 PASS (5 контактов X5-like). **Следующий шаг 3:** сумма+валюта OPPORTUNITY / `amount_rub` для USD. Коммит: `2497736`.
+**2026-06-19:** `crm.lead.contact.items.get` → все контакты в `lead.contacts[]` (телефоны/email); primary → ЛПР + плоские поля; `merge_bitrix_contacts` — ручные CRM не затираются при upsert; pytest 10 PASS (5 контактов X5-like). Коммит: `2497736`.
 
 ---
 

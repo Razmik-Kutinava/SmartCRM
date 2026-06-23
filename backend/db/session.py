@@ -106,6 +106,8 @@ async def init_db():
             "ALTER TABLE tasks ADD COLUMN IF NOT EXISTS escalated BOOLEAN DEFAULT FALSE",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS amount_rub NUMERIC(14,2)",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS paid_amount_rub NUMERIC(14,2)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS deal_amount NUMERIC(14,2)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS deal_currency VARCHAR(8)",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS approvals JSONB",
             "ALTER TABLE lead_field_audits ADD COLUMN IF NOT EXISTS event_type VARCHAR(64) DEFAULT 'field_change'",
             "ALTER TABLE lead_field_audits ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb",

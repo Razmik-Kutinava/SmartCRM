@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Ф4 лиды: сумма + валюта (OPPORTUNITY)
+
+**Было:** USD/EUR суммы только в `budget` текстом; `amount_rub` пусто для X5 (15 780 $). **Стало:** колонки `deal_amount`/`deal_currency`; API `amount`+`currency`; маппинг Битрикс; merge без затирания; отображение в шапке и панели карточки; analytics `lead_amount_rub` для RUB из `amount`; pytest 35+ PASS.
+
 ## 2026-06-19 — Ф4 лиды: мультиконтакты из Битрикс
 
 **Было:** только `CONTACT_ID` → 1 контакт в `contacts[]` (X5: 1 вместо 5+). **Стало:** `crm.lead.contact.items.get` + параллельный `crm.contact.get`; все телефоны/email; primary → `lpr`; `merge_bitrix_contacts` при upsert сохраняет ручные контакты CRM; pytest 10 PASS.

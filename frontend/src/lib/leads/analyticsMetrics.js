@@ -26,6 +26,12 @@ export function leadAmountRub(lead) {
 		const v = Number(lead.amountRub);
 		if (Number.isFinite(v) && v > 0) return v;
 	}
+	const amt = lead?.amount;
+	const cur = String(lead?.currency || '').toUpperCase();
+	if (amt != null && amt !== '' && (cur === 'RUB' || cur === 'RUR')) {
+		const v = Number(amt);
+		if (Number.isFinite(v) && v > 0) return v;
+	}
 	return parseBudgetRub(lead?.budget);
 }
 

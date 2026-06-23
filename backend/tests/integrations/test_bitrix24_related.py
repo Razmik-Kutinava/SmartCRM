@@ -78,6 +78,22 @@ async def test_enrich_fields_modum_like(monkeypatch):
     assert extra["okved_section"] == "62"
 
 
+def test_merge_does_not_wipe_deal_amount():
+    class Lead:
+        inn = None
+        ogrn = None
+        contacts = None
+        bitrix_extra = None
+        deal_amount = __import__("decimal").Decimal("15780")
+        deal_currency = "USD"
+
+    from integrations.bitrix24_related import merge_bitrix_field_updates
+
+    patch = merge_bitrix_field_updates(Lead(), {"deal_amount": None, "company": "Новое"})
+    assert "deal_amount" not in patch
+    assert patch["company"] == "Новое"
+
+
 def test_merge_does_not_wipe_inn():
     class Lead:
         inn = "7707083893"

@@ -13,6 +13,7 @@ from db.session import Base
 from core.lead_approvals import merge_approvals_payload
 from core.lead_bitrix_extra import bitrix_extra_for_api
 from core.lead_contacts import contacts_for_api, normalize_contacts
+from core.lead_deal_amount import deal_amount_for_api
 
 
 class Lead(Base):
@@ -30,6 +31,8 @@ class Lead(Base):
     # Суммы сделки в ₽ (менеджер); для отчётов и подсказок воронки
     amount_rub: Mapped[Optional[Decimal]] = mapped_column(Numeric(14, 2), nullable=True, default=None)
     paid_amount_rub: Mapped[Optional[Decimal]] = mapped_column(Numeric(14, 2), nullable=True, default=None)
+    deal_amount: Mapped[Optional[Decimal]] = mapped_column(Numeric(14, 2), nullable=True, default=None)
+    deal_currency: Mapped[Optional[str]] = mapped_column(String(8), nullable=True, default=None)
     position: Mapped[str] = mapped_column(String(255), default="—")
     website: Mapped[str] = mapped_column(String(255), default="—")
     employees: Mapped[str] = mapped_column(String(100), default="—")
@@ -123,6 +126,8 @@ class Lead(Base):
             "budget": self.budget,
             "amountRub": _money(self.amount_rub),
             "paidAmountRub": _money(self.paid_amount_rub),
+            "amount": deal_amount_for_api(getattr(self, "deal_amount", None)),
+            "currency": (getattr(self, "deal_currency", None) or ""),
             "position": self.position,
             "website": self.website,
             "employees": self.employees,

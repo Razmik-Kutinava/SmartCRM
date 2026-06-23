@@ -17,6 +17,12 @@ import httpx
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.lead_deal_amount import (
+    amount_rub_from_deal,
+    deal_amount_from_bitrix_row,
+    format_budget_label,
+    normalize_currency,
+)
 from db.models.lead import Lead
 
 logger = logging.getLogger(__name__)
@@ -168,32 +174,15 @@ def _all_phones(val: Any) -> str:
 
 
 def _amount_rub(row: dict) -> Optional[Decimal]:
-    opp = row.get("OPPORTUNITY")
-    if opp in (None, "", False):
-        return None
-    cur = str(row.get("CURRENCY_ID") or "RUB").upper()
-    if cur not in ("RUB", "RUR"):
-        return None
-    try:
-        return Decimal(str(opp))
-    except Exception:
-        return None
+    amt, cur = deal_amount_from_bitrix_row(row)
+    return amount_rub_from_deal(amt, cur)
 
 
 def _budget(row: dict) -> str:
-    opp = row.get("OPPORTUNITY")
-    cur = row.get("CURRENCY_ID") or ""
-    if opp in (None, "", False):
+    amt, cur = deal_amount_from_bitrix_row(row)
+    if amt is None:
         return "—"
-    try:
-        num = float(opp)
-        if num == int(num):
-            num_s = str(int(num))
-        else:
-            num_s = str(num)
-    except (TypeError, ValueError):
-        num_s = str(opp)
-    return f"{num_s} {cur}".strip() if cur else num_s
+    return format_budget_label(amt, cur or "RUB")
 
 
 def _guess_inn(row: dict) -> Optional[str]:
@@ -328,6 +317,8 @@ def row_to_lead_fields(
     if row.get("SOURCE_DESCRIPTION"):
         desc = (desc + "\n" + str(row["SOURCE_DESCRIPTION"])).strip()
 
+    deal_amt, deal_cur = deal_amount_from_bitrix_row(row)
+
     return {
         "company": _company_title(row)[:255],
         "contact": _contact_name(row)[:255],
@@ -341,7 +332,9 @@ def row_to_lead_fields(
             else "—"
         )[:100],
         "budget": _budget(row)[:100],
-        "amount_rub": _amount_rub(row),
+        "deal_amount": deal_amt,
+        "deal_currency": deal_cur,
+        "amount_rub": amount_rub_from_deal(deal_amt, deal_cur),
         "position": (str(row.get("POST") or "—"))[:255],
         "website": _first_multi(row.get("WEB"))[:255] if row.get("WEB") else "—",
         "employees": "—",
@@ -410,10 +403,13 @@ async def lead_to_bitrix_fields(lead: Lead) -> dict[str, Any]:
         "POST": (lead.position or "")[:255] if (lead.position or "").strip() not in ("", "—") else None,
         "COMMENTS": (lead.description or "")[:2000] if lead.description else None,
         "ADDRESS_CITY": (lead.city or "")[:255] if (lead.city or "").strip() not in ("", "—") else None,
-        "CURRENCY_ID": "RUB",
+        "CURRENCY_ID": normalize_currency(getattr(lead, "deal_currency", None) or "RUB"),
     }
-    if lead.amount_rub is not None:
+    if getattr(lead, "deal_amount", None) is not None:
+        fields["OPPORTUNITY"] = str(lead.deal_amount)
+    elif lead.amount_rub is not None:
         fields["OPPORTUNITY"] = str(lead.amount_rub)
+        fields["CURRENCY_ID"] = "RUB"
     email = _bitrix_multi_field(lead.email or "")
     if email:
         fields["EMAIL"] = email

@@ -86,6 +86,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `okved_industry_map.py` | Маппинг секции ОКВЭД → `industry_bucket` (укрупнённая отрасль) |
 | `lead_products.py` | Нормализация `lead_products` (статус, цена, merge) |
 | `lead_bitrix_extra.py` | UF Битрикс (подписка, поставка, лицензия…) → `lead.bitrix_extra` |
+| `lead_deal_amount.py` | OPPORTUNITY + CURRENCY_ID → `deal_amount` / `deal_currency`, API `amount`/`currency` |
 | `lead_priority_tier.py` | Приоритет лида по порогам CRM (зеркало `crmStages.js`) |
 | `lead_profile.py` | Нормализация ОКВЭД, размер компании (`employees_band`), `portrait_score`, sync полей портрета |
 | `lead_field_audit_util.py` | Аудит изменений полей лида |

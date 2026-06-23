@@ -33,6 +33,8 @@ TRACKED_ORM_FIELDS: tuple[str, ...] = (
     "description",
     "amount_rub",
     "paid_amount_rub",
+    "deal_amount",
+    "deal_currency",
     "approvals",
 )
 

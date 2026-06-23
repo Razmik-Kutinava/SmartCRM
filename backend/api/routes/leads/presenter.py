@@ -20,7 +20,7 @@ from .schemas import LeadCreate
 def dump_lead_create(body: LeadCreate) -> dict:
     d = body.model_dump()
     raw_ap = d.pop("approvals", None)
-    for key in ("amount_rub", "paid_amount_rub"):
+    for key in ("amount_rub", "paid_amount_rub", "deal_amount"):
         if d.get(key) is not None:
             d[key] = Decimal(str(d[key]))
     d["approvals"] = merge_approvals_payload(None, raw_ap) if raw_ap is not None else default_approvals_dict()

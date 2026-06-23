@@ -31,8 +31,16 @@ STAGES = [
 ]
 
 
-def test_lead_amount_from_amount_rub():
+def test_lead_amount_from_amount_rub_field():
     assert lead_amount_rub({"amountRub": 650000}) == 650000.0
+
+
+def test_lead_amount_from_amount_currency_rub():
+    assert lead_amount_rub({"amount": 150000, "currency": "RUB"}) == 150000.0
+
+
+def test_lead_amount_usd_not_counted_as_rub():
+    assert lead_amount_rub({"amount": 15780, "currency": "USD"}) is None
 
 
 def test_lead_amount_from_budget_fallback():

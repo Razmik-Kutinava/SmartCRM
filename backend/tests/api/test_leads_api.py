@@ -123,6 +123,26 @@ async def test_update_lead_amount_rub_camelcase(client):
 
 
 @pytest.mark.asyncio
+async def test_lead_deal_amount_currency_in_api(client):
+    """GET лида отдаёт amount + currency из deal_amount/deal_currency."""
+    create_r = await client.post("/api/leads", json={"company": "USD Deal"})
+    lead_id = create_r.json()["id"]
+
+    patch_r = await client.patch(
+        f"/api/leads/{lead_id}",
+        json={"amount": 15780, "currency": "USD"},
+    )
+    assert patch_r.status_code == 200
+    assert patch_r.json()["amount"] == 15780.0
+    assert patch_r.json()["currency"] == "USD"
+    assert patch_r.json()["amountRub"] is None
+
+    get_r = await client.get(f"/api/leads/{lead_id}")
+    assert get_r.json()["amount"] == 15780.0
+    assert get_r.json()["currency"] == "USD"
+
+
+@pytest.mark.asyncio
 async def test_update_lead_checko_json_camelcase(client):
     """PATCH checkoJson/inn/ogrn — паспорт после enrich."""
     create_r = await client.post(

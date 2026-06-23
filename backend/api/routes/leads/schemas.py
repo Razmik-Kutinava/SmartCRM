@@ -16,6 +16,12 @@ class LeadCreate(BaseModel):
     budget: str = "—"
     amount_rub: float | None = Field(None, validation_alias=AliasChoices("amount_rub", "amountRub"))
     paid_amount_rub: float | None = Field(None, validation_alias=AliasChoices("paid_amount_rub", "paidAmountRub"))
+    deal_amount: float | None = Field(
+        None, validation_alias=AliasChoices("deal_amount", "dealAmount", "amount")
+    )
+    deal_currency: str | None = Field(
+        None, validation_alias=AliasChoices("deal_currency", "dealCurrency", "currency")
+    )
     position: str = "—"
     website: str = "—"
     employees: str = "—"
@@ -69,6 +75,12 @@ class LeadPatch(BaseModel):
     budget: Optional[str] = None
     amount_rub: float | None = Field(None, validation_alias=AliasChoices("amount_rub", "amountRub"))
     paid_amount_rub: float | None = Field(None, validation_alias=AliasChoices("paid_amount_rub", "paidAmountRub"))
+    deal_amount: float | None = Field(
+        None, validation_alias=AliasChoices("deal_amount", "dealAmount", "amount")
+    )
+    deal_currency: str | None = Field(
+        None, validation_alias=AliasChoices("deal_currency", "dealCurrency", "currency")
+    )
     position: Optional[str] = None
     website: Optional[str] = None
     employees: Optional[str] = None

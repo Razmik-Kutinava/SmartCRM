@@ -57,6 +57,14 @@ def lead_amount_rub(lead: dict[str, Any]) -> float | None:
             return v if v > 0 else None
         except (TypeError, ValueError):
             pass
+    amt = lead.get("amount")
+    cur = str(lead.get("currency") or "").upper()
+    if amt is not None and amt != "" and cur in ("RUB", "RUR"):
+        try:
+            v = float(amt)
+            return v if v > 0 else None
+        except (TypeError, ValueError):
+            pass
     return parse_budget_rub(lead.get("budget"))
 
 

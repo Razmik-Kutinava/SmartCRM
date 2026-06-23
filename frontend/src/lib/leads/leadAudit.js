@@ -23,6 +23,8 @@ export const AUDIT_FIELD_LABELS = {
 	description: 'Описание',
 	amount_rub: 'Сумма ₽',
 	paid_amount_rub: 'Оплачено ₽',
+	deal_amount: 'Сумма сделки',
+	deal_currency: 'Валюта',
 	approvals: 'Апрувы',
 	communication: 'Касание',
 };

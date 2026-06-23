@@ -379,6 +379,9 @@ def merge_bitrix_field_updates(existing: Any, patch: dict[str, Any]) -> dict[str
     for key in ("inn", "ogrn"):
         if not out.get(key) and getattr(existing, key, None):
             out.pop(key, None)
+    for key in ("deal_amount", "deal_currency"):
+        if not out.get(key) and getattr(existing, key, None):
+            out.pop(key, None)
     if not out.get("contacts") and getattr(existing, "contacts", None):
         out.pop("contacts", None)
     elif "contacts" in out:

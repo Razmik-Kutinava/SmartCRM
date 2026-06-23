@@ -28,7 +28,7 @@
 	import { contactsDraftFromLead, contactsPatchFromDraft } from '$lib/leads/leadContacts.js';
 	import { loadLeadCardActivity } from '$lib/leads/leadCardActivity.js';
 	import { describeTransitionRule, rulesForTargetStage } from '$lib/leads/stageTransition.js';
-	import { buildMoneyPatch, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
+	import { buildMoneyPatch, formatDealAmountLabel, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 	import { formatRuDate } from '$lib/leads/leadActivityTasks.js';
@@ -774,6 +774,9 @@
 					<span class="text-green-400 font-semibold">{lead.score}/100</span>
 					<span class="px-1.5 py-px rounded text-[10px] font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
 					<span>{lead.stage}</span>
+					{#if formatDealAmountLabel(lead)}
+						<span class="text-amber-300/90 font-medium" data-testid="lead-card-deal-amount">{formatDealAmountLabel(lead)}</span>
+					{/if}
 					{#if lead.inn}
 						<span>ИНН {lead.inn}</span>
 					{/if}
@@ -1055,7 +1058,14 @@
 				</div>
 
 				<div class="space-y-2">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Суммы сделки (₽)</div>
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Суммы сделки</div>
+					{#if formatDealAmountLabel(lead)}
+						<div class="text-sm text-gray-300" data-testid="lead-card-deal-amount-panel">
+							<span class="text-gray-500 text-xs">Сумма (Битрикс)</span>
+							<div class="text-amber-200/90 font-medium mt-0.5">{formatDealAmountLabel(lead)}</div>
+						</div>
+					{/if}
+					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium pt-1">В рублях (менеджер)</div>
 					<div class="space-y-2 text-sm">
 						<label class="block">
 							<span class="text-gray-500 text-xs">Сумма договора / сделки</span>

@@ -139,7 +139,7 @@ async def update_lead(
     for field, value in data.items():
         if field == "approvals":
             continue
-        if field in ("amount_rub", "paid_amount_rub"):
+        if field in ("amount_rub", "paid_amount_rub", "deal_amount"):
             patch_for_merge[field] = Decimal(str(value)) if value is not None else None
         else:
             patch_for_merge[field] = value
@@ -160,8 +160,12 @@ async def update_lead(
     for field, value in data.items():
         if field == "approvals":
             continue
-        if field in ("amount_rub", "paid_amount_rub"):
+        if field in ("amount_rub", "paid_amount_rub", "deal_amount"):
             setattr(lead, field, Decimal(str(value)) if value is not None else None)
+        elif field == "deal_currency":
+            from core.lead_deal_amount import normalize_currency
+
+            setattr(lead, field, normalize_currency(value) if value else None)
         else:
             setattr(lead, field, value)
     from core.lead_profile import sync_lead_profile
