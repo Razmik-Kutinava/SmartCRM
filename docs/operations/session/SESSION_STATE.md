@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-19 | Действие: сумма+валюта — deal_amount/deal_currency, API amount/currency, UI шапка+панель, Битрикс OPPORTUNITY; pytest 28+ PASS. | Коммит: `85f88ef` | Хвост A: mass backfill deal_amount на 3225 не запускали; апрув UI в браузере | Хвост B: нет | Хвост C: нет | Статус: done
+
 2026-06-19 | Действие: мультиконтакты Битрикс — contact.items, 5 контактов X5-like, merge_bitrix_contacts; pytest 10 PASS. | Коммит: `2497736` | Хвост A: mass resync contacts на 3225 не запускали | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-19 | Действие: UF Битрикс → bitrix_extra — lead_bitrix_extra, enrich/merge upsert, API bitrixExtra, миграция JSONB; pytest 14 PASS (X5-like). | Коммит: `503914d` | Хвост A: mass backfill bitrix_extra на 3225 не запускали | Хвост B: нет | Хвост C: нет | Статус: done

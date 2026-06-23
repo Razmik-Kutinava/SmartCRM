@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[сумма + валюта OPPORTUNITY] | Статус: ✅ done`
 
-**2026-06-19:** `deal_amount`/`deal_currency` из Битрикс OPPORTUNITY+CURRENCY_ID; API `amount`+`currency`; `amount_rub` только RUB; шапка и панель карточки; pytest 35+ PASS. **Следующий шаг 4:** по плану X5-gap (бейдж «Повторный лид» / UI bitrixExtra). Коммит: `TBD`.
+**2026-06-19:** `deal_amount`/`deal_currency` из Битрикс OPPORTUNITY+CURRENCY_ID; API `amount`+`currency`; `amount_rub` только RUB; шапка и панель карточки; pytest 35+ PASS. **Следующий шаг 4:** по плану X5-gap (бейдж «Повторный лид» / UI bitrixExtra). Коммит: `85f88ef`.
 
 ---
 
