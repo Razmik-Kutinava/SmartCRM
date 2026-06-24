@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[crm.activity синк встреч/дел] | Статус: 🔄 in_progress`
 
-**2026-06-24:** Preflight без scope task — только `crm.activity` (встреча/дело/звонок). Smoke 5 лидов OK; полный `resync_bitrix_lead_tasks.py` в фоне. Коммит: `TBD`.
+**2026-06-24:** Preflight без scope task — только `crm.activity` (встреча/дело/звонок). Smoke 5 лидов OK; полный `resync_bitrix_lead_tasks.py` в фоне. Коммит: `511b753`.
 
 ---
 
