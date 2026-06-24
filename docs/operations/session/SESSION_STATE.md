@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-24 | Действие: /leads/list coverage — сегменты B24/паспорт/пустые/проигран/без дел; GET /api/leads/coverage; чипы-фильтры UI; pytest 12+34 crm_leads PASS | Коммит: `PENDING` | Хвост A: mass resync + activity resync в фоне; browser UI не кликали | Хвост B: нет | Хвост C: нет | Статус: done
+2026-06-24 | Действие: /leads/list coverage — сегменты B24/паспорт/пустые/проигран/без дел; GET /api/leads/coverage; чипы-фильтры UI; pytest 12+34 crm_leads PASS | Коммит: `f9123bf` | Хвост A: mass resync + activity resync в фоне; browser UI не кликали | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-24 | Действие: /leads/tasks фильтры статус+срок+эскалация; task_list_filter API; бейджи; pytest 8 PASS | Коммит: `9e1d76b` | Хвост A: mass resync в фоне | Хвост B: нет | Хвост C: нет | Статус: done
 
