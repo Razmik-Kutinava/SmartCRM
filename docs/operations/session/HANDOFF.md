@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[webhook scope task — шаг 4 X5-gap] | Статус: blocked (портал)`
 
-**2026-06-24:** Extended probe: crm/user **ok**, task **missing** (401); feature API ok кроме `tasks.task.list`; `requisite.list` Access denied (ИНН через UF). JSON `data/bitrix_webhook_scope_report.json`. Acceptance: `F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`. **👤:** включить scope **task** на вебхуке → `.env` → `check_bitrix_webhook_scopes.py` → `resync_bitrix_lead_tasks.py`. Коммит: `TBD`.
+**2026-06-24:** Extended probe: crm/user **ok**, task **missing** (401); feature API ok кроме `tasks.task.list`; `requisite.list` Access denied (ИНН через UF). JSON `data/bitrix_webhook_scope_report.json`. Acceptance: `F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`. **👤:** включить scope **task** на вебхуке → `.env` → `check_bitrix_webhook_scopes.py` → `resync_bitrix_lead_tasks.py`. Коммит: `ae3fa9c`.
 
 ---
 

@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-24 | Действие: шаг 4 webhook scope task — extended probe (feature API), JSON report, F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE; live task missing; pytest 8 PASS | Коммит: `TBD` | Хвост A: 👤 scope task на B24 + resync | Хвост B: BACKLOG шаг 4 | Хвост C: requisite.list Access denied | Статус: blocked (портал)
+2026-06-24 | Действие: шаг 4 webhook scope task — extended probe (feature API), JSON report, F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE; live task missing; pytest 8 PASS | Коммит: `ae3fa9c` | Хвост A: 👤 scope task на B24 + resync | Хвост B: BACKLOG шаг 4 | Хвост C: requisite.list Access denied | Статус: blocked (портал)
 
 2026-06-24 | Действие: mass-resync хвост 1–3 — rate-limit/retry в bitrix_call, auto-sync pause, multi-contacts metrics; 162/3225 extra, 106 multi; pytest 6+ PASS; прогон resume w2 | Коммит: `1f103f5` | Хвост A: дождаться 3225; scope task; browser | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: in_progress
 
