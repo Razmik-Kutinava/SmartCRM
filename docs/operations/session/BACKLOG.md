@@ -179,7 +179,19 @@
 
 ---
 
-## Активный хвост (топ по приоритету)
+## Фаза 4 — X5-gap прогон (шаги 1–5, хвосты)
+
+| Шаг | PRD_MAP | Отложено | Приоритет |
+|-----|---------|----------|-----------|
+| 1 | UF → `bitrix_extra` | Mass backfill `bitrix_extra` на ~3225 лидов (`resync` / re-import с webhook) | 🔴 |
+| 2 | Мультиконтакты | Mass resync contacts на ~3225 (`resync_bitrix_lead_engagement` или upsert poll) | 🔴 |
+| 3 | Сумма + валюта | Mass backfill `deal_amount`/`deal_currency`; 👤 апрув суммы в браузере | 🟡 |
+| 4 | Webhook scope `task` | 👤 включить scope **task** на входящем вебхуке B24 → `resync_bitrix_lead_tasks.py --workers 4` | 🔴 |
+| 5 | UI карточки X5-gap | 👤 апрув карточки в браузере (лицензия, контакты, UF, бейдж) | 🟡 |
+
+`[2026-06-19] | PRD_MAP: Ф4 · X5-gap шаги 1–5 | Отложено: mass backfills 1–3, scope task п.4, browser апрув 3+5 | Причина: код закрыт, нужен webhook + оператор | Нужна фаза MAP: 4 | Из шага: сводка прогона шаг 5`
+
+---
 
 `[2026-06-14] | PRD_MAP: «Ф2 §1 Voice Layer» — ЗАКРЫТО ✅ | Scope: Hermes modules + UI voice_action (modal/navigate/filter/approve) + rescue eval | Сделано: frontend voiceAction/VoiceActionHost, minScore, send_email/save_to_rag approve, `smoke_voice_layer.py` 72 passed, `VOICE_LAYER_ACCEPTANCE.md` | Хвост 🟢: live LLM eval всех модулей (не rescue) — опционально | Коммит: `f2b618e`
 

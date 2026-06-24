@@ -29,6 +29,7 @@
 	import { loadLeadCardActivity } from '$lib/leads/leadCardActivity.js';
 	import { describeTransitionRule, rulesForTargetStage } from '$lib/leads/stageTransition.js';
 	import { buildMoneyPatch, formatDealAmountLabel, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
+	import { isRepeatLead } from '$lib/leads/leadBitrixExtra.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 	import { formatRuDate } from '$lib/leads/leadActivityTasks.js';
@@ -42,6 +43,8 @@
 	import LeadStageHints from '../../../components/LeadStageHints.svelte';
 	import LeadDealPathPanel from '../../../components/LeadDealPathPanel.svelte';
 	import LeadContactsPanel from '../../../components/LeadContactsPanel.svelte';
+	import LeadContactsReadonlyList from '../../../components/LeadContactsReadonlyList.svelte';
+	import LeadBitrixExtraPanel from '../../../components/LeadBitrixExtraPanel.svelte';
 	import LeadScoreAdvisoryPanel from '../../../components/LeadScoreAdvisoryPanel.svelte';
 	import LeadActivityPanel from '../../../components/LeadActivityPanel.svelte';
 	import LeadPassportPanel from '../../../components/LeadPassportPanel.svelte';
@@ -775,7 +778,13 @@
 					<span class="px-1.5 py-px rounded text-[10px] font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
 					<span>{lead.stage}</span>
 					{#if formatDealAmountLabel(lead)}
-						<span class="text-amber-300/90 font-medium" data-testid="lead-card-deal-amount">{formatDealAmountLabel(lead)}</span>
+						<span class="text-amber-300/90 font-semibold tabular-nums" data-testid="lead-card-deal-amount">{formatDealAmountLabel(lead)}</span>
+					{/if}
+					{#if isRepeatLead(lead)}
+						<span
+							class="px-1.5 py-px rounded text-[10px] font-medium bg-violet-900/70 text-violet-200 border border-violet-700/50"
+							data-testid="lead-repeat-badge"
+						>Повторный лид</span>
 					{/if}
 					{#if lead.inn}
 						<span>ИНН {lead.inn}</span>
@@ -975,6 +984,8 @@
 							<span class="text-gray-500 text-xs">Компания</span>
 							<input bind:value={detailsDraft.company} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
 						</label>
+						<LeadBitrixExtraPanel {lead} />
+						<LeadContactsReadonlyList contacts={lead.contacts || []} />
 						<LeadContactsPanel
 							contacts={contactsDraft}
 							onChange={(c) => { contactsDraft = c; }}

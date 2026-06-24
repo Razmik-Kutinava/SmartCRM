@@ -31,6 +31,12 @@ def format_deal_amount_label(lead: dict) -> str:
     formatted = f"{amount:,.2f}".replace(",", " ").replace(".00", "")
     if formatted.endswith(" "):
         formatted = formatted.strip()
+    if currency == "USD":
+        return f"{formatted} $"
+    if currency == "EUR":
+        return f"{formatted} €"
+    if currency in ("RUB", "RUR"):
+        return f"{formatted} ₽"
     return f"{formatted} {currency}".strip() if currency else formatted
 
 
@@ -59,8 +65,12 @@ def test_build_money_patch_rejects_garbage():
 
 def test_format_deal_amount_label_usd():
     label = format_deal_amount_label({"amount": 15780, "currency": "USD"})
-    assert "15 780" in label
-    assert "USD" in label
+    assert label == "15 780 $"
+
+
+def test_format_deal_amount_label_rub():
+    label = format_deal_amount_label({"amount": 150000, "currency": "RUB"})
+    assert label == "150 000 ₽"
 
 
 def test_format_deal_amount_label_falls_back_to_budget():

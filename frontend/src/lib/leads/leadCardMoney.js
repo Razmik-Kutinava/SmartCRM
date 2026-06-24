@@ -17,7 +17,7 @@ export function dealAmountFromLead(lead) {
 	return { amount: Number.isFinite(n) ? n : null, currency };
 }
 
-/** Подпись суммы сделки для шапки карточки: «15 780 USD». */
+/** Подпись суммы сделки для шапки: «15 780 $» / «150 000 ₽». */
 export function formatDealAmountLabel(lead) {
 	const { amount, currency } = dealAmountFromLead(lead);
 	if (amount == null || amount <= 0) {
@@ -25,6 +25,9 @@ export function formatDealAmountLabel(lead) {
 		return budget && budget !== '—' ? budget : '';
 	}
 	const formatted = amount.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+	if (currency === 'USD') return `${formatted} $`;
+	if (currency === 'EUR') return `${formatted} €`;
+	if (currency === 'RUB' || currency === 'RUR') return `${formatted} ₽`;
 	return currency ? `${formatted} ${currency}` : formatted;
 }
 

@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-19 — Ф4 лиды: UI карточки X5-gap (шаг 5)
+
+**Было:** `bitrixExtra` и мультиконтакты в API, но в UI карточки не отображались; сумма `15 780 USD`; нет бейджа «Повторный лид»; сырые UF только в `tech_json`. **Стало:** шапка `15 780 $` + бейдж; блок «Лицензия / подписка» (6–8 полей); readonly-список контактов; сворачиваемый fallback «Поля Битрикс (сырые UF)»; превью плитки «Карточка»; pytest mirror+smoke PASS. **Хвост:** mass backfills шагов 1–3, scope task, browser апрув — `BACKLOG.md`.
+
 ## 2026-06-19 — Ф4 лиды: webhook scope task (tasks.task.list)
 
 **Было:** `tasks.task.list` → 401 (только `crm`+`user` на вебхуке); задачи Битрикс не импортировались, resync молча пропускал. **Стало:** `bitrix_webhook_scopes` + `check_bitrix_webhook_scopes.py`; ошибка с инструкцией включить **task**; preflight в resync; `resync_bitrix_lead_tasks.py`; pytest 10 PASS. **Оператор:** на портале B24 включить scope task и перезапустить resync.

@@ -101,6 +101,8 @@ def test_lead_card_panels_in_slide_over():
     assert "LeadDealPathPanel" in stages
     assert "LeadActivityPanel" not in stages
     assert "LeadContactsPanel" in center
+    assert "LeadContactsReadonlyList" in center
+    assert "LeadBitrixExtraPanel" in center
     assert "Суммы сделки" in center
     assert "LeadActivityPanel" in activity
     assert "LeadDealPathPanel" not in activity
@@ -128,6 +130,24 @@ def test_lead_card_deal_path_and_hints_ui():
     assert "lead.dealPath" in text
     assert "Апрувы и документы" not in text
     assert "Сохранить документы" not in panel
+
+
+def test_lead_card_bitrix_extra_ui_markers():
+    """Шаг 5 X5-gap: бейдж повторного лида, лицензия, контакты readonly, UF fallback."""
+    text = _LEAD_CARD.read_text(encoding="utf-8")
+    header = text.split('data-testid="lead-card-header"', 1)[1].split("</header>", 1)[0]
+    assert 'data-testid="lead-repeat-badge"' in header
+    assert "isRepeatLead(lead)" in text
+    assert 'data-testid="lead-card-deal-amount"' in header
+    assert "LeadBitrixExtraPanel" in text
+    assert "LeadContactsReadonlyList" in text
+    license_panel = (
+        _REPO / "frontend" / "src" / "components" / "LeadBitrixExtraPanel.svelte"
+    ).read_text(encoding="utf-8")
+    assert 'data-testid="lead-bitrix-license-panel"' in license_panel
+    assert 'data-testid="lead-bitrix-uf-panel"' in license_panel
+    hub = _HUB_PREVIEW.read_text(encoding="utf-8")
+    assert "licensePreviewText" in hub
 
 
 def test_lead_hub_preview_module():

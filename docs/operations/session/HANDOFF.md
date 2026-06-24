@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[UI карточки X5-gap — шаг 5] | Статус: ✅ done (код)`
+
+**2026-06-19:** Шапка — `formatDealAmountLabel` → `15 780 $`, бейдж «Повторный лид» (`isRepeatLead`); панель «Карточка» — `LeadBitrixExtraPanel` (лицензия/подписка + сворачиваемые сырые UF), `LeadContactsReadonlyList`; превью хаба `licensePreviewText`; pytest mirror+smoke PASS. **Хвосты прогона 1–5:** mass backfill bitrix_extra/deal_amount/contacts (~3225), scope **task** на портале B24, 👤 апрув UI в браузере — см. `BACKLOG.md` § X5-gap. **Следующий шаг:** оператор — scope task + mass resync; затем обход карточки end-to-end. Коммит: `TBD`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[webhook scope task + tasks.task.list] | Статус: ✅ done (код) | blocked: scope на портале`
 
 **2026-06-19:** Probe `crm/user/task` (`check_bitrix_webhook_scopes.py`); понятный 401 для `tasks.task.list`; кэш denied + preflight resync; `resync_bitrix_lead_tasks.py`; pytest 10 PASS. **На портале:** включить scope **task** на входящем вебхуке, обновить URL в `.env`, затем `python scripts/resync_bitrix_lead_tasks.py --workers 4`. Live probe: crm/user ok, **task missing**. Коммит: `59490d3`.

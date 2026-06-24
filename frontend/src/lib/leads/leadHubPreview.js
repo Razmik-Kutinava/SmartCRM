@@ -2,6 +2,7 @@
 import { dealPathTotals, dealPathNextStep } from '$lib/leads/leadDealPathUi.js';
 import { passportHasData } from '$lib/leads/leadPassport.js';
 import { hubProductsPreview } from '$lib/leads/leadProducts.js';
+import { licensePreviewText } from '$lib/leads/leadBitrixExtra.js';
 import { slaStatus } from '$lib/tasks/taskSla.js';
 
 export const HUB_PANELS = [
@@ -43,7 +44,11 @@ export function buildHubTilePreviews(ctx) {
 			preview: [lead.contact, lead.phone !== '—' ? lead.phone : '', lead.email !== '—' ? lead.email : '']
 				.filter(Boolean)
 				.join(' · ') || 'Контакты и реквизиты',
-			meta: lead.inn ? `ИНН ${lead.inn}` : lead.website !== '—' ? lead.website : '',
+			meta: [
+				lead.inn ? `ИНН ${lead.inn}` : '',
+				Array.isArray(lead.contacts) && lead.contacts.length ? `${lead.contacts.length} контакт(ов)` : '',
+				licensePreviewText(lead),
+			].filter(Boolean).join(' · ') || (lead.website !== '—' ? lead.website : ''),
 		},
 		products: productsHub,
 		activity: {
