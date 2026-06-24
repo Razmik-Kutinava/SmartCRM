@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[browser апрув + resync — шаги 5/6/7] | Статус: 🔄 in_progress`
+
+**2026-06-24:** Бэкенд ✅ фронт ✅5173. Resync **985/3228** (~30%, ETA ~3.8ч, 0 ошибок). DevTools: шаг5 `/leads/289` — `15 780 $`, повторный, 5 контактов; шаг7 — фильтры+колонка; календарь ✅. **👤:** визуально `ок шаг 5/7`. Mass-resync до done. Коммит: `TBD`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[webhook scope task — шаг 4 X5-gap] | Статус: blocked (портал)`
 
 **2026-06-24:** Extended probe: crm/user **ok**, task **missing** (401); feature API ok кроме `tasks.task.list`; `requisite.list` Access denied (ИНН через UF). JSON `data/bitrix_webhook_scope_report.json`. Acceptance: `F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`. **👤:** включить scope **task** на вебхуке → `.env` → `check_bitrix_webhook_scopes.py` → `resync_bitrix_lead_tasks.py`. Коммит: `ae3fa9c`.

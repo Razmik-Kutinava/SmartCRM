@@ -20,15 +20,20 @@
 		'Декабрь',
 	];
 
-	let viewYear = $state(new Date().getFullYear());
-	let viewMonth = $state(new Date().getMonth() + 1);
+	const today = new Date();
+	const currentYear = today.getFullYear();
+	const currentMonth = today.getMonth() + 1;
+	const currentDay = today.getDate();
+
+	let viewYear = $state(currentYear);
+	let viewMonth = $state(currentMonth);
 	let cal = $state(null);
 	let leads = $state([]);
 	let loading = $state(true);
 	let err = $state('');
 
 	let panelOpen = $state(false);
-	let pickDay = $state(null);
+	let pickDay = $state(currentDay);
 	let newTitle = $state('');
 	let newDue = $state('');
 	let newSla = $state('');
@@ -104,6 +109,10 @@
 		newNote = '';
 		newLeadId = '';
 		panelOpen = true;
+	}
+
+	function isToday(day) {
+		return day === currentDay && viewMonth === currentMonth && viewYear === currentYear;
 	}
 
 	function closePanel() {
@@ -201,7 +210,9 @@
 			{#if err}
 				<p class="text-amber-400 text-xs mb-2">{err}</p>
 			{/if}
-			<div class="grid grid-cols-7 gap-px bg-gray-800 rounded-xl overflow-hidden border border-gray-800 max-w-5xl">
+			<div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,28rem)]">
+				<div>
+					<div class="grid grid-cols-7 gap-px bg-gray-800 rounded-xl overflow-hidden border border-gray-800 max-w-5xl">
 				{#each cal.weekday_labels as wd}
 					<div class="bg-gray-900 px-2 py-2 text-center text-[11px] text-gray-500 font-medium">{wd}</div>
 				{/each}
@@ -210,7 +221,7 @@
 						<button
 							type="button"
 							onclick={() => selectDay(day)}
-							class="min-h-[5.5rem] bg-gray-950 hover:bg-gray-900/90 text-left p-2 align-top border-t border-gray-800/80 transition-colors {day ? (day === pickDay ? 'border-indigo-500 bg-indigo-950/80' : '') : 'cursor-default opacity-40'}"
+							class="min-h-[5.5rem] text-left p-2 align-top border-t border-gray-800/80 transition-colors {day ? (day === pickDay ? 'border-indigo-500 bg-indigo-950/80' : isToday(day) ? 'border-emerald-500 bg-emerald-950/70' : 'bg-gray-950 hover:bg-gray-900/90') : 'cursor-default opacity-40'}"
 							disabled={!day}
 						>
 							{#if day}
@@ -231,11 +242,12 @@
 						</button>
 					{/each}
 				{/each}
+				</div>
 			</div>
-
-			{#if pickDay}
-				<div class="mt-6 rounded-xl border border-gray-800 bg-gray-900 p-4 max-w-5xl">
-					<div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+			<div class="space-y-4">
+					{#if pickDay}
+						<div class="rounded-xl border border-gray-800 bg-gray-900 p-4">
+						<div class="flex flex-wrap items-center justify-between gap-3 mb-3">
 						<div>
 							<h2 class="text-sm font-semibold text-white">{formatRuDate(viewYear, viewMonth, pickDay)}</h2>
 							<p class="text-xs text-gray-500">Список задач на выбранную дату.</p>
@@ -278,6 +290,8 @@
 					{/if}
 				</div>
 			{/if}
+			</div>
+		</div>
 		{/if}
 	</div>
 </div>

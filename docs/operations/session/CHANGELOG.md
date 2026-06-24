@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-24 — Ф4 X5-gap: browser-апрув чеклист + fix календаря
+
+**Прогон:** resync 985/3228; DevTools шаги 5/7 + календарь OK. Док: `F4_X5_BROWSER_APPROVAL.md`. Fix: закрывающие `</div>` в `calendar/+page.svelte`. **👤:** формальный апрув шагов 5/7; mass-resync до 3228.
+
 ## 2026-06-24 — Ф4 X5-gap шаг 4: webhook scope task — extended probe + acceptance
 
 **Live:** crm/user ok, task missing; feature probes + JSON report; resync preflight блокирует без task. Док: `F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`. **Оператор:** scope task на портале.
