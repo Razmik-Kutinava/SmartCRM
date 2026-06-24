@@ -71,6 +71,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `lib/test_lead_list_profile_filters.py` | Фильтры ОКВЭД-секция и employees_band (segment query) |
 | `lib/test_lead_list_group.py` | Группировка списка лидов (groupLeads) |
 | `lib/test_tasks_page_filters.py` | Фильтры страницы /leads/tasks |
+| `core/test_task_list_filter.py` | filter_tasks — статус, срок, legacy |
 | `core/test_lead_profile.py` | Нормализация ОКВЭД, employees_band, portrait_score |
 | `lib/test_lead_card_money.py` | Суммы ₽ на карточке лида |
 | `api/test_lead_engagement.py` | Комментарии, касания, апрувы, dealPath/stageHints в GET |

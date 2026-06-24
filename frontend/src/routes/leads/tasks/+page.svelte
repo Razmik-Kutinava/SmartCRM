@@ -3,10 +3,11 @@
 	import { page } from '$app/stores';
 	import { fetchLeads } from '$lib/leadsStorage.js';
 	import { createTask as apiCreateTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
-	import { slaStatus } from '$lib/tasks/taskSla.js';
+	import { slaStatus, taskDueBadge } from '$lib/tasks/taskSla.js';
 	import {
-		parseTasksPageFilter,
-		TASK_PAGE_FILTERS,
+		parseLegacyTasksFilter,
+		TASK_DUE_FILTERS,
+		TASK_STATUS_FILTERS,
 		tasksFetchParams,
 	} from '$lib/tasks/tasksPageFilters.js';
 
@@ -14,7 +15,9 @@
 	let leads = $state([]);
 	let loading = $state(true);
 	let err = $state('');
-	let filter = $state('all');
+	let statusFilter = $state('all');
+	let dueFilter = $state('all');
+	let escalatedOnly = $state(false);
 	let panelOpen = $state(false);
 	let createMode = $state('task');
 
@@ -31,7 +34,9 @@
 		loading = true;
 		err = '';
 		try {
-			tasks = await fetchTasks(tasksFetchParams(filter));
+			tasks = await fetchTasks(
+				tasksFetchParams({ taskStatus: statusFilter, dueFilter, escalatedOnly }),
+			);
 			leads = await fetchLeads().catch(() => []);
 		} catch (e) {
 			err = e?.message || String(e);
@@ -61,7 +66,10 @@
 	}
 
 	onMount(() => {
-		filter = parseTasksPageFilter($page.url.searchParams.get('filter'));
+		const legacy = parseLegacyTasksFilter($page.url.searchParams.get('filter'));
+		statusFilter = legacy.taskStatus;
+		dueFilter = legacy.dueFilter;
+		escalatedOnly = legacy.escalatedOnly;
 		load();
 	});
 
@@ -110,9 +118,25 @@
 		}
 	}
 
-	function setFilter(id) {
-		filter = id;
+	function setStatusFilter(id) {
+		statusFilter = id;
 		load();
+	}
+
+	function setDueFilter(id) {
+		dueFilter = id;
+		load();
+	}
+
+	function toggleEscalatedFilter() {
+		escalatedOnly = !escalatedOnly;
+		load();
+	}
+
+	function chipCls(active) {
+		return active
+			? 'bg-indigo-600 text-white'
+			: 'bg-gray-800 text-gray-400 hover:text-gray-200';
 	}
 </script>
 
@@ -145,21 +169,38 @@
 				</button>
 			</div>
 		</div>
-		<div class="flex gap-2 mt-3 flex-wrap" role="tablist" aria-label="Фильтр задач">
-			{#each TASK_PAGE_FILTERS as [id, label]}
+		<div class="mt-3 space-y-2">
+			<div class="flex flex-wrap items-center gap-2">
+				<span class="text-[10px] uppercase tracking-wide text-gray-600 w-14 shrink-0">Статус</span>
+				{#each TASK_STATUS_FILTERS as [id, label]}
+					<button
+						type="button"
+						data-testid="tasks-filter-status-{id}"
+						class="text-xs px-2.5 py-1 rounded-md {chipCls(statusFilter === id)}"
+						onclick={() => setStatusFilter(id)}
+					>{label}</button>
+				{/each}
+			</div>
+			<div class="flex flex-wrap items-center gap-2">
+				<span class="text-[10px] uppercase tracking-wide text-gray-600 w-14 shrink-0">Срок</span>
+				{#each TASK_DUE_FILTERS as [id, label]}
+					<button
+						type="button"
+						data-testid="tasks-filter-due-{id}"
+						class="text-xs px-2.5 py-1 rounded-md {chipCls(dueFilter === id)}"
+						onclick={() => setDueFilter(id)}
+					>{label}</button>
+				{/each}
 				<button
 					type="button"
-					role="tab"
-					aria-selected={filter === id}
-					class="text-xs px-2.5 py-1 rounded-md {filter === id
-						? 'bg-indigo-600 text-white'
-						: 'bg-gray-800 text-gray-400 hover:text-gray-200'}"
-					onclick={() => setFilter(id)}
-				>{label}</button>
-			{/each}
-			{#if !loading}
-				<span class="text-xs text-gray-600 self-center ml-1">{tasks.length} шт.</span>
-			{/if}
+					data-testid="tasks-filter-escalated"
+					class="text-xs px-2.5 py-1 rounded-md {chipCls(escalatedOnly)}"
+					onclick={toggleEscalatedFilter}
+				>Эскалация</button>
+				{#if !loading}
+					<span class="text-xs text-gray-600 ml-auto">{tasks.length} шт.</span>
+				{/if}
+			</div>
 		</div>
 	</div>
 
@@ -189,9 +230,17 @@
 					</thead>
 					<tbody class="divide-y divide-gray-800">
 						{#each tasks as t}
+							{@const badge = taskDueBadge(t)}
 							<tr class="hover:bg-gray-800/40">
 								<td class="px-4 py-2.5 text-white max-w-md">
-									<div class="font-medium">{t.title}</div>
+									<div class="flex flex-wrap items-center gap-2">
+										<div class="font-medium">{t.title}</div>
+										{#if badge}
+											<span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium {badge.cls}">
+												{badge.label}
+											</span>
+										{/if}
+									</div>
 									{#if t.note}
 										<div class="text-xs text-gray-500 line-clamp-2 mt-0.5">{t.note}</div>
 									{/if}

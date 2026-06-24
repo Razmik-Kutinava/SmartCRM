@@ -27,3 +27,28 @@ export function slaStatus(task) {
 	if (dt.getTime() === now.getTime()) return { key: 'today', label: 'Сегодня', cls: 'text-yellow-400' };
 	return { key: 'ok', label: 'В срок', cls: 'text-green-400' };
 }
+
+/** Бейдж срока задачи в списке */
+export function taskDueBadge(task) {
+	if (task.status === 'done') {
+		return { label: 'Выполнено', cls: 'bg-gray-700/80 text-gray-400' };
+	}
+	const sla = slaStatus(task);
+	if (sla.key === 'overdue') {
+		return { label: 'Просрочено', cls: 'bg-red-900/60 text-red-300' };
+	}
+	if (sla.key === 'today') {
+		return { label: 'Сегодня', cls: 'bg-yellow-900/50 text-yellow-300' };
+	}
+	const due = parseTaskDue(task.due);
+	if (due) {
+		const now = new Date();
+		now.setHours(0, 0, 0, 0);
+		due.setHours(0, 0, 0, 0);
+		if (due < now) return { label: 'Просрочено', cls: 'bg-red-900/60 text-red-300' };
+		if (due.getTime() === now.getTime()) {
+			return { label: 'Сегодня', cls: 'bg-yellow-900/50 text-yellow-300' };
+		}
+	}
+	return null;
+}

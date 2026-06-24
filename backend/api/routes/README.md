@@ -80,7 +80,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `crm.py` | `/api/crm` | Публичные CRM: стадии, настройки |
 | `webhooks_bitrix.py` | `/api/webhooks/bitrix` | Исходящие события Битрикс24 (ONCRMLEADADD) |
 | `leads/` | `/api/leads` | См. пакет выше |
-| `tasks.py` | `/api/tasks` | Задачи по лидам, SLA, фильтр `lead_id` |
+| `tasks.py` | `/api/tasks` | Задачи: `task_status`, `due`, `escalated`, `lead_id` |
 | `email.py` | `/api/email` | IMAP/SMTP; nurture: `/nurture/preview-llm`, `/start-llm` (`chain_type`: new/cross/upsell), `/start`, `/start-segment`, `/process-due`, `GET /nurture/chains`; кампании: `/campaign/preview-llm`, `/test-send`, `send_now` (фильтр `industries[]`) |
 | `agent_email.py` | `/api/agent-email` | AI-черновики писем по лиду |
 | `search.py` | `/api/search` | Поиск компаний; `enrich-lead` + кэш enrich; `auto-ingest-rag` |

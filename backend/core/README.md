@@ -95,3 +95,4 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_field_audit_util.py` | Аудит изменений полей лида |
 | `stage_transition.py` | Правила перехода между стадиями |
 | `task_dates.py` | Парсинг дат задач и статус SLA |
+| `task_list_filter.py` | Фильтры списка задач: статус, срок, эскалация |

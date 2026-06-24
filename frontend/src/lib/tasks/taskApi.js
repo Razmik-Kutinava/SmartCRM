@@ -3,6 +3,9 @@ import { apiFetch, apiPatch, apiPost } from '$lib/api.js';
 
 export async function fetchTasks(params = {}) {
 	const q = new URLSearchParams();
+	if (params.taskStatus) q.set('task_status', params.taskStatus);
+	if (params.due) q.set('due', params.due);
+	if (params.escalated) q.set('escalated', 'true');
 	if (params.status) q.set('status', params.status);
 	if (params.leadId != null) q.set('lead_id', String(params.leadId));
 	if (params.lead) q.set('lead', params.lead);

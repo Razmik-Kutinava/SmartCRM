@@ -48,3 +48,22 @@ async def test_tasks_filter_overdue(client):
     assert overdue_r.status_code == 200
     titles = [t["title"] for t in overdue_r.json()]
     assert "Просрочка" in titles
+
+
+@pytest.mark.asyncio
+async def test_tasks_filter_done_and_combined(client):
+    await client.post("/api/tasks", json={"title": "Готово", "status": "done", "due": "24.06.2026"})
+    await client.post(
+        "/api/tasks",
+        json={"title": "Сегодня открыта", "status": "open", "due": "24.06.2026"},
+    )
+
+    done_r = await client.get("/api/tasks?task_status=done")
+    assert done_r.status_code == 200
+    assert all(t["status"] == "done" for t in done_r.json())
+
+    combo_r = await client.get("/api/tasks?task_status=open&due=today")
+    assert combo_r.status_code == 200
+    titles = [t["title"] for t in combo_r.json()]
+    assert "Сегодня открыта" in titles
+    assert "Готово" not in titles

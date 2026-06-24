@@ -1,6 +1,6 @@
 """
 REST API для задач:
-  GET    /api/tasks                    — список задач (фильтр: status, lead)
+  GET    /api/tasks                    — список задач (фильтр: task_status, due, escalated, lead)
   GET    /api/tasks/calendar/month     — сетка месяца + задачи по дням (stdlib calendar)
   POST   /api/tasks                    — создать задачу
   GET    /api/tasks/{id}               — получить задачу
@@ -18,6 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.task_dates import parse_task_date
+from core.task_list_filter import filter_tasks
 from db.session import get_db
 from db.models import Task
 
@@ -55,7 +56,10 @@ class TaskPatch(BaseModel):
 
 @router.get("")
 async def list_tasks(
-    status: Optional[str] = Query(None),
+    status: Optional[str] = Query(None, description="Legacy: open|done|today|overdue|escalated"),
+    task_status: Optional[str] = Query(None, description="open|done"),
+    due: Optional[str] = Query(None, description="today|overdue"),
+    escalated: Optional[bool] = Query(None),
     lead: Optional[str] = Query(None),
     lead_id: Optional[int] = Query(None),
     db: AsyncSession = Depends(get_db),
@@ -65,29 +69,14 @@ async def list_tasks(
     tasks = list(result.scalars().all())
     today = dt.date.today()
 
-    if status == "done":
-        tasks = [t for t in tasks if t.status == "done"]
-    elif status == "open":
-        tasks = [t for t in tasks if t.status == "open"]
-    elif status == "today":
-        tasks = [
-            t
-            for t in tasks
-            if t.status == "open"
-            and any(parse_task_date(raw) == today for raw in (t.due, t.sla_due))
-        ]
-    elif status == "overdue":
-        tasks = [
-            t
-            for t in tasks
-            if t.status == "open"
-            and any(
-                (d := parse_task_date(raw)) is not None and d < today
-                for raw in (t.due, t.sla_due)
-            )
-        ]
-    elif status == "escalated":
-        tasks = [t for t in tasks if t.status == "open" and t.escalated]
+    tasks = filter_tasks(
+        tasks,
+        today=today,
+        task_status=task_status,
+        due=due,
+        escalated_only=bool(escalated),
+        legacy_status=status if not task_status and not due and escalated is None else None,
+    )
 
     if lead_id is not None:
         tasks = [t for t in tasks if t.lead_id == lead_id]
