@@ -186,7 +186,7 @@
 | 1 | UF → `bitrix_extra` | Mass backfill: **636/3228** (~20%); resync failed @625 — `--resume` | 🔴 |
 | 2 | Мультиконтакты | тот же `resync_bitrix_lead_fields` — `contact.items` + merge; метрика `contacts multi` в check script | 🔴 |
 | 3 | Сумма + валюта | **663/3228** deal_amount (~20%); код+UI ✅; 👤 апрув `15 780 $` → [`F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`](../phase4/leads/F4_X5_DEAL_AMOUNT_ACCEPTANCE.md) | 🟡 |
-| 4 | Webhook scope `task` | 👤 scope **task** на вебхуке B24 → `resync_bitrix_lead_tasks.py --workers 4` | 🔴 |
+| 4 | Webhook scope `task` | **blocked:** probe live — crm/user ok, **task missing**; requisite.list Access denied (ИНН из UF ok); 👤 → [`F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`](../phase4/leads/F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md) | 🔴 |
 | 5 | UI карточки X5-gap | 👤 апрув карточки в браузере | 🟡 |
 | 6 | Mass-resync полей | **in_progress** — extra+contacts+deal одним скриптом; retry в `bitrix_call` | 🔴 |
 | 7 | Список: подписка / поставка | 👤 апрув фильтров и колонки в браузере после mass-resync | 🟡 |

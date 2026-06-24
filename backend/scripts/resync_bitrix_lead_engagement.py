@@ -51,8 +51,8 @@ async def backfill_engagement(
         missing = missing_scopes(report)
         if "task" in missing:
             raise BitrixWebhookError(
-                "Resync задач невозможен: у вебхука нет scope task (tasks.task.list - 401). "
-                + webhook_setup_hint(missing=["crm", "user", "task"])
+                "Resync задач невозможен: у вебхука нет scope task (tasks.task.list — 401). "
+                + webhook_setup_hint(missing=["task"])
             )
 
     stats = {

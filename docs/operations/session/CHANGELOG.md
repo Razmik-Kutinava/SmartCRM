@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-24 — Ф4 X5-gap шаг 4: webhook scope task — extended probe + acceptance
+
+**Live:** crm/user ok, task missing; feature probes + JSON report; resync preflight блокирует без task. Док: `F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`. **Оператор:** scope task на портале.
+
 ## 2026-06-24 — Ф4 X5-gap шаг 3: сумма + валюта — acceptance + backfill статус
 
 **Код:** ✅. **Данные:** 663/3228 deal_amount; эталон 5227 → `15 780 $`. Док: `F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`; resync resume после Errno 22.

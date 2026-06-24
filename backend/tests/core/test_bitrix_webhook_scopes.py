@@ -73,7 +73,36 @@ async def test_fetch_bitrix_task_rows_marks_denied_on_scope(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_fetch_bitrix_task_rows_parses_nested_task(monkeypatch):
+async def test_probe_feature_apis_ok(monkeypatch):
+    from core.bitrix_webhook_scopes import probe_feature_apis
+
+    async def fake_call(method, params=None):
+        return {"result": []}
+
+    monkeypatch.setattr("integrations.bitrix24.bitrix_call", fake_call)
+    monkeypatch.setattr("integrations.bitrix24.webhook_base", lambda: "https://x/rest/1/s/")
+
+    report = await probe_feature_apis(sample_lead_id=100)
+    assert report["lead.get"]["status"] == "ok"
+    assert report["tasks.task.list"]["status"] == "ok"
+
+
+@pytest.mark.asyncio
+async def test_probe_webhook_full_marks_missing_task(monkeypatch):
+    from core.bitrix_webhook_scopes import probe_webhook_full
+
+    async def fake_call(method, params=None):
+        if method.startswith("tasks."):
+            raise BitrixWebhookError("tasks.task.list 401 insufficient_scope task")
+        return {"result": [{"ID": "1"}] if method == "crm.lead.list" else []}
+
+    monkeypatch.setattr("integrations.bitrix24.bitrix_call", fake_call)
+    monkeypatch.setattr("integrations.bitrix24.webhook_base", lambda: "https://x/rest/1/s/")
+
+    full = await probe_webhook_full()
+    assert full["scopes"]["task"]["status"] == "missing"
+    assert "task" in full["missing_scopes"]
+    assert full["features"]["tasks.task.list"]["status"] == "missing"
     from integrations.bitrix24_tasks import _fetch_bitrix_task_rows, reset_tasks_list_probe
 
     reset_tasks_list_probe()

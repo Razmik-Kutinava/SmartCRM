@@ -21,7 +21,7 @@
 | `crm_sync/base.py` | Протоколы pull/push для адаптеров CRM |
 
 Переменные: `BITRIX24_WEBHOOK_URL`, `BITRIX_AUTO_SYNC_MINUTES`, `BITRIX_SYNC_MODIFY_DAYS`, `BITRIX_SYNC_BATCH_SIZE`, `BITRIX_OUTBOUND_TOKEN`.  
-**Scope вебхука:** `crm` + `user` + **`task`** (иначе `tasks.task.list` → 401). Проверка: `scripts/check_bitrix_webhook_scopes.py`.
+**Scope вебхука:** `crm` + `user` + **`task`**. Проверка: `scripts/check_bitrix_webhook_scopes.py` → `data/bitrix_webhook_scope_report.json`. Acceptance: `docs/operations/phase4/leads/F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`.
 Telegram: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_NOTIFY_ENABLED`, `TELEGRAM_POLL_ENABLED`.  
 AmoCRM: `AMO_SUBDOMAIN`, `AMO_ACCESS_TOKEN`. HubSpot: `HUBSPOT_ACCESS_TOKEN`.  
 Роуты: `api/routes/leads/bitrix_routes.py`, `amo_routes.py`, `hubspot_routes.py`, `api/routes/webhooks_bitrix.py`.

@@ -68,7 +68,8 @@
 
 **Решение:** в Битрикс24 в настройках вебхука включить минимум **CRM (`crm`)**, **`user`** и **`task`** (для `tasks.task.list`), сохранить, при необходимости **скопировать новый URL** (секрет может смениться) в **`BITRIX24_WEBHOOK_URL`**.
 
-Проверка scope: `cd backend && python scripts/check_bitrix_webhook_scopes.py`
+Проверка scope: `cd backend && python scripts/check_bitrix_webhook_scopes.py` → `data/bitrix_webhook_scope_report.json`  
+Acceptance шаг 4: [`F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`](../operations/phase4/leads/F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md)
 
 ---
 
