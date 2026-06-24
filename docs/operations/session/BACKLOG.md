@@ -186,7 +186,7 @@
 | 1 | UF → `bitrix_extra` | Mass backfill: **~960/3228** (~30%); resync running ETA ~3.7ч | 🔴 |
 | 2 | Мультиконтакты | тот же resync — **952** contacts json, **441** multi | 🔴 |
 | 3 | Сумма + валюта | **~987/3228** deal_amount (~31%); DevTools ✅ `15 780 $`; 👤 → [`F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`](../phase4/leads/F4_X5_DEAL_AMOUNT_ACCEPTANCE.md) | 🟡 |
-| 4 | Webhook scope `task` | **blocked:** probe live — crm/user ok, **task missing**; 👤 → [`F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`](../phase4/leads/F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md) | 🔴 |
+| 4 | Встречи/дела (crm.activity) | ✅ без scope task; mass resync в фоне; tasks.task — опционально (портал) | 🟡 |
 | 5 | UI карточки X5-gap | ✅ **апрув оператора 2026-06-24** | 🟢 |
 | 6 | Mass-resync полей | **in_progress** ~1205/3228 + watcher `--only-missing` | 🔴 |
 | 7 | Список: подписка / поставка | ✅ **апрув оператора 2026-06-24** | 🟢 |

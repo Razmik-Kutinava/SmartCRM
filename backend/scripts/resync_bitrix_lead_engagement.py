@@ -31,6 +31,7 @@ async def backfill_engagement(
     delay_ms: int = 10,
     workers: int = 4,
     skip_scope_check: bool = False,
+    require_task_scope: bool = False,
 ) -> dict[str, int]:
     from sqlalchemy import select
 
@@ -43,23 +44,48 @@ async def backfill_engagement(
     if not webhook_base():
         raise BitrixWebhookError("BITRIX24_WEBHOOK_URL не задан")
 
-    if tasks and not skip_scope_check:
-        from core.bitrix_webhook_scopes import missing_scopes, probe_webhook_scopes, webhook_setup_hint
+    include_tasks_module = True
+    if tasks or timeline:
+        from core.bitrix_webhook_scopes import (
+            missing_activity_scopes,
+            missing_scopes,
+            probe_webhook_scopes,
+            resolve_include_tasks_module,
+            webhook_setup_hint,
+        )
 
         reset_tasks_list_probe()
         report = await probe_webhook_scopes()
-        missing = missing_scopes(report)
-        if "task" in missing:
+        missing_act = missing_activity_scopes(report)
+        if missing_act:
             raise BitrixWebhookError(
-                "Resync задач невозможен: у вебхука нет scope task (tasks.task.list — 401). "
-                + webhook_setup_hint(missing=["task"])
+                "Resync невозможен: нет scope CRM для crm.activity. "
+                + webhook_setup_hint(missing=missing_act)
             )
+        if tasks:
+            if require_task_scope and "task" in missing_scopes(report):
+                raise BitrixWebhookError(
+                    "Resync tasks.task невозможен: у вебхука нет scope task. "
+                    + webhook_setup_hint(missing=["task"])
+                )
+            include_tasks_module = resolve_include_tasks_module(
+                report,
+                require_task_scope=require_task_scope,
+                skip_scope_check=skip_scope_check,
+            )
+            if not include_tasks_module:
+                print(
+                    "  INFO: scope task отсутствует — синкаем crm.activity "
+                    "(встречи, дела, звонки); tasks.task пропускаем",
+                    flush=True,
+                )
 
     stats = {
         "total": 0,
         "timeline_added": 0,
         "tasks_touched": 0,
         "errors": 0,
+        "activities_only": 0 if include_tasks_module else 1,
     }
     sem = asyncio.Semaphore(max(1, workers))
 
@@ -77,6 +103,7 @@ async def backfill_engagement(
                             lead.id,
                             bid,
                             company_name=lead.company or "",
+                            include_tasks_module=include_tasks_module,
                         )
                     await db.commit()
             except Exception:
@@ -124,7 +151,12 @@ async def main() -> int:
     parser.add_argument("--batch-size", type=int, default=40)
     parser.add_argument("--delay-ms", type=int, default=10)
     parser.add_argument("--workers", type=int, default=4)
-    parser.add_argument("--skip-scope-check", action="store_true", help="Не проверять scope task перед resync")
+    parser.add_argument("--skip-scope-check", action="store_true", help="Пробовать tasks.task даже без probe task")
+    parser.add_argument(
+        "--require-task-scope",
+        action="store_true",
+        help="Упасть, если нет scope task (строгий режим)",
+    )
     parser.add_argument("--check-scopes-only", action="store_true", help="Только probe crm/user/task и выход")
     args = parser.parse_args()
 
@@ -157,6 +189,7 @@ async def main() -> int:
             delay_ms=args.delay_ms,
             workers=args.workers,
             skip_scope_check=args.skip_scope_check,
+            require_task_scope=args.require_task_scope,
         )
     except Exception as e:
         print(f"resync_bitrix_lead_engagement FAILED: {e}")

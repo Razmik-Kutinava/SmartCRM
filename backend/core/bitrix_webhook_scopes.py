@@ -109,6 +109,30 @@ def missing_scopes(report: dict[str, dict[str, str]]) -> list[str]:
     return [s for s in REQUIRED_WEBHOOK_SCOPES if report.get(s, {}).get("status") == "missing"]
 
 
+# Встречи/дела/звонки — crm.activity; модуль tasks.task не обязателен.
+ENGAGEMENT_ACTIVITY_SCOPES: tuple[str, ...] = ("crm",)
+
+
+def missing_activity_scopes(report: dict[str, dict[str, str]]) -> list[str]:
+    return [s for s in ENGAGEMENT_ACTIVITY_SCOPES if report.get(s, {}).get("status") == "missing"]
+
+
+def resolve_include_tasks_module(
+    report: dict[str, dict[str, str]],
+    *,
+    require_task_scope: bool = False,
+    skip_scope_check: bool = False,
+) -> bool:
+    """Нужен ли tasks.task.list: только при scope task или --skip-scope-check."""
+    if skip_scope_check:
+        return True
+    if require_task_scope and "task" in missing_scopes(report):
+        return False
+    if "task" in missing_scopes(report):
+        return False
+    return True
+
+
 async def _sample_bitrix_lead_id() -> int | None:
     from integrations.bitrix24 import bitrix_call
 

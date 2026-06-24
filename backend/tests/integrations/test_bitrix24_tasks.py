@@ -11,7 +11,7 @@ import pytest
 async def test_sync_tasks_creates_meeting(monkeypatch):
     start = datetime(2026, 6, 23, 10, 0, tzinfo=timezone.utc)
 
-    async def fake_fetch(bid):
+    async def fake_fetch(bid, **kw):
         return [{
             "kind": "act",
             "id": 501,
@@ -57,7 +57,7 @@ async def test_sync_tasks_creates_meeting(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_sync_tasks_updates_existing_marker(monkeypatch):
-    async def fake_fetch(bid):
+    async def fake_fetch(bid, **kw):
         return [{
             "kind": "task",
             "id": 77,
@@ -107,3 +107,34 @@ def test_task_marker_format():
     from integrations.bitrix24_tasks import task_marker
 
     assert task_marker("act", 12) == "[b24:act:12]"
+
+
+@pytest.mark.asyncio
+async def test_fetch_items_skips_tasks_module(monkeypatch):
+    calls: list[str] = []
+
+    async def fake_call(method, params=None):
+        calls.append(method)
+        if method == "crm.activity.list":
+            return {
+                "result": [
+                    {
+                        "ID": "9",
+                        "TYPE_ID": "1",
+                        "SUBJECT": "получить триалку",
+                        "DESCRIPTION": "тест",
+                        "START_TIME": "2026-06-24T08:30:00+03:00",
+                        "COMPLETED": "N",
+                    }
+                ]
+            }
+        raise AssertionError(f"unexpected {method}")
+
+    monkeypatch.setattr("integrations.bitrix24_tasks._bitrix_call", fake_call)
+
+    from integrations.bitrix24_tasks import fetch_bitrix_lead_task_items
+
+    items = await fetch_bitrix_lead_task_items(5227, include_tasks_module=False)
+    assert calls == ["crm.activity.list"]
+    assert len(items) == 1
+    assert items[0]["title"] == "Встреча: получить триалку"

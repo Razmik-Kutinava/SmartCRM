@@ -17,7 +17,9 @@
 Без **task** работают: импорт лидов, UF, контакты, история (`crm.activity`), mass-resync полей.  
 **Реквизиты:** `crm.requisite.list` на портале может дать `Access denied` (400) — ИНН тогда из UF; не блокер mass-resync полей.
 
-**Не работает:** импорт задач из `tasks.task` (resync задач блокируется preflight).
+**Не работает без scope task:** импорт сущности **tasks.task** (модуль «Задача» Битрикса — вы им не пользуетесь).
+
+**Работает без scope task:** `crm.activity` — **Встреча**, **Дело**, **Звонок**, **Письмо** → таблица `tasks` в SmartCRM (карточка лида + `/leads/tasks` + календарь).
 
 ---
 
@@ -56,7 +58,22 @@ Feature API при crm ok: `lead.get`, `activity.list`, `contact.items`, `requis
 
 ---
 
-## Resync задач (после OK probe)
+## Resync встреч/дел (без scope task)
+
+```bash
+cd backend
+# smoke — только crm.activity
+python scripts/resync_bitrix_lead_tasks.py --limit 5 --workers 1
+
+# полный прогон (~3228 лидов)
+python -u scripts/resync_bitrix_lead_tasks.py --workers 2 --batch-size 30 --delay-ms 80
+```
+
+Preflight: нужен только **crm**. Без **task** — предупреждение, синкаются встречи/дела/звонки; `tasks.task` пропускается.
+
+Опционально `--require-task-scope` — старый строгий режим (упасть без task).
+
+## Resync tasks.task (опционально, после scope task на портале)
 
 ```bash
 cd backend

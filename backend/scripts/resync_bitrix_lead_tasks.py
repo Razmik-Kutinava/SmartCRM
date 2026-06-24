@@ -22,6 +22,7 @@ async def main() -> int:
     parser.add_argument("--delay-ms", type=int, default=10)
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--skip-scope-check", action="store_true")
+    parser.add_argument("--require-task-scope", action="store_true")
     args = parser.parse_args()
 
     try:
@@ -33,6 +34,7 @@ async def main() -> int:
             delay_ms=args.delay_ms,
             workers=args.workers,
             skip_scope_check=args.skip_scope_check,
+            require_task_scope=args.require_task_scope,
         )
     except Exception as e:
         print(f"resync_bitrix_lead_tasks FAILED: {e}")

@@ -128,8 +128,12 @@ def reset_tasks_list_probe() -> None:
     _tasks_list_denied = False
 
 
-async def fetch_bitrix_lead_task_items(bitrix_lead_id: int) -> list[dict[str, Any]]:
-    """Открытые дела: CRM-активности и tasks.task, привязанные к лиду."""
+async def fetch_bitrix_lead_task_items(
+    bitrix_lead_id: int,
+    *,
+    include_tasks_module: bool = True,
+) -> list[dict[str, Any]]:
+    """Дела по лиду: crm.activity (встреча/звонок/дело) и опционально tasks.task."""
     items: list[dict[str, Any]] = []
     try:
         data = await _bitrix_call(
@@ -173,6 +177,9 @@ async def fetch_bitrix_lead_task_items(bitrix_lead_id: int) -> list[dict[str, An
     except Exception as e:
         logger.warning("crm.activity.list tasks lead %s: %s", bitrix_lead_id, e)
 
+    if not include_tasks_module:
+        return items
+
     for row in await _fetch_bitrix_task_rows(bitrix_lead_id):
         task_row = row.get("task") if isinstance(row.get("task"), dict) else row
         tid = int(task_row.get("id") or task_row.get("ID") or 0)
@@ -213,9 +220,13 @@ async def sync_bitrix_tasks(
     *,
     company_name: str = "",
     user_names: dict[int, str] | None = None,
+    include_tasks_module: bool = True,
 ) -> int:
     """Импорт/обновление задач лида из Битрикс; возвращает число затронутых записей."""
-    items = await fetch_bitrix_lead_task_items(bitrix_lead_id)
+    items = await fetch_bitrix_lead_task_items(
+        bitrix_lead_id,
+        include_tasks_module=include_tasks_module,
+    )
     if not items:
         return 0
     names = user_names or {}

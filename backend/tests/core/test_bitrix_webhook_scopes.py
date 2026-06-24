@@ -7,6 +7,7 @@ from core.bitrix_webhook_scopes import (
     insufficient_scope_message,
     is_task_scope_error,
     missing_scopes,
+    resolve_include_tasks_module,
     webhook_setup_hint,
 )
 from integrations.bitrix24 import BitrixWebhookError, _handle_bitrix_http
@@ -35,6 +36,16 @@ def test_missing_scopes_from_report():
         "task": {"status": "missing", "detail": "401"},
     }
     assert missing_scopes(report) == ["task"]
+
+
+def test_resolve_include_tasks_module_without_task_scope():
+    report = {
+        "crm": {"status": "ok"},
+        "user": {"status": "ok"},
+        "task": {"status": "missing"},
+    }
+    assert resolve_include_tasks_module(report) is False
+    assert resolve_include_tasks_module(report, skip_scope_check=True) is True
 
 
 def test_webhook_setup_hint_lists_task():
