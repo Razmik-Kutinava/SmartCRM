@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[mass-resync полей — шаг 6] | Статус: ✅ done (код) | in_progress: полный прогон 3225`
 
-**2026-06-19:** `resync_bitrix_lead_fields.py` + `core/bitrix_lead_fields_sync.py` — backfill `bitrix_extra`, `contacts`, `deal_amount`/`deal_currency` из Битрикс API (`crm.lead.get` + enrich); offline `--no-api` → UF из `tech_json`; pytest 6 PASS; smoke `--limit 2` OK. **Команда:** `cd backend && python -u scripts/resync_bitrix_lead_fields.py --workers 4 --batch-size 40 --delay-ms 10`. Доки `leads.md`, PRD_MAP. **Следующий:** дождаться полного прогона; scope **task** на портале; browser апрув карточки. Коммит: `TBD`.
+**2026-06-19:** `resync_bitrix_lead_fields.py` + `core/bitrix_lead_fields_sync.py` — backfill `bitrix_extra`, `contacts`, `deal_amount`/`deal_currency` из Битрикс API (`crm.lead.get` + enrich); offline `--no-api` → UF из `tech_json`; pytest 6 PASS; smoke `--limit 2` OK. **Команда:** `cd backend && python -u scripts/resync_bitrix_lead_fields.py --workers 4 --batch-size 40 --delay-ms 10`. Доки `leads.md`, PRD_MAP. **Следующий:** дождаться полного прогона; scope **task** на портале; browser апрув карточки. Коммит: `8c6e5e5`.
 
 ---
 

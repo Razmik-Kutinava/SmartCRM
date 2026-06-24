@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-19 | Действие: mass-resync полей шаг 6 — resync_bitrix_lead_fields.py, bitrix_lead_fields_sync; pytest 6 PASS; smoke limit 2 OK; полный прогон 3225 в фоне | Коммит: `TBD` | Хвост A: дождаться полного прогона; scope task; browser апрув | Хвост B: BACKLOG шаг 6 | Хвост C: нет | Статус: in_progress
+2026-06-19 | Действие: mass-resync полей шаг 6 — resync_bitrix_lead_fields.py, bitrix_lead_fields_sync; pytest 6 PASS; smoke limit 2 OK; полный прогон 3225 в фоне | Коммит: `8c6e5e5` | Хвост A: дождаться полного прогона; scope task; browser апрув | Хвост B: BACKLOG шаг 6 | Хвост C: нет | Статус: in_progress
 
 2026-06-19 | Действие: UI карточки X5-gap шаг 5 — LeadBitrixExtraPanel, LeadContactsReadonlyList, бейдж повторного лида, formatDealAmountLabel `$`; pytest lib+smoke 21 PASS; BACKLOG сводка хвостов 1–5 | Коммит: `cd62bbf` | Хвост A: mass backfill 1–3, scope task п.4, browser апрув 3+5 | Хвост B: BACKLOG § X5-gap | Хвост C: нет | Статус: done
 
