@@ -73,6 +73,7 @@
 - **Mass-resync полей (шаг 6 X5-gap):** `bitrix_extra` + `contacts` + `deal_amount` для всех лидов с `bitrix_lead_id` (~3225):  
   `cd backend && python -u scripts/resync_bitrix_lead_fields.py --workers 4 --batch-size 40 --delay-ms 15`  
   Только UF из `tech_json` (без API): `--no-api` (контакты/сумма не подтянутся без webhook).
+- **Список `/leads/list` — лицензия:** фильтр **Подписка** (истекает 30 дн. / просрочена / есть дата), **Тип поставки** (`bitrixExtra.deliveryType`); колонка **Подписка до** с цветным бейджем.
 - **Re-sync профиля:** `cd backend && python scripts/resync_bitrix_lead_profiles.py` (нужен `BITRIX24_WEBHOOK_URL`) → import + backfill.
 
 ### Битрикс: история и дела по лидам

@@ -31,6 +31,8 @@
 		SCORE_RISK_FILTERS,
 		EMPLOYEES_BAND_FILTERS,
 		TASK_DUE_FILTERS,
+		SUBSCRIPTION_FILTERS,
+		distinctDeliveryTypes,
 		taskDueBadgeForLead,
 		GROUP_BY_OPTIONS,
 		distinctOkvedSections,
@@ -47,7 +49,7 @@
 	import { createLeadComment } from '$lib/leads/leadComments.js';
 	import { createLeadCommunication } from '$lib/leads/leadCommunications.js';
 	import { openLeadCreateModal } from '$lib/leads/leadCreateUi.js';
-	import { confirmAndDeleteLead } from '$lib/leads/leadDelete.js';
+	import { subscriptionBadgeForLead, deliveryTypeFromLead } from '$lib/leads/leadBitrixExtra.js';
 
 	const API = getApiUrl();
 
@@ -61,6 +63,8 @@
 	let filterOkvedSection = $state('all');
 	let filterIndustryBucket = $state('all');
 	let filterTaskDue = $state('all');
+	let filterSubscription = $state('all');
+	let filterDeliveryType = $state('all');
 	let filterMinScore = $state(null);
 	let groupBy = $state('none');
 	/** @type {string[]} */
@@ -151,6 +155,8 @@
 				filterOkvedSection,
 				filterIndustryBucket,
 				filterTaskDue,
+				filterSubscription,
+				filterDeliveryType,
 				sortBy,
 				minScore: filterMinScore,
 			},
@@ -162,6 +168,7 @@
 
 	const okvedSectionOptions = $derived(distinctOkvedSections(leads));
 	const industryBucketOptions = $derived(distinctIndustryBuckets(leads));
+	const deliveryTypeOptions = $derived(distinctDeliveryTypes(leads));
 
 	const listGroups = $derived(groupLeads(filtered, groupBy));
 
@@ -216,6 +223,8 @@
 			|| filterOkvedSection !== 'all'
 			|| filterIndustryBucket !== 'all'
 			|| filterTaskDue !== 'all'
+			|| filterSubscription !== 'all'
+			|| filterDeliveryType !== 'all'
 			|| filterMinScore != null,
 		),
 	);
@@ -231,6 +240,8 @@
 		filterOkvedSection = 'all';
 		filterIndustryBucket = 'all';
 		filterTaskDue = 'all';
+		filterSubscription = 'all';
+		filterDeliveryType = 'all';
 		filterMinScore = null;
 		sortBy = 'tasks_urgent';
 	}
@@ -915,6 +926,31 @@
 					{/each}
 				</select>
 			</label>
+			<label class="min-w-[8.5rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Подписка</span>
+				<select
+					bind:value={filterSubscription}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-subscription"
+				>
+					{#each SUBSCRIPTION_FILTERS as opt}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="min-w-[9rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Тип поставки</span>
+				<select
+					bind:value={filterDeliveryType}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-delivery-type"
+				>
+					<option value="all">Все типы</option>
+					{#each deliveryTypeOptions as opt (opt.id)}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
 			<label class="min-w-[8rem]">
 				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Дела</span>
 				<select
@@ -1018,6 +1054,7 @@
 					<button type="button" class="hover:text-gray-300" onclick={() => sortBy = 'priority_desc'}>Приоритет</button>
 				</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Бюджет</th>
+				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Подписка до</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Источник</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium max-w-[14rem]">Заметка</th>
 				<th class="px-4 py-2.5 text-xs text-gray-500 font-medium text-right">Действия</th>
@@ -1027,7 +1064,7 @@
 			{#each listGroups as group (group.key || '__all__')}
 				{#if groupBy !== 'none'}
 					<tr class="bg-gray-800/50" data-testid="leads-list-group-header">
-						<td colspan="10" class="px-4 py-2">
+						<td colspan="11" class="px-4 py-2">
 							<button
 								type="button"
 								class="flex items-center gap-2 text-xs font-medium text-gray-300 hover:text-white w-full text-left"
@@ -1046,6 +1083,7 @@
 					{#each group.leads as lead, i}
 				{@const tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
 				{@const taskBadge = taskDueBadgeForLead(lead)}
+				{@const subBadge = subscriptionBadgeForLead(lead)}
 				<tr class="hover:bg-gray-800/30 transition-colors group">
 					<td class="px-6 py-3 text-gray-600 text-xs">{i + 1}</td>
 					<td class="px-4 py-3">
@@ -1099,6 +1137,22 @@
 						<span class="px-2 py-0.5 rounded text-xs font-medium {priorityTierBadgeClass(tier)}">{tier.label}</span>
 					</td>
 					<td class="px-4 py-3 text-gray-300">{lead.budget}</td>
+					<td class="px-4 py-3">
+						{#if subBadge}
+							<span
+								class="inline-block px-1.5 py-0.5 rounded text-[10px] border tabular-nums {subBadge.cls}"
+								data-testid="leads-list-subscription-badge"
+								title={subBadge.kind === 'expiring' ? `Истекает через ${subBadge.days} дн.` : subBadge.kind === 'expired' ? 'Подписка просрочена' : 'Подписка до'}
+							>{subBadge.label}</span>
+							{#if deliveryTypeFromLead(lead)}
+								<div class="text-[10px] text-gray-600 mt-0.5 truncate max-w-[8rem]" title={deliveryTypeFromLead(lead)}>
+									{deliveryTypeFromLead(lead)}
+								</div>
+							{/if}
+						{:else}
+							<span class="text-gray-600 text-xs">—</span>
+						{/if}
+					</td>
 					<td class="px-4 py-3 text-gray-500 text-xs">{lead.source}</td>
 					<td class="px-4 py-3 text-xs text-gray-500 max-w-[14rem]">
 						{#if lead.description}
@@ -1125,7 +1179,7 @@
 
 			{#if filtered.length === 0}
 				<tr>
-					<td colspan="10" class="px-6 py-12 text-center text-gray-600 text-sm">
+					<td colspan="11" class="px-6 py-12 text-center text-gray-600 text-sm">
 						Лидов не найдено. Скажи "создай лид компания ..." 🎙
 					</td>
 				</tr>

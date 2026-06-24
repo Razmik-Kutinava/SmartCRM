@@ -1,5 +1,9 @@
 /** Фильтрация и сортировка списка лидов (/leads/list). */
 import { leadPriorityTier } from '$lib/crmStages.js';
+import {
+	deliveryTypeFromLead,
+	subscriptionStatus,
+} from '$lib/leads/leadBitrixExtra.js';
 
 export const SORT_OPTIONS = [
 	{ id: 'tasks_urgent', label: 'Дела срочные ↑' },
@@ -233,6 +237,40 @@ export const TASK_DUE_FILTERS = [
 	{ id: 'has_open', label: 'Есть открытые' },
 ];
 
+export const SUBSCRIPTION_FILTERS = [
+	{ id: 'all', label: 'Все подписки' },
+	{ id: 'expiring', label: 'Истекает (30 дн.)' },
+	{ id: 'expired', label: 'Просрочена' },
+	{ id: 'has_date', label: 'Есть дата' },
+];
+
+/** Уникальные типы поставки из bitrixExtra.deliveryType. */
+export function distinctDeliveryTypes(leads) {
+	const counts = new Map();
+	for (const l of leads || []) {
+		const dt = deliveryTypeFromLead(l);
+		if (!dt) continue;
+		counts.set(dt, (counts.get(dt) || 0) + 1);
+	}
+	return [...counts.entries()]
+		.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ru'))
+		.map(([id, count]) => ({ id, label: `${id} (${count})` }));
+}
+
+export function leadMatchesSubscriptionFilter(lead, filterId, now = new Date()) {
+	if (!filterId || filterId === 'all') return true;
+	const st = subscriptionStatus(lead, now);
+	if (filterId === 'expiring') return st.kind === 'expiring';
+	if (filterId === 'expired') return st.kind === 'expired';
+	if (filterId === 'has_date') return st.kind !== 'none';
+	return true;
+}
+
+export function leadMatchesDeliveryTypeFilter(lead, filterId) {
+	if (!filterId || filterId === 'all') return true;
+	return deliveryTypeFromLead(lead) === filterId;
+}
+
 const TASK_URGENCY_RANK = { overdue: 0, today: 1, upcoming: 2, open: 3, none: 4 };
 
 export function taskUrgencyRank(lead) {
@@ -290,9 +328,12 @@ export function filterLeads(
 		filterOkvedSection = 'all',
 		filterIndustryBucket = 'all',
 		filterTaskDue = 'all',
+		filterSubscription = 'all',
+		filterDeliveryType = 'all',
 		minScore = null,
 	},
 	config = null,
+	now = new Date(),
 ) {
 	return leads.filter((l) => {
 		if (filterStage !== 'all' && l.stage !== filterStage) return false;
@@ -323,6 +364,8 @@ export function filterLeads(
 		if (filterTaskDue === 'today' && !l.taskDueToday) return false;
 		if (filterTaskDue === 'overdue' && !l.taskOverdue) return false;
 		if (filterTaskDue === 'has_open' && !(Number(l.openTaskCount) > 0)) return false;
+		if (!leadMatchesSubscriptionFilter(l, filterSubscription, now)) return false;
+		if (!leadMatchesDeliveryTypeFilter(l, filterDeliveryType)) return false;
 		return leadMatchesSearch(l, search);
 	});
 }
