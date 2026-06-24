@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[UI карточки X5-gap — шаг 5] | Статус: ✅ done (код)`
 
-**2026-06-19:** Шапка — `formatDealAmountLabel` → `15 780 $`, бейдж «Повторный лид» (`isRepeatLead`); панель «Карточка» — `LeadBitrixExtraPanel` (лицензия/подписка + сворачиваемые сырые UF), `LeadContactsReadonlyList`; превью хаба `licensePreviewText`; pytest mirror+smoke PASS. **Хвосты прогона 1–5:** mass backfill bitrix_extra/deal_amount/contacts (~3225), scope **task** на портале B24, 👤 апрув UI в браузере — см. `BACKLOG.md` § X5-gap. **Следующий шаг:** оператор — scope task + mass resync; затем обход карточки end-to-end. Коммит: `TBD`.
+**2026-06-19:** Шапка — `formatDealAmountLabel` → `15 780 $`, бейдж «Повторный лид» (`isRepeatLead`); панель «Карточка» — `LeadBitrixExtraPanel` (лицензия/подписка + сворачиваемые сырые UF), `LeadContactsReadonlyList`; превью хаба `licensePreviewText`; pytest mirror+smoke 21 PASS. **Хвосты прогона 1–5:** mass backfill bitrix_extra/deal_amount/contacts (~3225), scope **task** на портале B24, 👤 апрув UI в браузере — см. `BACKLOG.md` § X5-gap. **Следующий шаг:** оператор — scope task + mass resync; затем обход карточки end-to-end. Коммит: `cd62bbf`.
 
 ---
 

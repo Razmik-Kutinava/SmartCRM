@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-19 | Действие: UI карточки X5-gap шаг 5 — LeadBitrixExtraPanel, LeadContactsReadonlyList, бейдж повторного лида, formatDealAmountLabel `$`; pytest lib+smoke PASS; BACKLOG сводка хвостов 1–5 | Коммит: `TBD` | Хвост A: mass backfill 1–3, scope task п.4, browser апрув 3+5 | Хвост B: BACKLOG § X5-gap | Хвост C: нет | Статус: done
+2026-06-19 | Действие: UI карточки X5-gap шаг 5 — LeadBitrixExtraPanel, LeadContactsReadonlyList, бейдж повторного лида, formatDealAmountLabel `$`; pytest lib+smoke 21 PASS; BACKLOG сводка хвостов 1–5 | Коммит: `cd62bbf` | Хвост A: mass backfill 1–3, scope task п.4, browser апрув 3+5 | Хвост B: BACKLOG § X5-gap | Хвост C: нет | Статус: done
 
 2026-06-19 | Действие: webhook scope task — probe crm/user/task, fix 401 tasks.task.list, resync_bitrix_lead_tasks, preflight; pytest 10 PASS; live: task missing на портале | Коммит: `59490d3` | Хвост A: оператор должен включить scope task в B24 и запустить resync | Хвост B: нет | Хвост C: нет | Статус: blocked (портал)
 
