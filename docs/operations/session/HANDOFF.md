@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[mass-resync bitrix_extra — шаг 1/6 хвост] | Статус: 🔄 in_progress`
 
-**2026-06-24:** Прогон завис на 40/3225 (productrows); UF agneko — числовые коды. **Фикс:** light enrich, agneko map, retry Access denied, `--resume`, runbook `F4_BITRIX_FIELDS_RESYNC.md`. **Прогон:** `50/3225` extra в БД, resume `workers 1 delay 80`, ETA ~5.5 ч. **Оператору:** `BITRIX_AUTO_SYNC_MINUTES=0`. Коммит: `TBD`.
+**2026-06-24:** Прогон завис на 40/3225 (productrows); UF agneko — числовые коды. **Фикс:** light enrich, agneko map, retry Access denied, `--resume`, runbook `F4_BITRIX_FIELDS_RESYNC.md`. **Прогон:** `50/3225` extra в БД, resume `workers 1 delay 80`, ETA ~5.5 ч. **Оператору:** `BITRIX_AUTO_SYNC_MINUTES=0`. Коммит: `b5b3ad9`.
 
 ---
 
