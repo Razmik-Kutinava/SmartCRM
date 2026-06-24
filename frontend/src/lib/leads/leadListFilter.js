@@ -1,5 +1,6 @@
 /** Фильтрация и сортировка списка лидов (/leads/list). */
 import { leadPriorityTier } from '$lib/crmStages.js';
+import { leadMatchesCoverageFilter } from '$lib/leads/leadCoverage.js';
 import {
 	deliveryTypeFromLead,
 	subscriptionStatus,
@@ -330,6 +331,7 @@ export function filterLeads(
 		filterTaskDue = 'all',
 		filterSubscription = 'all',
 		filterDeliveryType = 'all',
+		filterCoverage = 'all',
 		minScore = null,
 	},
 	config = null,
@@ -366,6 +368,7 @@ export function filterLeads(
 		if (filterTaskDue === 'has_open' && !(Number(l.openTaskCount) > 0)) return false;
 		if (!leadMatchesSubscriptionFilter(l, filterSubscription, now)) return false;
 		if (!leadMatchesDeliveryTypeFilter(l, filterDeliveryType)) return false;
+		if (!leadMatchesCoverageFilter(l, filterCoverage)) return false;
 		return leadMatchesSearch(l, search);
 	});
 }

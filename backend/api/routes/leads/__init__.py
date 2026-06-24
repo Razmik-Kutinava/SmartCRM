@@ -20,6 +20,7 @@ router.include_router(engagement.router)
 router.include_router(csv_routes.router)
 router.include_router(export_routes.router)
 
+router.get("/coverage")(crud.leads_coverage_summary)
 router.get("")(crud.list_leads)
 router.get("/industries")(crud.list_industries)
 router.post("", status_code=201)(crud.create_lead)

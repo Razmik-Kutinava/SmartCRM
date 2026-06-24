@@ -83,6 +83,8 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_card_context.py` | Даты этапа и касаний для карточки |
 | `lead_score_list_flags.py` | Флаги advisory для списка лидов (`hasScoreWarnings`, `scoreDivergent`) |
 | `lead_task_list_flags.py` | Флаги задач в списке лидов (`taskDueToday`, `taskOverdue`, `nextTaskTitle`) |
+| `lead_coverage.py` | Сегменты полноты карточки (B24, паспорт, пустые, проигран, без дел) |
+| `lead_coverage_attach.py` | Прикрепление coverage-флагов к списку лидов |
 | `okved_industry_map.py` | Маппинг секции ОКВЭД → `industry_bucket` (укрупнённая отрасль) |
 | `lead_products.py` | Нормализация `lead_products` (статус, цена, merge) |
 | `lead_bitrix_extra.py` | UF Битрикс (подписка, поставка, лицензия…) → `lead.bitrix_extra` |

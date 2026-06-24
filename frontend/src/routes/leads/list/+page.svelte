@@ -11,6 +11,7 @@
 		apiImportLeadsCsv,
 		downloadLeadsCsvExport,
 		fetchBitrixImportStats,
+		fetchLeadCoverage,
 		readLeadsCache,
 		writeLeadsCache,
 	} from '$lib/leadsStorage.js';
@@ -50,6 +51,7 @@
 	import { createLeadCommunication } from '$lib/leads/leadCommunications.js';
 	import { openLeadCreateModal } from '$lib/leads/leadCreateUi.js';
 	import { subscriptionBadgeForLead, deliveryTypeFromLead } from '$lib/leads/leadBitrixExtra.js';
+	import { COVERAGE_FILTERS } from '$lib/leads/leadCoverage.js';
 
 	const API = getApiUrl();
 
@@ -65,6 +67,7 @@
 	let filterTaskDue = $state('all');
 	let filterSubscription = $state('all');
 	let filterDeliveryType = $state('all');
+	let filterCoverage = $state('all');
 	let filterMinScore = $state(null);
 	let groupBy = $state('none');
 	/** @type {string[]} */
@@ -81,6 +84,8 @@
 	let csvInput = $state(null);
 	/** @type {{ bitrix_total: number | null, local_bitrix_leads_count: number, date_from?: string } | null} */
 	let bitrixStats = $state(null);
+	/** @type {{ total?: number, bitrixTotal?: number, segments?: Record<string, number>, resync?: { status?: string, processed?: number, totalB24?: number } } | null} */
+	let coverageStats = $state(null);
 
 	/** Воронка с сервера (Ops → CRM / crm_settings.json), иначе дефолт */
 	let stages = $state(/** @type {string[]} */ (['all', ...DEFAULT_CRM_STAGES]));
@@ -104,6 +109,11 @@
 			bitrixStats = await fetchBitrixImportStats('2023-01-01');
 		} catch {
 			bitrixStats = null;
+		}
+		try {
+			coverageStats = await fetchLeadCoverage();
+		} catch {
+			coverageStats = null;
 		}
 
 		registerLeadIntentHandler(handleVoiceResult);
@@ -157,6 +167,7 @@
 				filterTaskDue,
 				filterSubscription,
 				filterDeliveryType,
+				filterCoverage,
 				sortBy,
 				minScore: filterMinScore,
 			},
@@ -169,6 +180,20 @@
 	const okvedSectionOptions = $derived(distinctOkvedSections(leads));
 	const industryBucketOptions = $derived(distinctIndustryBuckets(leads));
 	const deliveryTypeOptions = $derived(distinctDeliveryTypes(leads));
+
+	const coverageCounts = $derived.by(() => {
+		/** @type {Record<string, number>} */
+		const counts = { all: leads.length };
+		for (const chip of COVERAGE_FILTERS) {
+			if (chip.id !== 'all') counts[chip.id] = 0;
+		}
+		for (const l of leads) {
+			for (const seg of l.coverageSegments || []) {
+				if (counts[seg] != null) counts[seg] += 1;
+			}
+		}
+		return counts;
+	});
 
 	const listGroups = $derived(groupLeads(filtered, groupBy));
 
@@ -225,6 +250,7 @@
 			|| filterTaskDue !== 'all'
 			|| filterSubscription !== 'all'
 			|| filterDeliveryType !== 'all'
+			|| filterCoverage !== 'all'
 			|| filterMinScore != null,
 		),
 	);
@@ -242,6 +268,7 @@
 		filterTaskDue = 'all';
 		filterSubscription = 'all';
 		filterDeliveryType = 'all';
+		filterCoverage = 'all';
 		filterMinScore = null;
 		sortBy = 'tasks_urgent';
 	}
@@ -834,6 +861,31 @@
 		{#if bitrixStats}
 			<span class="hidden sm:inline text-gray-600">
 				B24: {bitrixStats.local_bitrix_leads_count ?? '—'} / {bitrixStats.bitrix_total ?? '—'}
+			</span>
+		{/if}
+	</div>
+
+	<div class="px-4 sm:px-6 pb-2 flex flex-wrap items-center gap-2" data-testid="leads-coverage-chips">
+		<span class="text-[10px] uppercase tracking-wider text-gray-600 mr-1 w-full sm:w-auto">Полнота</span>
+		{#each COVERAGE_FILTERS as chip (chip.id)}
+			<button
+				type="button"
+				class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] border transition-colors
+					{filterCoverage === chip.id
+					? 'bg-indigo-600/25 border-indigo-500/80 text-indigo-200'
+					: 'bg-gray-800/50 border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300'}"
+				aria-pressed={filterCoverage === chip.id}
+				data-testid="leads-coverage-{chip.id}"
+				onclick={() => { filterCoverage = chip.id; }}
+			>
+				{chip.label}
+				<span class="font-semibold tabular-nums">{coverageCounts[chip.id] ?? 0}</span>
+			</button>
+		{/each}
+		{#if coverageStats?.resync?.status}
+			<span class="text-[10px] text-gray-600 ml-auto" data-testid="leads-coverage-resync">
+				B24 resync: {coverageStats.resync.processed ?? 0}/{coverageStats.resync.totalB24 ?? '—'}
+				· {coverageStats.resync.status}
 			</span>
 		{/if}
 	</div>

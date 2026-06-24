@@ -348,6 +348,42 @@ async def test_list_leads_includes_task_flags(client):
 
 
 @pytest.mark.asyncio
+async def test_list_leads_includes_coverage_flags(client):
+    """GET /api/leads — сегменты полноты карточки."""
+    create_r = await client.post(
+        "/api/leads",
+        json={"company": "Coverage тест", "stage": "Проигран", "inn": "7707083893"},
+    )
+    assert create_r.status_code == 201
+    lead_id = create_r.json()["id"]
+    patch_r = await client.patch(f"/api/leads/{lead_id}", json={"inn": "7707083893"})
+    assert patch_r.status_code == 200
+
+    r = await client.get("/api/leads")
+    assert r.status_code == 200
+    row = next(l for l in r.json() if l["id"] == lead_id)
+    assert "coverageSegments" in row
+    assert "coverageLost" in row
+    assert row["coverageLost"] is True
+    assert "passport" in row["coverageSegments"]
+    assert row["coverageNoTasks"] is True
+
+
+@pytest.mark.asyncio
+async def test_leads_coverage_summary(client):
+    """GET /api/leads/coverage — сводка сегментов."""
+    await client.post("/api/leads", json={"company": "Cov A", "stage": "Новый"})
+    r = await client.get("/api/leads/coverage")
+    assert r.status_code == 200
+    data = r.json()
+    assert "total" in data
+    assert data["total"] >= 1
+    assert "segments" in data
+    assert isinstance(data["segments"], dict)
+    assert "resync" in data
+
+
+@pytest.mark.asyncio
 async def test_list_leads_includes_industry_bucket(client):
     """GET /api/leads — industryBucket из ОКВЭД."""
     create_r = await client.post(

@@ -11,6 +11,8 @@ from core import crm_settings_store
 from core.lead_approvals import merge_approvals_payload
 from core.lead_contacts import apply_contacts_patch, normalize_contacts
 from core.lead_field_audit_util import TRACKED_ORM_FIELDS, append_lead_field_audits
+from core.lead_coverage import summarize_coverage
+from core.lead_coverage_attach import attach_lead_coverage_flags
 from core.lead_score_list_flags import attach_lead_score_flags, load_tasks_by_lead
 from core.lead_task_list_flags import attach_lead_task_flags
 from core.stage_transition import merge_lead_patch_for_validation, validate_stage_transition
@@ -47,7 +49,42 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
     settings = crm_settings_store.load_settings()
     tasks_by_lead = await load_tasks_by_lead(db)
     with_score = attach_lead_score_flags(leads, tasks_by_lead, settings)
-    return attach_lead_task_flags(with_score, tasks_by_lead)
+    with_tasks = attach_lead_task_flags(with_score, tasks_by_lead)
+    return attach_lead_coverage_flags(with_tasks, tasks_by_lead)
+
+
+async def leads_coverage_summary(db: AsyncSession = Depends(get_db)):
+    """Счётчики сегментов полноты карточки + прогресс B24 resync."""
+    import json
+    from pathlib import Path
+
+    from sqlalchemy import func
+
+    result = await db.execute(select(Lead).order_by(Lead.id))
+    leads = [row.to_dict() for row in result.scalars().all()]
+    tasks_by_lead = await load_tasks_by_lead(db)
+    enriched = attach_lead_coverage_flags(leads, tasks_by_lead)
+    b24 = int(
+        (await db.execute(select(func.count()).select_from(Lead).where(Lead.bitrix_lead_id.isnot(None)))).scalar_one()
+        or 0
+    )
+    state_path = Path(__file__).resolve().parents[3] / "data" / "bitrix_fields_resync_state.json"
+    resync: dict = {}
+    if state_path.is_file():
+        try:
+            resync = json.loads(state_path.read_text(encoding="utf-8"))
+        except Exception:
+            resync = {}
+    return {
+        "total": len(enriched),
+        "bitrixTotal": b24,
+        "segments": summarize_coverage(enriched),
+        "resync": {
+            "status": resync.get("status"),
+            "processed": int(resync.get("processed") or 0),
+            "totalB24": int(resync.get("total_b24") or b24),
+        },
+    }
 
 
 async def list_industries(db: AsyncSession = Depends(get_db)):
