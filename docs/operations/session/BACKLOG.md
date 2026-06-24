@@ -183,9 +183,9 @@
 
 | Шаг | PRD_MAP | Отложено | Приоритет |
 |-----|---------|----------|-----------|
-| 1 | UF → `bitrix_extra` | Mass backfill: **~160/3225** в БД; global rate-limit + auto-sync pause | 🔴 |
+| 1 | UF → `bitrix_extra` | Mass backfill: **636/3228** (~20%); resync failed @625 — `--resume` | 🔴 |
 | 2 | Мультиконтакты | тот же `resync_bitrix_lead_fields` — `contact.items` + merge; метрика `contacts multi` в check script | 🔴 |
-| 3 | Сумма + валюта | 88/3230 deal_amount; полный resync в прогоне | 🟡 |
+| 3 | Сумма + валюта | **663/3228** deal_amount (~20%); код+UI ✅; 👤 апрув `15 780 $` → [`F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`](../phase4/leads/F4_X5_DEAL_AMOUNT_ACCEPTANCE.md) | 🟡 |
 | 4 | Webhook scope `task` | 👤 scope **task** на вебхуке B24 → `resync_bitrix_lead_tasks.py --workers 4` | 🔴 |
 | 5 | UI карточки X5-gap | 👤 апрув карточки в браузере | 🟡 |
 | 6 | Mass-resync полей | **in_progress** — extra+contacts+deal одним скриптом; retry в `bitrix_call` | 🔴 |

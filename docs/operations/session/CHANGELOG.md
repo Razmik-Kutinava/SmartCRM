@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-24 — Ф4 X5-gap шаг 3: сумма + валюта — acceptance + backfill статус
+
+**Код:** ✅. **Данные:** 663/3228 deal_amount; эталон 5227 → `15 780 $`. Док: `F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`; resync resume после Errno 22.
+
 ## 2026-06-24 — Ф4: mass-resync — rate-limit, auto-sync pause, multi-contacts metrics
 
 **Было:** Access denied при параллельных REST; contacts/deal не отслеживались в check. **Стало:** retry+semaphore в `bitrix_call`; `bitrix_resync_guard` паузит poll; state `with_multi_contacts`; check script — `contacts multi`, `b24-contact-*`. Прогон 162/3225.

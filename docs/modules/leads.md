@@ -69,7 +69,7 @@
 - **Битрикс24:** ИНН/ОГРН из реквизитов; **ОКВЭД и число сотрудников** из UF (`UF_CRM_OKVED`, `UF_CRM_OKVED_CODE`, hint `оквэд` / `сотруд`) на лиде и связанной компании — без Checko.
 - **UF лицензия/подписка:** `core/lead_bitrix_extra.py` + `bitrix24_uf.extract_bitrix_extra_from_row` → колонка **`bitrix_extra`** (JSON): подписка до, тип поставки, срок лицензии, резерв до, licensing email, сублицензиат, плательщик, менеджер, участник, страна, повторный лид. API: `bitrixExtra` в `Lead.to_dict()`. Синк при upsert/poll; offline backfill из `tech_json.bitrix24.uf`.
 - **Мультиконтакты Битрикс:** `crm.lead.contact.items.get` → все связанные контакты в **`contacts` JSON** (телефоны/email по каждому); основной (`IS_PRIMARY`) → роль `lpr` и плоские `contact`/`email`/`phone`; `merge_bitrix_contacts` при upsert — ручные контакты CRM не затираются.
-- **Сумма + валюта:** `OPPORTUNITY` + `CURRENCY_ID` → `deal_amount` / `deal_currency`; API **`amount`** + **`currency`**; `amount_rub` только RUB/RUR; шапка и панель «Суммы сделки» в карточке.
+- **Сумма + валюта:** `OPPORTUNITY` + `CURRENCY_ID` → `deal_amount` / `deal_currency`; API **`amount`** + **`currency`**; шапка `15 780 $` (`formatDealAmountLabel`). Browser-апрув: [`F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`](../operations/phase4/leads/F4_X5_DEAL_AMOUNT_ACCEPTANCE.md).
 - **Mass-resync полей (шаг 6 X5-gap):** `bitrix_extra` + `contacts` + `deal_amount` для всех лидов с `bitrix_lead_id` (~3225):  
   `cd backend && python -u scripts/resync_bitrix_lead_fields.py --workers 3 --batch-size 25 --delay-ms 20`  
   Статус: `python scripts/check_bitrix_fields_backfill.py` · runbook: [`F4_BITRIX_FIELDS_RESYNC.md`](../operations/phase4/leads/F4_BITRIX_FIELDS_RESYNC.md)  

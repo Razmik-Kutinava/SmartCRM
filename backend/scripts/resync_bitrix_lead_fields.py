@@ -30,6 +30,14 @@ def _load_env() -> None:
         pass
 
 
+def _safe_print(msg: str) -> None:
+    """Windows: не падать на flush в закрытый pipe (Errno 22)."""
+    try:
+        print(msg, flush=True)
+    except OSError:
+        pass
+
+
 def _read_state() -> dict:
     try:
         if STATE_PATH.is_file():
@@ -231,18 +239,18 @@ async def backfill_fields(
                     "with_bitrix_extra": stats["with_bitrix_extra"],
                     "with_contacts": stats["with_contacts"],
                     "with_multi_contacts": stats["with_multi_contacts"],
+                    "with_deal_amount": stats["with_deal_amount"],
                     "errors": stats["errors"],
                     "timeouts": stats["timeouts"],
                     "eta_sec": eta_sec,
                 }
             )
-            print(
+            _safe_print(
                 f"  … {stats['processed']}/{stats['total']} | обновлено {stats['updated']} | "
                 f"extra {stats['with_bitrix_extra']} | контакты {stats['with_contacts']} | "
                 f"multi {stats['with_multi_contacts']} | "
                 f"сумма {stats['with_deal_amount']} | ошибок {stats['errors']} | "
                 f"ETA ~{eta_sec // 60}m",
-                flush=True,
             )
             chunk = []
 
@@ -357,10 +365,10 @@ async def main() -> int:
         )
     except Exception as e:
         _write_state({"status": "failed", "error": str(e)})
-        print(f"resync_bitrix_lead_fields FAILED: {e}")
+        _safe_print(f"resync_bitrix_lead_fields FAILED: {e}")
         return 1
 
-    print(
+    _safe_print(
         "resync_bitrix_lead_fields: "
         f"{stats['processed']}/{stats['total']} b24-лидов | обновлено {stats['updated']} | "
         f"bitrix_extra {stats['with_bitrix_extra']} | контакты {stats['with_contacts']} | "

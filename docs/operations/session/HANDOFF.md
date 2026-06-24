@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[сумма+валюта — шаг 3 X5-gap] | Статус: 🔄 backfill + 👤 browser`
+
+**2026-06-24:** Код/UI ✅ (`15 780 $`, lead 5227 → `/leads/289`). БД **663/3228** deal_amount. Acceptance: `F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`. Resync упал @625 (Errno 22) — `_safe_print`, `--resume`. **👤:** открыть карточку, проверить `data-testid=lead-card-deal-amount`. Коммит: `TBD`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[mass-resync bitrix_extra — шаг 1/6 хвост] | Статус: 🔄 in_progress`
 
 **2026-06-24:** Mass-resync **162/3225** extra, **106** multi-contacts, **200** deal_amount. Фикс: global retry/rate-limit в `bitrix_call`, auto-sync pause на resync, метрики multi в check script. Прогон перезапущен `--resume workers 2`. Коммит: `1f103f5`.

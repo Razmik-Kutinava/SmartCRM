@@ -90,6 +90,17 @@ async def main() -> int:
             ).scalar_one()
             or 0
         )
+        deal_usd = int(
+            (
+                await db.execute(
+                    select(func.count()).select_from(Lead).where(
+                        Lead.deal_amount.isnot(None),
+                        Lead.deal_currency == "USD",
+                    )
+                )
+            ).scalar_one()
+            or 0
+        )
 
     state = {}
     if STATE_PATH.is_file():
@@ -107,7 +118,9 @@ async def main() -> int:
     print(f"  contacts json: {with_contacts}")
     print(f"  contacts multi (2+): {multi_contacts}")
     print(f"  contacts with b24-contact-*: {b24_contacts}")
-    print(f"  deal_amount: {with_deal}")
+    deal_pct = round(100.0 * with_deal / b24, 1) if b24 else 0.0
+    print(f"  deal_amount: {with_deal} ({deal_pct}% of b24)")
+    print(f"  deal_amount USD: {deal_usd}")
     if state:
         print(f"  resync_state: {json.dumps(state, ensure_ascii=False)}")
     return 0
