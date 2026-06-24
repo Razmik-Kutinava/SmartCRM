@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[mass-resync bitrix_extra — шаг 1/6 хвост] | Статус: 🔄 in_progress`
 
-**2026-06-24:** Mass-resync **162/3225** extra, **106** multi-contacts, **200** deal_amount. Фикс: global retry/rate-limit в `bitrix_call`, auto-sync pause на resync, метрики multi в check script. Прогон перезапущен `--resume workers 2`. Коммит: `TBD`.
+**2026-06-24:** Mass-resync **162/3225** extra, **106** multi-contacts, **200** deal_amount. Фикс: global retry/rate-limit в `bitrix_call`, auto-sync pause на resync, метрики multi в check script. Прогон перезапущен `--resume workers 2`. Коммит: `1f103f5`.
 
 ---
 
