@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[mass-resync полей — шаг 6] | Статус: ✅ done (код) | in_progress: полный прогон 3225`
+
+**2026-06-19:** `resync_bitrix_lead_fields.py` + `core/bitrix_lead_fields_sync.py` — backfill `bitrix_extra`, `contacts`, `deal_amount`/`deal_currency` из Битрикс API (`crm.lead.get` + enrich); offline `--no-api` → UF из `tech_json`; pytest 6 PASS; smoke `--limit 2` OK. **Команда:** `cd backend && python -u scripts/resync_bitrix_lead_fields.py --workers 4 --batch-size 40 --delay-ms 10`. Доки `leads.md`, PRD_MAP. **Следующий:** дождаться полного прогона; scope **task** на портале; browser апрув карточки. Коммит: `TBD`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[UI карточки X5-gap — шаг 5] | Статус: ✅ done (код)`
 
 **2026-06-19:** Шапка — `formatDealAmountLabel` → `15 780 $`, бейдж «Повторный лид» (`isRepeatLead`); панель «Карточка» — `LeadBitrixExtraPanel` (лицензия/подписка + сворачиваемые сырые UF), `LeadContactsReadonlyList`; превью хаба `licensePreviewText`; pytest mirror+smoke 21 PASS. **Хвосты прогона 1–5:** mass backfill bitrix_extra/deal_amount/contacts (~3225), scope **task** на портале B24, 👤 апрув UI в браузере — см. `BACKLOG.md` § X5-gap. **Следующий шаг:** оператор — scope task + mass resync; затем обход карточки end-to-end. Коммит: `cd62bbf`.

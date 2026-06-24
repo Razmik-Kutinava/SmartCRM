@@ -179,17 +179,20 @@
 
 ---
 
-## Фаза 4 — X5-gap прогон (шаги 1–5, хвосты)
+## Фаза 4 — X5-gap прогон (шаги 1–6)
 
 | Шаг | PRD_MAP | Отложено | Приоритет |
 |-----|---------|----------|-----------|
-| 1 | UF → `bitrix_extra` | Mass backfill `bitrix_extra` на ~3225 лидов (`resync` / re-import с webhook) | 🔴 |
-| 2 | Мультиконтакты | Mass resync contacts на ~3225 (`resync_bitrix_lead_engagement` или upsert poll) | 🔴 |
-| 3 | Сумма + валюта | Mass backfill `deal_amount`/`deal_currency`; 👤 апрув суммы в браузере | 🟡 |
-| 4 | Webhook scope `task` | 👤 включить scope **task** на входящем вебхуке B24 → `resync_bitrix_lead_tasks.py --workers 4` | 🔴 |
-| 5 | UI карточки X5-gap | 👤 апрув карточки в браузере (лицензия, контакты, UF, бейдж) | 🟡 |
+| 1 | UF → `bitrix_extra` | 👤 полный прогон `resync_bitrix_lead_fields.py` (~3225) | 🟡 |
+| 2 | Мультиконтакты | 👤 тот же `resync_bitrix_lead_fields.py` (contacts в одном скрипте) | 🟡 |
+| 3 | Сумма + валюта | 👤 тот же скрипт + апрув суммы в браузере | 🟡 |
+| 4 | Webhook scope `task` | 👤 scope **task** на вебхуке B24 → `resync_bitrix_lead_tasks.py --workers 4` | 🔴 |
+| 5 | UI карточки X5-gap | 👤 апрув карточки в браузере | 🟡 |
+| 6 | Mass-resync полей | Скрипт ✅; полный прогон 3225 — в фоне / дождаться завершения | 🟡 |
 
-`[2026-06-19] | PRD_MAP: Ф4 · X5-gap шаги 1–5 | Отложено: mass backfills 1–3, scope task п.4, browser апрув 3+5 | Причина: код закрыт, нужен webhook + оператор | Нужна фаза MAP: 4 | Из шага: сводка прогона шаг 5`
+`[2026-06-19] | PRD_MAP: Ф4 · X5-gap шаг 6 mass-resync | Отложено: дождаться полного прогона + scope task п.4 + browser апрув | Причина: скрипт готов, прогон долгий | Нужна фаза MAP: 4 | Из шага: resync_bitrix_lead_fields.py`
+
+`[2026-06-19] | PRD_MAP: Ф4 · X5-gap шаги 1–5 | Отложено: mass backfills 1–3, scope task п.4, browser апрув 3+5 | Причина: код закрыт, нужен webhook + оператор | Нужна фаза MAP: 4 | Из шага: сводка прогона шаг 5` **→ шаг 6 закрывает backfill 1–3 одним скриптом**
 
 ---
 
