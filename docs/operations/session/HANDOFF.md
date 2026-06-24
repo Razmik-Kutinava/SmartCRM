@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 UI] | Задача:[fix 404 coverage/managers] | Статус: ✅ done`
 
-**2026-06-24:** Двойной путь `/api/leads/leads/*` в `leadsStorage.js` → 404. Исправлено на `/coverage` и `/managers`. Fallback списка менеджеров из `GET /api/leads`. Activity resync: **3228/3228**, 359 задач, 0 ошибок. Коммит: `PENDING`.
+**2026-06-24:** Двойной путь `/api/leads/leads/*` в `leadsStorage.js` → 404. Исправлено на `/coverage` и `/managers`. Fallback списка менеджеров из `GET /api/leads`. Activity resync: **3228/3228**, 359 задач, 0 ошибок. Коммит: `05446af`.
 
 ---
 
