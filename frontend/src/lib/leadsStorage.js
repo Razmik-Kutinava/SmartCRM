@@ -210,6 +210,31 @@ export async function fetchLeadCoverage() {
 	return body;
 }
 
+/** Справочник менеджеров (ответственный + bitrix_extra.manager) */
+export async function fetchLeadManagers() {
+	const r = await fetch(`${API()}/leads/managers`);
+	const text = await r.text().catch(() => '');
+	let body;
+	try {
+		body = text ? JSON.parse(text) : {};
+	} catch {
+		body = { detail: text };
+	}
+	if (!r.ok) {
+		const d = body?.detail;
+		const msg =
+			typeof d === 'string'
+				? d
+				: Array.isArray(d)
+					? d.map((x) => x.msg || x).join('; ')
+					: d
+						? JSON.stringify(d)
+						: text || `HTTP ${r.status}`;
+		throw new Error(msg);
+	}
+	return body;
+}
+
 /** Импорт лидов из Битрикс24 (на бэкенде нужен BITRIX24_WEBHOOK_URL). max_items=0 — без лимита. */
 export async function apiImportBitrix(options = {}) {
 	const { date_from = '2023-01-01', max_items = 0 } = options;

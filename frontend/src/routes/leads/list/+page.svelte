@@ -12,6 +12,7 @@
 		downloadLeadsCsvExport,
 		fetchBitrixImportStats,
 		fetchLeadCoverage,
+		fetchLeadManagers,
 		readLeadsCache,
 		writeLeadsCache,
 	} from '$lib/leadsStorage.js';
@@ -52,6 +53,7 @@
 	import { openLeadCreateModal } from '$lib/leads/leadCreateUi.js';
 	import { subscriptionBadgeForLead, deliveryTypeFromLead } from '$lib/leads/leadBitrixExtra.js';
 	import { COVERAGE_FILTERS } from '$lib/leads/leadCoverage.js';
+	import { leadManagerLabel } from '$lib/leads/leadManager.js';
 
 	const API = getApiUrl();
 
@@ -68,6 +70,7 @@
 	let filterSubscription = $state('all');
 	let filterDeliveryType = $state('all');
 	let filterCoverage = $state('all');
+	let filterManager = $state('all');
 	let filterMinScore = $state(null);
 	let groupBy = $state('none');
 	/** @type {string[]} */
@@ -86,6 +89,8 @@
 	let bitrixStats = $state(null);
 	/** @type {{ total?: number, bitrixTotal?: number, segments?: Record<string, number>, resync?: { status?: string, processed?: number, totalB24?: number } } | null} */
 	let coverageStats = $state(null);
+	/** @type {Array<{ name: string, count: number }>} */
+	let managerOptions = $state([]);
 
 	/** Воронка с сервера (Ops → CRM / crm_settings.json), иначе дефолт */
 	let stages = $state(/** @type {string[]} */ (['all', ...DEFAULT_CRM_STAGES]));
@@ -114,6 +119,15 @@
 			coverageStats = await fetchLeadCoverage();
 		} catch {
 			coverageStats = null;
+		}
+		try {
+			const mgr = await fetchLeadManagers();
+			managerOptions = Array.isArray(mgr?.managers) ? mgr.managers : [];
+			if (mgr?.defaultFilter && filterManager === 'all') {
+				filterManager = mgr.defaultFilter;
+			}
+		} catch {
+			managerOptions = [];
 		}
 
 		registerLeadIntentHandler(handleVoiceResult);
@@ -168,6 +182,7 @@
 				filterSubscription,
 				filterDeliveryType,
 				filterCoverage,
+				filterManager,
 				sortBy,
 				minScore: filterMinScore,
 			},
@@ -251,6 +266,7 @@
 			|| filterSubscription !== 'all'
 			|| filterDeliveryType !== 'all'
 			|| filterCoverage !== 'all'
+			|| filterManager !== 'all'
 			|| filterMinScore != null,
 		),
 	);
@@ -269,6 +285,7 @@
 		filterSubscription = 'all';
 		filterDeliveryType = 'all';
 		filterCoverage = 'all';
+		filterManager = 'all';
 		filterMinScore = null;
 		sortBy = 'tasks_urgent';
 	}
@@ -901,6 +918,19 @@
 					data-testid="leads-list-search"
 				/>
 			</label>
+			<label class="min-w-[10rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Менеджер</span>
+				<select
+					bind:value={filterManager}
+					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-manager"
+				>
+					<option value="all">Все менеджеры</option>
+					{#each managerOptions as opt (opt.name)}
+						<option value={opt.name}>{opt.name} ({opt.count})</option>
+					{/each}
+				</select>
+			</label>
 			<label class="min-w-[7.5rem]">
 				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Сортировка</span>
 				<select
@@ -1097,6 +1127,7 @@
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Компания</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Контакт</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Этап</th>
+				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">Менеджер</th>
 				<th class="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">
 					<button type="button" class="hover:text-gray-300" onclick={() => sortBy = sortBy === 'score_desc' ? 'score_asc' : 'score_desc'}>
 						Скоринг {sortBy === 'score_asc' ? '↑' : '↓'}
@@ -1116,7 +1147,7 @@
 			{#each listGroups as group (group.key || '__all__')}
 				{#if groupBy !== 'none'}
 					<tr class="bg-gray-800/50" data-testid="leads-list-group-header">
-						<td colspan="11" class="px-4 py-2">
+						<td colspan="12" class="px-4 py-2">
 							<button
 								type="button"
 								class="flex items-center gap-2 text-xs font-medium text-gray-300 hover:text-white w-full text-left"
@@ -1168,6 +1199,9 @@
 					</td>
 					<td class="px-4 py-3">
 						<span class="px-2 py-0.5 rounded-full text-xs font-medium {stageColor(lead.stage)}">{lead.stage}</span>
+					</td>
+					<td class="px-4 py-3 text-gray-400 text-xs max-w-[9rem] truncate" data-testid="leads-list-manager-cell" title={lead.managerName || leadManagerLabel(lead)}>
+						{lead.managerName || leadManagerLabel(lead) || '—'}
 					</td>
 					<td class="px-4 py-3">
 						<span class="font-bold {scoreColor(lead.score)}">{lead.score}</span>

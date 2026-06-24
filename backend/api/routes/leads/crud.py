@@ -11,6 +11,8 @@ from core import crm_settings_store
 from core.lead_approvals import merge_approvals_payload
 from core.lead_contacts import apply_contacts_patch, normalize_contacts
 from core.lead_field_audit_util import TRACKED_ORM_FIELDS, append_lead_field_audits
+from core.lead_manager import catalog_managers, normalize_manager_key
+from core.lead_manager_attach import attach_lead_manager_labels
 from core.lead_coverage import summarize_coverage
 from core.lead_coverage_attach import attach_lead_coverage_flags
 from core.lead_score_list_flags import attach_lead_score_flags, load_tasks_by_lead
@@ -50,7 +52,26 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
     tasks_by_lead = await load_tasks_by_lead(db)
     with_score = attach_lead_score_flags(leads, tasks_by_lead, settings)
     with_tasks = attach_lead_task_flags(with_score, tasks_by_lead)
-    return attach_lead_coverage_flags(with_tasks, tasks_by_lead)
+    with_coverage = attach_lead_coverage_flags(with_tasks, tasks_by_lead)
+    return attach_lead_manager_labels(with_coverage)
+
+
+async def list_lead_managers(db: AsyncSession = Depends(get_db)):
+    """Справочник менеджеров из БД (ответственный + bitrix_extra.manager)."""
+    import os
+
+    result = await db.execute(select(Lead).order_by(Lead.id))
+    leads = [row.to_dict() for row in result.scalars().all()]
+    managers = catalog_managers(leads)
+    default_raw = (os.getenv("CRM_OPERATOR_NAME") or "").strip()
+    default_filter = None
+    if default_raw:
+        dk = normalize_manager_key(default_raw)
+        for row in managers:
+            if normalize_manager_key(row["name"]) == dk:
+                default_filter = row["name"]
+                break
+    return {"managers": managers, "defaultFilter": default_filter}
 
 
 async def leads_coverage_summary(db: AsyncSession = Depends(get_db)):

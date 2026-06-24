@@ -1,6 +1,7 @@
 /** Фильтрация и сортировка списка лидов (/leads/list). */
 import { leadPriorityTier } from '$lib/crmStages.js';
 import { leadMatchesCoverageFilter } from '$lib/leads/leadCoverage.js';
+import { leadMatchesManagerFilter } from '$lib/leads/leadManager.js';
 import {
 	deliveryTypeFromLead,
 	subscriptionStatus,
@@ -332,6 +333,7 @@ export function filterLeads(
 		filterSubscription = 'all',
 		filterDeliveryType = 'all',
 		filterCoverage = 'all',
+		filterManager = 'all',
 		minScore = null,
 	},
 	config = null,
@@ -369,6 +371,7 @@ export function filterLeads(
 		if (!leadMatchesSubscriptionFilter(l, filterSubscription, now)) return false;
 		if (!leadMatchesDeliveryTypeFilter(l, filterDeliveryType)) return false;
 		if (!leadMatchesCoverageFilter(l, filterCoverage)) return false;
+		if (!leadMatchesManagerFilter(l, filterManager)) return false;
 		return leadMatchesSearch(l, search);
 	});
 }

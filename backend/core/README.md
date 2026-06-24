@@ -85,6 +85,8 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_task_list_flags.py` | Флаги задач в списке лидов (`taskDueToday`, `taskOverdue`, `nextTaskTitle`) |
 | `lead_coverage.py` | Сегменты полноты карточки (B24, паспорт, пустые, проигран, без дел) |
 | `lead_coverage_attach.py` | Прикрепление coverage-флагов к списку лидов |
+| `lead_manager.py` | Менеджер лида: bitrix_extra.manager + responsible |
+| `lead_manager_attach.py` | Поле `managerName` в списке лидов |
 | `okved_industry_map.py` | Маппинг секции ОКВЭД → `industry_bucket` (укрупнённая отрасль) |
 | `lead_products.py` | Нормализация `lead_products` (статус, цена, merge) |
 | `lead_bitrix_extra.py` | UF Битрикс (подписка, поставка, лицензия…) → `lead.bitrix_extra` |

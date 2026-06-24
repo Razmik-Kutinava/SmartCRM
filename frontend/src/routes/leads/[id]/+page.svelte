@@ -30,6 +30,7 @@
 	import { describeTransitionRule, rulesForTargetStage } from '$lib/leads/stageTransition.js';
 	import { buildMoneyPatch, formatDealAmountLabel, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
 	import { isRepeatLead } from '$lib/leads/leadBitrixExtra.js';
+	import { leadManagerLabel } from '$lib/leads/leadManager.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 	import { formatRuDate } from '$lib/leads/leadActivityTasks.js';
@@ -777,6 +778,9 @@
 					<span class="text-green-400 font-semibold">{lead.score}/100</span>
 					<span class="px-1.5 py-px rounded text-[10px] font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
 					<span>{lead.stage}</span>
+					{#if leadManagerLabel(lead)}
+						<span class="text-sky-300/90" data-testid="lead-card-manager">{leadManagerLabel(lead)}</span>
+					{/if}
 					{#if formatDealAmountLabel(lead)}
 						<span class="text-amber-300/90 font-semibold tabular-nums" data-testid="lead-card-deal-amount">{formatDealAmountLabel(lead)}</span>
 					{/if}

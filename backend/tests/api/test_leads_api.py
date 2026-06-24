@@ -384,6 +384,29 @@ async def test_leads_coverage_summary(client):
 
 
 @pytest.mark.asyncio
+async def test_list_lead_managers_and_manager_name(client):
+    """GET /api/leads/managers + managerName в списке."""
+    create_r = await client.post(
+        "/api/leads",
+        json={"company": "Mgr тест", "stage": "Новый", "responsible": "Гюрджян Размик"},
+    )
+    assert create_r.status_code == 201
+    lead_id = create_r.json()["id"]
+
+    mgr_r = await client.get("/api/leads/managers")
+    assert mgr_r.status_code == 200
+    mgr_data = mgr_r.json()
+    assert "managers" in mgr_data
+    names = [m["name"] for m in mgr_data["managers"]]
+    assert "Гюрджян Размик" in names
+
+    list_r = await client.get("/api/leads")
+    row = next(l for l in list_r.json() if l["id"] == lead_id)
+    assert row.get("managerName") == "Гюрджян Размик"
+    assert "Гюрджян Размик" in row.get("managerNames", [])
+
+
+@pytest.mark.asyncio
 async def test_list_leads_includes_industry_bucket(client):
     """GET /api/leads — industryBucket из ОКВЭД."""
     create_r = await client.post(
