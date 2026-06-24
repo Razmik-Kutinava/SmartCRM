@@ -87,6 +87,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_products.py` | Нормализация `lead_products` (статус, цена, merge) |
 | `lead_bitrix_extra.py` | UF Битрикс (подписка, поставка, лицензия…) → `lead.bitrix_extra` |
 | `bitrix_lead_fields_sync.py` | Patch `bitrix_extra`/contacts/deal_amount при mass-resync |
+| `bitrix_resync_guard.py` | Пауза auto-sync пока `resync_bitrix_lead_fields` status=running |
 | `lead_deal_amount.py` | OPPORTUNITY + CURRENCY_ID → `deal_amount` / `deal_currency`, API `amount`/`currency` |
 | `bitrix_webhook_scopes.py` | Проверка scope вебхука (crm, user, **task**); подсказки при 401 `tasks.task.list` |
 | `lead_priority_tier.py` | Приоритет лида по порогам CRM (зеркало `crmStages.js`) |

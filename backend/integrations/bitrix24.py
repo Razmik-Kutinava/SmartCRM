@@ -5,10 +5,12 @@ https://ваш-портал/rest/112/секрет/
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
 import re
+import time
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any, Optional
@@ -29,6 +31,11 @@ logger = logging.getLogger(__name__)
 
 _DEFAULT_DATE_FROM = "2023-01-01"
 _PAGE = 50
+_BITRIX_ACCESS_DENIED_RETRIES = 5
+_call_sem = asyncio.Semaphore(max(1, int(os.getenv("BITRIX_MAX_CONCURRENT", "2"))))
+_min_call_interval = float(os.getenv("BITRIX_MIN_CALL_INTERVAL_SEC", "0.1"))
+_last_call_mono = 0.0
+_call_spacing_lock = asyncio.Lock()
 
 
 class BitrixWebhookError(RuntimeError):
@@ -121,6 +128,20 @@ def _handle_bitrix_http(method: str, r: httpx.Response) -> dict[str, Any]:
     return data
 
 
+async def _space_bitrix_calls() -> None:
+    global _last_call_mono
+    async with _call_spacing_lock:
+        now = time.monotonic()
+        wait = _min_call_interval - (now - _last_call_mono)
+        if wait > 0:
+            await asyncio.sleep(wait)
+        _last_call_mono = time.monotonic()
+
+
+def _is_access_denied(err: BitrixWebhookError) -> bool:
+    return "access denied" in str(err).lower()
+
+
 async def bitrix_call(method: str, params: Optional[dict[str, Any]] = None) -> dict[str, Any]:
     base = webhook_base()
     if not base:
@@ -130,9 +151,23 @@ async def bitrix_call(method: str, params: Optional[dict[str, Any]] = None) -> d
         )
     url = f"{base}/{method}"
     payload = params or {}
-    async with httpx.AsyncClient(timeout=120.0) as client:
-        r = await client.post(url, json=payload)
-    return _handle_bitrix_http(method, r)
+    last_err: BitrixWebhookError | None = None
+    for attempt in range(_BITRIX_ACCESS_DENIED_RETRIES):
+        async with _call_sem:
+            await _space_bitrix_calls()
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                r = await client.post(url, json=payload)
+            try:
+                return _handle_bitrix_http(method, r)
+            except BitrixWebhookError as e:
+                last_err = e
+                if _is_access_denied(e) and attempt + 1 < _BITRIX_ACCESS_DENIED_RETRIES:
+                    await asyncio.sleep(min(30.0, 2.0**attempt + 1.0))
+                    continue
+                raise
+    if last_err:
+        raise last_err
+    raise BitrixWebhookError(f"Битрикс24 {method}: неизвестная ошибка")
 
 
 async def fetch_bitrix_lead_total(date_from: str) -> Optional[int]:

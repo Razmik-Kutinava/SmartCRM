@@ -14,7 +14,7 @@ STATE_PATH = BACKEND / "data" / "bitrix_fields_resync_state.json"
 
 
 async def main() -> int:
-    from sqlalchemy import func, select
+    from sqlalchemy import func, select, text
 
     from db.models.lead import Lead
     from db.session import SessionLocal
@@ -58,6 +58,30 @@ async def main() -> int:
             ).scalar_one()
             or 0
         )
+        multi_contacts = int(
+            (
+                await db.execute(
+                    text(
+                        "SELECT count(*) FROM leads "
+                        "WHERE contacts IS NOT NULL "
+                        "AND jsonb_array_length(contacts::jsonb) > 1"
+                    )
+                )
+            ).scalar_one()
+            or 0
+        )
+        b24_contacts = int(
+            (
+                await db.execute(
+                    text(
+                        "SELECT count(*) FROM leads "
+                        "WHERE contacts IS NOT NULL "
+                        "AND contacts::text LIKE '%b24-contact-%'"
+                    )
+                )
+            ).scalar_one()
+            or 0
+        )
         with_deal = int(
             (
                 await db.execute(
@@ -74,12 +98,15 @@ async def main() -> int:
         except Exception:
             state = {}
 
+    pct = round(100.0 * with_extra / b24, 1) if b24 else 0.0
     print("bitrix_fields_backfill_status:")
     print(f"  leads total: {total}")
     print(f"  bitrix_lead_id: {b24}")
-    print(f"  bitrix_extra not null: {with_extra}")
+    print(f"  bitrix_extra not null: {with_extra} ({pct}% of b24)")
     print(f"  subscription_end in extra: {with_sub}")
     print(f"  contacts json: {with_contacts}")
+    print(f"  contacts multi (2+): {multi_contacts}")
+    print(f"  contacts with b24-contact-*: {b24_contacts}")
     print(f"  deal_amount: {with_deal}")
     if state:
         print(f"  resync_state: {json.dumps(state, ensure_ascii=False)}")

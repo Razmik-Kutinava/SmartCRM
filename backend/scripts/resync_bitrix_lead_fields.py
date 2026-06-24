@@ -110,6 +110,7 @@ async def backfill_fields(
         "from_api": 0,
         "with_bitrix_extra": 0,
         "with_contacts": 0,
+        "with_multi_contacts": 0,
         "with_deal_amount": 0,
         "skipped_empty": 0,
         "errors": 0,
@@ -208,6 +209,8 @@ async def backfill_fields(
                     stats["with_bitrix_extra"] += 1
                 if flags["contacts"]:
                     stats["with_contacts"] += 1
+                if flags.get("contacts_multi"):
+                    stats["with_multi_contacts"] += 1
                 if flags["deal_amount"]:
                     stats["with_deal_amount"] += 1
                 if apply_bitrix_fields_patch(lead, patch):
@@ -226,6 +229,8 @@ async def backfill_fields(
                     "total_b24": stats["total"],
                     "updated": stats["updated"],
                     "with_bitrix_extra": stats["with_bitrix_extra"],
+                    "with_contacts": stats["with_contacts"],
+                    "with_multi_contacts": stats["with_multi_contacts"],
                     "errors": stats["errors"],
                     "timeouts": stats["timeouts"],
                     "eta_sec": eta_sec,
@@ -234,6 +239,7 @@ async def backfill_fields(
             print(
                 f"  … {stats['processed']}/{stats['total']} | обновлено {stats['updated']} | "
                 f"extra {stats['with_bitrix_extra']} | контакты {stats['with_contacts']} | "
+                f"multi {stats['with_multi_contacts']} | "
                 f"сумма {stats['with_deal_amount']} | ошибок {stats['errors']} | "
                 f"ETA ~{eta_sec // 60}m",
                 flush=True,
@@ -261,6 +267,8 @@ async def backfill_fields(
                     stats["with_bitrix_extra"] += 1
                 if flags["contacts"]:
                     stats["with_contacts"] += 1
+                if flags.get("contacts_multi"):
+                    stats["with_multi_contacts"] += 1
                 if flags["deal_amount"]:
                     stats["with_deal_amount"] += 1
                 if apply_bitrix_fields_patch(lead, patch):
@@ -276,6 +284,7 @@ async def backfill_fields(
             "updated": stats["updated"],
             "with_bitrix_extra": stats["with_bitrix_extra"],
             "with_contacts": stats["with_contacts"],
+            "with_multi_contacts": stats["with_multi_contacts"],
             "with_deal_amount": stats["with_deal_amount"],
             "errors": stats["errors"],
             "timeouts": stats["timeouts"],
@@ -322,6 +331,7 @@ async def main() -> int:
                 "updated": 0,
                 "with_bitrix_extra": 0,
                 "with_contacts": 0,
+                "with_multi_contacts": 0,
                 "with_deal_amount": 0,
                 "errors": 0,
                 "timeouts": 0,
@@ -354,6 +364,7 @@ async def main() -> int:
         "resync_bitrix_lead_fields: "
         f"{stats['processed']}/{stats['total']} b24-лидов | обновлено {stats['updated']} | "
         f"bitrix_extra {stats['with_bitrix_extra']} | контакты {stats['with_contacts']} | "
+        f"multi {stats['with_multi_contacts']} | "
         f"сумма {stats['with_deal_amount']} | API {stats['from_api']} | "
         f"пусто {stats['skipped_empty']} | ошибок {stats['errors']} | таймаутов {stats['timeouts']}"
     )

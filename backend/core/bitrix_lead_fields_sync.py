@@ -62,10 +62,14 @@ def apply_bitrix_fields_patch(lead: Any, patch: dict[str, Any]) -> bool:
     return changed
 
 
-def patch_stats(patch: dict[str, Any]) -> dict[str, bool]:
+def patch_stats(patch: dict[str, Any]) -> dict[str, bool | int]:
     """Флаги «что попало в patch» для отчёта resync."""
+    contacts = patch.get("contacts")
+    n_contacts = len(contacts) if isinstance(contacts, list) else 0
     return {
         "bitrix_extra": bool(patch.get("bitrix_extra")),
-        "contacts": bool(patch.get("contacts")),
+        "contacts": bool(contacts),
+        "contacts_multi": n_contacts > 1,
+        "contacts_count": n_contacts,
         "deal_amount": patch.get("deal_amount") is not None,
     }

@@ -86,3 +86,15 @@ def test_patch_stats():
     assert flags["bitrix_extra"]
     assert not flags["contacts"]
     assert flags["deal_amount"]
+    assert flags["contacts_count"] == 0
+
+    multi = patch_stats(
+        {
+            "contacts": [
+                {"id": "b24-contact-1", "name": "A", "role": "lpr"},
+                {"id": "b24-contact-2", "name": "B", "role": "other"},
+            ]
+        }
+    )
+    assert multi["contacts_multi"]
+    assert multi["contacts_count"] == 2

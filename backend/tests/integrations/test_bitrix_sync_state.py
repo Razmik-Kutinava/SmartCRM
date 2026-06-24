@@ -1,5 +1,5 @@
 """bitrix24_sync: state file + poll skip без webhook (моки)."""
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 

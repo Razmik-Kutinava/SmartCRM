@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-24 — Ф4: mass-resync — rate-limit, auto-sync pause, multi-contacts metrics
+
+**Было:** Access denied при параллельных REST; contacts/deal не отслеживались в check. **Стало:** retry+semaphore в `bitrix_call`; `bitrix_resync_guard` паузит poll; state `with_multi_contacts`; check script — `contacts multi`, `b24-contact-*`. Прогон 162/3225.
+
 ## 2026-06-24 — Ф4 лиды: mass-resync bitrix_extra — фикс + перезапуск
 
 **Было:** прогон завис на 40/3225; `bitrix_extra` 0; затем Access denied на workers=3. **Стало:** light enrich; agneko UF map; retry/backoff; resume/state; runbook; **50/3225** в БД с extra, прогон в фоне (workers=1).

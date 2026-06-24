@@ -15,7 +15,7 @@
 ## Что синкается
 
 - `bitrix_extra` — подписка, тип поставки, лицензия, повторный лид…
-- `contacts[]` — все контакты лида (`crm.lead.contact.items`)
+- `contacts[]` — все контакты лида (`crm.lead.contact.items` + `crm.contact.get`), merge ручных
 - `deal_amount` / `deal_currency` — OPPORTUNITY + CURRENCY_ID
 
 **Лёгкий enrich** (`enrich_fields_for_resync`): без productrows/КП/сделок — иначе прогон зависает на часах.
@@ -74,10 +74,11 @@
 
 ## Рекомендации оператору
 
-1. На время mass-resync: `BITRIX_AUTO_SYNC_MINUTES=0` в `.env` или uvicorn **без** `--reload`
+1. На время mass-resync: auto-sync **пауза автоматически** при `status=running` в state; опционально `BITRIX_AUTO_SYNC_MINUTES=0`
 2. Не запускать два resync параллельно
-3. После прогона: `check_bitrix_fields_backfill.py` → сверить `with_sub` / `with_deal`
+3. После прогона: `check_bitrix_fields_backfill.py` → сверить `contacts multi`, `bitrix_extra`, `deal_amount`
 4. Scope **task** на вебхуке — отдельно (`resync_bitrix_lead_tasks.py`)
+5. Глобальный rate-limit: `BITRIX_MAX_CONCURRENT=2`, `BITRIX_MIN_CALL_INTERVAL_SEC=0.1` + retry Access denied в `bitrix_call`
 
 ## ETA (ориентир)
 

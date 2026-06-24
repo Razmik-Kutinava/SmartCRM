@@ -157,6 +157,8 @@ async def run_daily_bitrix_poll() -> dict[str, Any]:
 
 
 async def bitrix_poll_loop(stop: asyncio.Event) -> None:
+    from core.bitrix_resync_guard import is_fields_resync_running
+
     minutes = int((os.getenv("BITRIX_AUTO_SYNC_MINUTES") or "5").strip() or "0")
     if minutes <= 0 or not webhook_base():
         logger.info("Bitrix auto-sync: выключен (BITRIX_AUTO_SYNC_MINUTES=%s)", minutes)
@@ -167,17 +169,22 @@ async def bitrix_poll_loop(stop: asyncio.Event) -> None:
     )
     await asyncio.sleep(15)
     while not stop.is_set():
+        if is_fields_resync_running():
+            logger.info("Bitrix auto-sync: пауза — mass-resync полей (bitrix_fields_resync_state.json)")
+            pause_sec = 30
+        else:
+            try:
+                r = await run_daily_bitrix_poll()
+                logger.info(
+                    "Bitrix auto-sync: imported=%s updated=%s batch=%s",
+                    r.get("imported"),
+                    r.get("updated"),
+                    r.get("local_batch"),
+                )
+            except Exception:
+                logger.exception("Bitrix auto-sync failed")
+            pause_sec = minutes * 60
         try:
-            r = await run_daily_bitrix_poll()
-            logger.info(
-                "Bitrix auto-sync: imported=%s updated=%s batch=%s",
-                r.get("imported"),
-                r.get("updated"),
-                r.get("local_batch"),
-            )
-        except Exception:
-            logger.exception("Bitrix auto-sync failed")
-        try:
-            await asyncio.wait_for(stop.wait(), timeout=minutes * 60)
+            await asyncio.wait_for(stop.wait(), timeout=pause_sec)
         except asyncio.TimeoutError:
             pass
