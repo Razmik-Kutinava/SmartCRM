@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-24 | Действие: X5-gap прогон — DevTools шаг5/7+calendar OK; F4_X5_BROWSER_APPROVAL; fix calendar +page.svelte; resync 985/3228 running | Коммит: `TBD` | Хвост A: mass-resync до 3228; 👤 ок 5/7; scope task | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: in_progress
+2026-06-24 | Действие: X5-gap прогон — DevTools шаг5/7+calendar OK; F4_X5_BROWSER_APPROVAL; fix calendar +page.svelte; resync 985/3228 running | Коммит: `d81ed3c` | Хвост A: mass-resync до 3228; 👤 ок 5/7; scope task | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: in_progress
 
 2026-06-24 | Действие: шаг 4 webhook scope task — extended probe (feature API), JSON report, F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE; live task missing; pytest 8 PASS | Коммит: `ae3fa9c` | Хвост A: 👤 scope task на B24 + resync | Хвост B: BACKLOG шаг 4 | Хвост C: requisite.list Access denied | Статус: blocked (портал)
 
