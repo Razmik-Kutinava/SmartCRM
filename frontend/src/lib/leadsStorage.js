@@ -187,7 +187,7 @@ export async function fetchBitrixImportStats(date_from = '2023-01-01') {
 
 /** Сегменты полноты карточки + прогресс B24 resync */
 export async function fetchLeadCoverage() {
-	const r = await fetch(`${API()}/leads/coverage`);
+	const r = await fetch(`${API()}/coverage`);
 	const text = await r.text().catch(() => '');
 	let body;
 	try {
@@ -212,7 +212,7 @@ export async function fetchLeadCoverage() {
 
 /** Справочник менеджеров (ответственный + bitrix_extra.manager) */
 export async function fetchLeadManagers() {
-	const r = await fetch(`${API()}/leads/managers`);
+	const r = await fetch(`${API()}/managers`);
 	const text = await r.text().catch(() => '');
 	let body;
 	try {

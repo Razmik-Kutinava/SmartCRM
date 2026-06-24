@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-24 | Действие: fix 404 /api/leads/leads/coverage|managers — пути в leadsStorage; fallback менеджеров из списка; smoke test; activity resync 3228 done 359 tasks | Коммит: `PENDING` | Хвост A: browser не кликали | Хвост B: нет | Хвост C: нет | Статус: done
+
 2026-06-24 | Действие: фильтр менеджера /leads/list — GET /managers, dropdown, колонка, карточка; CRM_OPERATOR_NAME; pytest 8+35 crm_leads PASS | Коммит: `a5079a1` | Хвост A: browser UI не кликали; CRM_OPERATOR_NAME в .env не задан | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-24 | Действие: /leads/list coverage — сегменты B24/паспорт/пустые/проигран/без дел; GET /api/leads/coverage; чипы-фильтры UI; pytest 12+34 crm_leads PASS | Коммит: `f9123bf` | Хвост A: mass resync + activity resync в фоне; browser UI не кликали | Хвост B: нет | Хвост C: нет | Статус: done

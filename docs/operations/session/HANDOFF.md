@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 UI] | Задача:[fix 404 coverage/managers] | Статус: ✅ done`
+
+**2026-06-24:** Двойной путь `/api/leads/leads/*` в `leadsStorage.js` → 404. Исправлено на `/coverage` и `/managers`. Fallback списка менеджеров из `GET /api/leads`. Activity resync: **3228/3228**, 359 задач, 0 ошибок. Коммит: `PENDING`.
+
+---
+
 `Спринт:[Ф4 UI] | Задача:[/leads/list фильтр менеджера] | Статус: ✅ done`
 
 **2026-06-24:** Выпадающий фильтр «Менеджер» из БД (ответственный B24 + `bitrix_extra.manager`). API `GET /api/leads/managers`, колонка в таблице, бейдж в карточке. Дефолт через `CRM_OPERATOR_NAME` в `.env`. Коммит: `a5079a1`.

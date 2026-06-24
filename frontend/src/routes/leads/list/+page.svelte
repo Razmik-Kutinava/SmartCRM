@@ -196,6 +196,20 @@
 	const industryBucketOptions = $derived(distinctIndustryBuckets(leads));
 	const deliveryTypeOptions = $derived(distinctDeliveryTypes(leads));
 
+	const managerFilterOptions = $derived.by(() => {
+		if (managerOptions.length > 0) return managerOptions;
+		/** @type {Map<string, number>} */
+		const counts = new Map();
+		for (const l of leads) {
+			const name = l.managerName || leadManagerLabel(l);
+			if (!name) continue;
+			counts.set(name, (counts.get(name) || 0) + 1);
+		}
+		return [...counts.entries()]
+			.map(([name, count]) => ({ name, count }))
+			.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'ru'));
+	});
+
 	const coverageCounts = $derived.by(() => {
 		/** @type {Record<string, number>} */
 		const counts = { all: leads.length };
@@ -926,7 +940,7 @@
 					data-testid="leads-list-manager"
 				>
 					<option value="all">Все менеджеры</option>
-					{#each managerOptions as opt (opt.name)}
+					{#each managerFilterOptions as opt (opt.name)}
 						<option value={opt.name}>{opt.name} ({opt.count})</option>
 					{/each}
 				</select>
