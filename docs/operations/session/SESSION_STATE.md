@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-24 | Действие: mass-resync хвост 1–3 — rate-limit/retry в bitrix_call, auto-sync pause, multi-contacts metrics; 162/3225 extra, 106 multi; pytest 6+ PASS; прогон resume w2 | Коммит: `TBD` | Хвост A: дождаться 3225; scope task; browser | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: in_progress
+2026-06-24 | Действие: mass-resync хвост 1–3 — rate-limit/retry в bitrix_call, auto-sync pause, multi-contacts metrics; 162/3225 extra, 106 multi; pytest 6+ PASS; прогон resume w2 | Коммит: `1f103f5` | Хвост A: дождаться 3225; scope task; browser | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: in_progress
 
 2026-06-19 | Действие: список шаг 7 — фильтры подписка/тип поставки, колонка «Подписка до»; pytest 8 PASS | Коммит: `a228e9d` | Хвост A: browser апрув после mass-resync | Хвост B: BACKLOG шаг 7 | Хвост C: нет | Статус: done
 
