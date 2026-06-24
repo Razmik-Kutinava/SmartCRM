@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[mass-resync до 3228 + only-missing] | Статус: 🔄 in_progress`
 
-**2026-06-24:** 👤 **апрув шагов 5 и 7**. Resync **~1205/3228** (0 новых ошибок после 141 burst). Добавлен `--only-missing` + `watch_fields_resync_then_retry.py` (фон). После done — автодожим. Коммит: `TBD`.
+**2026-06-24:** 👤 **апрув шагов 5 и 7**. Resync **~1205/3228** (0 новых ошибок после 141 burst). Добавлен `--only-missing` + `watch_fields_resync_then_retry.py` (фон). После done — автодожим. Коммит: `1b81d9a`.
 
 ---
 

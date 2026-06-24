@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-24 | Действие: 👤 апрув шаг 5/7; resync ~1205/3228 running; --only-missing + watch_fields_resync_then_retry; pytest 2 PASS | Коммит: `TBD` | Хвост A: дождаться 3228 + only-missing pass | Хвост B: нет | Хвост C: 141 API errors burst @1045–1185 | Статус: in_progress
+2026-06-24 | Действие: 👤 апрув шаг 5/7; resync ~1205/3228 running; --only-missing + watch_fields_resync_then_retry; pytest 2 PASS | Коммит: `1b81d9a` | Хвост A: дождаться 3228 + only-missing pass | Хвост B: нет | Хвост C: 141 API errors burst @1045–1185 | Статус: in_progress
 
 2026-06-24 | Действие: X5-gap прогон — DevTools шаг5/7+calendar OK; F4_X5_BROWSER_APPROVAL; fix calendar +page.svelte; resync 985/3228 running | Коммит: `d81ed3c` | Хвост A: mass-resync до 3228; 👤 ок 5/7; scope task | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: in_progress
 
