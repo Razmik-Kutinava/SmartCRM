@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[B24 таймлайн → Действия и история] | Статус: ✅ done (код) | 🔄 mass --timeline-only`
+
+**2026-06-24:** Было: панель «Действия и история» пустая/бедная — mass-resync гонял только tasks, не timeline. Стало: `bitrix24_timeline_extra` (создание лида, logmessage/бизнес-процессы, имена авторов); расширен `bitrix24_timeline`; UI — единая лента комментов + встреч без дублей `[b24:act:*]`; CLI `check_bitrix_engagement_backfill.py`; `--timeline-only` + state. До backfill: 392/3228 лидов с историей, 3582 comm rows. Smoke 5 лидов +6 записей. Mass `--timeline-only` в фоне. pytest 5 PASS. Коммит: `TBD`.
+
+---
+
 `Спринт:[Ф4 UI] | Задача:[fix 404 coverage/managers] | Статус: ✅ done`
 
 **2026-06-24:** Двойной путь `/api/leads/leads/*` в `leadsStorage.js` → 404. Исправлено на `/coverage` и `/managers`. Fallback списка менеджеров из `GET /api/leads`. Activity resync: **3228/3228**, 359 задач, 0 ошибок. Коммит: `05446af`.

@@ -51,7 +51,7 @@
 	let scheduleDateIso = $state(defaultScheduleDateIso());
 	let tasksExpanded = $state(false);
 
-	const timeline = $derived(buildActivityTimeline({ communications, comments }));
+	const timeline = $derived(buildActivityTimeline({ communications, comments, tasks }));
 	const auditRows = $derived(
 		(audit || []).filter((row) => !isAuditRowHidden(/** @type {Record<string, unknown>} */ (row)))
 	);
@@ -250,12 +250,12 @@
 		</button>
 	</div>
 
-	<details class="text-xs" data-testid="lead-activity-timeline">
+	<details class="text-xs" data-testid="lead-activity-timeline" open={timeline.length > 0}>
 		<summary class="cursor-pointer select-none text-gray-500 hover:text-gray-300 list-none flex items-center gap-1">
 			<span class="text-gray-600">▸</span>
 			История ({timeline.length})
 		</summary>
-		<div class="mt-2 max-h-56 overflow-y-auto space-y-2 pl-1">
+		<div class="mt-2 max-h-80 overflow-y-auto space-y-2 pl-1">
 			{#each timeline as item (item.id)}
 				<div class="rounded border border-gray-800/80 bg-gray-950/50 px-2 py-1.5">
 					<div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-gray-500">

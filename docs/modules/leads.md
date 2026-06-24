@@ -79,7 +79,7 @@
 
 ### Битрикс: история и дела по лидам
 
-- **История (таймлайн):** `crm.activity.list` + `crm.timeline.comment.list` → `lead_communication_logs` → панель **«Действия»** в карточке (`bitrix24_timeline.py`).
+- **История (таймлайн):** `crm.activity.list` + `crm.timeline.comment.list` + «Создан лид» + `crm.timeline.logmessage.list` → `lead_communication_logs` → панель **«Действия»** (`bitrix24_timeline.py`, `bitrix24_timeline_extra.py`). Встречи из `tasks` сливаются в ленту на UI без дублей с activity.
 - **Задачи / встречи:** открытые `crm.activity` (встреча, звонок, письмо) и `tasks.task` с `UF_CRM_TASK=L_{id}` → таблица **`tasks`** → `/leads/tasks`, календарь, бейджи в списке лидов (`bitrix24_tasks.py`).
 - Синк при каждом upsert лида (`bitrix24_upsert.py`) и фоновом poll.
 - **Массовый backfill** (как продукты):  

@@ -6,6 +6,8 @@ export const ACTIVITY_TYPES = [
 	{ value: 'meeting_offline', label: 'Личная встреча', channel: 'communication' },
 	{ value: 'other', label: 'Другое', channel: 'communication' },
 	{ value: 'comment', label: 'Комментарий', channel: 'communication' },
+	{ value: 'lead_created', label: 'Создан лид', channel: 'communication' },
+	{ value: 'bizproc', label: 'Бизнес-процесс', channel: 'communication' },
 	{ value: 'note', label: 'Заметка', channel: 'communication' },
 ];
 

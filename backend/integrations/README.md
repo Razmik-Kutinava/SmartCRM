@@ -8,6 +8,7 @@
 | `bitrix24_related.py` | company/contact/requisites + **все контакты** (`crm.lead.contact.items`) → `contacts` JSON |
 | `bitrix24_products.py` | productrows лида/сделок/КП + UF + opportunity → `lead_products` |
 | `bitrix24_timeline.py` | activity + comments → `lead_communication_logs` |
+| `bitrix24_timeline_extra.py` | «Создан лид», logmessage (бизнес-процессы) в таймлайн |
 | `bitrix24_tasks.py` | встречи/дела/звонки (`crm.activity`) + опц. `tasks.task` → `tasks` |
 | `bitrix24_upsert.py` | upsert лида + таймлайн (общий для import/webhook/poll) |
 | `bitrix24_sync.py` | Один лид (upsert), фоновый опрос, состояние синка |

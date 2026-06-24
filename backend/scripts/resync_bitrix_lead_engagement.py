@@ -8,6 +8,7 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 REPO_ROOT = BACKEND.parent
+STATE_PATH = BACKEND / "data" / "bitrix_timeline_resync_state.json"
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
@@ -20,6 +21,22 @@ def _load_env() -> None:
         load_dotenv(REPO_ROOT / ".env", override=True)
     except ImportError:
         pass
+
+
+def _write_state(**fields: object) -> None:
+    import json
+    from datetime import datetime, timezone
+
+    STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    prev: dict = {}
+    if STATE_PATH.is_file():
+        try:
+            prev = json.loads(STATE_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            prev = {}
+    prev.update(fields)
+    prev["updated_at"] = datetime.now(timezone.utc).isoformat()
+    STATE_PATH.write_text(json.dumps(prev, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 async def backfill_engagement(
@@ -119,6 +136,9 @@ async def backfill_engagement(
         rows = (await db.execute(q)).scalars().all()
         stats["total"] = len(rows)
 
+    if timeline and not tasks:
+        _write_state(status="running", processed=0, total_b24=stats["total"], timeline_added=0, errors=0)
+
     chunk: list[Lead] = []
     for i, lead in enumerate(rows, 1):
         chunk.append(lead)
@@ -128,6 +148,14 @@ async def backfill_engagement(
         for tl, tk in results:
             stats["timeline_added"] += tl
             stats["tasks_touched"] += tk
+        if timeline and not tasks:
+            _write_state(
+                status="running",
+                processed=i,
+                total_b24=stats["total"],
+                timeline_added=stats["timeline_added"],
+                errors=stats["errors"],
+            )
         print(
             f"  … {i}/{stats['total']} | история +{sum(r[0] for r in results)} | задачи {sum(r[1] for r in results)}",
             flush=True,
@@ -139,6 +167,14 @@ async def backfill_engagement(
         for tl, tk in results:
             stats["timeline_added"] += tl
             stats["tasks_touched"] += tk
+    if timeline and not tasks:
+        _write_state(
+            status="done",
+            processed=stats["total"],
+            total_b24=stats["total"],
+            timeline_added=stats["timeline_added"],
+            errors=stats["errors"],
+        )
     return stats
 
 

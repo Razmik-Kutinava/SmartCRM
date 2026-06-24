@@ -2,6 +2,12 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-24 — B24 таймлайн: комменты + хронология в «Действия и история»
+
+**Было:** в карточке лида панель истории почти пустая — синкали только дела/встречи (`crm.activity` → tasks), комментарии и системные события B24 не подтягивались массово.
+
+**Стало:** полный fetch таймлайна (`crm.timeline.comment.list`, `crm.timeline.logmessage.list`, «Создан лид» из `crm.lead.get`); единая UI-лента (коммуникации + задачи/встречи без дублей); `check_bitrix_engagement_backfill.py`; mass `resync_bitrix_lead_engagement.py --timeline-only`.
+
 ## 2026-06-24 — Fix: 404 coverage/managers на списке лидов
 
 `leadsStorage.js` дублировал `/leads` в URL (`/api/leads/leads/coverage`). Activity resync завершён: 3228 лидов, 359 задач.

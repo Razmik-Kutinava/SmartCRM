@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-24 | Действие: B24 таймлайн → «Действия и история» — bitrix24_timeline_extra, UI leadActivityTimeline, check_bitrix_engagement_backfill, --timeline-only state; smoke 5 +6; mass timeline в фоне; pytest 5 PASS | Коммит: `TBD` | Хвост A: browser Liqvor не кликали; mass timeline 3228 в фоне | Хвост B: нет | Хвост C: crm.timeline.comment.list Access denied на части лидов (портал) | Статус: done (код)
+
 2026-06-24 | Действие: fix 404 /api/leads/leads/coverage|managers — пути в leadsStorage; fallback менеджеров из списка; smoke test; activity resync 3228 done 359 tasks | Коммит: `05446af` | Хвост A: browser не кликали | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-24 | Действие: фильтр менеджера /leads/list — GET /managers, dropdown, колонка, карточка; CRM_OPERATOR_NAME; pytest 8+35 crm_leads PASS | Коммит: `a5079a1` | Хвост A: browser UI не кликали; CRM_OPERATOR_NAME в .env не задан | Хвост B: нет | Хвост C: нет | Статус: done

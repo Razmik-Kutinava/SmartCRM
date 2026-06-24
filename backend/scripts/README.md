@@ -80,7 +80,8 @@
 | `backfill_lead_profile.py` | Backfill `okved_*`, `employees_band`, `portrait_score` у существующих лидов из `checko_json` |
 | `resync_bitrix_lead_profiles.py` | Re-import Битрикс (ИНН/ОКВЭД UF) + backfill портрета без Checko |
 | `resync_bitrix_lead_products.py` | Backfill `lead_products` из Битрикс API (UF, productrows, сделки, КП); `.env` → `BITRIX24_WEBHOOK_URL`; `--workers 6 --delay-ms 10` |
-| `resync_bitrix_lead_engagement.py` | Backfill **истории** (`lead_communication_logs`) и **задач/встреч** (`tasks`) из Битрикс; `--timeline-only` / `--tasks-only`; `--check-scopes-only`; `--workers 4` |
+| `check_bitrix_engagement_backfill.py` | Счётчики истории B24 (`lead_communication_logs`) и дел |
+| `resync_bitrix_lead_engagement.py` | Backfill **истории** (`lead_communication_logs`) и **задач/встреч** (`tasks`) из Битрикс; `--timeline-only` / `--tasks-only`; state → `data/bitrix_timeline_resync_state.json` |
 | `resync_bitrix_lead_tasks.py` | Встречи/дела (`crm.activity`) + опционально `tasks.task`; без scope task — только activity |
 | `resync_bitrix_lead_fields.py` | Backfill **bitrix_extra**, **contacts**, **deal_amount**; `--resume` / `--only-missing` / `--offset`; state `data/bitrix_fields_resync_state.json` |
 | `watch_fields_resync_then_retry.py` | Ждёт `status=done`, затем `--only-missing` дожим |

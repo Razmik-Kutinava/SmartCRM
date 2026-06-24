@@ -74,6 +74,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `core/test_task_list_filter.py` | filter_tasks — статус, срок, legacy |
 | `core/test_lead_profile.py` | Нормализация ОКВЭД, employees_band, portrait_score |
 | `lib/test_lead_card_money.py` | Суммы ₽ на карточке лида |
+| `lib/test_lead_activity_timeline.py` | Единая лента «Действия и история» (комменты + встречи без дублей B24) |
 | `api/test_lead_engagement.py` | Комментарии, касания, апрувы, dealPath/stageHints в GET |
 | `core/test_lead_deal_path.py` | Путь сделки, подсказки по этапу, порядок доков |
 | `core/test_task_dates.py` | Даты и SLA задач |
@@ -122,6 +123,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `integrations/test_bitrix24_uf.py` | ИНН/домен/продукты из UF |
 | `integrations/test_bitrix24_related.py` | company/contact/requisites enrich |
 | `integrations/test_bitrix24_timeline.py` | Таймлайн → communications |
+| `integrations/test_bitrix24_timeline_extra.py` | «Создан лид», logmessage, имена авторов в таймлайне |
 | `integrations/test_bitrix24_tasks.py` | Встречи/дела Битрикс → tasks |
 | `integrations/test_bitrix_sync_state.py` | sync state + poll skip + upsert mock |
 | `integrations/test_bitrix_webhook.py` | Исходящий вебхук ONCRMLEADADD |

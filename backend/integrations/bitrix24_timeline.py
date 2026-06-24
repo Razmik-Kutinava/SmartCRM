@@ -94,15 +94,20 @@ async def fetch_timeline_entries(bitrix_lead_id: int) -> list[dict[str, Any]]:
     except Exception as e:
         logger.warning("crm.activity.list lead %s: %s", bitrix_lead_id, e)
 
+    rows: list = []
     try:
-        data = await _bitrix_call(
-            "crm.timeline.comment.list",
-            {
-                "filter": {"ENTITY_ID": bitrix_lead_id, "ENTITY_TYPE": "lead"},
-                "order": {"CREATED": "DESC"},
-            },
-        )
-        for c in data.get("result") or []:
+        for filt in (
+            {"ENTITY_ID": bitrix_lead_id, "ENTITY_TYPE": "lead"},
+            {"ENTITY_ID": bitrix_lead_id, "ENTITY_TYPE_ID": 1},
+        ):
+            data = await _bitrix_call(
+                "crm.timeline.comment.list",
+                {"filter": filt, "order": {"CREATED": "DESC"}},
+            )
+            rows = data.get("result") or []
+            if rows:
+                break
+        for c in rows or []:
             if not isinstance(c, dict):
                 continue
             cid = int(c.get("ID") or 0)
@@ -120,7 +125,17 @@ async def fetch_timeline_entries(bitrix_lead_id: int) -> list[dict[str, Any]]:
                 "actor_id": c.get("AUTHOR_ID"),
             })
     except Exception as e:
-        logger.debug("crm.timeline.comment.list lead %s: %s", bitrix_lead_id, e)
+        logger.warning("crm.timeline.comment.list lead %s: %s", bitrix_lead_id, e)
+
+    from integrations.bitrix24_timeline_extra import (
+        fetch_lead_created_entry,
+        fetch_timeline_log_messages,
+    )
+
+    created = await fetch_lead_created_entry(bitrix_lead_id)
+    if created:
+        entries.append(created)
+    entries.extend(await fetch_timeline_log_messages(bitrix_lead_id))
 
     return entries
 
@@ -152,7 +167,20 @@ async def sync_bitrix_timeline(
     entries = await fetch_timeline_entries(bitrix_lead_id)
     if not entries:
         return 0
-    names = user_names or {}
+    names = dict(user_names or {})
+    if not names:
+        user_ids: set[int] = set()
+        for item in entries:
+            aid = item.get("actor_id")
+            if aid is not None:
+                try:
+                    user_ids.add(int(aid))
+                except (TypeError, ValueError):
+                    pass
+        if user_ids:
+            from integrations.bitrix24 import _load_user_names
+
+            names.update(await _load_user_names(user_ids))
     existing = await _existing_markers(db, lead_id)
     added = 0
     for item in entries:
