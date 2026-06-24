@@ -9,6 +9,7 @@
 | `python scripts/check_bitrix_fields_backfill.py` | Счётчики в БД + `data/bitrix_fields_resync_state.json` |
 | `python -u scripts/resync_bitrix_lead_fields.py --workers 3 --batch-size 25 --delay-ms 20` | Полный прогон |
 | `python -u scripts/resync_bitrix_lead_fields.py --resume` | Продолжить с последнего `processed` |
+| `python -u scripts/resync_bitrix_lead_fields.py --only-missing --workers 1 --delay-ms 150` | Дожим лидов без extra/contacts/deal_amount после основного прогона |
 | `python -u scripts/resync_bitrix_lead_fields.py --offset 40` | С указанного смещения |
 | `python -u scripts/resync_bitrix_lead_fields.py --no-api` | Только UF из `tech_json` (offline) |
 

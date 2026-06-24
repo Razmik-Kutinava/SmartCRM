@@ -82,7 +82,8 @@
 | `resync_bitrix_lead_products.py` | Backfill `lead_products` из Битрикс API (UF, productrows, сделки, КП); `.env` → `BITRIX24_WEBHOOK_URL`; `--workers 6 --delay-ms 10` |
 | `resync_bitrix_lead_engagement.py` | Backfill **истории** (`lead_communication_logs`) и **задач/встреч** (`tasks`) из Битрикс; `--timeline-only` / `--tasks-only`; `--check-scopes-only`; `--workers 4` |
 | `resync_bitrix_lead_tasks.py` | Только задачи/встречи (`tasks.task` + activity); preflight scope **task** |
-| `resync_bitrix_lead_fields.py` | Backfill **bitrix_extra**, **contacts**, **deal_amount** из Битрикс API; `--resume` / `--offset`; state `data/bitrix_fields_resync_state.json` |
+| `resync_bitrix_lead_fields.py` | Backfill **bitrix_extra**, **contacts**, **deal_amount**; `--resume` / `--only-missing` / `--offset`; state `data/bitrix_fields_resync_state.json` |
+| `watch_fields_resync_then_retry.py` | Ждёт `status=done`, затем `--only-missing` дожим |
 | `check_bitrix_fields_backfill.py` | Счётчики backfill в БД + state-файл resync |
 | `check_bitrix_webhook_scopes.py` | Probe crm/user/task + feature API → `data/bitrix_webhook_scope_report.json` |
 | `_resplit_leadgen_pkgs.py` | One-off: пересборка pipeline/checko пакетов |

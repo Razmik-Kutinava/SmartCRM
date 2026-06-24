@@ -187,9 +187,9 @@
 | 2 | Мультиконтакты | тот же resync — **952** contacts json, **441** multi | 🔴 |
 | 3 | Сумма + валюта | **~987/3228** deal_amount (~31%); DevTools ✅ `15 780 $`; 👤 → [`F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`](../phase4/leads/F4_X5_DEAL_AMOUNT_ACCEPTANCE.md) | 🟡 |
 | 4 | Webhook scope `task` | **blocked:** probe live — crm/user ok, **task missing**; 👤 → [`F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`](../phase4/leads/F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md) | 🔴 |
-| 5 | UI карточки X5-gap | DevTools ✅ `/leads/289`; 👤 визуально → [`F4_X5_BROWSER_APPROVAL.md`](../phase4/leads/F4_X5_BROWSER_APPROVAL.md) | 🟡 |
-| 6 | Mass-resync полей | **in_progress** ~965/3228 processed | 🔴 |
-| 7 | Список: подписка / поставка | DevTools ✅ фильтры+колонка; даты ~30% лидов; 👤 апрув | 🟡 |
+| 5 | UI карточки X5-gap | ✅ **апрув оператора 2026-06-24** | 🟢 |
+| 6 | Mass-resync полей | **in_progress** ~1205/3228 + watcher `--only-missing` | 🔴 |
+| 7 | Список: подписка / поставка | ✅ **апрув оператора 2026-06-24** | 🟢 |
 
 `[2026-06-24] | PRD_MAP: Ф4 · X5-gap mass-resync bitrix_extra | Отложено: дождаться прогона 3225 (50/3225 на 2026-06-24) | Причина: Access denied при workers=3 — снижен до 1 | Из шага: F4_BITRIX_FIELDS_RESYNC.md`
 

@@ -96,8 +96,9 @@ async def backfill_fields(
     batch_size: int = 25,
     delay_ms: int = 20,
     workers: int = 3,
+    only_missing: bool = False,
 ) -> dict[str, int]:
-    from sqlalchemy import func, select
+    from sqlalchemy import func, or_, select
 
     from core.bitrix_lead_fields_sync import (
         apply_bitrix_fields_patch,
@@ -178,10 +179,18 @@ async def backfill_fields(
             return {}
 
     async with SessionLocal() as db:
-        count_q = select(func.count()).select_from(Lead).where(Lead.bitrix_lead_id.isnot(None))
+        base_filter = Lead.bitrix_lead_id.isnot(None)
+        if only_missing:
+            base_filter = base_filter & or_(
+                Lead.bitrix_extra.is_(None),
+                Lead.contacts.is_(None),
+                Lead.deal_amount.is_(None),
+            )
+
+        count_q = select(func.count()).select_from(Lead).where(base_filter)
         total_all = int((await db.execute(count_q)).scalar_one() or 0)
 
-        q = select(Lead).where(Lead.bitrix_lead_id.isnot(None)).order_by(Lead.id)
+        q = select(Lead).where(base_filter).order_by(Lead.id)
         if offset > 0:
             q = q.offset(offset)
         if limit > 0:
@@ -314,10 +323,15 @@ async def main() -> int:
     parser.add_argument("--batch-size", type=int, default=25, help="Коммит каждые N лидов")
     parser.add_argument("--delay-ms", type=int, default=20, help="Пауза между лидами (API)")
     parser.add_argument("--workers", type=int, default=3, help="Параллельных запросов к Битрикс")
+    parser.add_argument(
+        "--only-missing",
+        action="store_true",
+        help="Только лиды без bitrix_extra / contacts / deal_amount (дожим после основного прогона)",
+    )
     args = parser.parse_args()
 
     offset = args.offset
-    if args.resume:
+    if args.resume and not args.only_missing:
         st = _read_state()
         if st.get("processed"):
             offset = int(st["processed"])
@@ -362,6 +376,7 @@ async def main() -> int:
             batch_size=args.batch_size,
             delay_ms=args.delay_ms,
             workers=args.workers,
+            only_missing=args.only_missing,
         )
     except Exception as e:
         _write_state({"status": "failed", "error": str(e)})

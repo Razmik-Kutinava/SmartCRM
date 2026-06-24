@@ -17,6 +17,7 @@ def test_resync_bitrix_lead_fields_script_exists():
     assert "offline_fields_patch" in text
     assert "--resume" in text
     assert "--offset" in text
+    assert "--only-missing" in text
 
 
 def test_resync_bitrix_lead_fields_help():
@@ -31,3 +32,4 @@ def test_resync_bitrix_lead_fields_help():
     assert proc.returncode == 0
     assert "--no-api" in proc.stdout
     assert "--workers" in proc.stdout
+    assert "--only-missing" in proc.stdout
