@@ -235,6 +235,7 @@ export function distinctOkvedSections(leads) {
 export const TASK_DUE_FILTERS = [
 	{ id: 'all', label: 'Все дела' },
 	{ id: 'today', label: 'Дело сегодня' },
+	{ id: 'tomorrow', label: 'Дело завтра' },
 	{ id: 'overdue', label: 'Просрочено' },
 	{ id: 'has_open', label: 'Есть открытые' },
 ];
@@ -366,6 +367,7 @@ export function filterLeads(
 			if (bucket !== filterIndustryBucket) return false;
 		}
 		if (filterTaskDue === 'today' && !l.taskDueToday) return false;
+		if (filterTaskDue === 'tomorrow' && !l.taskDueTomorrow) return false;
 		if (filterTaskDue === 'overdue' && !l.taskOverdue) return false;
 		if (filterTaskDue === 'has_open' && !(Number(l.openTaskCount) > 0)) return false;
 		if (!leadMatchesSubscriptionFilter(l, filterSubscription, now)) return false;

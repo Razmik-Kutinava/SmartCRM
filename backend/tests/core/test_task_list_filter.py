@@ -22,6 +22,17 @@ def test_legacy_status_overdue():
     assert out[0].due == "01.01.2020"
 
 
+def test_filter_tomorrow():
+    today = dt.date(2026, 6, 24)
+    tasks = [
+        _Task(status="open", due="25.06.2026", sla_due=None, escalated=False),
+        _Task(status="open", due="24.06.2026", sla_due=None, escalated=False),
+    ]
+    out = filter_tasks(tasks, today=today, due="tomorrow")
+    assert len(out) == 1
+    assert out[0].due == "25.06.2026"
+
+
 def test_filter_done_only():
     tasks = [
         _Task(status="done", due="—", sla_due=None, escalated=False),

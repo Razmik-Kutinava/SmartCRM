@@ -39,7 +39,10 @@ def _format_due(dt: datetime | None) -> str:
     if not dt:
         return "—"
     local = dt.astimezone(timezone.utc) if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
-    return f"{local.day:02d}.{local.month:02d}.{local.year}"
+    date_part = f"{local.day:02d}.{local.month:02d}.{local.year}"
+    if local.hour or local.minute:
+        return f"{date_part} {local.hour:02d}:{local.minute:02d}"
+    return date_part
 
 
 def _activity_title(type_id: int, subject: str, aid: int) -> str:

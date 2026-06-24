@@ -28,11 +28,21 @@ def test_lead_task_flags_overdue_from_sla():
 
 
 def test_attach_lead_task_flags_by_lead_id():
+    today = dt.date.today()
+    due = today.strftime("%d.%m.%Y")
     leads = [{"id": 1, "company": "A"}, {"id": 2, "company": "B"}]
     tasks_by_lead = {
-        1: [{"title": "X", "status": "open", "due": "22.06.2026"}],
+        1: [{"title": "X", "status": "open", "due": due}],
         2: [],
     }
     out = attach_lead_task_flags(leads, tasks_by_lead)
     assert out[0]["taskDueToday"] is True
     assert out[1]["openTaskCount"] == 0
+
+
+def test_lead_task_flags_tomorrow():
+    today = dt.date(2026, 6, 24)
+    tasks = [{"title": "Follow", "status": "open", "due": "25.06.2026"}]
+    flags = lead_task_flags(tasks, today=today)
+    assert flags["taskDueTomorrow"] is True
+    assert flags["taskDueToday"] is False

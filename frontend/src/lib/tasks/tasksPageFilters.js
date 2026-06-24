@@ -9,7 +9,9 @@ export const TASK_STATUS_FILTERS = [
 export const TASK_DUE_FILTERS = [
 	['all', 'Все сроки'],
 	['today', 'Сегодня'],
+	['tomorrow', 'Завтра'],
 	['overdue', 'Просрочено'],
+	['scheduled', 'Запланированные'],
 ];
 
 const STATUS_ALLOWED = new Set(TASK_STATUS_FILTERS.map(([id]) => id));
@@ -21,7 +23,9 @@ const LEGACY_FILTER_MAP = {
 	open: ['open', 'all', false],
 	done: ['done', 'all', false],
 	today: ['open', 'today', false],
+	tomorrow: ['open', 'tomorrow', false],
 	overdue: ['open', 'overdue', false],
+	scheduled: ['open', 'scheduled', false],
 	escalated: ['open', 'all', true],
 };
 

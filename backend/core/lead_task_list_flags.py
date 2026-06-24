@@ -41,6 +41,7 @@ def lead_task_flags(
     ref = today or dt.date.today()
     open_rows = _open_tasks(tasks)
     due_today = False
+    due_tomorrow = False
     overdue = False
     best: Optional[dict[str, Any]] = None
     best_rank = 99
@@ -52,8 +53,10 @@ def lead_task_flags(
             due_today = True
         if urgency == "overdue":
             overdue = True
-        rank = _URGENCY_RANK.get(urgency, 3)
         d = _earliest_due(task)
+        if d == ref + dt.timedelta(days=1):
+            due_tomorrow = True
+        rank = _URGENCY_RANK.get(urgency, 3)
         if rank < best_rank or (rank == best_rank and d and (best_date is None or d < best_date)):
             best_rank = rank
             best = task
@@ -74,6 +77,7 @@ def lead_task_flags(
     return {
         "openTaskCount": len(open_rows),
         "taskDueToday": due_today,
+        "taskDueTomorrow": due_tomorrow,
         "taskOverdue": overdue,
         "taskUrgency": urgency,
         "nextTaskTitle": str((best or {}).get("title") or "")[:120],

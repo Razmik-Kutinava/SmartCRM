@@ -6,6 +6,7 @@
 	const tabs = [
 		{ href: '/leads/funnel', label: 'Воронка', icon: '📊' },
 		{ href: '/leads/list', label: 'Список', icon: '☰' },
+		{ href: '/leads/deals', label: 'Дела', icon: '📋' },
 		{ href: '/leads/calendar', label: 'Календарь', icon: '📅' },
 		{ href: '/leads/tasks', label: 'Задачи', icon: '✓' },
 		{ href: '/leads/focus', label: 'Фокус', icon: '🍅' },

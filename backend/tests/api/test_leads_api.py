@@ -348,6 +348,34 @@ async def test_list_leads_includes_task_flags(client):
 
 
 @pytest.mark.asyncio
+async def test_list_leads_activities_endpoint(client):
+    """GET /api/leads/activities — дела по лидам (B24-стиль)."""
+    import datetime as dt
+
+    tomorrow = (dt.date.today() + dt.timedelta(days=1)).strftime("%d.%m.%Y")
+    create_r = await client.post(
+        "/api/leads",
+        json={"company": "Дела API", "stage": "Запрос", "contact": "Иван"},
+    )
+    assert create_r.status_code == 201
+    lead_id = create_r.json()["id"]
+    await client.post(
+        "/api/tasks",
+        json={
+            "title": "ответ на кп",
+            "lead_id": lead_id,
+            "related_lead": "Дела API",
+            "due": tomorrow,
+        },
+    )
+    r = await client.get("/api/leads/activities?due=tomorrow")
+    assert r.status_code == 200
+    body = r.json()
+    assert "items" in body and "counts" in body
+    assert any(row["leadId"] == lead_id for row in body["items"])
+
+
+@pytest.mark.asyncio
 async def test_list_leads_includes_coverage_flags(client):
     """GET /api/leads — сегменты полноты карточки."""
     create_r = await client.post(

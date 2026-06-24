@@ -7,7 +7,7 @@ from typing import Any, Optional
 from core.task_dates import parse_task_date
 
 TASK_STATUSES = frozenset({"open", "done"})
-DUE_FILTERS = frozenset({"today", "overdue"})
+DUE_FILTERS = frozenset({"today", "tomorrow", "overdue", "scheduled"})
 LEGACY_STATUS = frozenset({"today", "overdue", "escalated", "open", "done"})
 
 
@@ -23,8 +23,13 @@ def _dates_for_task(task: Any) -> list[dt.date]:
 def task_matches_due(task: Any, due: str, *, today: dt.date) -> bool:
     if due == "today":
         return any(d == today for d in _dates_for_task(task))
+    if due == "tomorrow":
+        ref = today + dt.timedelta(days=1)
+        return any(d == ref for d in _dates_for_task(task))
     if due == "overdue":
         return any(d < today for d in _dates_for_task(task))
+    if due == "scheduled":
+        return any(d >= today for d in _dates_for_task(task))
     return True
 
 

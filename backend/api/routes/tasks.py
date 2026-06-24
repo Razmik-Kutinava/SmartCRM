@@ -58,7 +58,7 @@ class TaskPatch(BaseModel):
 async def list_tasks(
     status: Optional[str] = Query(None, description="Legacy: open|done|today|overdue|escalated"),
     task_status: Optional[str] = Query(None, description="open|done"),
-    due: Optional[str] = Query(None, description="today|overdue"),
+    due: Optional[str] = Query(None, description="today|tomorrow|overdue|scheduled"),
     escalated: Optional[bool] = Query(None),
     lead: Optional[str] = Query(None),
     lead_id: Optional[int] = Query(None),
