@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[сумма+валюта — шаг 3 X5-gap] | Статус: 🔄 backfill + 👤 browser`
 
-**2026-06-24:** Код/UI ✅ (`15 780 $`, lead 5227 → `/leads/289`). БД **663/3228** deal_amount. Acceptance: `F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`. Resync упал @625 (Errno 22) — `_safe_print`, `--resume`. **👤:** открыть карточку, проверить `data-testid=lead-card-deal-amount`. Коммит: `TBD`.
+**2026-06-24:** Код/UI ✅ (`15 780 $`, lead 5227 → `/leads/289`). БД **663/3228** deal_amount. Acceptance: `F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`. Resync упал @625 (Errno 22) — `_safe_print`, `--resume`. **👤:** открыть карточку, проверить `data-testid=lead-card-deal-amount`. Коммит: `f54dd36`.
 
 ---
 
