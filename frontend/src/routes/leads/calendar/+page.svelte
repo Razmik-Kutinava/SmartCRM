@@ -72,6 +72,7 @@
 		}
 		viewMonth = m;
 		viewYear = y;
+		pickDay = null;
 		loadMonth();
 	}
 
@@ -84,10 +85,17 @@
 		}
 		viewMonth = m;
 		viewYear = y;
+		pickDay = null;
 		loadMonth();
 	}
 
-	function openDay(day) {
+	function selectDay(day) {
+		if (!day) return;
+		pickDay = day;
+		panelOpen = false;
+	}
+
+	function openNewTask(day) {
 		if (!day) return;
 		pickDay = day;
 		newDue = formatRuDate(viewYear, viewMonth, day);
@@ -100,7 +108,6 @@
 
 	function closePanel() {
 		panelOpen = false;
-		pickDay = null;
 	}
 
 	async function submitNew(ev) {
@@ -156,7 +163,7 @@
 		<div>
 			<h1 class="text-lg font-semibold text-white">Календарь задач</h1>
 			<p class="text-xs text-gray-500">
-				Сетка месяца (Python <code class="text-gray-400">calendar.monthcalendar</code>) · клик по дню — новая задача
+				Сетка месяца (Python <code class="text-gray-400">calendar.monthcalendar</code>) · клик по дню — выбрать дату и посмотреть задачи
 			</p>
 		</div>
 		<div class="flex items-center gap-2">
@@ -202,9 +209,8 @@
 					{#each week as day}
 						<button
 							type="button"
-							onclick={() => openDay(day)}
-							class="min-h-[5.5rem] bg-gray-950 hover:bg-gray-900/90 text-left p-2 align-top border-t border-gray-800/80 transition-colors
-								{day ? '' : 'cursor-default opacity-40'}"
+							onclick={() => selectDay(day)}
+							class="min-h-[5.5rem] bg-gray-950 hover:bg-gray-900/90 text-left p-2 align-top border-t border-gray-800/80 transition-colors {day ? (day === pickDay ? 'border-indigo-500 bg-indigo-950/80' : '') : 'cursor-default opacity-40'}"
 							disabled={!day}
 						>
 							{#if day}
@@ -226,10 +232,55 @@
 					{/each}
 				{/each}
 			</div>
+
+			{#if pickDay}
+				<div class="mt-6 rounded-xl border border-gray-800 bg-gray-900 p-4 max-w-5xl">
+					<div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+						<div>
+							<h2 class="text-sm font-semibold text-white">{formatRuDate(viewYear, viewMonth, pickDay)}</h2>
+							<p class="text-xs text-gray-500">Список задач на выбранную дату.</p>
+						</div>
+						<button
+							type="button"
+							onclick={() => openNewTask(pickDay)}
+							class="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm text-white hover:bg-indigo-500"
+						>
+							Новая задача
+						</button>
+					</div>
+					{#if tasksForDay(pickDay).length === 0}
+						<div class="rounded-xl border border-gray-800 bg-gray-950 p-4 text-sm text-gray-400">
+							Нет задач на выбранную дату.
+						</div>
+					{:else}
+						<ul class="space-y-3">
+							{#each tasksForDay(pickDay) as task}
+								<li class="rounded-xl border border-gray-800 bg-gray-950 p-4">
+									<div class="flex items-start justify-between gap-3">
+										<div class="space-y-1">
+											<div class="text-sm font-semibold text-white truncate" title={task.title}>
+												{task.title}
+											</div>
+											<div class="text-[11px] text-gray-400">
+												{task.related_lead || (task.lead_id ? `Лид #${task.lead_id}` : 'Без лида')}
+											</div>
+										</div>
+										<div class="text-[11px] rounded-full px-2 py-1 font-medium {task.status === 'done' ? 'bg-green-500/15 text-green-300' : 'bg-blue-500/10 text-blue-200'}">
+											{task.status === 'done' ? 'Выполнено' : 'Открыта'}
+										</div>
+									</div>
+									{#if task.note}
+										<p class="mt-2 text-xs text-gray-400 line-clamp-3">{task.note}</p>
+									{/if}
+								</li>
+							{/each}
+						</ul>
+					{/if}
+				</div>
+			{/if}
 		{/if}
 	</div>
 </div>
-
 {#if panelOpen}
 	<button
 		type="button"
