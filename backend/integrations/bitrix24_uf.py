@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import Any, Callable
 
 _INN_RE = re.compile(r"\d{10}(\d{2})?")
 
@@ -148,11 +148,16 @@ def extract_employees_from_row(row: dict) -> str:
     return hinted[:100] if hinted else ""
 
 
-def extract_bitrix_extra_from_row(row: dict) -> dict[str, Any]:
+def extract_bitrix_extra_from_row(
+    row: dict,
+    *,
+    uf_by_hint_fn: Callable[..., str] | None = None,
+) -> dict[str, Any]:
     """Лицензия/подписка/поставка и прочие UF → lead.bitrix_extra."""
     from core.lead_bitrix_extra import build_bitrix_extra_from_row
 
-    return build_bitrix_extra_from_row(row, uf_raw_fn=_uf_raw, uf_by_hint_fn=uf_by_hint)
+    hint_fn = uf_by_hint_fn or uf_by_hint
+    return build_bitrix_extra_from_row(row, uf_raw_fn=_uf_raw, uf_by_hint_fn=hint_fn)
 
 
 def normalize_website(value: str) -> str:

@@ -15,6 +15,8 @@ def test_resync_bitrix_lead_fields_script_exists():
     assert "backfill_fields" in text
     assert "bitrix_extra" in text
     assert "offline_fields_patch" in text
+    assert "--resume" in text
+    assert "--offset" in text
 
 
 def test_resync_bitrix_lead_fields_help():

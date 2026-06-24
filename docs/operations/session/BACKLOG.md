@@ -183,13 +183,15 @@
 
 | Шаг | PRD_MAP | Отложено | Приоритет |
 |-----|---------|----------|-----------|
-| 1 | UF → `bitrix_extra` | 👤 полный прогон `resync_bitrix_lead_fields.py` (~3225) | 🟡 |
-| 2 | Мультиконтакты | 👤 тот же `resync_bitrix_lead_fields.py` (contacts в одном скрипте) | 🟡 |
-| 3 | Сумма + валюта | 👤 тот же скрипт + апрув суммы в браузере | 🟡 |
+| 1 | UF → `bitrix_extra` | Mass backfill: **50/3225** в БД (`check_bitrix_fields_backfill`); resume workers=1, ETA ~5.5 ч | 🔴 |
+| 2 | Мультиконтакты | 364/3230 contacts; полный resync в прогоне | 🟡 |
+| 3 | Сумма + валюта | 88/3230 deal_amount; полный resync в прогоне | 🟡 |
 | 4 | Webhook scope `task` | 👤 scope **task** на вебхуке B24 → `resync_bitrix_lead_tasks.py --workers 4` | 🔴 |
 | 5 | UI карточки X5-gap | 👤 апрув карточки в браузере | 🟡 |
-| 6 | Mass-resync полей | Скрипт ✅; полный прогон 3225 — в фоне / дождаться завершения | 🟡 |
+| 6 | Mass-resync полей | **in_progress** — 50/3225 extra; retry Access denied; `F4_BITRIX_FIELDS_RESYNC.md` | 🔴 |
 | 7 | Список: подписка / поставка | 👤 апрув фильтров и колонки в браузере после mass-resync | 🟡 |
+
+`[2026-06-24] | PRD_MAP: Ф4 · X5-gap mass-resync bitrix_extra | Отложено: дождаться прогона 3225 (50/3225 на 2026-06-24) | Причина: Access denied при workers=3 — снижен до 1 | Из шага: F4_BITRIX_FIELDS_RESYNC.md`
 
 `[2026-06-19] | PRD_MAP: Ф4 · X5-gap шаг 6 mass-resync | Отложено: дождаться полного прогона + scope task п.4 + browser апрув | Причина: скрипт готов, прогон долгий | Нужна фаза MAP: 4 | Из шага: resync_bitrix_lead_fields.py`
 

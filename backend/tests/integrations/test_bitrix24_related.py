@@ -127,6 +127,33 @@ def test_merge_merges_bitrix_extra():
 
 
 @pytest.mark.asyncio
+async def test_enrich_fields_for_resync_light_no_products(monkeypatch):
+    row = {
+        "ID": "200",
+        "TITLE": "Тест",
+        "CONTACT_ID": "0",
+        "UF_CRM_SUBSCRIPTION_END": "10.01.2025",
+        "UF_CRM_DELIVERY_TYPE": "Новая лицензия",
+    }
+    products_mock = AsyncMock(return_value=[{"name": "should not load"}])
+    monkeypatch.setattr(
+        "integrations.bitrix24_products.fetch_bitrix_lead_products",
+        products_mock,
+    )
+    monkeypatch.setattr(
+        "integrations.bitrix24_related._contacts_from_bitrix_lead",
+        AsyncMock(return_value=([], {})),
+    )
+
+    from integrations.bitrix24_related import enrich_fields_for_resync
+
+    extra = await enrich_fields_for_resync(row)
+    products_mock.assert_not_called()
+    assert extra["bitrix_extra"]["subscription_end"] == "10.01.2025"
+    assert extra["bitrix_extra"]["delivery_type"] == "Новая лицензия"
+
+
+@pytest.mark.asyncio
 async def test_enrich_fields_x5_like(monkeypatch):
     row = {
         "ID": "100",

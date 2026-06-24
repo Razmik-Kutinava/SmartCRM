@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Callable
 
 from core.lead_bitrix_extra import merge_bitrix_extra
 from core.lead_contacts import merge_bitrix_contacts
@@ -367,6 +367,39 @@ async def enrich_fields_from_bitrix_row(row: dict) -> dict[str, Any]:
         extra["company"] = company_title[:255]
 
     bx = extract_bitrix_extra_from_row(row)
+    if bx:
+        extra["bitrix_extra"] = bx
+
+    return extra
+
+
+async def enrich_fields_for_resync(
+    row: dict,
+    *,
+    uf_by_hint_fn: Callable[..., str] | None = None,
+) -> dict[str, Any]:
+    """Лёгкий enrich для mass-resync: контакты + bitrix_extra (без productrows/КП)."""
+    extra: dict[str, Any] = {}
+    contact_id = row.get("CONTACT_ID")
+    try:
+        ctid = int(contact_id) if contact_id not in (None, "", "0") else None
+    except (TypeError, ValueError):
+        ctid = None
+
+    contacts_pack = await _contacts_from_bitrix_lead(
+        row,
+        primary_contact=None,
+        primary_contact_id=ctid,
+    )
+    if isinstance(contacts_pack, Exception):
+        contacts_pack = ([], {})
+
+    contacts, contact_flat = contacts_pack if isinstance(contacts_pack, tuple) else ([], {})
+    if contacts:
+        extra["contacts"] = contacts
+        extra.update(contact_flat)
+
+    bx = extract_bitrix_extra_from_row(row, uf_by_hint_fn=uf_by_hint_fn)
     if bx:
         extra["bitrix_extra"] = bx
 

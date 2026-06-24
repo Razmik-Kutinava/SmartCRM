@@ -33,6 +33,37 @@ def test_bitrix_extra_for_api_camel_case():
     assert "manager" not in api
 
 
+def test_build_agneko_numeric_uf_email_in_delivery_slot():
+    row = {
+        "ID": "5227",
+        "TITLE": "ИКС 5",
+        "UF_CRM_1684590938": "Licensing@x5.ru",
+        "UF_CRM_1684590906": "2025-06-01T03:00:00+03:00",
+    }
+    extra = build_bitrix_extra_from_row(row, uf_raw_fn=_uf_raw, uf_by_hint_fn=uf_by_hint)
+    assert extra.get("license_registration") == "Licensing@x5.ru"
+    assert "delivery_type" not in extra
+
+
+def test_build_agneko_numeric_uf_row():
+    row = {
+        "ID": "4008",
+        "TITLE": "Корпоративный центр ИКС 5 (x5.ru)",
+        "ADDRESS_COUNTRY": "РОССИЯ",
+        "UF_CRM_1684590906": "2024-05-30T03:00:00+03:00",
+        "UF_CRM_1684590938": "Продление поддержки",
+        "UF_CRM_1697732648936": "2025-01-10T03:00:00+03:00",
+        "UF_CRM_1704976364045": "@x5.ru",
+        "UF_CRM_1706632424941": "1",
+    }
+    extra = build_bitrix_extra_from_row(row, uf_raw_fn=_uf_raw, uf_by_hint_fn=uf_by_hint)
+    assert extra["subscription_end"] == "30.05.2024"
+    assert extra["delivery_type"] == "Продление поддержки"
+    assert extra["reserved_until"] == "10.01.2025"
+    assert extra["license_registration"] == "@x5.ru"
+    assert extra["is_repeat_lead"] is True
+
+
 def test_build_x5_like_row():
     row = {
         "ID": "99999",

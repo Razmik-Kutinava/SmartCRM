@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-24 | Действие: mass-resync bitrix_extra фикс — light enrich, agneko UF map, resume/state, check script, runbook; live X5 #4008 extra OK; прогон перезапущен | Коммит: `TBD` | Хвост A: дождаться 3225; scope task; browser апрув | Хвост B: BACKLOG+ISSUES note UF map | Хвост C: зависание 40/3225 — причина найдена | Статус: in_progress
+
 2026-06-19 | Действие: список шаг 7 — фильтры подписка/тип поставки, колонка «Подписка до»; pytest 8 PASS | Коммит: `a228e9d` | Хвост A: browser апрув после mass-resync | Хвост B: BACKLOG шаг 7 | Хвост C: нет | Статус: done
 
 2026-06-19 | Действие: mass-resync полей шаг 6 — resync_bitrix_lead_fields.py, bitrix_lead_fields_sync; pytest 6 PASS; smoke limit 2 OK; полный прогон 3225 в фоне | Коммит: `8c6e5e5` | Хвост A: дождаться полного прогона; scope task; browser апрув | Хвост B: BACKLOG шаг 6 | Хвост C: нет | Статус: in_progress

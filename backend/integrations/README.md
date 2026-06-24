@@ -4,6 +4,7 @@
 |------|--------|
 | `bitrix24.py` | REST по входящему вебхуку: list/get, маппинг полей, массовый импорт |
 | `bitrix24_uf.py` | ИНН/домен/продукты/ОКВЭД/сотрудники/лицензия UF → `bitrix_extra` |
+| `bitrix24_uf_labels.py` | Кэш подписей UF (`crm.lead.userfield.list`) для hint-поиска |
 | `bitrix24_related.py` | company/contact/requisites + **все контакты** (`crm.lead.contact.items`) → `contacts` JSON |
 | `bitrix24_products.py` | productrows лида/сделок/КП + UF + opportunity → `lead_products` |
 | `bitrix24_timeline.py` | activity + comments → `lead_communication_logs` |

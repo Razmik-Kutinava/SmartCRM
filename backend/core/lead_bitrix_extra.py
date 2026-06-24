@@ -35,11 +35,50 @@ _CAMEL = {
 
 # Явные UF-коды (если есть в портале) + hint по подстроке в имени UF.
 _FIELD_SPECS: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
-    ("subscription_end", ("UF_CRM_SUBSCRIPTION_END", "UF_CRM_SUPPORT_END", "UF_SUBSCRIPTION_END"), ("подписк", "поддержк", "support_end", "subscription")),
-    ("delivery_type", ("UF_CRM_DELIVERY_TYPE", "UF_CRM_SUPPLY_TYPE", "UF_DELIVERY_TYPE"), ("поставк", "delivery", "supply_type")),
-    ("license_term", ("UF_CRM_LICENSE_TERM", "UF_CRM_TEMP_LICENSE", "UF_LICENSE_TERM"), ("временн", "license_term", "срок_лиценз", "temp_license")),
-    ("reserved_until", ("UF_CRM_RESERVED_UNTIL", "UF_CRM_RESERVE_UNTIL", "UF_RESERVED"), ("резерв", "reserved", "зарезерв")),
-    ("license_registration", ("UF_CRM_LICENSE_EMAIL", "UF_CRM_LICENSE_REG", "UF_LICENSING"), ("licensing", "регистрац", "license_reg", "лицензии")),
+    (
+        "subscription_end",
+        (
+            "UF_CRM_SUBSCRIPTION_END",
+            "UF_CRM_SUPPORT_END",
+            "UF_SUBSCRIPTION_END",
+            "UF_CRM_1684590906",
+        ),
+        ("подписк", "поддержк", "support_end", "subscription"),
+    ),
+    (
+        "delivery_type",
+        (
+            "UF_CRM_DELIVERY_TYPE",
+            "UF_CRM_SUPPLY_TYPE",
+            "UF_DELIVERY_TYPE",
+        ),
+        ("поставк", "delivery", "supply_type"),
+    ),
+    (
+        "license_term",
+        ("UF_CRM_LICENSE_TERM", "UF_CRM_TEMP_LICENSE", "UF_LICENSE_TERM"),
+        ("временн", "license_term", "срок_лиценз", "temp_license"),
+    ),
+    (
+        "reserved_until",
+        (
+            "UF_CRM_RESERVED_UNTIL",
+            "UF_CRM_RESERVE_UNTIL",
+            "UF_RESERVED",
+            "UF_CRM_1697732648936",
+        ),
+        ("резерв", "reserved", "зарезерв"),
+    ),
+    (
+        "license_registration",
+        (
+            "UF_CRM_LICENSE_EMAIL",
+            "UF_CRM_LICENSE_REG",
+            "UF_LICENSING",
+            "UF_CRM_1704976364045",
+        ),
+        ("licensing", "регистрац", "license_reg", "лицензии"),
+    ),
     ("sublicensee", ("UF_CRM_SUBLICENSEE", "UF_SUBLICENSEE"), ("сублиценз", "sublicensee")),
     ("payer_partner", ("UF_CRM_PAYER", "UF_CRM_PARTNER", "UF_PAYER_PARTNER"), ("плательщ", "партнер", "payer")),
     ("manager", ("UF_CRM_MANAGER", "UF_MANAGER"), ("менеджер", "manager")),
@@ -95,9 +134,25 @@ def _normalize_text(raw: str, *, max_len: int = 500) -> str:
     return s[:max_len]
 
 
+def _apply_agneko_portal_uf(row: dict, out: dict[str, Any], uf_raw_fn: Any) -> None:
+    """crm.agneko.com: UF_CRM_1684590938 — email или тип поставки в одном поле."""
+    raw = uf_raw_fn(row.get("UF_CRM_1684590938"))
+    if not raw:
+        return
+    if "@" in raw:
+        out.pop("delivery_type", None) if out.get("delivery_type") == raw else None
+        if not out.get("license_registration"):
+            out["license_registration"] = _normalize_text(raw)
+    elif not out.get("delivery_type"):
+        out["delivery_type"] = _normalize_text(raw)
+
+
 def _is_repeat_lead(row: dict) -> bool:
     title = str(row.get("TITLE") or "").lower()
     if "повторный лид" in title or "repeat" in title:
+        return True
+    repeat_flag = row.get("UF_CRM_1706632424941")
+    if str(repeat_flag or "").strip() in ("1", "Y", "y", "true", "True", "да", "Да"):
         return True
     for key, val in row.items():
         if not str(key).startswith("UF_"):
@@ -128,6 +183,8 @@ def build_bitrix_extra_from_row(row: dict, *, uf_raw_fn: Any, uf_by_hint_fn: Any
             val = _normalize_text(val)
         if val:
             out[key] = val
+
+    _apply_agneko_portal_uf(row, out, uf_raw_fn)
 
     country = _normalize_text(str(row.get("ADDRESS_COUNTRY") or ""), max_len=120)
     if country:

@@ -71,8 +71,9 @@
 - **Мультиконтакты Битрикс:** `crm.lead.contact.items.get` → все связанные контакты в **`contacts` JSON** (телефоны/email по каждому); основной (`IS_PRIMARY`) → роль `lpr` и плоские `contact`/`email`/`phone`; `merge_bitrix_contacts` при upsert — ручные контакты CRM не затираются.
 - **Сумма + валюта:** `OPPORTUNITY` + `CURRENCY_ID` → `deal_amount` / `deal_currency`; API **`amount`** + **`currency`**; `amount_rub` только RUB/RUR; шапка и панель «Суммы сделки» в карточке.
 - **Mass-resync полей (шаг 6 X5-gap):** `bitrix_extra` + `contacts` + `deal_amount` для всех лидов с `bitrix_lead_id` (~3225):  
-  `cd backend && python -u scripts/resync_bitrix_lead_fields.py --workers 4 --batch-size 40 --delay-ms 15`  
-  Только UF из `tech_json` (без API): `--no-api` (контакты/сумма не подтянутся без webhook).
+  `cd backend && python -u scripts/resync_bitrix_lead_fields.py --workers 3 --batch-size 25 --delay-ms 20`  
+  Статус: `python scripts/check_bitrix_fields_backfill.py` · runbook: [`F4_BITRIX_FIELDS_RESYNC.md`](../operations/phase4/leads/F4_BITRIX_FIELDS_RESYNC.md)  
+  Только UF из `tech_json` (без API): `--no-api`
 - **Список `/leads/list` — лицензия:** фильтр **Подписка** (истекает 30 дн. / просрочена / есть дата), **Тип поставки** (`bitrixExtra.deliveryType`); колонка **Подписка до** с цветным бейджем.
 - **Re-sync профиля:** `cd backend && python scripts/resync_bitrix_lead_profiles.py` (нужен `BITRIX24_WEBHOOK_URL`) → import + backfill.
 
