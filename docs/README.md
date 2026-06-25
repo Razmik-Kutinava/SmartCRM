@@ -14,6 +14,7 @@
 | Понять устройство системы | [product/ARCHITECTURE.md](product/ARCHITECTURE.md) |
 | Запустить локально | [start/SETUP.md](start/SETUP.md) |
 | Как идёт запрос, LLM, пути данных | [start/RUNBOOK.md](start/RUNBOOK.md) |
+| Исходящий вебхук B24 + ngrok (когда настроим) | [start/BITRIX_OUTBOUND_WEBHOOK.md](start/BITRIX_OUTBOUND_WEBHOOK.md) |
 
 ---
 

@@ -156,7 +156,7 @@ Acceptance шаг 4: [`F4_X5_WEBHOOK_TASK_SCOPE_ACCEPTANCE.md`](../operations/ph
 
 | Канал | Задержка | Настройка |
 |--------|----------|-----------|
-| **Исходящий вебхук Битрикса** | сразу при создании/изменении | В Битрикс24: разработчикам → **исходящий вебхук**, события `ONCRMLEADADD`, `ONCRMLEADUPDATE`, URL: `https://<ваш-smartcrm>/api/webhooks/bitrix/events` (опционально `?token=` = `BITRIX_OUTBOUND_TOKEN` в `.env`) |
+| **Исходящий вебхук Битрикса** | сразу при создании/изменении | Пошагово: [`docs/start/BITRIX_OUTBOUND_WEBHOOK.md`](../start/BITRIX_OUTBOUND_WEBHOOK.md) (ngrok на `:8000` + события `ONCRMLEADADD`, `ONCRMLEADUPDATE`) |
 | **Фоновый опрос** | каждые **5 мин** (по умолчанию) | `BITRIX_AUTO_SYNC_MINUTES=5` в `.env`; тянет `crm.lead.list` с `DATE_CREATE >= сегодня` |
 
 Проверка статуса: **`GET /api/leads/bitrix-sync-status`** (нужен `X-API-Key` если включён).

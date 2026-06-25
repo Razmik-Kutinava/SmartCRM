@@ -28,7 +28,7 @@
 | 🟡 желательно | **Фаза 1** | **Голос → лиды** | **п.5** смоук | Spot-check: **fanout** — фраза «проанализируй лид …» / «создай лид …» — индикатор «Агенты анализируют…», модалка/ответ 15–30 с (S02, S06) | Голосовая панель в layout; live Groq |
 | 🟢 опционально | **Фаза 1** | **Голос → лиды** | **п.2** Hermes live | Прогон **live LLM** (не CPU rescue): `GROQ_API_KEY=… python scripts/smoke_hermes_leads_live.py` | Артефакт `backend/data/artifacts/voice/hermes_leads_live.json` |
 | 🟢 опционально | **Фаза 1** | **Голос → лиды** | **п.1** health | `curl "http://127.0.0.1:8000/health/whisper?ping=1"` — reachable с твоим ключом | `VOICE_LEADS_TAIL_ACCEPTANCE.md` |
-| 🟡 отложено | **Фаза 2** / DevOps | **Лиды** | **п.2** Битрикс синк | Туннель **:8000** (ngrok/cloudflared) + исходящий вебхук в портале Битрикс | Запись ниже § Записи; сейчас работает импорт кнопкой + опрос 5 мин |
+| 🟡 отложено | **Фаза 2** / DevOps | **Лиды** | **п.2** Битрикс синк | Туннель **:8000** (ngrok/cloudflared) + исходящий вебхук в портале Битрикс | Инструкция: [`docs/start/BITRIX_OUTBOUND_WEBHOOK.md`](../../start/BITRIX_OUTBOUND_WEBHOOK.md); сейчас импорт + опрос 5 мин |
 
 **Критерий «Фаза 1 / Голос → лиды закрыт»:** ✅ mic E2E (WS bytes + dev sim). Опц. spot-check 🟡 ниже.
 

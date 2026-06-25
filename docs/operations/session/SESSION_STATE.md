@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-25 | Действие: docs — исходящий вебхук B24 + ngrok пошагово (`docs/start/BITRIX_OUTBOUND_WEBHOOK.md`); ссылки bitrix.md, BACKLOG, docs/README | Коммит: `pending` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
+
 2026-06-25 | Действие: убрать Аналитика из корневого сайдбара — только /leads/analytics; test_app_sidebar_ui; pytest 8 PASS | Коммит: `c23b32a` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-25 | Действие: resume mass B24 backfill — fields+timeline resume 270+tasks+products+watch; engagement --resume; spawn_bitrix_backfill_all; pytest 1 PASS | Коммит: `042b5bd` | Хвост A: дождаться 3228 по всем слоям | Хвост B: нет | Хвост C: параллельные прогоны грузят B24 API | Статус: in_progress
