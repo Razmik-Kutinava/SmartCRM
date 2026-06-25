@@ -2,7 +2,7 @@
 
 `Спринт:[Ф4 лиды] | Задача:[resume mass backfill B24] | Статус: 🔄 in_progress`
 
-**2026-06-25:** Перезапущены фоновые прогоны: поля (3228), таймлайн `--resume` с 270, дела, продукты, watch `--only-missing`. `--resume` для engagement; `spawn_bitrix_backfill_all.py`. Коммит: `TBD`.
+**2026-06-25:** Перезапущены фоновые прогоны: поля (3228), таймлайн `--resume` с 270, дела, продукты, watch `--only-missing`. `--resume` для engagement; `spawn_bitrix_backfill_all.py`. Коммит: `042b5bd`.
 
 ---
 
