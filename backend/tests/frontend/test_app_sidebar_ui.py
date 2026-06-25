@@ -38,6 +38,15 @@ def test_layout_collapsible_sidebar_markers():
     assert "w-14" in text
 
 
+def test_sidebar_nav_no_top_level_analytics():
+    """Аналитика только во вкладках /leads, не в корневом сайдбаре."""
+    text = _LAYOUT.read_text(encoding="utf-8")
+    start = text.index("const navItems = [")
+    end = text.index("];", start)
+    nav_block = text[start:end]
+    assert "/leads/analytics" not in nav_block
+
+
 def test_lead_card_toolbar_icon_only():
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert 'data-testid="lead-card-toolbar"' in text

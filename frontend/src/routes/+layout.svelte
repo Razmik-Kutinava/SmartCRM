@@ -31,7 +31,6 @@
 		{ href: '/leadgen', label: 'Лидогенерация', icon: '◆' },
 		{ href: '/tenders', label: 'Тендеры', icon: '◇' },
 		{ href: '/search', label: 'Поиск', icon: '◎' },
-		{ href: '/leads/analytics', label: 'Аналитика', icon: '◈' },
 		{ href: '/ops', label: 'Ops / Качество', icon: '◉' },
 		{ href: '/settings', label: 'Настройки', icon: '◎' },
 	];
