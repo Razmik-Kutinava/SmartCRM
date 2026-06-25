@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[resume mass backfill B24] | Статус: 🔄 in_progress`
+
+**2026-06-25:** Перезапущены фоновые прогоны: поля (3228), таймлайн `--resume` с 270, дела, продукты, watch `--only-missing`. `--resume` для engagement; `spawn_bitrix_backfill_all.py`. Коммит: `TBD`.
+
+---
+
 `Спринт:[Ф4 UI] | Задача:[/leads/deals — дела как B24] | Статус: ✅ done`
 
 **2026-06-24:** Вкладка **Дела** `/leads/deals` — список лидов с ближайшим делом, сортировка по сроку; фильтры Запланированные/Сегодня/Завтра/Просрочено/Входящие; менеджер; API `GET /api/leads/activities`; время в due из B24; «Дело завтра» в `/leads/list` и `/leads/tasks`. pytest 17+ PASS. Коммит: `29d1380`.

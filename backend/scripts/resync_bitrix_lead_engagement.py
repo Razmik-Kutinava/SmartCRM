@@ -44,6 +44,7 @@ async def backfill_engagement(
     timeline: bool,
     tasks: bool,
     limit: int = 0,
+    offset: int = 0,
     batch_size: int = 40,
     delay_ms: int = 10,
     workers: int = 4,
@@ -135,14 +136,22 @@ async def backfill_engagement(
             q = q.limit(limit)
         rows = (await db.execute(q)).scalars().all()
         stats["total"] = len(rows)
+        work_rows = rows[offset:] if offset > 0 else rows
 
     if timeline and not tasks:
-        _write_state(status="running", processed=0, total_b24=stats["total"], timeline_added=0, errors=0)
+        _write_state(
+            status="running",
+            processed=offset,
+            total_b24=stats["total"],
+            timeline_added=0,
+            errors=0,
+        )
 
     chunk: list[Lead] = []
-    for i, lead in enumerate(rows, 1):
+    for j, lead in enumerate(work_rows, 1):
+        i = offset + j
         chunk.append(lead)
-        if len(chunk) < batch_size and i < len(rows):
+        if len(chunk) < batch_size and j < len(work_rows):
             continue
         results = await asyncio.gather(*[_sync_one(l) for l in chunk])
         for tl, tk in results:
@@ -184,6 +193,8 @@ async def main() -> int:
     parser.add_argument("--timeline-only", action="store_true", help="Только lead_communication_logs")
     parser.add_argument("--tasks-only", action="store_true", help="Только tasks")
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument("--offset", type=int, default=0, help="Пропустить первые N b24-лидов")
+    parser.add_argument("--resume", action="store_true", help="Продолжить timeline с bitrix_timeline_resync_state.json")
     parser.add_argument("--batch-size", type=int, default=40)
     parser.add_argument("--delay-ms", type=int, default=10)
     parser.add_argument("--workers", type=int, default=4)
@@ -216,11 +227,25 @@ async def main() -> int:
     if args.tasks_only:
         do_tl = False
 
+    offset = max(0, args.offset)
+    if args.resume and args.timeline_only:
+        try:
+            import json
+
+            if STATE_PATH.is_file():
+                st = json.loads(STATE_PATH.read_text(encoding="utf-8"))
+                if st.get("status") == "running" and int(st.get("processed") or 0) > 0:
+                    offset = int(st["processed"])
+                    print(f"  resume timeline с offset={offset}", flush=True)
+        except Exception:
+            pass
+
     try:
         stats = await backfill_engagement(
             timeline=do_tl,
             tasks=do_tk,
             limit=args.limit,
+            offset=offset,
             batch_size=args.batch_size,
             delay_ms=args.delay_ms,
             workers=args.workers,

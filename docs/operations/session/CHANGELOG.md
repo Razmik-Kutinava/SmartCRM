@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-25 — Resume: mass backfill Битрикс → CRM
+
+Перезапуск поля/таймлайн (resume 270)/дела/продукты + watch only-missing. CLI `spawn_bitrix_backfill_all.py`, `--resume` на engagement.
+
 ## 2026-06-24 — UI /leads/deals: дела по лидам как в B24
 
 Вкладка «Дела»: лид + ближайшее открытое дело, срок с временем, фильтры scheduled/today/tomorrow/overdue/incoming, менеджер. API `GET /api/leads/activities`. Фильтр «завтра» в списке лидов и задачах.

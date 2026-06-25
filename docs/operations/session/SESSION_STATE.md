@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-25 | Действие: resume mass B24 backfill — fields+timeline resume 270+tasks+products+watch; engagement --resume; spawn_bitrix_backfill_all; pytest 1 PASS | Коммит: `TBD` | Хвост A: дождаться 3228 по всем слоям | Хвост B: нет | Хвост C: параллельные прогоны грузят B24 API | Статус: in_progress
+
 2026-06-24 | Действие: /leads/deals B24-стиль — activities API, фильтры scheduled/today/tomorrow, менеджер, время в B24 due; list+tasks завтра; pytest 17 PASS | Коммит: `29d1380` | Хвост A: browser /leads/deals не кликали | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-24 | Действие: B24 таймлайн → «Действия и история» — bitrix24_timeline_extra, UI leadActivityTimeline, check_bitrix_engagement_backfill, --timeline-only state; smoke 5 +6; mass timeline в фоне; pytest 5 PASS | Коммит: `fb20f91` | Хвост A: browser Liqvor не кликали; mass timeline 3228 в фоне | Хвост B: нет | Хвост C: crm.timeline.comment.list Access denied на части лидов (портал) | Статус: done (код)
