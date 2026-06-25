@@ -560,6 +560,28 @@
 - [x] Аналитика `/leads/analytics` — smoke · **апрув обход 2026-06-25**
 - [ ] Голос на лидах — create, filter, delete approve (S04) · **отложен** (после приёмки проекта)
 
+### Email (тюнинг Ф4)
+
+Детали: [`F4_EMAIL_TUNING.md`](../operations/phase4/email/F4_EMAIL_TUNING.md)
+
+- [ ] Ящики в UI (`/email` Настройки или `/ops/integrations`) — без единственной зависимости от `.env`
+- [ ] Тест IMAP/SMTP из формы; статусы подключения; шифрование пароля at rest
+- [ ] Счётчик исходящих/день; warn/block перед массовой отправкой и `send_now`
+- [ ] Лимит FAQ auto-reply в `/ops/email-agents` (не только env)
+- [ ] LLM-nurture на все **20** касаний (сейчас пилот 3)
+- [ ] Апрув превью цепочки перед стартом nurture по сегменту
+- [ ] Пауза nurture при ответе клиента — smoke на живом ящике
+- [ ] История кампаний и цепочек — фильтры, статус шагов
+- [ ] Вкладка «Почта» на карточке — паритет с `/email` (ответ, апрув, анализ+черновик)
+- [ ] Кнопка «Рассылка» на карточке — превью сегмента + лимит перед отправкой
+- [ ] Relink сирот с карточки лида
+- [ ] Маскировка email в логах и `/ops/traces`
+- [ ] Аудит: кто отправил письмо / запустил кампанию / nurture
+- [ ] Фильтр PII перед LLM (черновики, nurture)
+- [ ] Голос: `write_email`, `send_email`, рассылка по сегменту · **после** снятия отложенности голоса на лидах
+- [ ] «Переделай короче» для черновика письма (F3 Voice §2)
+- [ ] Acceptance: pytest `tests/email/` + live smoke + DevTools `/email`, `/ops/email`, карточка
+
 ### Vendor crawl → RAG tech_specialist (тюнинг)
 
 Детали: [`F4_VENDOR_CRAWL_TUNING.md`](../operations/phase4/rag/F4_VENDOR_CRAWL_TUNING.md)
@@ -660,7 +682,7 @@
 | Лиды enrich | 2 | ✅ | Ф2 §9: кнопка + голос enrich — `LEADS_CARD_ENRICH_ACCEPTANCE.md`, `LEADS_ENRICH_VOICE_ACCEPTANCE.md` |
 | Лидоген | 1→2 | ✅ Ф1 | **Ф2 §8:** голос ✅ · `LEADGEN_VOICE_F2_ACCEPTANCE.md` |
 | Тендеры | 1→2→3 | ✅ baseline 2026-06-11 | `TENDERS_BASELINE_ACCEPTANCE.md` · Ф2 §7 голос/платный API |
-| Email | 2→3 | 🔲 | Ф2 §3: IMAP |
+| Email | 2→3→4 | 🔲 | Ф4: [`F4_EMAIL_TUNING.md`](../operations/phase4/email/F4_EMAIL_TUNING.md) |
 | Оркестрация | 2 | 🔲 | Ф2 §2: fanout |
 | Агенты | 1→2 | ✅ чат | Ф2 quality gates → `/ops/eval` |
 | Безопасность | 2→3 | ⚠️ dev OK | **Ф2 оч.10** перед продом · **Ф3** роли/аудит |
