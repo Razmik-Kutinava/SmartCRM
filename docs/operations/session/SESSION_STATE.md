@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-25 | Действие: docs — исходящий вебхук B24 + ngrok пошагово (`docs/start/BITRIX_OUTBOUND_WEBHOOK.md`); ссылки bitrix.md, BACKLOG, docs/README | Коммит: `pending` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
+2026-06-25 | Действие: docs — исходящий вебхук B24 + ngrok пошагово (`docs/start/BITRIX_OUTBOUND_WEBHOOK.md`); ссылки bitrix.md, BACKLOG, docs/README | Коммит: `1ed3816` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-25 | Действие: убрать Аналитика из корневого сайдбара — только /leads/analytics; test_app_sidebar_ui; pytest 8 PASS | Коммит: `c23b32a` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
