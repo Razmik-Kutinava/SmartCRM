@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-26 | Действие: restart mass B24 backfill — spawn_bitrix_backfill_all (поля/таймлайн/tasks/products/watch); timeline resume 2490→2520+/3228; fields ~94% extra | Коммит: pending | Хвост A: дождаться 3228 timeline+tasks | Хвост B: нет | Хвост C: нет | Статус: in_progress
+2026-06-26 | Действие: restart mass B24 backfill — spawn_bitrix_backfill_all (поля/таймлайн/tasks/products/watch); timeline resume 2490→2520+/3228; fields ~94% extra | Коммит: `98727cf` | Хвост A: дождаться 3228 timeline+tasks | Хвост B: нет | Хвост C: нет | Статус: in_progress
 
 2026-06-25 | Действие: docs — чеклист Ф4 Email: `F4_EMAIL_TUNING.md`, PRD_MAP §Email (17 пунктов), phase4/README | Коммит: `5b77eb0` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
