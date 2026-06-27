@@ -14,6 +14,7 @@
     } from '$lib/email/emailListLogic.js';
     import EmailYandexSidebar from '../../components/email/EmailYandexSidebar.svelte';
     import EmailYandexSearchBar from '../../components/email/EmailYandexSearchBar.svelte';
+    import EmailThreadView from '../../components/email/EmailThreadView.svelte';
     import { buildReplyApprovePreview, buildComposeApprovePreview } from '$lib/email/emailApproveLogic.js';
     import { voiceEmailContext } from '$lib/voice/voiceAction.js';
     import EmailApproveModal from '../../components/EmailApproveModal.svelte';
@@ -359,11 +360,6 @@
         campaignLeadIds = campaignLeadIds.includes(id) ? campaignLeadIds.filter(x => x !== id) : [...campaignLeadIds, id];
     }
 
-    function fmtFull(iso) {
-        if (!iso) return '—';
-        return new Date(iso).toLocaleString('ru-RU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-    }
-
     async function onAccountFilterChange() {
         await load();
     }
@@ -627,106 +623,22 @@
     </div>
 {/if}
 
-<!-- ═══ МОДАЛ: ТРЕД ══════════════════════════════════════════ -->
-{#if selectedThread}
-    <button class="fixed inset-0 bg-black/70 z-40 cursor-default" onclick={closeThread} aria-label="Закрыть"></button>
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-        <div class="bg-gray-950 border border-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col pointer-events-auto">
-
-            <!-- заголовок -->
-            <div class="flex items-start gap-3 px-6 py-4 border-b border-gray-800 flex-shrink-0">
-                <div class="flex-1 min-w-0">
-                    <h2 class="text-sm font-semibold text-white">{selectedThread.subject || 'Без темы'}</h2>
-                    <div class="flex items-center gap-3 mt-1">
-                        <span class="text-xs text-gray-500">{selectedThread.category}</span>
-                        <span class="text-xs text-gray-600">·</span>
-                        <span class="text-xs text-gray-500">{fmtFull(selectedThread.lastMessageAt)}</span>
-                        <span class="text-xs text-gray-600">·</span>
-                        <span class="text-xs text-gray-500">{threadMessages.length} сообщ.</span>
-                    </div>
-                </div>
-                <button onclick={closeThread} class="text-gray-500 hover:text-white text-2xl leading-none flex-shrink-0">&times;</button>
-            </div>
-
-            <!-- сообщения -->
-            <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4 min-h-0">
-                {#if loadingMessages}
-                    <div class="flex items-center gap-2 text-gray-500 text-sm">
-                        <span class="animate-spin">⟳</span> Загрузка сообщений...
-                    </div>
-                {:else if threadMessages.length === 0}
-                    <p class="text-gray-500 text-sm">Нет сообщений в этом треде.</p>
-                {:else}
-                    {#each threadMessages as msg (msg.id)}
-                        <div class="rounded-xl border px-4 py-3
-                            {msg.direction === 'outbound' ? 'border-indigo-800/60 bg-indigo-950/30 ml-8' : 'border-gray-800 bg-gray-900 mr-8'}">
-                            <div class="flex items-center justify-between mb-2 gap-2">
-                                <div class="flex items-center gap-2 min-w-0">
-                                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0
-                                        {msg.direction === 'outbound' ? 'bg-indigo-700 text-indigo-200' : 'bg-gray-700 text-gray-300'}">
-                                        {(msg.sender || '?').charAt(0).toUpperCase()}
-                                    </div>
-                                    <span class="text-xs font-semibold text-gray-200 truncate">{msg.sender || '—'}</span>
-                                    {#if msg.recipients && msg.direction === 'outbound'}
-                                        <span class="text-xs text-gray-600 truncate">→ {msg.recipients}</span>
-                                    {/if}
-                                </div>
-                                <span class="text-xs text-gray-500 flex-shrink-0">{fmtFull(msg.sentAt)}</span>
-                            </div>
-                            <p class="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">{msg.body || msg.snippet || '(нет текста)'}</p>
-                        </div>
-                    {/each}
-                {/if}
-            </div>
-
-            <!-- ответ -->
-            <div class="px-6 py-4 border-t border-gray-800 flex-shrink-0 space-y-3">
-                <div class="flex flex-wrap items-center gap-2">
-                    <button
-                        onclick={runThreadAnalyze}
-                        disabled={analyzeLoading || !threadMessages.length}
-                        class="px-3 py-1.5 rounded-lg bg-violet-700 text-xs font-semibold text-white hover:bg-violet-600 disabled:bg-gray-700 disabled:text-gray-500 transition-colors"
-                    >{analyzeLoading ? 'Анализ...' : '✨ Анализ + черновик'}</button>
-                    {#if analyzeResult}
-                        <span class="text-xs px-2 py-1 rounded-full bg-gray-800 text-violet-200">
-                            {analyzeResult.category_label}
-                        </span>
-                        <button
-                            onclick={applyDraftToReply}
-                            class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
-                        >В ответ ↓</button>
-                    {/if}
-                </div>
-                {#if analyzeError}
-                    <p class="text-xs text-red-400">{analyzeError}</p>
-                {/if}
-                {#if analyzeResult?.draft?.body}
-                    <div class="rounded-xl border border-violet-900/50 bg-violet-950/20 px-3 py-2 text-xs text-gray-300">
-                        <div class="font-semibold text-violet-200 mb-1">{analyzeResult.draft.subject}</div>
-                        <p class="whitespace-pre-wrap line-clamp-4">{analyzeResult.draft.body}</p>
-                        {#if analyzeResult.summary}
-                            <p class="text-gray-500 mt-2">{analyzeResult.summary}</p>
-                        {/if}
-                    </div>
-                {/if}
-                <div class="relative">
-                    <textarea
-                        bind:value={replyBody}
-                        class="w-full h-24 rounded-xl bg-gray-900 border border-gray-700 px-4 py-3 pr-28 text-sm text-white
-                               resize-none focus:outline-none focus:border-indigo-500 transition-colors"
-                        placeholder="Написать ответ..."
-                    ></textarea>
-                    <button
-                        onclick={requestSendReply}
-                        disabled={replyLoading || approveLoading || !replyBody.trim()}
-                        class="absolute bottom-3 right-3 px-4 py-1.5 rounded-lg bg-indigo-600 text-xs font-semibold text-white
-                               hover:bg-indigo-500 disabled:bg-gray-700 disabled:text-gray-500 transition-colors"
-                    >↑ Ответить</button>
-                </div>
-            </div>
-        </div>
-    </div>
-{/if}
+<!-- ═══ ТРЕД (Yandex: одно письмо + сайдбар) ═══════════════════ -->
+<EmailThreadView
+    thread={selectedThread}
+    messages={threadMessages}
+    loading={loadingMessages}
+    bind:replyBody
+    {replyLoading}
+    {approveLoading}
+    analyzeLoading={analyzeLoading}
+    analyzeResult={analyzeResult}
+    analyzeError={analyzeError}
+    onClose={closeThread}
+    onAnalyze={runThreadAnalyze}
+    onApplyDraft={applyDraftToReply}
+    onReply={requestSendReply}
+/>
 
 <EmailApproveModal
     preview={approvePreview}

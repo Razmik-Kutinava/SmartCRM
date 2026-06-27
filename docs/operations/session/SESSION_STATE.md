@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-25 | Действие: тред /email Yandex — EmailThreadView, strip цитат, сайдбар «Письма на тему»; pytest 11 PASS | Коммит: `pending` | Хвост A: browser не кликали; карточка лида без паритета | Хвост B: нет | Хвост C: нет | Статус: done
+
 2026-06-25 | Действие: UI /email Yandex Mail — sidebar, search chips, папки, звёзды; F4_EMAIL_YANDEX_UI.md; pytest 8 PASS | Коммит: `cb54ff8` | Хвост A: browser апрув не кликали | Хвост B: нет | Хвост C: Trash/Drafts/Spam placeholder | Статус: done
 
 2026-06-27 | Действие: кнопка «Сбросить» всегда видна в /leads/list (фикс. позиция после поиска); smoke test | Коммит: `490e5e5` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
