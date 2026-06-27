@@ -55,3 +55,35 @@ async def test_run_backfill_batch_mocked(tmp_path, monkeypatch):
     assert result["imported"] == 12
     state = backfill.backfill_status_payload()
     assert state["accounts"]["1"]["total_imported"] == 12
+
+
+@pytest.mark.asyncio
+async def test_backfill_auth_error_marks_error_after_three(tmp_path, monkeypatch):
+    monkeypatch.setattr("email_sync.background._STATE_PATH", tmp_path / "state.json")
+    monkeypatch.setenv("EMAIL_BACKFILL_ENABLED", "1")
+
+    acc1 = type("A", (), {"id": 1, "username": "a@test.com"})()
+
+    class FakeScalars:
+        def all(self):
+            return [acc1]
+
+    class FakeResult:
+        def scalars(self):
+            return FakeScalars()
+
+    db = AsyncMock()
+    db.execute = AsyncMock(return_value=FakeResult())
+    auth_err = Exception("[AUTHENTICATIONFAILED] LOGIN invalid credentials")
+
+    with patch(
+        "email_sync.backfill.sync_account_messages_date_window",
+        new_callable=AsyncMock,
+        side_effect=auth_err,
+    ):
+        for _ in range(3):
+            await backfill.run_backfill_batch(db)
+
+    state = backfill.backfill_status_payload()
+    assert state["accounts"]["1"]["status"] == "error"
+    assert state["accounts"]["1"]["fail_count"] == 3

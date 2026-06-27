@@ -130,6 +130,10 @@ async def run_backfill_batch(db: AsyncSession) -> dict[str, Any]:
         write_sync_state({"backfill_rr_index": (rr + 1) % len(accounts)})
         return {"skipped": True, "reason": "account done", "account_id": account.id}
 
+    if acc_state.get("status") == "error":
+        write_sync_state({"backfill_rr_index": (rr + 1) % len(accounts)})
+        return {"skipped": True, "reason": "account error", "account_id": account.id}
+
     cursor = date.fromisoformat(acc_state["cursor_date"])
     window = _next_window(cursor)
     if window is None:
@@ -157,9 +161,21 @@ async def run_backfill_batch(db: AsyncSession) -> dict[str, Any]:
         )
     except Exception as e:
         logger.exception("Email backfill failed for %s", account.username)
+        err_text = str(e)[:500]
         acc_state["status"] = "idle"
-        acc_state["last_error"] = str(e)[:500]
-        write_sync_state({"backfill_accounts": state["backfill_accounts"]})
+        acc_state["last_error"] = err_text
+        fail_count = int(acc_state.get("fail_count") or 0) + 1
+        acc_state["fail_count"] = fail_count
+        if fail_count >= 3 and (
+            "AUTHENTICATIONFAILED" in err_text or "MailboxLoginError" in type(e).__name__
+        ):
+            acc_state["status"] = "error"
+        write_sync_state(
+            {
+                "backfill_accounts": state["backfill_accounts"],
+                "backfill_rr_index": (rr + 1) % len(accounts),
+            }
+        )
         return {"error": str(e), "account_id": account.id}
 
     imported = int(batch.get("imported") or 0)

@@ -37,8 +37,10 @@ async def main() -> int:
             break
         status = backfill_status_payload()
         accounts = status.get("accounts") or {}
-        if accounts and all(a.get("status") == "done" for a in accounts.values()):
-            print("All accounts done.")
+        if accounts and all(
+            a.get("status") in ("done", "error") for a in accounts.values()
+        ):
+            print("All accounts finished (done or error).")
             break
         done += 1
         if args.batches and done >= args.batches:
