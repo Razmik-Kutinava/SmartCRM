@@ -82,7 +82,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_stage_hints.py` | Мульти-подсказки по этапу, срокам, докам |
 | `lead_card_context.py` | Даты этапа и касаний для карточки |
 | `lead_score_list_flags.py` | Флаги advisory для списка лидов (`hasScoreWarnings`, `scoreDivergent`) |
-| `lead_task_list_flags.py` | Флаги задач в списке лидов (`taskDueToday`, `taskDueTomorrow`, `nextTaskTitle`) |
+| `lead_task_list_flags.py` | Флаги задач в списке лидов (`taskDueToday`, `openTaskDueDates`, `nextTaskTitle`) |
 | `lead_day_priority.py` | Ранжирование «Мой день»: `dayRank`, этап+dealPath, intent задачи, затухание |
 | `lead_day_priority_attach.py` | Прикрепление dayRank к списку лидов |
 | `day_priority_config.py` | Дефолты и merge весов `crm_settings.day_priority` |

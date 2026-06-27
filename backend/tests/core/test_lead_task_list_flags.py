@@ -46,3 +46,15 @@ def test_lead_task_flags_tomorrow():
     flags = lead_task_flags(tasks, today=today)
     assert flags["taskDueTomorrow"] is True
     assert flags["taskDueToday"] is False
+    assert flags["openTaskDueDates"] == ["2026-06-25"]
+
+
+def test_lead_task_flags_open_due_dates_multiple():
+    today = dt.date(2026, 6, 24)
+    tasks = [
+        {"title": "A", "status": "open", "due": "25.06.2026"},
+        {"title": "B", "status": "open", "sla_due": "28.06.2026", "due": "—"},
+        {"title": "C", "status": "done", "due": "24.06.2026"},
+    ]
+    flags = lead_task_flags(tasks, today=today)
+    assert flags["openTaskDueDates"] == ["2026-06-25", "2026-06-28"]

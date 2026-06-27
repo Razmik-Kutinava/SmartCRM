@@ -12,6 +12,17 @@ def test_task_due_filter_today():
     assert out[0]["id"] == 1
 
 
+def test_task_due_filter_on_date():
+    leads = [
+        {"id": 1, "openTaskDueDates": ["2026-06-25", "2026-06-28"], "company": "A"},
+        {"id": 2, "openTaskDueDates": ["2026-06-30"], "company": "B"},
+        {"id": 3, "openTaskDueDates": [], "company": "C"},
+    ]
+    target = "2026-06-25"
+    out = [l for l in leads if target in (l.get("openTaskDueDates") or [])]
+    assert [x["id"] for x in out] == [1]
+
+
 def test_task_urgency_sort_order():
     rank = {"overdue": 0, "today": 1, "upcoming": 2, "open": 3, "none": 4}
     leads = [

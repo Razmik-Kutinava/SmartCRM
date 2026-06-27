@@ -239,7 +239,27 @@ export const TASK_DUE_FILTERS = [
 	{ id: 'tomorrow', label: 'Дело завтра' },
 	{ id: 'overdue', label: 'Просрочено' },
 	{ id: 'has_open', label: 'Есть открытые' },
+	{ id: 'on_date', label: 'На дату' },
 ];
+
+/** Лид имеет открытое дело со сроком на ISO-дату (YYYY-MM-DD). */
+export function leadHasOpenTaskOnDate(lead, isoDate) {
+	const d = String(isoDate || '').trim();
+	if (!d) return false;
+	const dates = lead?.openTaskDueDates;
+	if (Array.isArray(dates) && dates.length) {
+		return dates.includes(d);
+	}
+	return false;
+}
+
+/** Сегодня в формате input[type=date] (локальная TZ). */
+export function todayIsoDate(now = new Date()) {
+	const y = now.getFullYear();
+	const m = String(now.getMonth() + 1).padStart(2, '0');
+	const day = String(now.getDate()).padStart(2, '0');
+	return `${y}-${m}-${day}`;
+}
 
 export const SUBSCRIPTION_FILTERS = [
 	{ id: 'all', label: 'Все подписки' },
@@ -340,6 +360,7 @@ export function filterLeads(
 		filterOkvedSection = 'all',
 		filterIndustryBucket = 'all',
 		filterTaskDue = 'all',
+		filterTaskDueDate = '',
 		filterSubscription = 'all',
 		filterDeliveryType = 'all',
 		filterCoverage = 'all',
@@ -379,6 +400,7 @@ export function filterLeads(
 		if (filterTaskDue === 'tomorrow' && !l.taskDueTomorrow) return false;
 		if (filterTaskDue === 'overdue' && !l.taskOverdue) return false;
 		if (filterTaskDue === 'has_open' && !(Number(l.openTaskCount) > 0)) return false;
+		if (filterTaskDue === 'on_date' && !leadHasOpenTaskOnDate(l, filterTaskDueDate)) return false;
 		if (!leadMatchesSubscriptionFilter(l, filterSubscription, now)) return false;
 		if (!leadMatchesDeliveryTypeFilter(l, filterDeliveryType)) return false;
 		if (!leadMatchesCoverageFilter(l, filterCoverage)) return false;

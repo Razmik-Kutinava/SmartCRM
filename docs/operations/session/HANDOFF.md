@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[фильтр дел «На дату» в списке] | Статус: ✅ done | 👤 проверка`
+
+**2026-06-27:** `/leads/list` — фильтр дел «На дату» + date picker; API `openTaskDueDates` на каждом лиде. **👤:** выбрать «На дату», сменить дату, убедиться что список сужается.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[«Мой день» — task_intent + Ops веса] | Статус: ✅ done (код) | 👤 приёмка`
 
 **2026-06-27:** Dropdown `task_intent` при создании задачи (`/leads/tasks`, карточка лида, панель активности); API `taskIntent` + `GET /api/tasks/intent-catalog`; веса `day_priority` в `/ops/crm`. pytest: crm_leads + tasks + day_priority. **👤:** создать задачу с типом, сохранить веса в Ops, проверить порядок в `/leads/list`.

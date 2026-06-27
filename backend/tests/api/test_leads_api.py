@@ -345,6 +345,9 @@ async def test_list_leads_includes_task_flags(client):
     assert "nextTaskTitle" in row
     assert row["nextTaskTitle"] == "Позвонить сегодня"
     assert row["taskDueToday"] is True
+    assert "openTaskDueDates" in row
+    assert isinstance(row["openTaskDueDates"], list)
+    assert len(row["openTaskDueDates"]) >= 1
     assert "dayRank" in row
     assert "taskIntent" in row
     assert "needsEnrich" in row

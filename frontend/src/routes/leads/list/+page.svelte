@@ -44,6 +44,7 @@
 		groupLeads,
 		SORT_OPTIONS,
 		leadListViewFromVoiceSlots,
+		todayIsoDate,
 	} from '$lib/leads/leadListFilter.js';
 	import {
 		voiceLeadFilter,
@@ -68,6 +69,7 @@
 	let filterOkvedSection = $state('all');
 	let filterIndustryBucket = $state('all');
 	let filterTaskDue = $state('all');
+	let filterTaskDueDate = $state('');
 	let filterSubscription = $state('all');
 	let filterDeliveryType = $state('all');
 	let filterCoverage = $state('all');
@@ -180,6 +182,7 @@
 				filterOkvedSection,
 				filterIndustryBucket,
 				filterTaskDue,
+				filterTaskDueDate,
 				filterSubscription,
 				filterDeliveryType,
 				filterCoverage,
@@ -278,6 +281,7 @@
 			|| filterOkvedSection !== 'all'
 			|| filterIndustryBucket !== 'all'
 			|| filterTaskDue !== 'all'
+			|| (filterTaskDue === 'on_date' && filterTaskDueDate)
 			|| filterSubscription !== 'all'
 			|| filterDeliveryType !== 'all'
 			|| filterCoverage !== 'all'
@@ -285,6 +289,15 @@
 			|| filterMinScore != null,
 		),
 	);
+
+	function onTaskDueFilterChange() {
+		if (filterTaskDue === 'on_date' && !filterTaskDueDate) {
+			filterTaskDueDate = todayIsoDate();
+		}
+		if (filterTaskDue !== 'on_date') {
+			filterTaskDueDate = '';
+		}
+	}
 
 	function resetListFilters() {
 		search = '';
@@ -297,6 +310,7 @@
 		filterOkvedSection = 'all';
 		filterIndustryBucket = 'all';
 		filterTaskDue = 'all';
+		filterTaskDueDate = '';
 		filterSubscription = 'all';
 		filterDeliveryType = 'all';
 		filterCoverage = 'all';
@@ -1052,6 +1066,7 @@
 				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Дела</span>
 				<select
 					bind:value={filterTaskDue}
+					onchange={onTaskDueFilterChange}
 					class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
 					data-testid="leads-list-task-due"
 				>
@@ -1060,6 +1075,17 @@
 					{/each}
 				</select>
 			</label>
+			{#if filterTaskDue === 'on_date'}
+				<label class="min-w-[9rem]">
+					<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Дата дела</span>
+					<input
+						type="date"
+						bind:value={filterTaskDueDate}
+						class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+						data-testid="leads-list-task-due-date"
+					/>
+				</label>
+			{/if}
 			<label class="min-w-[8rem]">
 				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Группировка</span>
 				<select

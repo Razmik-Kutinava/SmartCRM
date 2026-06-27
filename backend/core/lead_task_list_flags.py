@@ -70,6 +70,12 @@ def lead_task_flags(
                 next_due = str(raw).strip()
                 break
 
+    due_dates: set[str] = set()
+    for task in open_rows:
+        d = _earliest_due(task)
+        if d:
+            due_dates.add(d.isoformat())
+
     urgency = "none"
     if best:
         urgency = _urgency_for_task(best, ref)
@@ -82,6 +88,7 @@ def lead_task_flags(
         "taskUrgency": urgency,
         "nextTaskTitle": str((best or {}).get("title") or "")[:120],
         "nextTaskDue": next_due[:100],
+        "openTaskDueDates": sorted(due_dates),
     }
 
 
