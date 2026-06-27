@@ -242,19 +242,40 @@ export function formatThreadTime(iso, now = new Date()) {
 
 export function syncStatusLabel(status) {
 	if (!status) return '';
+	const parts = [];
 	if (!status.auto_sync_enabled) {
-		return status.account_count > 0
-			? 'Фоновый синк выключен (EMAIL_AUTO_SYNC_MINUTES=0)'
-			: 'Подключите почту для синхронизации';
+		parts.push(
+			status.account_count > 0
+				? 'Фоновый синк выключен (EMAIL_AUTO_SYNC_MINUTES=0)'
+				: 'Подключите почту для синхронизации'
+		);
+	} else {
+		const mins = status.auto_sync_minutes ?? 5;
+		const last = status.last_poll_at
+			? new Date(status.last_poll_at).toLocaleString('ru-RU', {
+					day: '2-digit',
+					month: '2-digit',
+					hour: '2-digit',
+					minute: '2-digit',
+				})
+			: 'ещё не было';
+		parts.push(`Синк: каждые ${mins} мин · последний ${last}`);
 	}
-	const mins = status.auto_sync_minutes ?? 5;
-	const last = status.last_poll_at
-		? new Date(status.last_poll_at).toLocaleString('ru-RU', {
-				day: '2-digit',
-				month: '2-digit',
-				hour: '2-digit',
-				minute: '2-digit',
-			})
-		: 'ещё не было';
-	return `Фоновый синк: каждые ${mins} мин · последний ${last}`;
+	const bf = status.backfill;
+	if (bf?.enabled && !bf.paused) {
+		const acc = bf.accounts ? Object.values(bf.accounts) : [];
+		const running = acc.find((a) => a.status === 'running');
+		const totalImp = acc.reduce((s, a) => s + (a.total_imported || 0), 0);
+		if (running) {
+			parts.push(`Догрузка истории… +${totalImp} всего`);
+		} else if (bf.done_count < acc.length && acc.length) {
+			const cursor = acc.find((a) => a.status !== 'done')?.cursor_date;
+			parts.push(`Догрузка истории: +${totalImp} писем${cursor ? ` · до ${cursor}` : ''}`);
+		} else if (acc.length && bf.done_count === acc.length) {
+			parts.push(`История загружена (+${totalImp})`);
+		} else {
+			parts.push('Догрузка истории включена');
+		}
+	}
+	return parts.join(' · ');
 }

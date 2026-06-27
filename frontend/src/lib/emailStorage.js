@@ -152,6 +152,15 @@ export async function fetchEmailSyncStatus() {
 	return emailJson('/sync/status');
 }
 
+export async function startEmailBackfill(reset = false) {
+	const q = reset ? '?reset=true' : '';
+	return emailJson(`/backfill/start${q}`, { method: 'POST' });
+}
+
+export async function pauseEmailBackfill() {
+	return emailJson('/backfill/pause', { method: 'POST' });
+}
+
 export async function fetchEmailConfigStatus() {
 	return emailJson('/config/status');
 }

@@ -31,6 +31,14 @@ async def test_run_background_inbox_sync_skipped_without_accounts(monkeypatch, t
         "email_sync.background.sync_all_email_accounts",
         new_callable=AsyncMock,
         return_value={"imported": 0, "total": 0, "accounts": [], "empty": True},
+    ), patch(
+        "services.email_nurture.process_due_nurture_steps",
+        new_callable=AsyncMock,
+        return_value={"processed": 0},
+    ), patch(
+        "email_sync.backfill.run_backfill_batch",
+        new_callable=AsyncMock,
+        return_value={"skipped": True},
     ):
         result = await background.run_background_inbox_sync()
     assert result["skipped"] is True
@@ -49,6 +57,14 @@ async def test_run_background_inbox_sync_writes_state(monkeypatch, tmp_path):
             "accounts": [{"id": 1, "username": "a@test.com"}],
             "empty": False,
         },
+    ), patch(
+        "services.email_nurture.process_due_nurture_steps",
+        new_callable=AsyncMock,
+        return_value={"processed": 0},
+    ), patch(
+        "email_sync.backfill.run_backfill_batch",
+        new_callable=AsyncMock,
+        return_value={"imported": 1},
     ):
         result = await background.run_background_inbox_sync()
     assert result["imported"] == 3

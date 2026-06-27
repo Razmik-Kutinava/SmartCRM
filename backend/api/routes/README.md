@@ -82,7 +82,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `webhooks_bitrix.py` | `/api/webhooks/bitrix` | Исходящие события Битрикс24 (ONCRMLEADADD) |
 | `leads/` | `/api/leads` | См. пакет выше |
 | `tasks.py` | `/api/tasks` | Задачи: CRUD, `task_intent`, `GET /intent-catalog`, фильтры |
-| `email.py` | `/api/email` | IMAP/SMTP; nurture: `/nurture/preview-llm`, `/start-llm` (`chain_type`: new/cross/upsell), `/start`, `/start-segment`, `/process-due`, `GET /nurture/chains`; кампании: `/campaign/preview-llm`, `/test-send`, `send_now` (фильтр `industries[]`) |
+| `email.py` | `/api/email` | IMAP/SMTP; sync/backfill: `GET /sync/status`, `POST /sync`, `GET /backfill/status`, `POST /backfill/start`, `POST /backfill/pause`, `POST /backfill/run-once`; nurture: `/nurture/preview-llm`, `/start-llm` (`chain_type`: new/cross/upsell), `/start`, `/start-segment`, `/process-due`, `GET /nurture/chains`; кампании: `/campaign/preview-llm`, `/test-send`, `send_now` (фильтр `industries[]`) |
 | `agent_email.py` | `/api/agent-email` | AI-черновики писем по лиду |
 | `search.py` | `/api/search` | Поиск компаний; `enrich-lead` + кэш enrich; `auto-ingest-rag` |
 | `rag.py` | `/api/rag` | Загрузка документов, `ingest-dialogue`, **`/vendor-crawl`** (краулинг вендоров → tec) |

@@ -82,6 +82,14 @@
 - [ ] `is_read` / реальные вложения из IMAP (хвост API)
 - [ ] Trash / Drafts / Spam — синк с IMAP-папками
 
+### I. Полная история почты (backfill)
+
+- [x] Фоновый backfill батчами по датам (`EMAIL_BACKFILL_*`, `email_sync/backfill.py`)
+- [x] API `/api/email/backfill/*` + кнопка «Догрузить всю историю» на `/email`
+- [x] Скрипт `scripts/run_email_backfill.py` для ускоренной догрузки
+- [ ] Sent-папка в backfill (сейчас только INBOX)
+- [ ] Browser-апрув: счётчик писем/тредов вырос до полной истории
+
 ---
 
 ## Не в Ф4 (явно вне scope)

@@ -54,6 +54,7 @@
 | `smoke_email_nurture_live.py` | Live: тестовый лид-клиент → nurture start → process-due → 1-е письмо с `{{company}}` |
 | `smoke_email_nurture_segment_live.py` | Live: узкий сегмент `Nurture Live` → `start-segment` batch (без mass send) |
 | `smoke_email_nurture_llm_live.py` | Live: маркетолог LLM → 3 письма MaxPatrol VM → nurture start-llm |
+| `run_email_backfill.py` | Догрузка всей истории IMAP батчами (`--reset`, `--batches N`) |
 | `smoke_campaign_mass_ui.py` | Live UI: `/email` → Массовая (сегмент) — Playwright, чекбоксы → счётчик → 3 LLM → test ib@ |
 | `probe_email_host.py` | Диагностика IMAP/SMTP портов для кастомного хоста (me@) |
 | `smoke_scoring_funnel.py` | Смоук балльной воронки: формула scoreAdvisory + приоритеты |

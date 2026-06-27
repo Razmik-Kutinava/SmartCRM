@@ -18,6 +18,7 @@ from db.models.email_nurture import EmailNurtureChain, EmailNurtureStep
 from email_sync.sync import sync_account_messages
 from email_sync.sync_all import sync_all_email_accounts
 from email_sync.background import email_sync_status_payload
+from email_sync.backfill import backfill_status_payload, pause_backfill, start_backfill, run_backfill_batch
 from services.email_bootstrap import bootstrap_accounts_from_env, upsert_account_from_payload
 from services.email_thread_list import list_email_threads_enriched
 from services.email_thread_analyze import analyze_email_thread
@@ -189,10 +190,32 @@ async def sync_all_email_accounts_route(db: AsyncSession = Depends(get_db)):
 
 @router.get("/sync/status")
 async def email_background_sync_status(db: AsyncSession = Depends(get_db)):
-    """Фоновый IMAP-синк: интервал, последний прогон (без секретов)."""
+    """Фоновый IMAP-синк: интервал, последний прогон, backfill (без секретов)."""
     result = await db.execute(select(EmailAccount.id))
     count = len(result.all())
     return await email_sync_status_payload(account_count=count)
+
+
+@router.get("/backfill/status")
+async def email_backfill_status():
+    return backfill_status_payload()
+
+
+@router.post("/backfill/start")
+async def email_backfill_start(reset: bool = False):
+    """Запустить/продолжить фоновую догрузку истории."""
+    return start_backfill(reset=reset)
+
+
+@router.post("/backfill/pause")
+async def email_backfill_pause_route():
+    return pause_backfill()
+
+
+@router.post("/backfill/run-once")
+async def email_backfill_run_once(db: AsyncSession = Depends(get_db)):
+    """Один батч backfill вручную (smoke / ops)."""
+    return await run_backfill_batch(db)
 
 
 @router.get("/threads")

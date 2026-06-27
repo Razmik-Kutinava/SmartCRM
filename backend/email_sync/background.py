@@ -45,14 +45,17 @@ def write_sync_state(patch: dict[str, Any]) -> None:
 
 
 async def run_background_inbox_sync() -> dict[str, Any]:
-    """Один проход фонового синка — все аккаунты из БД."""
+    """Один проход фонового синка — все аккаунты из БД + батч backfill."""
     from services.email_nurture import process_due_nurture_steps
+    from email_sync.backfill import run_backfill_batch
 
     async with get_db_session() as db:
         summary = await sync_all_email_accounts(db)
         nurture = await process_due_nurture_steps(db)
+        backfill = await run_backfill_batch(db)
         await db.commit()
     summary["nurture"] = nurture
+    summary["backfill"] = backfill
     if summary.get("empty"):
         return {"skipped": True, "reason": "нет подключённых аккаунтов"}
 
@@ -84,11 +87,13 @@ async def email_poll_loop(stop: asyncio.Event) -> None:
             if result.get("skipped"):
                 logger.debug("Email auto-sync: %s", result.get("reason"))
             else:
+                bf = result.get("backfill") or {}
                 logger.info(
-                    "Email auto-sync: imported=%s total=%s accounts=%s",
+                    "Email auto-sync: imported=%s total=%s accounts=%s backfill=%s",
                     result.get("imported"),
                     result.get("total"),
                     len(result.get("accounts") or []),
+                    bf.get("imported") if not bf.get("skipped") else bf.get("reason"),
                 )
         except Exception:
             logger.exception("Email auto-sync failed")
@@ -100,6 +105,8 @@ async def email_poll_loop(stop: asyncio.Event) -> None:
 
 async def email_sync_status_payload(account_count: int | None = None) -> dict[str, Any]:
     """Сводка для GET /api/email/sync/status."""
+    from email_sync.backfill import backfill_status_payload
+
     minutes = email_auto_sync_minutes()
     state = read_sync_state()
     if account_count is None:
@@ -112,4 +119,5 @@ async def email_sync_status_payload(account_count: int | None = None) -> dict[st
         "account_count": account_count,
         "last_poll_at": state.get("last_poll_at"),
         "last_poll_result": state.get("last_poll_result"),
+        "backfill": backfill_status_payload(),
     }

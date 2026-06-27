@@ -5,7 +5,8 @@
     import {
         fetchEmailAccounts, connectEmailAccount, syncAllEmailAccounts, fetchEmailThreads,
         fetchEmailCampaigns, createCampaign, fetchEmailSyncStatus, previewCampaignSegment,
-        sendEmail, replyToEmail, fetchThreadMessages, analyzeEmailThread
+        sendEmail, replyToEmail, fetchThreadMessages, analyzeEmailThread,
+        startEmailBackfill
     } from '$lib/emailStorage.js';
     import {
         filterEmailThreads, countEmailFolder, groupThreadsByDate,
@@ -67,6 +68,7 @@
     let use_ssl     = $state(true);
     let connectLoading = $state(false);
     let syncLoading    = $state(false);
+    let backfillStarting = $state(false);
 
     // ─── кампании ────────────────────────────────────────────────
     let selectedAccountId = $state(null);
@@ -297,6 +299,18 @@
         finally { syncLoading = false; }
     }
 
+    async function startHistoryBackfill() {
+        if (!accounts.length) { error = '❌ Сначала подключите почту'; return; }
+        error = ''; success = '';
+        backfillStarting = true;
+        try {
+            await startEmailBackfill(false);
+            success = '✅ Догрузка истории запущена — идёт в фоне (батчи по 90 дней назад)';
+            syncStatus = await fetchEmailSyncStatus().catch(() => null);
+        } catch (e) { error = `❌ ${e.message}`; }
+        finally { backfillStarting = false; }
+    }
+
     // ─── подключение ─────────────────────────────────────────────
     async function connect() {
         error = ''; success = '';
@@ -387,8 +401,17 @@
         {#if error}   <div class="mx-5 mt-3 px-4 py-2.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm flex-shrink-0">{error}</div>   {/if}
         {#if success} <div class="mx-5 mt-3 px-4 py-2.5 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm flex-shrink-0">{success}</div> {/if}
         {#if syncStatus && showMailList}
-            <div class="mx-5 mt-2 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-gray-500 text-xs flex-shrink-0">
-                {syncStatusLabel(syncStatus)}
+            <div class="mx-5 mt-2 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-gray-500 text-xs flex-shrink-0 flex flex-wrap items-center gap-3">
+                <span class="flex-1 min-w-0">{syncStatusLabel(syncStatus)}</span>
+                {#if accounts.length && syncStatus.backfill?.enabled}
+                    <button
+                        type="button"
+                        class="text-[#0066cc] hover:underline whitespace-nowrap disabled:opacity-50"
+                        disabled={backfillStarting}
+                        onclick={startHistoryBackfill}
+                        data-testid="email-backfill-start"
+                    >{backfillStarting ? 'Запуск…' : 'Догрузить всю историю'}</button>
+                {/if}
             </div>
         {/if}
 

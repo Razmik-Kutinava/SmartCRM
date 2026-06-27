@@ -76,10 +76,28 @@ def _parse_msg_date(raw: Any) -> datetime:
     return dt
 
 
-def _imap_since_date(account: EmailAccount) -> date | None:
-    """Письма с этой даты (IMAP SINCE). Окно 30 дней — чинит даты после битого импорта."""
+def incremental_since_date() -> date:
     days = int(os.getenv("EMAIL_IMAP_SINCE_DAYS", "30"))
     return (datetime.now(timezone.utc) - timedelta(days=max(1, days))).date()
+
+
+def _imap_since_date(account: EmailAccount) -> date | None:
+    """Письма с этой даты (IMAP SINCE). Окно 30 дней — инкрементальный синк."""
+    return incremental_since_date()
+
+
+def _imap_fetch_limit() -> int:
+    return max(1, int(os.getenv("EMAIL_IMAP_FETCH_LIMIT", "500")))
+
+
+def _build_imap_criteria(date_gte: date | None, date_lt: date | None):
+    if date_gte and date_lt:
+        return AND(date_gte=date_gte, date_lt=date_lt)
+    if date_gte:
+        return AND(date_gte=date_gte)
+    if date_lt:
+        return AND(date_lt=date_lt)
+    return None
 
 
 def _message_uid(msg: Any) -> str:
@@ -142,7 +160,15 @@ def _fetch_imap_by_uids(account: EmailAccount, uids: list[str]) -> dict[str, dic
     return out
 
 
-def _fetch_imap_messages(account: EmailAccount) -> list[dict[str, Any]]:
+def _fetch_imap_messages(
+    account: EmailAccount,
+    *,
+    folder: str = "INBOX",
+    date_gte: date | None = None,
+    date_lt: date | None = None,
+    fetch_limit: int | None = None,
+    incremental: bool = True,
+) -> list[dict[str, Any]]:
     messages = []
     from imap_tools import MailBox, MailBoxUnencrypted
     from core.email_tls import account_insecure_ssl, imap_ssl_context
@@ -155,12 +181,15 @@ def _fetch_imap_messages(account: EmailAccount) -> list[dict[str, Any]]:
         kw["ssl_context"] = ssl_ctx
     with mailbox_cls(**kw) as mailbox:
         mailbox.login(account.username, decrypt(account.password))
-        mailbox.folder.set("INBOX")
-        fetch_limit = int(os.getenv("EMAIL_IMAP_FETCH_LIMIT", "500"))
-        since = _imap_since_date(account)
-        fetch_kw: dict[str, Any] = {"limit": max(1, fetch_limit), "reverse": True}
-        if since:
-            fetch_kw["criteria"] = AND(date_gte=since)
+        mailbox.folder.set(folder)
+        limit = fetch_limit if fetch_limit is not None else _imap_fetch_limit()
+        since = date_gte
+        if incremental and since is None:
+            since = _imap_since_date(account)
+        fetch_kw: dict[str, Any] = {"limit": max(1, limit), "reverse": True}
+        criteria = _build_imap_criteria(since, date_lt)
+        if criteria is not None:
+            fetch_kw["criteria"] = criteria
         for msg in mailbox.fetch(**fetch_kw):
             messages.append(_msg_to_item(msg))
     return messages
@@ -245,15 +274,21 @@ async def _repair_existing_message(
     return email
 
 
-async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict[str, Any]:
-    raw_messages = await run_in_threadpool(_fetch_imap_messages, account)
+async def import_imap_messages(
+    account: EmailAccount, db: AsyncSession, raw_messages: list[dict[str, Any]]
+) -> dict[str, Any]:
+    """Импорт списка IMAP-сообщений в БД (sync + backfill)."""
     if not raw_messages:
-        since = _imap_since_date(account)
-        account.last_synced_at = datetime.now(timezone.utc)
-        await db.commit()
-        return {'imported': 0, 'updated': 0, 'total': 0, 'since': since.isoformat() if since else None}
+        return {
+            "imported": 0,
+            "updated": 0,
+            "fake_fixed": 0,
+            "threads_fixed": 0,
+            "total": 0,
+            "faq_autoreplies": 0,
+        }
 
-    message_ids = [m['message_id'] for m in raw_messages if m['message_id']]
+    message_ids = [m["message_id"] for m in raw_messages if m["message_id"]]
     existing = set()
     if message_ids:
         rows = await db.execute(
@@ -266,20 +301,21 @@ async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict
 
     imported = 0
     updated = 0
-    touched_threads: set[int] = set()
     new_inbound: list[EmailMessage] = []
     for item in raw_messages:
-        if not item['message_id']:
+        if not item["message_id"]:
             continue
-        if item['message_id'] in existing:
+        if item["message_id"] in existing:
             repaired = await _repair_existing_message(db, account.id, item)
             if repaired:
                 updated += 1
-                touched_threads.add(repaired.thread_id)
             continue
 
         lead = await find_lead_for_email(
-            db, item['sender'], item['recipients'], item['cc'],
+            db,
+            item["sender"],
+            item["recipients"],
+            item["cc"],
             own_usernames={account.username},
         )
         thread = await _get_or_create_thread(db, account.id, lead.id if lead else None, item)
@@ -287,32 +323,28 @@ async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict
             account_id=account.id,
             thread_id=thread.id,
             lead_id=lead.id if lead else None,
-            message_id=item['message_id'],
-            in_reply_to=item['in_reply_to'],
-            subject=item['subject'],
-            sender=item['sender'],
-            recipients=item['recipients'],
-            cc=item['cc'],
-            direction=item['direction'],
-            category=item['category'],
-            snippet=item['snippet'],
-            body=item['body'],
-            raw_headers=item['raw_headers'],
-            sent_at=item['sent_at'],
+            message_id=item["message_id"],
+            in_reply_to=item["in_reply_to"],
+            subject=item["subject"],
+            sender=item["sender"],
+            recipients=item["recipients"],
+            cc=item["cc"],
+            direction=item["direction"],
+            category=item["category"],
+            snippet=item["snippet"],
+            body=item["body"],
+            raw_headers=item["raw_headers"],
+            sent_at=item["sent_at"],
         )
         db.add(email)
         imported += 1
         new_inbound.append(email)
-        touched_threads.add(thread.id)
         thread.snippet = email.snippet
         thread.last_message_at = email.sent_at or datetime.now(timezone.utc)
         thread.category = email.category
 
     fake_fixed = await _repair_fake_import_dates(account, db)
     threads_fixed = await _recompute_thread_timestamps(db, account.id, None)
-
-    since = _imap_since_date(account)
-    account.last_synced_at = datetime.now(timezone.utc)
     await db.flush()
 
     faq_sent = 0
@@ -323,16 +355,52 @@ async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict
         if msg.thread_id:
             await pause_chain_on_inbound(db, msg.thread_id)
 
-    await db.commit()
     return {
-        'imported': imported,
-        'updated': updated,
-        'fake_fixed': fake_fixed,
-        'threads_fixed': threads_fixed,
-        'total': len(raw_messages),
-        'since': since.isoformat() if since else None,
-        'faq_autoreplies': faq_sent,
+        "imported": imported,
+        "updated": updated,
+        "fake_fixed": fake_fixed,
+        "threads_fixed": threads_fixed,
+        "total": len(raw_messages),
+        "faq_autoreplies": faq_sent,
     }
+
+
+async def sync_account_messages(account: EmailAccount, db: AsyncSession) -> dict[str, Any]:
+    raw_messages = await run_in_threadpool(_fetch_imap_messages, account)
+    since = _imap_since_date(account)
+    if not raw_messages:
+        account.last_synced_at = datetime.now(timezone.utc)
+        await db.commit()
+        return {"imported": 0, "updated": 0, "total": 0, "since": since.isoformat() if since else None}
+
+    stats = await import_imap_messages(account, db, raw_messages)
+    account.last_synced_at = datetime.now(timezone.utc)
+    await db.commit()
+    return {**stats, "since": since.isoformat() if since else None}
+
+
+async def sync_account_messages_date_window(
+    account: EmailAccount,
+    db: AsyncSession,
+    *,
+    date_gte: date,
+    date_lt: date,
+    fetch_limit: int | None = None,
+) -> dict[str, Any]:
+    """Backfill: окно дат [date_gte, date_lt)."""
+    raw_messages = await run_in_threadpool(
+        _fetch_imap_messages,
+        account,
+        date_gte=date_gte,
+        date_lt=date_lt,
+        fetch_limit=fetch_limit,
+        incremental=False,
+    )
+    stats = await import_imap_messages(account, db, raw_messages)
+    account.last_synced_at = datetime.now(timezone.utc)
+    await db.commit()
+    return {**stats, "date_gte": date_gte.isoformat(), "date_lt": date_lt.isoformat()}
+
 
 async def _get_or_create_thread(db: AsyncSession, account_id: int, lead_id: int | None, item: dict[str, Any]) -> EmailThread:
     q = select(EmailThread).where(EmailThread.account_id == account_id, EmailThread.thread_key == item['thread_key'])

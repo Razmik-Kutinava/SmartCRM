@@ -2,8 +2,9 @@
 
 | Файл | За что |
 |------|--------|
-| `sync.py` | IMAP INBOX, парсинг дат, repair битого импорта |
+| `sync.py` | IMAP INBOX, парсинг дат, repair битого импорта, import/backfill окна |
 | `sync_all.py` | Sync всех аккаунтов (API + фон) |
+| `backfill.py` | Догрузка истории батчами назад (`EMAIL_BACKFILL_*`) |
 | `background.py` | Фоновый poll loop, nurture steps, `EMAIL_AUTO_SYNC_MINUTES` |
 | `../services/email_lead_match.py` | Ф3: линковка лида по email/домену |
 | `../services/email_faq_autoreply.py` | Ф3: автоответ FAQ после sync |

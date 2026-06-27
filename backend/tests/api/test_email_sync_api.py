@@ -79,6 +79,7 @@ async def test_sync_status_endpoint(client, monkeypatch):
     assert body["auto_sync_minutes"] == 5
     assert body["auto_sync_enabled"] is False
     assert body["account_count"] == 0
+    assert "backfill" in body
 
 
 @pytest.mark.asyncio

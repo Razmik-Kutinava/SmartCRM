@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 from imap_tools import AND
 
-from email_sync.sync import _fetch_imap_messages, _imap_since_date, _parse_msg_date
+from email_sync.sync import _fetch_imap_messages, _imap_since_date, _parse_msg_date, incremental_since_date
 
 
 def test_fetch_imap_messages_mocked():
@@ -26,6 +26,8 @@ def test_fetch_imap_messages_mocked():
         use_ssl=True,
         imap_server="imap.test",
         imap_port=993,
+        smtp_server="smtp.test",
+        smtp_port=465,
         username="u@test.com",
         password="enc",
     )
@@ -79,6 +81,8 @@ def test_fetch_imap_uses_since_criteria():
         use_ssl=True,
         imap_server="imap.test",
         imap_port=993,
+        smtp_server="smtp.test",
+        smtp_port=465,
         username="u@test.com",
         password="enc",
         last_synced_at=datetime(2026, 6, 11, 10, 0, tzinfo=timezone.utc),
@@ -95,4 +99,4 @@ def test_fetch_imap_uses_since_criteria():
 
     assert len(rows) == 1
     kw = mailbox.fetch.call_args.kwargs
-    assert kw["criteria"] == AND(date_gte=_imap_since_date(account))
+    assert kw["criteria"] == AND(date_gte=incremental_since_date())

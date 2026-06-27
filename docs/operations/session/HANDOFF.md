@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 Email] | Задача:[backfill всей истории] | Статус: ✅ done (код) | 👤 credentials + browser`
+
+**2026-06-27:** Фоновая догрузка почты — `backfill.py`, API `/api/email/backfill/*`, кнопка «Догрузить всю историю», скрипт `run_email_backfill.py`; батчи по 90 дней назад до 10 лет. **👤:** проверить пароль ib@ (AUTHENTICATIONFAILED); на `/email` нажать «Догрузить» или `python scripts/run_email_backfill.py`.
+
+---
+
 `Спринт:[Ф4 Email UI] | Задача:[тред как Яндекс] | Статус: ✅ done (код) | 👤 browser`
 
 **2026-06-25:** Тред — одно письмо + «Письма на тему» справа; цитаты обрезаются. **👤:** открыть длинный тред (Ruslan/ADSelfService), переключить письма в сайдбаре.
