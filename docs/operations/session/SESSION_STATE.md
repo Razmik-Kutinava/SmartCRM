@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-27 | Действие: persistence фильтров /leads/list — sessionStorage leadListFilterState.js; restore при возврате с карточки; pytest 4 PASS | Коммит: `pending` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
+
 2026-06-27 | Действие: LeadCardCoachBanner на хабе /leads/[id] — просрочки, доки, паспорт, скоринг; alert на плитках; pytest 3 PASS | Коммит: `aa53b96` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-27 | Действие: listStageSummary — этап/путь/сроки в GET /api/leads + UI колонка Этап (прогресс, дни, дело); batch_stage_entered_at; pytest 10 PASS | Коммит: `267c713` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done

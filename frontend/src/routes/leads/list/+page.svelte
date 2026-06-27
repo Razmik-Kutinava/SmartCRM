@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import {
 		fetchLeads,
 		apiCreateLead,
@@ -66,29 +67,53 @@
 	import { subscriptionBadgeForLead, deliveryTypeFromLead } from '$lib/leads/leadBitrixExtra.js';
 	import { COVERAGE_FILTERS } from '$lib/leads/leadCoverage.js';
 	import { leadManagerLabel } from '$lib/leads/leadManager.js';
+	import {
+		readLeadsListFilters,
+		writeLeadsListFilters,
+		clearLeadsListFilters,
+		hasLeadsListFiltersStorage,
+		LEADS_LIST_FILTER_DEFAULTS,
+	} from '$lib/leads/leadListFilterState.js';
 
 	const API = getApiUrl();
 
-	let search = $state('');
-	let filterStage = $state('all');
-	let filterPriority = $state('all');
-	let filterScoreRisk = $state('all');
-	let filterIndustry = $state('');
-	let filterCity = $state('');
-	let filterEmployeesBand = $state('all');
-	let filterOkvedSection = $state('all');
-	let filterIndustryBucket = $state('all');
-	let filterTaskDue = $state('all');
-	let filterTaskDueDate = $state('');
-	let filterSubscription = $state('all');
-	let filterDeliveryType = $state('all');
-	let filterCoverage = $state('all');
-	let filterManager = $state('all');
-	let filterMinScore = $state(null);
-	let groupBy = $state('none');
+	const savedListFilters = browser ? readLeadsListFilters() : null;
+	const hadSavedListFilters = browser && hasLeadsListFiltersStorage();
+
+	let search = $state(savedListFilters?.search ?? LEADS_LIST_FILTER_DEFAULTS.search);
+	let filterStage = $state(savedListFilters?.filterStage ?? LEADS_LIST_FILTER_DEFAULTS.filterStage);
+	let filterPriority = $state(savedListFilters?.filterPriority ?? LEADS_LIST_FILTER_DEFAULTS.filterPriority);
+	let filterScoreRisk = $state(savedListFilters?.filterScoreRisk ?? LEADS_LIST_FILTER_DEFAULTS.filterScoreRisk);
+	let filterIndustry = $state(savedListFilters?.filterIndustry ?? LEADS_LIST_FILTER_DEFAULTS.filterIndustry);
+	let filterCity = $state(savedListFilters?.filterCity ?? LEADS_LIST_FILTER_DEFAULTS.filterCity);
+	let filterEmployeesBand = $state(
+		savedListFilters?.filterEmployeesBand ?? LEADS_LIST_FILTER_DEFAULTS.filterEmployeesBand,
+	);
+	let filterOkvedSection = $state(
+		savedListFilters?.filterOkvedSection ?? LEADS_LIST_FILTER_DEFAULTS.filterOkvedSection,
+	);
+	let filterIndustryBucket = $state(
+		savedListFilters?.filterIndustryBucket ?? LEADS_LIST_FILTER_DEFAULTS.filterIndustryBucket,
+	);
+	let filterTaskDue = $state(savedListFilters?.filterTaskDue ?? LEADS_LIST_FILTER_DEFAULTS.filterTaskDue);
+	let filterTaskDueDate = $state(
+		savedListFilters?.filterTaskDueDate ?? LEADS_LIST_FILTER_DEFAULTS.filterTaskDueDate,
+	);
+	let filterSubscription = $state(
+		savedListFilters?.filterSubscription ?? LEADS_LIST_FILTER_DEFAULTS.filterSubscription,
+	);
+	let filterDeliveryType = $state(
+		savedListFilters?.filterDeliveryType ?? LEADS_LIST_FILTER_DEFAULTS.filterDeliveryType,
+	);
+	let filterCoverage = $state(savedListFilters?.filterCoverage ?? LEADS_LIST_FILTER_DEFAULTS.filterCoverage);
+	let filterManager = $state(savedListFilters?.filterManager ?? LEADS_LIST_FILTER_DEFAULTS.filterManager);
+	let filterMinScore = $state(savedListFilters?.filterMinScore ?? LEADS_LIST_FILTER_DEFAULTS.filterMinScore);
+	let groupBy = $state(savedListFilters?.groupBy ?? LEADS_LIST_FILTER_DEFAULTS.groupBy);
 	/** @type {string[]} */
-	let collapsedGroupKeys = $state([]);
-	let sortBy = $state('my_day');
+	let collapsedGroupKeys = $state(
+		savedListFilters?.collapsedGroupKeys ?? LEADS_LIST_FILTER_DEFAULTS.collapsedGroupKeys,
+	);
+	let sortBy = $state(savedListFilters?.sortBy ?? LEADS_LIST_FILTER_DEFAULTS.sortBy);
 	let showVoice = $state(false); // голос теперь глобальный — в layout
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
 	let apiError = $state(false); // флаг недоступности API
@@ -110,6 +135,31 @@
 
 	// Сразу показываем кэш, потом перезаписываем данными из БД
 	let leads = $state(readLeadsCache());
+
+	$effect(() => {
+		if (!browser) return;
+		writeLeadsListFilters({
+			search,
+			filterStage,
+			filterPriority,
+			filterScoreRisk,
+			filterIndustry,
+			filterCity,
+			filterEmployeesBand,
+			filterOkvedSection,
+			filterIndustryBucket,
+			filterTaskDue,
+			filterTaskDueDate,
+			filterSubscription,
+			filterDeliveryType,
+			filterCoverage,
+			filterManager,
+			filterMinScore,
+			groupBy,
+			sortBy,
+			collapsedGroupKeys,
+		});
+	});
 
 	onMount(async () => {
 		await loadCrmConfig();
@@ -136,7 +186,7 @@
 		try {
 			const mgr = await fetchLeadManagers();
 			managerOptions = Array.isArray(mgr?.managers) ? mgr.managers : [];
-			if (mgr?.defaultFilter && filterManager === 'all') {
+			if (mgr?.defaultFilter && filterManager === 'all' && !hadSavedListFilters) {
 				filterManager = mgr.defaultFilter;
 			}
 		} catch {
@@ -310,23 +360,26 @@
 	}
 
 	function resetListFilters() {
-		search = '';
-		filterStage = 'all';
-		filterPriority = 'all';
-		filterScoreRisk = 'all';
-		filterIndustry = '';
-		filterCity = '';
-		filterEmployeesBand = 'all';
-		filterOkvedSection = 'all';
-		filterIndustryBucket = 'all';
-		filterTaskDue = 'all';
-		filterTaskDueDate = '';
-		filterSubscription = 'all';
-		filterDeliveryType = 'all';
-		filterCoverage = 'all';
-		filterManager = 'all';
-		filterMinScore = null;
-		sortBy = 'my_day';
+		clearLeadsListFilters();
+		search = LEADS_LIST_FILTER_DEFAULTS.search;
+		filterStage = LEADS_LIST_FILTER_DEFAULTS.filterStage;
+		filterPriority = LEADS_LIST_FILTER_DEFAULTS.filterPriority;
+		filterScoreRisk = LEADS_LIST_FILTER_DEFAULTS.filterScoreRisk;
+		filterIndustry = LEADS_LIST_FILTER_DEFAULTS.filterIndustry;
+		filterCity = LEADS_LIST_FILTER_DEFAULTS.filterCity;
+		filterEmployeesBand = LEADS_LIST_FILTER_DEFAULTS.filterEmployeesBand;
+		filterOkvedSection = LEADS_LIST_FILTER_DEFAULTS.filterOkvedSection;
+		filterIndustryBucket = LEADS_LIST_FILTER_DEFAULTS.filterIndustryBucket;
+		filterTaskDue = LEADS_LIST_FILTER_DEFAULTS.filterTaskDue;
+		filterTaskDueDate = LEADS_LIST_FILTER_DEFAULTS.filterTaskDueDate;
+		filterSubscription = LEADS_LIST_FILTER_DEFAULTS.filterSubscription;
+		filterDeliveryType = LEADS_LIST_FILTER_DEFAULTS.filterDeliveryType;
+		filterCoverage = LEADS_LIST_FILTER_DEFAULTS.filterCoverage;
+		filterManager = LEADS_LIST_FILTER_DEFAULTS.filterManager;
+		filterMinScore = LEADS_LIST_FILTER_DEFAULTS.filterMinScore;
+		groupBy = LEADS_LIST_FILTER_DEFAULTS.groupBy;
+		collapsedGroupKeys = [...LEADS_LIST_FILTER_DEFAULTS.collapsedGroupKeys];
+		sortBy = LEADS_LIST_FILTER_DEFAULTS.sortBy;
 	}
 
 	function closeListMenu() {
