@@ -84,6 +84,20 @@
 
 ---
 
+[2026-06-27] — B24 портал: MySQL Connection refused — mass resync стоит
+
+Приоритет: 🔴 | Статус: открыта
+
+Описание: `spawn_bitrix_backfill_all` — `crm.lead.get` / `crm.status.list` HTTP 500: `Bitrix\Main\DB\ConnectionException Mysql connect error [localhost]: (2002) Connection refused`. Поля `only-missing` → `status: failed`; таймлайн/tasks/products не двигают `processed`.
+
+Влияние: догрузка ~618 таймлайн + ~191 полей + tasks/products заблокирована до восстановления Битрикс24 на портале.
+
+Решение: проверить MySQL/сервисы на хосте B24; после восстановления — `python scripts/spawn_bitrix_backfill_all.py` из `backend/`.
+
+Агент: B24 backfill restart
+
+---
+
 [2026-06-07] — `test_hermes_eval.py`: 9 failed (интенты create/update/noop)
 
 Приоритет: 🟡 | Статус: открыта

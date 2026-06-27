@@ -30,6 +30,7 @@ def main() -> int:
             "fields",
             [
                 "resync_bitrix_lead_fields.py",
+                "--only-missing",
                 "--workers",
                 "2",
                 "--batch-size",
