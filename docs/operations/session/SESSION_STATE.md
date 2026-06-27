@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-27 | Действие: фильтр «На дату» в /leads/list — openTaskDueDates в API, date picker в UI; pytest 9 PASS | Коммит: `TBD` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
+2026-06-27 | Действие: фильтр «На дату» в /leads/list — openTaskDueDates в API, date picker в UI; pytest 9 PASS | Коммит: `b301757` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-27 | Действие: task_intent dropdown (tasks/карточка/activity) + Ops day_priority JSON; API intent-catalog; тесты 53 PASS crm_leads | Коммит: `24c7f4b` | Хвост A: нет | Хвост B: нет | Хвост C: фикс import в task.py | Статус: done
 
