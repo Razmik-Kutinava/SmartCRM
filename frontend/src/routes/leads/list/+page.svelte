@@ -35,6 +35,7 @@
 		TASK_DUE_FILTERS,
 		SUBSCRIPTION_FILTERS,
 		distinctDeliveryTypes,
+		needsEnrichBadgeForLead,
 		taskDueBadgeForLead,
 		GROUP_BY_OPTIONS,
 		distinctOkvedSections,
@@ -75,7 +76,7 @@
 	let groupBy = $state('none');
 	/** @type {string[]} */
 	let collapsedGroupKeys = $state([]);
-	let sortBy = $state('tasks_urgent');
+	let sortBy = $state('my_day');
 	let showVoice = $state(false); // голос теперь глобальный — в layout
 	let notification = $state(null); // { text, type: 'success'|'error'|'info' }
 	let apiError = $state(false); // флаг недоступности API
@@ -301,7 +302,7 @@
 		filterCoverage = 'all';
 		filterManager = 'all';
 		filterMinScore = null;
-		sortBy = 'tasks_urgent';
+		sortBy = 'my_day';
 	}
 
 	function closeListMenu() {
@@ -1180,6 +1181,7 @@
 					{#each group.leads as lead, i}
 				{@const tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
 				{@const taskBadge = taskDueBadgeForLead(lead)}
+				{@const enrichBadge = needsEnrichBadgeForLead(lead)}
 				{@const subBadge = subscriptionBadgeForLead(lead)}
 				<tr class="hover:bg-gray-800/30 transition-colors group">
 					<td class="px-6 py-3 text-gray-600 text-xs">{i + 1}</td>
@@ -1187,15 +1189,24 @@
 						<a href="/leads/{lead.id}" class="font-medium text-white hover:text-indigo-400 transition-colors">
 							{lead.company}
 						</a>
-						{#if taskBadge}
+						{#if taskBadge || enrichBadge}
 							<div class="mt-1 flex flex-wrap items-center gap-1 max-w-[14rem]">
-								<span
-									class="inline-block px-1.5 py-0.5 rounded text-[10px] border {taskBadge.cls}"
-									data-testid="leads-list-task-badge"
-									title={lead.nextTaskTitle ? `${lead.nextTaskTitle}${lead.nextTaskDue ? ` · ${lead.nextTaskDue}` : ''}` : ''}
-								>{taskBadge.label}</span>
-								{#if lead.nextTaskTitle}
-									<span class="text-[10px] text-gray-600 truncate" title={lead.nextTaskTitle}>{lead.nextTaskTitle}</span>
+								{#if enrichBadge}
+									<span
+										class="inline-block px-1.5 py-0.5 rounded text-[10px] border {enrichBadge.cls}"
+										data-testid="leads-list-needs-enrich"
+										title="Горячий лид — дозаполни паспорт и карточку"
+									>{enrichBadge.label}</span>
+								{/if}
+								{#if taskBadge}
+									<span
+										class="inline-block px-1.5 py-0.5 rounded text-[10px] border {taskBadge.cls}"
+										data-testid="leads-list-task-badge"
+										title={lead.nextTaskTitle ? `${lead.nextTaskTitle}${lead.nextTaskDue ? ` · ${lead.nextTaskDue}` : ''}` : ''}
+									>{taskBadge.label}</span>
+									{#if lead.nextTaskTitle}
+										<span class="text-[10px] text-gray-600 truncate" title={lead.nextTaskTitle}>{lead.nextTaskTitle}</span>
+									{/if}
 								{/if}
 							</div>
 						{/if}

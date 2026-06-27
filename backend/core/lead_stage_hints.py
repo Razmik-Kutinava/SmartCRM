@@ -12,6 +12,8 @@ from core.lead_deal_path import (
 )
 from core.lead_approvals import APPROVAL_LABELS_RU
 from core.lead_contacts import contacts_for_api, has_established_lpr
+from core.lead_day_priority import days_without_touch
+from core.lead_task_intents import WAIT_STALE_INTENTS, classify_task_intent
 
 
 def _hint(severity: str, code: str, message: str, **extra: Any) -> dict[str, Any]:
@@ -131,6 +133,30 @@ def compute_stage_hints(
                 label = APPROVAL_LABELS_RU.get(key, key)
                 hints.append(
                     _hint("warn", f"won_doc_{key}", f"Выигран, но не закрыто: «{label}».")
+                )
+
+    title = str(lead.get("nextTaskTitle") or "").strip()
+    if title and last_comm_at is not None:
+        intent_id, _ = classify_task_intent(title)
+        no_touch = days_without_touch(last_comm_at, today)
+        if intent_id in WAIT_STALE_INTENTS or stage in ("КП отправлено", "Переговоры"):
+            if no_touch >= 21:
+                hints.append(
+                    _hint(
+                        "warn",
+                        "wait_stale",
+                        f"Нет касания {no_touch} дн. по делу «{title[:60]}» — перенеси срок, закрой или отметь проигран.",
+                        daysWithoutTouch=no_touch,
+                    )
+                )
+            elif no_touch >= 14:
+                hints.append(
+                    _hint(
+                        "info",
+                        "repeat_wait_task",
+                        f"Долгое ожидание ({no_touch} дн.) — проверь, актуален ли лид.",
+                        daysWithoutTouch=no_touch,
+                    )
                 )
 
     if score_advisory:

@@ -164,6 +164,15 @@ def test_sort_warnings_desc():
     assert [x["id"] for x in out] == [2, 1, 3]
 
 
+def test_sort_my_day():
+    leads = [
+        {"dayRank": 5000, "company": "B"},
+        {"dayRank": 100, "company": "A"},
+    ]
+    out = sorted(leads, key=lambda l: (float(l.get("dayRank") or 1e9),))
+    assert [x["company"] for x in out] == ["A", "B"]
+
+
 def test_sort_score_delta_desc():
     leads = [
         {"id": 1, "scoreDelta": 10, "scoreWarningsCount": 0},

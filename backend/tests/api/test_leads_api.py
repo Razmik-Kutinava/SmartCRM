@@ -345,6 +345,36 @@ async def test_list_leads_includes_task_flags(client):
     assert "nextTaskTitle" in row
     assert row["nextTaskTitle"] == "Позвонить сегодня"
     assert row["taskDueToday"] is True
+    assert "dayRank" in row
+    assert "taskIntent" in row
+    assert "needsEnrich" in row
+
+
+@pytest.mark.asyncio
+async def test_list_leads_day_rank_kp_above_trial(client):
+    """«Мой день»: ответ на КП выше триалки при том же дне."""
+    import datetime as dt
+
+    today = dt.date.today().strftime("%d.%m.%Y")
+    for company, title in (("КП компания", "ответ на кп"), ("Триал компания", "получить триалку")):
+        cr = await client.post(
+            "/api/leads",
+            json={"company": company, "stage": "КП отправлено", "score": 55},
+        )
+        assert cr.status_code == 201
+        lid = cr.json()["id"]
+        tr = await client.post(
+            "/api/tasks",
+            json={"title": title, "lead_id": lid, "due": f"{today} 08:00"},
+        )
+        assert tr.status_code == 201
+
+    rows = (await client.get("/api/leads")).json()
+    kp = next(l for l in rows if l["company"] == "КП компания")
+    trial = next(l for l in rows if l["company"] == "Триал компания")
+    assert kp["dayRank"] < trial["dayRank"]
+    assert kp["taskIntent"] == "kp_followup"
+    assert trial["taskIntent"] == "trial_request"
 
 
 @pytest.mark.asyncio

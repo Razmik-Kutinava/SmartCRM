@@ -8,6 +8,7 @@ import {
 } from '$lib/leads/leadBitrixExtra.js';
 
 export const SORT_OPTIONS = [
+	{ id: 'my_day', label: 'Мой день ↑' },
 	{ id: 'tasks_urgent', label: 'Дела срочные ↑' },
 	{ id: 'score_desc', label: 'Балл ↓' },
 	{ id: 'score_asc', label: 'Балл ↑' },
@@ -281,6 +282,14 @@ export function taskUrgencyRank(lead) {
 	return TASK_URGENCY_RANK[u] ?? 4;
 }
 
+export function needsEnrichBadgeForLead(lead) {
+	if (!lead?.needsEnrich) return null;
+	return {
+		label: 'Дозаполни',
+		cls: 'text-fuchsia-300 bg-fuchsia-950/50 border-fuchsia-800/50 animate-pulse',
+	};
+}
+
 export function taskDueBadgeForLead(lead) {
 	if (lead.taskOverdue) return { label: 'Просрочено', cls: 'text-red-400 bg-red-950/60 border-red-900/50' };
 	if (lead.taskDueToday) return { label: 'Сегодня', cls: 'text-amber-300 bg-amber-950/50 border-amber-900/40' };
@@ -403,6 +412,18 @@ export function sortLeads(leads, sortBy = 'score_desc', config = null) {
 	const companyOf = (l) => String(l.company || '').toLocaleLowerCase('ru');
 
 	switch (sortBy) {
+		case 'my_day':
+			return rows.sort((a, b) => {
+				const ra = Number(a.dayRank);
+				const rb = Number(b.dayRank);
+				const da = Number.isFinite(ra) ? ra : 1e9;
+				const db = Number.isFinite(rb) ? rb : 1e9;
+				if (da !== db) return da - db;
+				const amtA = Number(a.amount ?? a.deal_amount ?? 0) || 0;
+				const amtB = Number(b.amount ?? b.deal_amount ?? 0) || 0;
+				if (amtB !== amtA) return amtB - amtA;
+				return companyOf(a).localeCompare(companyOf(b), 'ru');
+			});
 		case 'tasks_urgent':
 			return rows.sort(
 				(a, b) =>

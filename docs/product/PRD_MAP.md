@@ -564,12 +564,12 @@
 
 Детали: [`F4_DAY_PRIORITY.md`](../operations/phase4/leads/F4_DAY_PRIORITY.md) · спека согласована 2026-06-27, код **не начат**
 
-- [ ] **Спека и формула** — этап+`dealPath` первичны, тип задачи вторичен, затухание «жду ответ» · док готов
-- [ ] **`lead_day_priority.py`** — `dayRank`, `stageBoost`, `urgencyBucket`, `waitStalePenalty`
-- [ ] **Классификатор дел** — `classify_task_intent(title)` + словарь intent→tier (regex, конфиг)
-- [ ] **API** — поля `dayRank`, `taskIntent`, `needsEnrich` в `GET /api/leads` и `/api/leads/activities`
-- [ ] **UI list + deals** — сортировка «Мой день», бейдж `needsEnrich`; единые правила при фильтре менеджера
-- [ ] **Суфлеры** — расширить `lead_stage_hints`: `wait_stale`, повтор ожидания без касания
+- [x] **Спека и формула** — этап+`dealPath` первичны, тип задачи вторичен, затухание «жду ответ» · док готов
+- [x] **`lead_day_priority.py`** — `dayRank`, `stageBoost`, `urgencyBucket`, `waitStalePenalty` · 2026-06-27
+- [x] **Классификатор дел** — `classify_task_intent(title)` + словарь intent→tier · `lead_task_intents.py`
+- [x] **API** — поля `dayRank`, `taskIntent`, `needsEnrich` в `GET /api/leads` и `/api/leads/activities`
+- [x] **UI list + deals** — сортировка «Мой день», бейдж `needsEnrich`; единые правила при фильтре менеджера
+- [x] **Суфлеры** — `lead_stage_hints`: `wait_stale`, `repeat_wait_task`
 - [ ] **Типы задач в CRM** — dropdown `task_intent` при создании (шаг 2, после базового ранга)
 - [ ] **Ops** — веса `day_priority` в `/ops/crm` (опционально)
 - [ ] Приёмка по §11 `F4_DAY_PRIORITY.md` · `[x]` только после «ок» оператора

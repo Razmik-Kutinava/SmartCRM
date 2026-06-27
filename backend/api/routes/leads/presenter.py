@@ -1,4 +1,5 @@
 """Сборка ответа API для карточки лида."""
+import datetime as dt
 from decimal import Decimal
 
 from fastapi import Request
@@ -8,8 +9,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core import crm_settings_store, lead_score_advisory
 from core.lead_approvals import default_approvals_dict, merge_approvals_payload
 from core.lead_card_context import last_communication_at, stage_entered_at
+from core.lead_day_priority import compute_day_priority
 from core.lead_deal_path import build_deal_path
-from core.lead_stage_hints import compute_stage_hints
+from core.lead_stage_hints import compute_stage_hints, days_on_stage
 from core.tender_lead_link import tender_link_for_lead
 from services.sla_protocol_runner import build_protocol_status
 from db.models import Lead, Task
@@ -57,6 +59,15 @@ async def lead_api_payload(lead: Lead, db: AsyncSession) -> dict:
         last_comm_at=last_comm,
         settings=settings,
         score_advisory=payload.get("scoreAdvisory"),
+    )
+    on_stage = days_on_stage(entered, dt.date.today()) if entered else 0
+    payload.update(
+        compute_day_priority(
+            payload,
+            tasks_payload,
+            last_comm_at=last_comm,
+            on_stage_days=on_stage,
+        )
     )
     tender_link = await tender_link_for_lead(db, lead.id)
     if tender_link:

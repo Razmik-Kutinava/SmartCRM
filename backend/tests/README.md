@@ -77,6 +77,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `lib/test_lead_activity_timeline.py` | Единая лента «Действия и история» (комменты + встречи без дублей B24) |
 | `api/test_lead_engagement.py` | Комментарии, касания, апрувы, dealPath/stageHints в GET |
 | `core/test_lead_deal_path.py` | Путь сделки, подсказки по этапу, порядок доков |
+| `core/test_lead_day_priority.py` | Ранжирование «Мой день»: dayRank, intent, needsEnrich, stale |
 | `core/test_task_dates.py` | Даты и SLA задач |
 | `api/test_tasks_api.py` | CRUD задач, lead_id, overdue |
 | `api/test_lead_comments_api.py` | Комментарии: 404, пустой body, порядок, x-actor-name |

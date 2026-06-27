@@ -13,8 +13,8 @@ CRUD лидов, вовлечённость, Битрикс.
 | Файл | За что |
 |------|--------|
 | `__init__.py` | Сборка роутера |
-| `crud.py` | Список, `GET /coverage`, `GET /managers`, `GET /activities` (дела по лидам), создать, lookalike-import, … |
-| `activities_routes.py` | `GET /api/leads/activities` — ближайшее дело по лиду, фильтры scheduled/today/tomorrow |
+| `crud.py` | Список (+ `dayRank`, `taskIntent`, `needsEnrich`), `GET /coverage`, `GET /managers`, создать, lookalike-import, … |
+| `activities_routes.py` | `GET /api/leads/activities` — дела по лидам; сортировка по `dayRank` («Мой день») |
 | `analytics_routes.py` | Сводка KPI и экспорт `/analytics/summary`, `/analytics/export` — query `period`, `source`, `format=csv|xlsx|pdf` |
 | `export_routes.py` | PDF карточки лида `GET /{lead_id}/export?format=pdf` |
 | `csv_routes.py` | CSV базы лидов `POST /import-csv`, `GET /export?format=csv` |

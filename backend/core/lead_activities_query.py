@@ -71,7 +71,7 @@ def build_activity_row(lead: dict[str, Any], task: dict[str, Any], *, today: dt.
     due_raw = _task_due_raw(task)
     parsed = parse_task_datetime(due_raw)
     extra = lead.get("bitrixExtra") if isinstance(lead.get("bitrixExtra"), dict) else {}
-    return {
+    row = {
         "leadId": lead.get("id"),
         "company": str(lead.get("company") or "")[:200],
         "contact": str(lead.get("contact") or "—")[:120],
@@ -84,7 +84,12 @@ def build_activity_row(lead: dict[str, Any], task: dict[str, Any], *, today: dt.
         "taskDue": due_raw or "—",
         "taskDueSort": parsed.isoformat() if parsed else "",
         "taskNote": str(task.get("note") or "")[:300],
+        "dayRank": lead.get("dayRank"),
+        "taskIntent": lead.get("taskIntent"),
+        "needsEnrich": bool(lead.get("needsEnrich")),
+        "waitStale": bool(lead.get("waitStale")),
     }
+    return row
 
 
 def query_lead_activities(
@@ -116,7 +121,7 @@ def query_lead_activities(
         if not _matches_due_slot(due_raw, slot, ref):
             continue
         rows.append(build_activity_row(lead, task, today=ref))
-    rows.sort(key=lambda r: (r.get("taskDueSort") or "9999", r.get("company") or ""))
+    rows.sort(key=lambda r: (r.get("dayRank") if r.get("dayRank") is not None else 1e9, r.get("taskDueSort") or "9999", r.get("company") or ""))
     return rows
 
 

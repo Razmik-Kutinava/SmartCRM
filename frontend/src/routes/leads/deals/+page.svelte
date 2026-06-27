@@ -72,7 +72,7 @@
 	<div class="shrink-0 px-4 sm:px-6 py-3 border-b border-gray-800 bg-gray-900">
 		<div class="flex flex-wrap items-center gap-3">
 			<h1 class="text-lg font-semibold text-white">Дела</h1>
-			<span class="text-xs text-gray-500">ближайшее дело по лиду · как в Битрикс24</span>
+			<span class="text-xs text-gray-500">умная очередь дня · как «Мой день»</span>
 			<label class="ml-auto min-w-[10rem]">
 				<span class="sr-only">Менеджер</span>
 				<select
@@ -141,6 +141,9 @@
 									>{row.company}</a>
 									{#if row.source}
 										<div class="text-[10px] text-gray-600 mt-0.5">{row.source}</div>
+									{/if}
+									{#if row.needsEnrich}
+										<span class="text-[10px] text-fuchsia-400 mt-0.5 block">дозаполни карточку</span>
 									{/if}
 								</td>
 								<td class="px-4 py-3">

@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[«Мой день» — dayRank] | Статус: ✅ done (код) | 👤 приёмка`
+
+**2026-06-27:** `lead_day_priority.py` + intents + API `dayRank`/`needsEnrich`; сортировка «Мой день» list/deals; суфлеры `wait_stale`. pytest 51 crm_leads PASS. **👤:** `/leads/list` + `/leads/deals` + фильтр менеджера. Dropdown task_intent — BACKLOG.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[спека «Мой день»] | Статус: ✅ done (док)`
 
 **2026-06-27:** Согласована логика умной очереди: этап+`dealPath` первичны, тип задачи вторичен, затухание «жду ответ». Канон: `docs/operations/phase4/leads/F4_DAY_PRIORITY.md`; пункты в PRD_MAP §«Мой день». Код **не начат** — ждём `go` на шаг 1 (`lead_day_priority.py`). Backfill B24 — отдельно (🔴 портал).
