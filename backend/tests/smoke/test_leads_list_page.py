@@ -68,6 +68,15 @@ def test_leads_list_filters_labeled():
     assert "resetListFilters" in text
 
 
+def test_leads_list_reset_button_always_visible():
+    text = _LIST.read_text(encoding="utf-8")
+    filters = text.split('data-testid="leads-list-filters"', 1)[1].split("<!-- Table -->", 1)[0]
+    idx = filters.index('data-testid="leads-list-reset-filters"')
+    before = filters[max(0, idx - 200) : idx]
+    assert '{#if filtersActive}' not in before
+    assert "shrink-0" in before
+
+
 def test_leads_list_kpi_strip():
     text = _LIST.read_text(encoding="utf-8")
     assert 'data-testid="leads-list-kpi"' in text

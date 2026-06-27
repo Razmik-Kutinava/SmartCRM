@@ -329,27 +329,6 @@
 		};
 	});
 
-	const filtersActive = $derived(
-		Boolean(
-			search.trim()
-			|| filterStage !== 'all'
-			|| filterPriority !== 'all'
-			|| filterScoreRisk !== 'all'
-			|| filterIndustry
-			|| filterCity
-			|| filterEmployeesBand !== 'all'
-			|| filterOkvedSection !== 'all'
-			|| filterIndustryBucket !== 'all'
-			|| filterTaskDue !== 'all'
-			|| (filterTaskDue === 'on_date' && filterTaskDueDate)
-			|| filterSubscription !== 'all'
-			|| filterDeliveryType !== 'all'
-			|| filterCoverage !== 'all'
-			|| filterManager !== 'all'
-			|| filterMinScore != null,
-		),
-	);
-
 	function onTaskDueFilterChange() {
 		if (filterTaskDue === 'on_date' && !filterTaskDueDate) {
 			filterTaskDueDate = todayIsoDate();
@@ -1010,6 +989,13 @@
 					data-testid="leads-list-search"
 				/>
 			</label>
+			<button
+				type="button"
+				class="shrink-0 self-end px-3 py-2 text-xs rounded-lg border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+				data-testid="leads-list-reset-filters"
+				onclick={resetListFilters}
+				title="Сбросить все фильтры и сортировку"
+			>Сбросить</button>
 			<label class="min-w-[10rem]">
 				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Менеджер</span>
 				<select
@@ -1162,14 +1148,6 @@
 					{/each}
 				</select>
 			</label>
-			{#if filtersActive}
-				<button
-					type="button"
-					class="px-3 py-2 text-xs rounded-lg border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-colors mb-0.5"
-					data-testid="leads-list-reset-filters"
-					onclick={resetListFilters}
-				>Сбросить</button>
-			{/if}
 		</div>
 		<div class="flex gap-1 flex-wrap" data-testid="leads-list-stage-chips">
 			{#each stages as stage}
