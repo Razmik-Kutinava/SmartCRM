@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-27 | Действие: docs — спека «Мой день» F4_DAY_PRIORITY.md; PRD_MAP §Мой день (8 пунктов); phase4/README, F4_LEADS_ACCEPTANCE, F4_SCORING_TUNING, leads.md, BACKLOG, core/README | Коммит: pending | Хвост A: код lead_day_priority после go | Хвост B: BACKLOG запись | Хвост C: нет | Статус: done
+
 2026-06-27 | Действие: restart B24 backfill — spawn 5 workers; spawn fields→--only-missing; resume timeline 2610/3228; 🔴 B24 MySQL Connection refused на портале | Коммит: `0287f39` | Хвост A: догрузить ~618 timeline + ~191 fields после B24 | Хвост B: нет | Хвост C: ISSUES B24 MySQL | Статус: blocked
 
 2026-06-26 | Действие: restart mass B24 backfill — spawn_bitrix_backfill_all (поля/таймлайн/tasks/products/watch); timeline resume 2490→2520+/3228; fields ~94% extra | Коммит: `98727cf` | Хвост A: дождаться 3228 timeline+tasks | Хвост B: нет | Хвост C: нет | Статус: in_progress

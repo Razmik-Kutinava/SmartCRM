@@ -560,6 +560,20 @@
 - [x] Аналитика `/leads/analytics` — smoke · **апрув обход 2026-06-25**
 - [ ] Голос на лидах — create, filter, delete approve (S04) · **отложен** (после приёмки проекта)
 
+### Мой день (приоритет очереди)
+
+Детали: [`F4_DAY_PRIORITY.md`](../operations/phase4/leads/F4_DAY_PRIORITY.md) · спека согласована 2026-06-27, код **не начат**
+
+- [ ] **Спека и формула** — этап+`dealPath` первичны, тип задачи вторичен, затухание «жду ответ» · док готов
+- [ ] **`lead_day_priority.py`** — `dayRank`, `stageBoost`, `urgencyBucket`, `waitStalePenalty`
+- [ ] **Классификатор дел** — `classify_task_intent(title)` + словарь intent→tier (regex, конфиг)
+- [ ] **API** — поля `dayRank`, `taskIntent`, `needsEnrich` в `GET /api/leads` и `/api/leads/activities`
+- [ ] **UI list + deals** — сортировка «Мой день», бейдж `needsEnrich`; единые правила при фильтре менеджера
+- [ ] **Суфлеры** — расширить `lead_stage_hints`: `wait_stale`, повтор ожидания без касания
+- [ ] **Типы задач в CRM** — dropdown `task_intent` при создании (шаг 2, после базового ранга)
+- [ ] **Ops** — веса `day_priority` в `/ops/crm` (опционально)
+- [ ] Приёмка по §11 `F4_DAY_PRIORITY.md` · `[x]` только после «ок» оператора
+
 ### Email (тюнинг Ф4)
 
 Детали: [`F4_EMAIL_TUNING.md`](../operations/phase4/email/F4_EMAIL_TUNING.md)

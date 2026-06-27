@@ -3,6 +3,8 @@
 **Откуда:** P3 закрыл SLA, экспорт отчёта, `scoreAdvisory` на карточке, приоритет в списке.  
 **Зачем Ф4:** закрыть **операционные дыры** — РОП и менеджер должны настраивать и видеть баллы без JSON и без «открыть каждую карточку».
 
+**Не путать с «Мой день»:** ежедневная очередь (`dayRank`, этап+задачи+время) — отдельный блок [`F4_DAY_PRIORITY.md`](F4_DAY_PRIORITY.md). Скоринг даёт `score`/`suggestedScore`; day-priority **не перезаписывает** балл в БД.
+
 База P3: [`F3_SLA_PROTOCOLS_ACCEPTANCE.md`](../../phase3/leads/F3_SLA_PROTOCOLS_ACCEPTANCE.md), [`F3_SCORING_EXPORT_ACCEPTANCE.md`](../../phase3/leads/F3_SCORING_EXPORT_ACCEPTANCE.md).
 
 ---

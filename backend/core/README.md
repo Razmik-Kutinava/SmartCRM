@@ -83,6 +83,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_card_context.py` | Даты этапа и касаний для карточки |
 | `lead_score_list_flags.py` | Флаги advisory для списка лидов (`hasScoreWarnings`, `scoreDivergent`) |
 | `lead_task_list_flags.py` | Флаги задач в списке лидов (`taskDueToday`, `taskDueTomorrow`, `nextTaskTitle`) |
+| `lead_day_priority.py` | *(план)* Ранжирование «Мой день»: `dayRank`, этап+dealPath, intent задачи, затухание ожидания — см. `docs/operations/phase4/leads/F4_DAY_PRIORITY.md` |
 | `lead_activities_query.py` | Список «дела по лидам» для `GET /api/leads/activities` |
 | `lead_coverage.py` | Сегменты полноты карточки (B24, паспорт, пустые, проигран, без дел) |
 | `lead_coverage_attach.py` | Прикрепление coverage-флагов к списку лидов |
