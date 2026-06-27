@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-27 | Действие: task_intent dropdown (tasks/карточка/activity) + Ops day_priority JSON; API intent-catalog; тесты 53 PASS crm_leads | Коммит: `TBD` | Хвост A: нет | Хвост B: нет | Хвост C: фикс import в task.py | Статус: done
+2026-06-27 | Действие: task_intent dropdown (tasks/карточка/activity) + Ops day_priority JSON; API intent-catalog; тесты 53 PASS crm_leads | Коммит: `24c7f4b` | Хвост A: нет | Хвост B: нет | Хвост C: фикс import в task.py | Статус: done
 
 2026-06-27 | Действие: «Мой день» — lead_day_priority, intents, API dayRank, UI sort+badge, stage_hints wait_stale; pytest crm_leads 51 PASS | Коммит: `6fcf5d4` | Хвост A: dropdown task_intent, Ops веса | Хвост B: нет | Хвост C: нет | Статус: done
 
