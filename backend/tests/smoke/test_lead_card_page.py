@@ -10,6 +10,7 @@ _HUB_TILE = _REPO / "frontend" / "src" / "components" / "LeadHubTile.svelte"
 _SLIDE_OVER = _REPO / "frontend" / "src" / "components" / "LeadSlideOver.svelte"
 _DEAL_PATH_PANEL = _REPO / "frontend" / "src" / "components" / "LeadDealPathPanel.svelte"
 _SCORE_ADVISORY_PANEL = _REPO / "frontend" / "src" / "components" / "LeadScoreAdvisoryPanel.svelte"
+_COACH_BANNER = _REPO / "frontend" / "src" / "components" / "LeadCardCoachBanner.svelte"
 
 
 def test_lead_card_industry_options_declared_before_use():
@@ -44,6 +45,8 @@ def test_lead_card_hub_layout():
     assert 'data-testid="lead-card-hub-grid"' in text
     assert 'data-testid="lead-card-overview"' in text
     assert 'data-testid="lead-card-main"' in text
+    assert "LeadCardCoachBanner" in text
+    assert 'data-testid="lead-card-coach-banner"' in _COACH_BANNER.read_text(encoding="utf-8")
     assert "LeadHubTile" in text
     assert "LeadProductsPanel" in text
     assert "openPanel === 'products'" in text

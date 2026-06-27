@@ -55,6 +55,8 @@
 	import LeadProductsPanel from '../../../components/LeadProductsPanel.svelte';
 	import { passportHasData } from '$lib/leads/leadPassport.js';
 	import { buildHubTilePreviews, PANEL_TITLES } from '$lib/leads/leadHubPreview.js';
+	import { buildLeadCardCoachItems, hubTileAlertsFromCoach } from '$lib/leads/leadCardCoach.js';
+	import LeadCardCoachBanner from '../../../components/LeadCardCoachBanner.svelte';
 
 	let lead = $state(null);
 	let notFound = $state(false);
@@ -502,6 +504,9 @@
 		})
 	);
 
+	const cardCoachItems = $derived(buildLeadCardCoachItems(lead, leadTasksList));
+	const hubTileAlerts = $derived(hubTileAlertsFromCoach(cardCoachItems));
+
 	let leadTasksList = $state([]);
 	let leadTasksLoading = $state(false);
 	let leadTaskSaving = $state(false);
@@ -908,6 +913,7 @@
 	<div class="flex-1 flex flex-col overflow-hidden min-h-0" data-testid="lead-card-main">
 		<div class="flex-1 overflow-y-auto p-4 sm:p-6" data-testid="lead-card-hub">
 			<div class="w-full" data-testid="lead-card-overview">
+				<LeadCardCoachBanner items={cardCoachItems} onOpen={openHubPanel} />
 				<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" data-testid="lead-card-hub-grid">
 					{#each hubTiles as tile (tile.id)}
 						<LeadHubTile
@@ -916,6 +922,7 @@
 							preview={tile.preview}
 							meta={tile.meta}
 							accent={tile.accent}
+							alert={Boolean(hubTileAlerts[tile.id])}
 							testId="lead-hub-tile-{tile.id}"
 							onclick={() => openHubPanel(tile.id)}
 						/>

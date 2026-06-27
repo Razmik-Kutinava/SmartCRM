@@ -5,6 +5,7 @@
 		preview = '',
 		meta = '',
 		accent = 'indigo',
+		alert = false,
 		onclick = () => {},
 		testId = 'lead-hub-tile',
 	} = $props();
@@ -28,7 +29,16 @@
 >
 	<div class="flex items-start justify-between gap-2">
 		<span class="text-2xl sm:text-3xl" aria-hidden="true">{icon}</span>
-		<span class="text-[10px] uppercase tracking-wider text-gray-500 group-hover:text-gray-400">Открыть →</span>
+		<div class="flex items-center gap-1.5 shrink-0">
+			{#if alert}
+				<span
+					class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-950 text-rose-300 border border-rose-800/80"
+					data-testid="{testId}-alert"
+					title="Требует внимания"
+				>!</span>
+			{/if}
+			<span class="text-[10px] uppercase tracking-wider text-gray-500 group-hover:text-gray-400">Открыть →</span>
+		</div>
 	</div>
 	<div class="mt-3 min-w-0">
 		<div class="text-sm sm:text-base font-semibold text-white leading-snug">{title}</div>
