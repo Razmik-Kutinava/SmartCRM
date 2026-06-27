@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-27 | Действие: task_intent dropdown (tasks/карточка/activity) + Ops day_priority JSON; API intent-catalog; тесты 53 PASS crm_leads | Коммит: `TBD` | Хвост A: нет | Хвост B: нет | Хвост C: фикс import в task.py | Статус: done
+
 2026-06-27 | Действие: «Мой день» — lead_day_priority, intents, API dayRank, UI sort+badge, stage_hints wait_stale; pytest crm_leads 51 PASS | Коммит: `6fcf5d4` | Хвост A: dropdown task_intent, Ops веса | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-27 | Действие: docs — спека «Мой день» F4_DAY_PRIORITY.md; PRD_MAP §Мой день (8 пунктов); phase4/README, F4_LEADS_ACCEPTANCE, F4_SCORING_TUNING, leads.md, BACKLOG, core/README | Коммит: `f212757` | Хвост A: код lead_day_priority после go | Хвост B: BACKLOG запись | Хвост C: нет | Статус: done

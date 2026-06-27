@@ -32,6 +32,7 @@
 	import { isRepeatLead } from '$lib/leads/leadBitrixExtra.js';
 	import { leadManagerLabel } from '$lib/leads/leadManager.js';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
+	import { TASK_INTENT_OPTIONS } from '$lib/tasks/taskIntentCatalog.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 	import { formatRuDate } from '$lib/leads/leadActivityTasks.js';
 	import { enrichLeadOnCard } from '$lib/search/enrichLeadOnCard.js';
@@ -383,21 +384,26 @@
 
 	async function addLeadTask() {
 		if (!lead || leadTaskSaving) return;
-		const title = prompt('Название задачи:');
-		if (!title?.trim()) return;
-		const dueDefault = formatRuDate(new Date());
-		const dueRaw = prompt(`Срок (ДД.ММ.ГГГГ, Enter = сегодня):`, dueDefault);
-		if (dueRaw === null) return;
-		const due = (dueRaw.trim() || dueDefault);
+		if (!leadTaskFormOpen) {
+			leadTaskFormOpen = true;
+			leadTaskTitle = '';
+			leadTaskDue = formatRuDate(new Date());
+			leadTaskIntent = '';
+			return;
+		}
+		if (!leadTaskTitle.trim()) return;
 		leadTaskSaving = true;
 		try {
 			await createTask({
-				title: title.trim(),
+				title: leadTaskTitle.trim(),
 				lead_id: lead.id,
 				related_lead: lead.company,
-				due,
-				sla_due: due,
+				due: leadTaskDue.trim() || formatRuDate(new Date()),
+				sla_due: leadTaskDue.trim() || formatRuDate(new Date()),
+				task_intent: leadTaskIntent.trim() || null,
 			});
+			leadTaskFormOpen = false;
+			leadTaskTitle = '';
 			await loadLeadTasks();
 		} catch (e) {
 			alert('Не удалось создать задачу: ' + (e?.message || e));
@@ -499,6 +505,10 @@
 	let leadTasksList = $state([]);
 	let leadTasksLoading = $state(false);
 	let leadTaskSaving = $state(false);
+	let leadTaskFormOpen = $state(false);
+	let leadTaskTitle = $state('');
+	let leadTaskDue = $state('');
+	let leadTaskIntent = $state('');
 
 	const stageTransitionRules = $derived(getCachedCrmConfig()?.stageTransitionRules ?? []);
 
@@ -1206,14 +1216,55 @@
 								</div>
 							</div>
 						{/each}
+						{#if leadTaskFormOpen}
+							<div class="p-3 border border-gray-700 rounded-lg space-y-2" data-testid="lead-card-task-form">
+								<input
+									bind:value={leadTaskTitle}
+									placeholder="Название задачи"
+									class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white"
+								/>
+								<input
+									bind:value={leadTaskDue}
+									placeholder="Срок дд.мм.гггг"
+									class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white"
+								/>
+								<select
+									bind:value={leadTaskIntent}
+									class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white"
+									data-testid="lead-card-task-intent"
+								>
+									{#each TASK_INTENT_OPTIONS as opt (opt.id || 'auto')}
+										<option value={opt.id}>{opt.label}</option>
+									{/each}
+								</select>
+								<div class="flex gap-2">
+									<button
+										type="button"
+										disabled={leadTaskSaving}
+										onclick={addLeadTask}
+										class="flex-1 py-2 rounded-lg bg-indigo-600 text-sm text-white disabled:opacity-50"
+									>
+										{leadTaskSaving ? 'Создание…' : 'Сохранить задачу'}
+									</button>
+									<button
+										type="button"
+										class="px-3 py-2 rounded-lg border border-gray-700 text-sm text-gray-400"
+										onclick={() => (leadTaskFormOpen = false)}
+									>
+										Отмена
+									</button>
+								</div>
+							</div>
+						{:else}
 						<button
 							type="button"
 							disabled={leadTaskSaving}
 							onclick={addLeadTask}
 							class="w-full p-3 border border-dashed border-gray-700 rounded-lg text-sm text-gray-500 hover:text-gray-300 hover:border-gray-500 transition-colors disabled:opacity-50"
 						>
-							{leadTaskSaving ? 'Создание…' : '+ Добавить задачу'}
+							+ Добавить задачу
 						</button>
+						{/if}
 						<a href="/leads/tasks" class="block text-xs text-indigo-400 hover:underline">Все задачи и SLA →</a>
 					</div>
 

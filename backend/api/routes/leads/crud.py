@@ -54,7 +54,7 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
     with_score = attach_lead_score_flags(leads, tasks_by_lead, settings)
     with_tasks = attach_lead_task_flags(with_score, tasks_by_lead)
     with_coverage = attach_lead_coverage_flags(with_tasks, tasks_by_lead)
-    with_day = attach_lead_day_priority(with_coverage, tasks_by_lead)
+    with_day = attach_lead_day_priority(with_coverage, tasks_by_lead, settings=settings)
     return attach_lead_manager_labels(with_day)
 
 

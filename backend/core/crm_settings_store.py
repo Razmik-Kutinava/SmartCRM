@@ -47,6 +47,8 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     },
     # P3: SLA-протоколы (шаги задач по стадии лида)
     "sla_protocols": [],
+    # Ф4: веса очереди «Мой день» (пустой dict = дефолты в core/day_priority_config.py)
+    "day_priority": {},
 }
 
 
@@ -118,6 +120,8 @@ def save_settings(new_data: dict[str, Any]) -> dict[str, Any]:
             current["stage_transition_rules"] = normalize_stage_transition_rules(v)
         elif k == "sla_protocols":
             current["sla_protocols"] = normalize_sla_protocols(v)
+        elif k == "day_priority" and isinstance(v, dict):
+            current["day_priority"] = v
         elif k in DEFAULT_SETTINGS:
             current[k] = v
     _FILE.write_text(json.dumps(current, ensure_ascii=False, indent=2), encoding="utf-8")

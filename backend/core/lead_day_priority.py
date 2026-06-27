@@ -5,26 +5,16 @@ import datetime as dt
 from decimal import Decimal
 from typing import Any, Optional
 
+from core.day_priority_config import DEFAULT_DAY_PRIORITY, merge_day_priority
 from core.lead_deal_path import build_deal_path
 from core.lead_task_intents import WAIT_STALE_INTENTS, classify_task_intent, intent_weight
 from core.lead_task_list_flags import lead_task_flags
 from core.task_dates import parse_task_datetime
 
-STAGE_BOOST: dict[str, int] = {
-    "Проигран": 10,
-    "Новый": 40,
-    "Квалифицирован": 90,
-    "КП отправлено": 160,
-    "Переговоры": 190,
-    "Выигран": 220,
-}
-
 HOT_STAGES = frozenset({"КП отправлено", "Переговоры", "Выигран"})
 
-_URGENCY_BASE = {"overdue": 0, "today": 10_000, "tomorrow": 20_000, "upcoming": 30_000, "open": 12_000, "none": 50_000}
 
-
-def _deal_path_progress_boost(lead: dict[str, Any]) -> int:
+def _deal_path_progress_boost(lead: dict[str, Any], cap: int) -> int:
     path = build_deal_path(lead)
     total = done = 0
     for group in path.get("groups") or []:
@@ -33,7 +23,7 @@ def _deal_path_progress_boost(lead: dict[str, Any]) -> int:
         done += int(prog.get("done") or 0)
     if total <= 0:
         return 0
-    return int(50 * done / total)
+    return int(cap * done / total)
 
 
 def _time_addon(due_raw: str, urgency: str, today: dt.date) -> float:
@@ -52,15 +42,17 @@ def _time_addon(due_raw: str, urgency: str, today: dt.date) -> float:
     return 200.0 if urgency == "open" else 0.0
 
 
-def _score_boost(lead: dict[str, Any]) -> int:
+def _score_boost(lead: dict[str, Any], dp: dict[str, Any]) -> int:
+    sug_factor = float(dp.get("score_suggested_factor") or 0.6)
+    mgr_factor = float(dp.get("score_manager_factor") or 0.4)
     sug = lead.get("suggestedScore")
     if sug is not None:
         try:
-            return int(float(sug) * 0.6)
+            return int(float(sug) * sug_factor)
         except (TypeError, ValueError):
             pass
     try:
-        return int(float(lead.get("score") or 0) * 0.4)
+        return int(float(lead.get("score") or 0) * mgr_factor)
     except (TypeError, ValueError):
         return 0
 
@@ -90,15 +82,21 @@ def wait_stale_penalty(
     stage: str,
     days_no_touch: int,
     on_stage_days: int = 0,
+    dp: dict[str, Any] | None = None,
 ) -> tuple[int, bool]:
+    cfg = dp or DEFAULT_DAY_PRIORITY
+    start = int(cfg.get("stale_start_days") or 14)
+    per_day = int(cfg.get("stale_penalty_per_day") or 120)
+    cap = int(cfg.get("stale_penalty_cap") or 8000)
+    wait_days = int(cfg.get("wait_stale_days") or 21)
     if intent_id not in WAIT_STALE_INTENTS and stage not in HOT_STAGES:
         return 0, False
-    if days_no_touch < 14:
+    if days_no_touch < start:
         return 0, False
-    penalty = min(8000, (days_no_touch - 13) * 120)
+    penalty = min(cap, (days_no_touch - start + 1) * per_day)
     if on_stage_days > 30:
         penalty += min(2000, (on_stage_days - 30) * 40)
-    stale = days_no_touch >= 21
+    stale = days_no_touch >= wait_days
     return penalty, stale
 
 
@@ -117,17 +115,25 @@ def compute_day_priority(
     today: Optional[dt.date] = None,
     last_comm_at: Optional[dt.datetime] = None,
     on_stage_days: int = 0,
+    settings: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    dp = merge_day_priority(settings)
+    stage_boost = dp.get("stage_boost") or {}
+    urgency_base = dp.get("urgency_base") or {}
+    tier_weight = dp.get("tier_weight") or {}
     ref = today or dt.date.today()
     flags = lead_task_flags(tasks, today=ref)
     stage = str(lead.get("stage") or "Новый").strip()
     title = str(flags.get("nextTaskTitle") or "")
     due_raw = str(flags.get("nextTaskDue") or "")
     note = ""
+    task_intent_field = ""
     open_rows = [t for t in tasks if str(t.get("status") or "open") != "done"]
     for t in open_rows:
         if str(t.get("title") or "").strip() == title:
-            note = str(t.get("note") or "")
+            task_intent_field = str(t.get("taskIntent") or "").strip()
+            raw_note = str(t.get("note") or "")
+            note = f"intent:{task_intent_field}" if task_intent_field else raw_note
             break
 
     intent_id, intent_tier = classify_task_intent(title, note)
@@ -135,12 +141,20 @@ def compute_day_priority(
     if flags.get("taskDueTomorrow") and urgency not in ("overdue", "today"):
         urgency = "tomorrow"
 
-    rank = float(_URGENCY_BASE.get(urgency, 50_000))
+    rank = float(urgency_base.get(urgency, urgency_base.get("none", 50_000)))
     rank += _time_addon(due_raw, urgency, ref)
 
-    money_boost = STAGE_BOOST.get(stage, 30) + _deal_path_progress_boost(lead)
-    task_boost = intent_weight(intent_id, intent_tier, stage)
-    score_boost = _score_boost(lead)
+    money_boost = int(stage_boost.get(stage, 30)) + _deal_path_progress_boost(
+        lead, int(dp.get("deal_path_progress_cap") or 50)
+    )
+    task_boost = intent_weight(
+        intent_id,
+        intent_tier,
+        stage,
+        tier_weight=tier_weight,
+        hot_bonus=int(dp.get("hot_stage_intent_bonus") or 40),
+    )
+    score_boost = _score_boost(lead, dp)
 
     rank -= money_boost
     rank -= task_boost
@@ -152,6 +166,7 @@ def compute_day_priority(
         stage=stage,
         days_no_touch=no_touch,
         on_stage_days=on_stage_days,
+        dp=dp,
     )
     rank += stale_pen
 

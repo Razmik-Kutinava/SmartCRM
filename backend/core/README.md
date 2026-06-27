@@ -85,7 +85,9 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `lead_task_list_flags.py` | Флаги задач в списке лидов (`taskDueToday`, `taskDueTomorrow`, `nextTaskTitle`) |
 | `lead_day_priority.py` | Ранжирование «Мой день»: `dayRank`, этап+dealPath, intent задачи, затухание |
 | `lead_day_priority_attach.py` | Прикрепление dayRank к списку лидов |
-| `lead_task_intents.py` | Классификация типа дела (intent → tier) |
+| `day_priority_config.py` | Дефолты и merge весов `crm_settings.day_priority` |
+| `task_intent_note.py` | Маркер `intent:xxx` в note задачи (без миграции БД) |
+| `lead_task_intents.py` | Классификация типа дела (intent → tier), каталог для dropdown |
 | `lead_activities_query.py` | Список «дела по лидам» для `GET /api/leads/activities` |
 | `lead_coverage.py` | Сегменты полноты карточки (B24, паспорт, пустые, проигран, без дел) |
 | `lead_coverage_attach.py` | Прикрепление coverage-флагов к списку лидов |

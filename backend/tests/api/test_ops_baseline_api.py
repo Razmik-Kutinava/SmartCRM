@@ -54,3 +54,18 @@ async def test_ops_crm_settings_roundtrip(client, monkeypatch, tmp_path):
     settings = get_r.json()["settings"]
     put_r = await client.put("/api/ops/crm-settings", json=settings)
     assert put_r.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_ops_crm_settings_day_priority_roundtrip(client, monkeypatch, tmp_path):
+    from core import crm_settings_store
+
+    fake = tmp_path / "crm_settings.json"
+    monkeypatch.setattr(crm_settings_store, "_FILE", fake)
+    settings = (await client.get("/api/ops/crm-settings")).json()["settings"]
+    settings["day_priority"] = {"stale_penalty_per_day": 150, "wait_stale_days": 30}
+    put_r = await client.put("/api/ops/crm-settings", json=settings)
+    assert put_r.status_code == 200
+    saved = (await client.get("/api/ops/crm-settings")).json()["settings"]["day_priority"]
+    assert saved["stale_penalty_per_day"] == 150
+    assert saved["wait_stale_days"] == 30

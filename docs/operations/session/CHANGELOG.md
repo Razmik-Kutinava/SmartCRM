@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-06-27 — Ф4: «Мой день» — task_intent dropdown + Ops day_priority
+
+`task_intent` в API/задачах (маркер в note), dropdown в tasks/карточке/activity; веса `day_priority` в `/ops/crm`. Тесты: task_intent_note, day_priority_config, tasks API, ops roundtrip.
+
 ## 2026-06-27 — Ф4: «Мой день» — dayRank в API и UI
 
 `lead_day_priority.py`, классификатор дел, сортировка list/deals, бейдж needsEnrich, суфлеры wait_stale. pytest crm_leads 51 PASS.

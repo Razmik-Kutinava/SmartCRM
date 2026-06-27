@@ -21,6 +21,8 @@ from core.task_dates import parse_task_date
 from core.task_list_filter import filter_tasks
 from db.session import get_db
 from db.models import Task
+from core.task_intent_note import extract_intent_from_note, note_for_display, upsert_intent_in_note
+from core.lead_task_intents import task_intent_catalog
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/tasks", tags=["tasks"])
@@ -36,6 +38,7 @@ class TaskCreate(BaseModel):
     related_lead: str = ""
     lead_id: Optional[int] = None
     note: str = ""
+    task_intent: Optional[str] = None
     sla_due: Optional[str] = None
     escalated: bool = False
 
@@ -48,8 +51,20 @@ class TaskPatch(BaseModel):
     related_lead: Optional[str] = None
     lead_id: Optional[int] = None
     note: Optional[str] = None
+    task_intent: Optional[str] = None
     sla_due: Optional[str] = None
     escalated: Optional[bool] = None
+
+
+def _apply_task_payload(data: dict, *, existing_note: str = "") -> dict:
+    out = dict(data)
+    intent = out.pop("task_intent", None)
+    if intent is not None or "note" in out:
+        current = out.get("note") if "note" in out else existing_note
+        if intent is None:
+            intent = extract_intent_from_note(existing_note)
+        out["note"] = upsert_intent_in_note(current or "", intent)
+    return out
 
 
 # ── Эндпоинты ──────────────────────────────────────────────────────
@@ -124,9 +139,15 @@ async def tasks_calendar_month(
     }
 
 
+@router.get("/intent-catalog")
+async def list_task_intent_catalog():
+    """Справочник типов дел для dropdown при создании задачи."""
+    return {"items": task_intent_catalog()}
+
+
 @router.post("", status_code=201)
 async def create_task(body: TaskCreate, db: AsyncSession = Depends(get_db)):
-    task = Task(**body.model_dump())
+    task = Task(**_apply_task_payload(body.model_dump()))
     db.add(task)
     await db.commit()
     await db.refresh(task)
@@ -148,6 +169,7 @@ async def update_task(task_id: int, body: TaskPatch, db: AsyncSession = Depends(
     if not task:
         raise HTTPException(404, detail="Задача не найдена")
     data = body.model_dump(exclude_none=True)
+    data = _apply_task_payload(data, existing_note=task.note or "")
     for field, value in data.items():
         setattr(task, field, value)
     await db.commit()

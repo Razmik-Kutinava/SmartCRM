@@ -10,6 +10,7 @@ def attach_lead_day_priority(
     leads: list[dict[str, Any]],
     tasks_by_lead: dict[int, list[dict[str, Any]]],
     *,
+    settings: dict[str, Any] | None = None,
     last_comm_by_lead: Optional[dict[int, Any]] = None,
     on_stage_days_by_lead: Optional[dict[int, int]] = None,
 ) -> list[dict[str, Any]]:
@@ -30,6 +31,7 @@ def attach_lead_day_priority(
                 tasks,
                 last_comm_at=last_comm_by_lead.get(lid_int) if lid_int else None,
                 on_stage_days=on_stage_days_by_lead.get(lid_int or 0, 0),
+                settings=settings,
             )
         )
         out.append(row)

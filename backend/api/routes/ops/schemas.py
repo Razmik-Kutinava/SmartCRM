@@ -106,3 +106,4 @@ class CrmSettingsUpdate(BaseModel):
     scoring_advisory: Optional[dict[str, Any]] = None
     stage_transition_rules: Optional[list[dict[str, Any]]] = None
     sla_protocols: Optional[list[dict[str, Any]]] = None
+    day_priority: Optional[dict[str, Any]] = None

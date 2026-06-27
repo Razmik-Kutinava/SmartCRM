@@ -78,8 +78,10 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `api/test_lead_engagement.py` | Комментарии, касания, апрувы, dealPath/stageHints в GET |
 | `core/test_lead_deal_path.py` | Путь сделки, подсказки по этапу, порядок доков |
 | `core/test_lead_day_priority.py` | Ранжирование «Мой день»: dayRank, intent, needsEnrich, stale |
+| `core/test_day_priority_config.py` | Merge весов day_priority из CRM settings |
+| `core/test_task_intent_note.py` | Маркер intent в note задачи |
 | `core/test_task_dates.py` | Даты и SLA задач |
-| `api/test_tasks_api.py` | CRUD задач, lead_id, overdue |
+| `api/test_tasks_api.py` | CRUD задач, lead_id, overdue, task_intent |
 | `api/test_lead_comments_api.py` | Комментарии: 404, пустой body, порядок, x-actor-name |
 | `core/test_lead_field_audit_util.py` | Запись аудита только изменённых полей |
 | `api/test_lead_field_audit_api.py` | GET audit, PATCH→строки, порядок, amountRub |

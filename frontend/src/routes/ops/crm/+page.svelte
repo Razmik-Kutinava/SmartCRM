@@ -21,6 +21,7 @@
 	let slaProtocolsJson = $state('[]');
 	let scoringAdvisoryEnabled = $state(true);
 	let scoringAdvisoryJson = $state('{}');
+	let dayPriorityJson = $state('{}');
 	let bitrixOk = $state(false);
 	let bitrixMasked = $state(null);
 
@@ -45,6 +46,7 @@
 			slaProtocolsJson = JSON.stringify(s.sla_protocols ?? [], null, 2);
 			scoringAdvisoryEnabled = s.scoring_advisory_enabled !== false;
 			scoringAdvisoryJson = JSON.stringify(s.scoring_advisory ?? {}, null, 2);
+			dayPriorityJson = JSON.stringify(s.day_priority ?? {}, null, 2);
 			bitrixOk = !!d.bitrix_webhook_configured;
 			bitrixMasked = d.bitrix_webhook_masked || null;
 		} catch (e) {
@@ -90,6 +92,15 @@
 			if (!scoring_advisory || typeof scoring_advisory !== 'object' || Array.isArray(scoring_advisory)) {
 				throw new Error('Веса scoring_advisory: ожидается JSON-объект');
 			}
+			let day_priority;
+			try {
+				day_priority = JSON.parse(dayPriorityJson || '{}');
+			} catch {
+				throw new Error('Веса «Мой день» (day_priority): невалидный JSON');
+			}
+			if (!day_priority || typeof day_priority !== 'object' || Array.isArray(day_priority)) {
+				throw new Error('Веса «Мой день»: ожидается JSON-объект');
+			}
 			const body = {
 				stages,
 				priority_thresholds: { critical: crit, high: high, medium: med },
@@ -100,6 +111,7 @@
 				sla_protocols,
 				scoring_advisory_enabled: scoringAdvisoryEnabled,
 				scoring_advisory,
+				day_priority,
 			};
 			const r = await fetch(`${API}/api/ops/crm-settings`, {
 				method: 'PUT',
@@ -215,6 +227,26 @@
 						rows="14"
 						class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white font-mono"
 						data-testid="ops-scoring-advisory-json"
+					></textarea>
+				</div>
+			</div>
+
+			<div class="rounded-lg border border-indigo-900/50 bg-indigo-950/20 p-4 space-y-3" data-testid="ops-day-priority">
+				<p class="text-sm text-gray-200 font-medium">Очередь «Мой день» (day_priority)</p>
+				<div>
+					<label class="block text-xs text-gray-500 mb-1">
+						Веса ранжирования (JSON-объект). Пустой <code class="text-gray-600">{'{}'}</code> — встроенные дефолты.
+						Ключи: <code class="text-gray-600">stage_boost</code>,
+						<code class="text-gray-600">tier_weight</code>,
+						<code class="text-gray-600">urgency_base</code>,
+						<code class="text-gray-600">stale_penalty_per_day</code>,
+						<code class="text-gray-600">wait_stale_days</code>
+					</label>
+					<textarea
+						bind:value={dayPriorityJson}
+						rows="12"
+						class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white font-mono"
+						data-testid="ops-day-priority-json"
 					></textarea>
 				</div>
 			</div>

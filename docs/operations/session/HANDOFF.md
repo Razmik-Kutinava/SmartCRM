@@ -1,8 +1,14 @@
 # HANDOFF
 
+`Спринт:[Ф4 лиды] | Задача:[«Мой день» — task_intent + Ops веса] | Статус: ✅ done (код) | 👤 приёмка`
+
+**2026-06-27:** Dropdown `task_intent` при создании задачи (`/leads/tasks`, карточка лида, панель активности); API `taskIntent` + `GET /api/tasks/intent-catalog`; веса `day_priority` в `/ops/crm`. pytest: crm_leads + tasks + day_priority. **👤:** создать задачу с типом, сохранить веса в Ops, проверить порядок в `/leads/list`.
+
+---
+
 `Спринт:[Ф4 лиды] | Задача:[«Мой день» — dayRank] | Статус: ✅ done (код) | 👤 приёмка`
 
-**2026-06-27:** `lead_day_priority.py` + intents + API `dayRank`/`needsEnrich`; сортировка «Мой день» list/deals; суфлеры `wait_stale`. pytest 51 crm_leads PASS. **👤:** `/leads/list` + `/leads/deals` + фильтр менеджера. Dropdown task_intent — BACKLOG.
+**2026-06-27:** `lead_day_priority.py` + intents + API `dayRank`/`needsEnrich`; сортировка «Мой день» list/deals; суфлеры `wait_stale`. pytest 51 crm_leads PASS. **👤:** `/leads/list` + `/leads/deals` + фильтр менеджера.
 
 ---
 

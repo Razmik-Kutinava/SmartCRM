@@ -9,6 +9,7 @@
 	import { auditFieldLabel, formatAuditValue, isAuditRowHidden } from '$lib/leads/leadAudit.js';
 	import { createLeadCommunication } from '$lib/leads/leadCommunications.js';
 	import { createTask, patchTask } from '$lib/tasks/taskApi.js';
+	import { TASK_INTENT_OPTIONS } from '$lib/tasks/taskIntentCatalog.js';
 	import {
 		defaultScheduleDateIso,
 		isoDateToRuDue,
@@ -48,6 +49,7 @@
 	let customTime = $state(nowDatetimeLocalValue());
 	let saving = $state(false);
 	let scheduleTask = $state(false);
+	let scheduleTaskIntent = $state('');
 	let scheduleDateIso = $state(defaultScheduleDateIso());
 	let tasksExpanded = $state(false);
 
@@ -82,6 +84,7 @@
 			related_lead: relatedLead || '',
 			due: due || '—',
 			note: text || '',
+			task_intent: scheduleTaskIntent.trim() || null,
 			assignee: 'Я',
 		});
 	}
@@ -221,6 +224,18 @@
 			Поставить задачу в календарь
 		</label>
 		{#if scheduleTask}
+			<label class="block text-[11px] text-gray-500">
+				Тип дела
+				<select
+					bind:value={scheduleTaskIntent}
+					class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-xs text-gray-200"
+					data-testid="lead-activity-task-intent"
+				>
+					{#each TASK_INTENT_OPTIONS as opt (opt.id || 'auto')}
+						<option value={opt.id}>{opt.label}</option>
+					{/each}
+				</select>
+			</label>
 			<label class="block text-[11px] text-gray-500">
 				Срок задачи
 				<input

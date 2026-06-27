@@ -67,6 +67,7 @@ async def lead_api_payload(lead: Lead, db: AsyncSession) -> dict:
             tasks_payload,
             last_comm_at=last_comm,
             on_stage_days=on_stage,
+            settings=settings,
         )
     )
     tender_link = await tender_link_for_lead(db, lead.id)

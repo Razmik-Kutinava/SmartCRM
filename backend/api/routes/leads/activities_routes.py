@@ -26,7 +26,7 @@ async def list_lead_activities(
     leads = [row.to_dict() for row in result.scalars().all()]
     tasks_by_lead = await load_tasks_by_lead(db)
     with_coverage = attach_lead_coverage_flags(leads, tasks_by_lead)
-    with_day = attach_lead_day_priority(with_coverage, tasks_by_lead)
+    with_day = attach_lead_day_priority(with_coverage, tasks_by_lead, settings=crm_settings_store.load_settings())
     leads = attach_lead_manager_labels(with_day)
     mgr = (manager or "").strip() or None
     items = query_lead_activities(leads, tasks_by_lead, due=due, manager=mgr)

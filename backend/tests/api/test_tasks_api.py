@@ -67,3 +67,35 @@ async def test_tasks_filter_done_and_combined(client):
     titles = [t["title"] for t in combo_r.json()]
     assert "Сегодня открыта" in titles
     assert "Готово" not in titles
+
+
+@pytest.mark.asyncio
+async def test_task_intent_create_patch_and_catalog(client):
+    catalog_r = await client.get("/api/tasks/intent-catalog")
+    assert catalog_r.status_code == 200
+    items = catalog_r.json()["items"]
+    assert any(i["id"] == "kp_followup" for i in items)
+
+    create_r = await client.post(
+        "/api/tasks",
+        json={
+            "title": "Ответить на КП",
+            "task_intent": "kp_followup",
+            "note": "Срочно",
+        },
+    )
+    assert create_r.status_code == 201
+    task = create_r.json()
+    task_id = task["id"]
+    assert task["taskIntent"] == "kp_followup"
+    assert task["note"] == "Срочно"
+    assert "intent:" not in task["note"]
+
+    patch_r = await client.patch(
+        f"/api/tasks/{task_id}",
+        json={"task_intent": "trial_request"},
+    )
+    assert patch_r.status_code == 200
+    assert patch_r.json()["taskIntent"] == "trial_request"
+
+    await client.delete(f"/api/tasks/{task_id}")

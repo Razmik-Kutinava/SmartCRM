@@ -7,6 +7,7 @@ from typing import Optional
 from sqlalchemy import String, Integer, DateTime, Text, func, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 from db.session import Base
+from core.task_intent_note import extract_intent_from_note, note_for_display
 
 
 class Task(Base):
@@ -36,6 +37,8 @@ class Task(Base):
     )
 
     def to_dict(self) -> dict:
+        intent = extract_intent_from_note(self.note or "")
+        display_note = note_for_display(self.note or "")
         return {
             "id": self.id,
             "title": self.title,
@@ -44,7 +47,8 @@ class Task(Base):
             "assignee": self.assignee,
             "relatedLead": self.related_lead,
             "leadId": self.lead_id,
-            "note": self.note,
+            "note": display_note,
+            "taskIntent": intent or "",
             "slaDue": self.sla_due,
             "escalated": self.escalated,
             "created": self.created_at.strftime("%d.%m.%Y") if self.created_at else "—",

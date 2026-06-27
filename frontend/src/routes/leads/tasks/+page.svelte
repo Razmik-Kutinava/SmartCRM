@@ -4,6 +4,7 @@
 	import { fetchLeads } from '$lib/leadsStorage.js';
 	import { createTask as apiCreateTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { slaStatus, taskDueBadge } from '$lib/tasks/taskSla.js';
+	import { TASK_INTENT_OPTIONS, taskIntentLabel } from '$lib/tasks/taskIntentCatalog.js';
 	import {
 		parseLegacyTasksFilter,
 		TASK_DUE_FILTERS,
@@ -28,6 +29,7 @@
 	let relatedLead = $state('');
 	let leadId = $state('');
 	let note = $state('');
+	let taskIntent = $state('');
 	let saving = $state(false);
 
 	async function load() {
@@ -50,6 +52,7 @@
 		due = '';
 		slaDue = '';
 		note = '';
+		taskIntent = '';
 		leadId = '';
 		relatedLead = '';
 		assignee = 'Я';
@@ -85,6 +88,7 @@
 				related_lead: relatedLead.trim(),
 				lead_id: leadId ? Number(leadId) : null,
 				note: note.trim(),
+				task_intent: taskIntent.trim() || null,
 				sla_due: slaDue.trim() || null,
 				escalated: false,
 			};
@@ -234,7 +238,9 @@
 							<tr class="hover:bg-gray-800/40">
 								<td class="px-4 py-2.5 text-white max-w-md">
 									<div class="flex flex-wrap items-center gap-2">
-										<div class="font-medium">{t.title}</div>
+										{#if t.taskIntent}
+										<span class="text-[10px] text-indigo-300/90">{taskIntentLabel(t.taskIntent)}</span>
+									{/if}
 										{#if badge}
 											<span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium {badge.cls}">
 												{badge.label}
@@ -316,6 +322,18 @@
 				placeholder="Название *"
 				class="w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white"
 			/>
+			<label class="block text-xs text-gray-500">
+				Тип дела (для «Мой день»)
+				<select
+					bind:value={taskIntent}
+					class="mt-1 w-full rounded-lg bg-gray-900 border border-gray-700 px-3 py-2 text-sm text-white"
+					data-testid="tasks-create-intent"
+				>
+					{#each TASK_INTENT_OPTIONS as opt (opt.id || 'auto')}
+						<option value={opt.id}>{opt.label}{opt.tier ? ` · ${opt.tier}` : ''}</option>
+					{/each}
+				</select>
+			</label>
 			<div class="grid sm:grid-cols-2 gap-3">
 				<input
 					bind:value={assignee}
