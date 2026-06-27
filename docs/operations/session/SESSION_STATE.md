@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-06-27 | Действие: email backfill — skip auth error после 3 fail, RR advance; pytest 4 PASS | Коммит: `pending` | Хвост A: ib@ пароль/SECRET_KEY | Хвост B: нет | Хвост C: нет | Статус: done
+2026-06-27 | Действие: email backfill — skip auth error после 3 fail, RR advance; pytest 4 PASS | Коммит: `7437c8a` | Хвост A: ib@ пароль/SECRET_KEY | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-27 | Действие: email backfill — батчи по датам, API, UI кнопка, скрипт; pytest email_sync 20 PASS; live: ib@ AUTH FAILED | Коммит: `ee17841` | Хвост A: Sent-папка не в backfill; browser не кликали | Хвост B: нет | Хвост C: ib@ IMAP AUTH — проверить пароль/SECRET_KEY | Статус: done
 
