@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-06-27 | Действие: listStageSummary — этап/путь/сроки в GET /api/leads + UI колонка Этап (прогресс, дни, дело); batch_stage_entered_at; pytest 10 PASS | Коммит: `TBD` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
+
 2026-06-27 | Действие: listCoach — суфлёр «что сделать» в GET /api/leads + UI /leads/list (дела, путь сделки, дозаполнить); pytest 41 PASS leads zone | Коммит: `eff2bb2` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-27 | Действие: фильтр «На дату» в /leads/list — openTaskDueDates в API, date picker в UI; pytest 9 PASS | Коммит: `b301757` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done

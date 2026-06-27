@@ -46,8 +46,10 @@
 | `backend/core/lead_coverage.py` | `bitrix_full`, `passport`, `card_ready`, `no_tasks`, `lost` |
 | `backend/core/lead_activities_query.py` | `/leads/deals`, `GET /api/leads/activities` |
 | `frontend/src/lib/leads/leadListFilter.js` | Фильтры, `taskDueBadgeForLead`, сортировки по баллу |
+| `backend/core/lead_list_coach.py` | `listCoach[]` — что сделать (строка списка) |
+| `backend/core/lead_list_stage_summary.py` | `listStageSummary` — путь, дни на этапе, срок дела |
 
-**Планируется (нет в репо):** `backend/core/lead_day_priority.py`, поля API `dayRank`, `taskIntent`, `moneyBoost`, `needsEnrich`, `waitStale`.
+**Реализовано в API списка:** `dayRank`, `taskIntent`, `needsEnrich`, `waitStale`, `listCoach`, `listStageSummary`.
 
 ---
 

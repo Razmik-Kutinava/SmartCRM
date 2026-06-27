@@ -78,6 +78,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `api/test_lead_engagement.py` | Комментарии, касания, апрувы, dealPath/stageHints в GET |
 | `core/test_lead_deal_path.py` | Путь сделки, подсказки по этапу, порядок доков |
 | `core/test_lead_list_coach.py` | Суфлёр listCoach в списке лидов |
+| `core/test_lead_list_stage_summary.py` | listStageSummary: этап, путь, сроки |
 | `core/test_lead_day_priority.py` | Ранжирование «Мой день»: dayRank, intent, needsEnrich, stale |
 | `core/test_day_priority_config.py` | Merge весов day_priority из CRM settings |
 | `core/test_task_intent_note.py` | Маркер intent в note задачи |

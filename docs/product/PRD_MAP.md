@@ -568,7 +568,7 @@
 - [x] **`lead_day_priority.py`** — `dayRank`, `stageBoost`, `urgencyBucket`, `waitStalePenalty` · 2026-06-27
 - [x] **Классификатор дел** — `classify_task_intent(title)` + словарь intent→tier · `lead_task_intents.py`
 - [x] **API** — поля `dayRank`, `taskIntent`, `needsEnrich` в `GET /api/leads` и `/api/leads/activities`
-- [x] **UI list + deals** — сортировка «Мой день», бейдж `needsEnrich`; суфлёр `listCoach` в строке списка · 2026-06-27
+- [x] **UI list + deals** — сортировка «Мой день», `listCoach` + `listStageSummary` (этап, путь, даты) в строке · 2026-06-27
 - [x] **Суфлеры** — `lead_stage_hints`: `wait_stale`, `repeat_wait_task`
 - [x] **Типы задач в CRM** — dropdown `task_intent` при создании (tasks, карточка, activity panel) · 2026-06-27
 - [x] **Ops** — веса `day_priority` в `/ops/crm` (опционально) · 2026-06-27

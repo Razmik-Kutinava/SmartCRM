@@ -1,4 +1,5 @@
 """CRUD и связанные read-эндпоинты лидов (handlers без отдельного APIRouter)."""
+import datetime as dt
 import json
 import logging
 from decimal import Decimal
@@ -12,13 +13,16 @@ from core.lead_approvals import merge_approvals_payload
 from core.lead_contacts import apply_contacts_patch, normalize_contacts
 from core.lead_field_audit_util import TRACKED_ORM_FIELDS, append_lead_field_audits
 from core.lead_manager import catalog_managers, normalize_manager_key
+from core.lead_card_context import batch_stage_entered_at
 from core.lead_day_priority_attach import attach_lead_day_priority
 from core.lead_list_coach import attach_lead_list_coach
+from core.lead_list_stage_summary import attach_lead_list_stage_summary
 from core.lead_manager_attach import attach_lead_manager_labels
 from core.lead_coverage import summarize_coverage
 from core.lead_coverage_attach import attach_lead_coverage_flags
 from core.lead_score_list_flags import attach_lead_score_flags, load_tasks_by_lead
 from core.lead_task_list_flags import attach_lead_task_flags
+from core.lead_stage_hints import days_on_stage
 from core.stage_transition import merge_lead_patch_for_validation, validate_stage_transition
 from db.models import EmailMessage, Lead
 from db.models.email import EmailThread
@@ -52,12 +56,27 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
     leads = [lead_row.to_dict() for lead_row in result.scalars().all()]
     settings = crm_settings_store.load_settings()
     tasks_by_lead = await load_tasks_by_lead(db)
+    stage_entered = await batch_stage_entered_at(db, leads)
+    today = dt.date.today()
+    on_stage_days_by_lead = {
+        lid: days_on_stage(entered, today) for lid, entered in stage_entered.items()
+    }
     with_score = attach_lead_score_flags(leads, tasks_by_lead, settings)
     with_tasks = attach_lead_task_flags(with_score, tasks_by_lead)
     with_coverage = attach_lead_coverage_flags(with_tasks, tasks_by_lead)
-    with_day = attach_lead_day_priority(with_coverage, tasks_by_lead, settings=settings)
+    with_day = attach_lead_day_priority(
+        with_coverage,
+        tasks_by_lead,
+        settings=settings,
+        on_stage_days_by_lead=on_stage_days_by_lead,
+    )
     with_coach = attach_lead_list_coach(with_day)
-    return attach_lead_manager_labels(with_coach)
+    with_summary = attach_lead_list_stage_summary(
+        with_coach,
+        on_stage_days_by_lead=on_stage_days_by_lead,
+        settings=settings,
+    )
+    return attach_lead_manager_labels(with_summary)
 
 
 async def list_lead_managers(db: AsyncSession = Depends(get_db)):

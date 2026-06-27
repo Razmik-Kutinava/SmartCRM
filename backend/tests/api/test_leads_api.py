@@ -350,6 +350,11 @@ async def test_list_leads_includes_task_flags(client):
     assert len(row["openTaskDueDates"]) >= 1
     assert "listCoach" in row
     assert isinstance(row["listCoach"], list)
+    assert "listStageSummary" in row
+    ss = row["listStageSummary"]
+    assert "dealPathTotal" in ss
+    assert "daysOnStage" in ss
+    assert "taskUrgency" in ss
     assert any("Просрочено" in str(c.get("text", "")) or "Сегодня" in str(c.get("text", "")) for c in row["listCoach"])
     assert "dayRank" in row
     assert "taskIntent" in row

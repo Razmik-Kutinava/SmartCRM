@@ -14,7 +14,7 @@
 
 4. **Приоритет по скорингу**: в списке лидов добавлена колонка «Приоритет» (уровни вроде критический / высокий / средний / низкий по порогам из конфига); на карточке лида рядом со скором показывается тот же бейдж. Дефолтный **`score`** при создании лида с голоса берётся из **`default_new_lead_score`**, если конфиг уже успел загрузиться.
 
-5. **«Мой день» (Ф4):** умная очередь — `dayRank` в API; сортировка «Мой день» на `/leads/list` и `/leads/deals`; этап+`dealPath` первичны. Спека: [`F4_DAY_PRIORITY.md`](../operations/phase4/leads/F4_DAY_PRIORITY.md).
+5. **«Мой день» (Ф4):** умная очередь — `dayRank` в API; сортировка на `/leads/list` и `/leads/deals`. В строке списка: **`listCoach`** (что сделать) и **`listStageSummary`** (прогресс пути сделки, дни на этапе, срок дела). Спека: [`F4_DAY_PRIORITY.md`](../operations/phase4/leads/F4_DAY_PRIORITY.md).
 
 6. **Массовая рассылка по лиду** перенесена на **`/leads/campaign/{id}`** (раньше был конфликт динамических сегментов `[id]` и `[leadId]`).
 
@@ -59,7 +59,7 @@
 
 ### Лиды (как и раньше)
 
-- **`/api/leads`** — список, создание, **`PATCH /api/leads/{id}`** — поля лида, включая **`score`**, **`stage`**, **`approvals`** (чеклист булевых «доков»; веса влияют на **`scoreAdvisory`**, не на `score` в БД), гейты по `stage_transition_rules`, аудит полей.
+- **`GET /api/leads`** — список с флагами задач, `dayRank`, `listCoach`, `listStageSummary` (этап, путь, сроки); создание; **`PATCH /api/leads/{id}`** — поля лида, включая **`score`**, **`stage`**, **`approvals`** (чеклист булевых «доков»; веса влияют на **`scoreAdvisory`**, не на `score` в БД), гейты по `stage_transition_rules`, аудит полей.
 - **`GET/POST /api/leads/{id}/comments`**, **`GET /api/leads/{id}/audit`** — комментарии и история полей; в аудите у записей есть **`eventType`** (например `field_change`, `communication`) и **`metadata`** при событиях вне диффа полей.
 - **`GET/POST /api/leads/{id}/communications`** — лог касаний (тип, текст, автор, время); при POST дополнительно пишется строка аудита с `eventType=communication`.
 - Источник правды по записям — PostgreSQL, модель **`Lead`** (`backend/db/models/lead.py`), поля в т.ч. `checko_json`, `tech_json`, `financials_json` для обогащения.

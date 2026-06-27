@@ -48,6 +48,15 @@
 	} from '$lib/leads/leadListFilter.js';
 	import { coachItemsForLead, coachSeverityClass } from '$lib/leads/leadListCoach.js';
 	import {
+		listStageSummary,
+		dealPathProgressLabel,
+		stageDaysLabel,
+		stageTimingClass,
+		taskDueLine,
+		taskUrgencyClass,
+		dealPathPercent,
+	} from '$lib/leads/leadListStageSummary.js';
+	import {
 		voiceLeadFilter,
 		registerLeadIntentHandler,
 	} from '$lib/voice/voiceAction.js';
@@ -1211,6 +1220,7 @@
 				{@const enrichBadge = needsEnrichBadgeForLead(lead)}
 				{@const coachItems = coachItemsForLead(lead)}
 				{@const subBadge = subscriptionBadgeForLead(lead)}
+				{@const stageSum = listStageSummary(lead)}
 				<tr class="hover:bg-gray-800/30 transition-colors group">
 					<td class="px-6 py-3 text-gray-600 text-xs">{i + 1}</td>
 					<td class="px-4 py-3">
@@ -1260,8 +1270,42 @@
 						<div class="text-gray-300">{lead.contact}</div>
 						<div class="text-xs text-gray-600">{lead.email !== '—' ? lead.email : ''}</div>
 					</td>
-					<td class="px-4 py-3">
+					<td class="px-4 py-3 min-w-[9rem]" data-testid="leads-list-stage-cell">
 						<span class="px-2 py-0.5 rounded-full text-xs font-medium {stageColor(lead.stage)}">{lead.stage}</span>
+						{#if stageSum}
+							<div class="mt-1.5 space-y-1 max-w-[11rem]" data-testid="leads-list-stage-summary">
+								{#if stageSum.dealPathTotal > 0}
+									<div class="flex items-center gap-1.5" title={stageSum.dealPathNext || ''}>
+										<div class="flex-1 h-1 rounded-full bg-gray-800 overflow-hidden">
+											<div
+												class="h-full rounded-full bg-indigo-500/80"
+												style="width: {dealPathPercent(stageSum)}%"
+											></div>
+										</div>
+										<span class="text-[10px] text-gray-500 tabular-nums shrink-0">{dealPathProgressLabel(stageSum)}</span>
+									</div>
+									{#if stageSum.dealPathNext}
+										<div class="text-[10px] text-indigo-300/90 truncate" title={stageSum.dealPathNext}>
+											→ {stageSum.dealPathNext}
+										</div>
+									{/if}
+								{/if}
+								<div class="text-[10px] {stageTimingClass(stageSum.stageTimingStatus)}">
+									{stageDaysLabel(stageSum)}
+								</div>
+								{#if taskDueLine(stageSum)}
+									<div class="text-[10px]">
+										<span class="text-gray-600">Дело: </span>
+										<span class={taskUrgencyClass(stageSum.taskUrgency)}>{taskDueLine(stageSum)}</span>
+									</div>
+								{:else if stageSum.openTaskCount > 0}
+									<div class="text-[10px] text-gray-500">{stageSum.openTaskCount} откр. дел</div>
+								{/if}
+								{#if stageSum.daysWithoutTouch}
+									<div class="text-[10px] text-amber-500/90">Без касания {stageSum.daysWithoutTouch} дн.</div>
+								{/if}
+							</div>
+						{/if}
 					</td>
 					<td class="px-4 py-3 text-gray-400 text-xs max-w-[9rem] truncate" data-testid="leads-list-manager-cell" title={lead.managerName || leadManagerLabel(lead)}>
 						{lead.managerName || leadManagerLabel(lead) || '—'}
