@@ -596,6 +596,14 @@
 - [ ] «Переделай короче» для черновика письма (F3 Voice §2)
 - [ ] Acceptance: pytest `tests/email/` + live smoke + DevTools `/email`, `/ops/email`, карточка
 
+**UI Яндекс.Почта:** [`F4_EMAIL_YANDEX_UI.md`](../operations/phase4/email/F4_EMAIL_YANDEX_UI.md)
+
+- [x] Сайдбар + папки + жёлтая «Написать» · код 2026-06-25
+- [x] Поиск pill + чипы фильтров · код 2026-06-25
+- [x] «Главное» (звезда на треде) · код 2026-06-25
+- [ ] Browser-апрув по чеклисту `F4_EMAIL_YANDEX_UI.md`
+- [ ] IMAP: непрочитанные, вложения, Trash/Drafts/Spam
+
 ### Vendor crawl → RAG tech_specialist (тюнинг)
 
 Детали: [`F4_VENDOR_CRAWL_TUNING.md`](../operations/phase4/rag/F4_VENDOR_CRAWL_TUNING.md)

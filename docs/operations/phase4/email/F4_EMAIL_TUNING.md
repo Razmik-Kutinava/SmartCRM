@@ -71,6 +71,17 @@
 - [ ] Live smoke: connect, sync, send, nurture, campaign
 - [ ] DevTools: `/email`, `/ops/email`, `/ops/email-agents`, карточка лида
 
+### H. UI как Яндекс.Почта
+
+Детали: [`F4_EMAIL_YANDEX_UI.md`](F4_EMAIL_YANDEX_UI.md)
+
+- [x] Сайдбар: градиент, «Почта», «Написать» + синк, папки как в Яндексе
+- [x] Поиск pill + «Найти» + чипы (вложения, дата, папки, от/кому, ещё)
+- [x] «Главное» — звезда на треде (localStorage)
+- [ ] Browser-апрув владельца по чеклисту `F4_EMAIL_YANDEX_UI.md`
+- [ ] `is_read` / реальные вложения из IMAP (хвост API)
+- [ ] Trash / Drafts / Spam — синк с IMAP-папками
+
 ---
 
 ## Не в Ф4 (явно вне scope)

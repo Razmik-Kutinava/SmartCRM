@@ -8,9 +8,12 @@
         sendEmail, replyToEmail, fetchThreadMessages, analyzeEmailThread
     } from '$lib/emailStorage.js';
     import {
-        EMAIL_FOLDERS, filterEmailThreads, countEmailFolder, groupThreadsByDate,
-        formatThreadTime, syncStatusLabel
+        filterEmailThreads, countEmailFolder, groupThreadsByDate,
+        formatThreadTime, syncStatusLabel, createEmptySearchFilters,
+        loadStarredThreadIds, toggleStarredThreadId, isEmailPanelFolder
     } from '$lib/email/emailListLogic.js';
+    import EmailYandexSidebar from '../../components/email/EmailYandexSidebar.svelte';
+    import EmailYandexSearchBar from '../../components/email/EmailYandexSearchBar.svelte';
     import { buildReplyApprovePreview, buildComposeApprovePreview } from '$lib/email/emailApproveLogic.js';
     import { voiceEmailContext } from '$lib/voice/voiceAction.js';
     import EmailApproveModal from '../../components/EmailApproveModal.svelte';
@@ -27,6 +30,8 @@
     // ─── навигация ───────────────────────────────────────────────
     let activeFolder = $state('inbox');
     let searchQuery  = $state('');
+    let searchFilters = $state(createEmptySearchFilters());
+    let starredThreadIds = $state(loadStarredThreadIds());
 
     // ─── тред ────────────────────────────────────────────────────
     let selectedThread  = $state(null);
@@ -82,17 +87,30 @@
     let success = $state('');
     let nurtureInitialLeadId = $state(null);
 
-    const folders = EMAIL_FOLDERS;
-
     let filteredThreads = $derived(filterEmailThreads(threads, {
         folder: activeFolder,
         search: searchQuery,
         accountId: filterAccountId || null,
+        searchFilters,
+        starredIds: starredThreadIds,
     }));
     let grouped = $derived(groupThreadsByDate(filteredThreads));
+    let showMailList = $derived(!isEmailPanelFolder(activeFolder));
 
     function folderCount(key) {
-        return countEmailFolder(threads, key);
+        return countEmailFolder(threads, key, starredThreadIds);
+    }
+
+    function onFolderChange() {
+        error = '';
+        success = '';
+        searchQuery = '';
+        searchFilters = createEmptySearchFilters();
+    }
+
+    function toggleThreadStar(e, threadId) {
+        e.stopPropagation();
+        starredThreadIds = toggleStarredThreadId(starredThreadIds, threadId);
     }
     async function load() {
         try {
@@ -351,175 +369,80 @@
     }
 </script>
 
-<!-- ═══ LAYOUT ════════════════════════════════════════════════ -->
-<div class="flex h-full min-h-0 overflow-hidden">
+<!-- ═══ LAYOUT (Yandex Mail) ═════════════════════════════════ -->
+<div class="flex h-full min-h-0 overflow-hidden bg-white">
 
-    <!-- ── ЛЕВАЯ ПАНЕЛЬ ── -->
-    <aside class="flex flex-col w-52 flex-shrink-0 border-r border-gray-800 bg-gray-950">
-
-        <!-- кнопки действий -->
-        <div class="px-3 pt-4 pb-3 space-y-1.5">
-            <button
-                class="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500 transition-colors"
-                onclick={() => openCompose()}
-            >✏ Написать письмо</button>
-            <button
-                class="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-800 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors disabled:opacity-50"
-                onclick={syncMail}
-                disabled={syncLoading || !accounts.length}
-            >{syncLoading ? '⏳ Синхронизация...' : '🔄 Синхронизировать'}</button>
-            <button
-                class="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-800 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
-                onclick={() => showSettings = !showSettings}
-            >⚙ Подключить почту</button>
-        </div>
-
-        <!-- папки -->
-        <nav class="flex-1 overflow-y-auto px-2 pt-1 space-y-0.5">
-            {#each folders as f}
-                {@const cnt = folderCount(f.key)}
-                <button
-                    class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left
-                           {activeFolder === f.key ? 'bg-indigo-600 text-white font-semibold' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}"
-                    onclick={() => { activeFolder = f.key; error = ''; success = ''; searchQuery = ''; }}
-                >
-                    <span class="text-base leading-none">{f.icon}</span>
-                    <span class="flex-1">{f.label}</span>
-                    {#if cnt > 0}
-                        <span class="text-xs rounded-full px-1.5 py-0.5 min-w-[20px] text-center
-                            {activeFolder === f.key ? 'bg-indigo-400/40' : 'bg-gray-700 text-gray-400'}">
-                            {cnt}
-                        </span>
-                    {/if}
-                </button>
-            {/each}
-
-            <!-- разделитель + Рассылки как раздел -->
-            <div class="pt-3 pb-1 px-3">
-                <div class="text-xs text-gray-600 uppercase tracking-wider">Кампании</div>
-            </div>
-            <button
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left
-                       {activeFolder === 'campaign_mass' ? 'bg-indigo-600 text-white font-semibold' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}"
-                onclick={() => { activeFolder = 'campaign_mass'; error = ''; success = ''; }}
-                data-testid="nav-campaign-mass"
-            >
-                <span class="text-base leading-none">📣</span>
-                <span>Массовая (сегмент)</span>
-            </button>
-            <button
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left
-                       {activeFolder === 'campaigns_manage' ? 'bg-indigo-600 text-white font-semibold' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}"
-                onclick={() => { activeFolder = 'campaigns_manage'; error = ''; success = ''; }}
-            >
-                <span class="text-base leading-none">📋</span>
-                <span>Управление</span>
-            </button>
-            <button
-                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left
-                       {activeFolder === 'nurture_touch' ? 'bg-indigo-600 text-white font-semibold' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}"
-                onclick={() => { activeFolder = 'nurture_touch'; error = ''; success = ''; }}
-                data-testid="nav-nurture-touch"
-            >
-                <span class="text-base leading-none">🔗</span>
-                <span>Касания (1 лид)</span>
-            </button>
-        </nav>
-
-        <!-- аккаунт внизу -->
-        {#if accounts.length > 1}
-            <div class="px-3 pb-2">
-                <label class="text-xs text-gray-500 block mb-1">Ящик</label>
-                <select
-                    class="w-full rounded-lg bg-gray-900 border border-gray-800 px-2 py-1.5 text-xs text-white"
-                    bind:value={filterAccountId}
-                    onchange={onAccountFilterChange}
-                >
-                    <option value="">Все ящики</option>
-                    {#each accounts as a (a.id)}
-                        <option value={String(a.id)}>{a.username}</option>
-                    {/each}
-                </select>
-            </div>
-        {/if}
-        {#if accounts.length}
-            <div class="px-4 py-3 border-t border-gray-800">
-                <div class="text-xs text-gray-400 font-medium truncate">{accounts[0].username}</div>
-                <div class="text-xs text-gray-600 mt-0.5">
-                    {accounts[0].lastSyncedAt
-                        ? `обновлено ${new Date(accounts[0].lastSyncedAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}`
-                        : 'Не синхронизировано'}
-                </div>
-            </div>
-        {:else}
-            <div class="px-4 py-3 border-t border-gray-800">
-                <div class="text-xs text-gray-600">Почта не подключена</div>
-            </div>
-        {/if}
-    </aside>
+    <EmailYandexSidebar
+        bind:activeFolder
+        bind:filterAccountId
+        {accounts}
+        {syncLoading}
+        folderCount={folderCount}
+        onCompose={() => openCompose()}
+        onSync={syncMail}
+        onSettings={() => { showSettings = !showSettings; }}
+        onFolderChange={onFolderChange}
+        onAccountFilterChange={onAccountFilterChange}
+    />
 
     <!-- ── ПРАВАЯ ЧАСТЬ ── -->
-    <div class="flex flex-col flex-1 min-w-0 min-h-0 overflow-hidden">
+    <div class="flex flex-col flex-1 min-w-0 min-h-0 overflow-hidden bg-white">
 
-        <!-- уведомления -->
-        {#if error}   <div class="mx-5 mt-3 px-4 py-2.5 rounded-xl bg-red-950  border border-red-800  text-red-200  text-sm flex-shrink-0">{error}</div>   {/if}
-        {#if success} <div class="mx-5 mt-3 px-4 py-2.5 rounded-xl bg-green-950 border border-green-800 text-green-200 text-sm flex-shrink-0">{success}</div> {/if}
-        {#if syncStatus}
-            <div class="mx-5 mt-2 px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-400 text-xs flex-shrink-0">
+        {#if error}   <div class="mx-5 mt-3 px-4 py-2.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm flex-shrink-0">{error}</div>   {/if}
+        {#if success} <div class="mx-5 mt-3 px-4 py-2.5 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm flex-shrink-0">{success}</div> {/if}
+        {#if syncStatus && showMailList}
+            <div class="mx-5 mt-2 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-gray-500 text-xs flex-shrink-0">
                 {syncStatusLabel(syncStatus)}
             </div>
         {/if}
 
-        <!-- ════ СПИСОК ПИСЕМ ════ -->
-        {#if activeFolder !== 'campaign' && activeFolder !== 'campaigns_manage' && activeFolder !== 'campaign_mass' && activeFolder !== 'nurture_touch'}
+        {#if showMailList}
 
-            <!-- поиск -->
-            <div class="px-5 pt-4 pb-3 flex-shrink-0">
-                <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none">🔍</span>
-                    <input
-                        bind:value={searchQuery}
-                        class="w-full rounded-xl bg-gray-900 border border-gray-700 pl-9 pr-8 py-2.5 text-sm text-white
-                               placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors"
-                        placeholder="Поиск по теме и содержимому..."
-                    />
-                    {#if searchQuery}
-                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white text-xs" onclick={() => searchQuery = ''}>✕</button>
-                    {/if}
-                </div>
-            </div>
+            <EmailYandexSearchBar bind:searchQuery bind:searchFilters onSearch={() => {}} />
 
-            <!-- письма -->
             <div class="flex-1 overflow-y-auto min-h-0 px-5 pb-6">
                 {#if accounts.length === 0}
                     <div class="mt-10 text-center">
-                        <p class="text-gray-400 text-sm mb-3">Почта не подключена</p>
-                        <button class="px-5 py-2.5 rounded-xl bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500 transition-colors" onclick={() => showSettings = true}>
-                            ⚙ Подключить почту
+                        <p class="text-gray-500 text-sm mb-3">Почта не подключена</p>
+                        <button class="px-5 py-2.5 rounded-2xl bg-[#ffdb4d] text-sm font-semibold text-gray-900 hover:bg-[#ffcc00] transition-colors" onclick={() => showSettings = true}>
+                            Подключить почту
                         </button>
                     </div>
                 {:else if grouped.size === 0}
                     <p class="mt-6 text-gray-500 text-sm">
-                        {searchQuery ? `Ничего не найдено по «${searchQuery}»` : 'Нет писем в этой папке.'}
+                        {searchQuery || searchFilters.attachments ? 'Ничего не найдено по фильтрам.' : 'Нет писем в этой папке.'}
                     </p>
                 {:else}
                     {#each grouped as [label, items]}
-                        <div class="sticky top-0 z-10 py-2 mt-2 bg-gray-950/90 backdrop-blur-sm">
+                        <div class="sticky top-0 z-10 py-2 mt-2 bg-white/95 backdrop-blur-sm">
                             <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{label}</span>
                         </div>
                         <div class="space-y-px mb-2">
                             {#each items as thread (thread.id)}
-                                <button
-                                    class="w-full text-left flex items-start gap-3 px-3 py-3 rounded-lg
-                                           hover:bg-gray-800/70 transition-colors group"
+                                <div
+                                    role="button"
+                                    tabindex="0"
+                                    class="w-full text-left flex items-start gap-3 px-3 py-3 rounded-xl
+                                           hover:bg-gray-50 transition-colors group border border-transparent hover:border-gray-100 cursor-pointer"
                                     onclick={() => openThread(thread)}
+                                    onkeydown={(e) => e.key === 'Enter' && openThread(thread)}
                                 >
-                                    <div class="flex-shrink-0 w-9 h-9 rounded-full bg-indigo-900/60 flex items-center justify-center text-sm font-bold text-indigo-300 select-none mt-0.5">
+                                    <span
+                                        role="button"
+                                        tabindex="0"
+                                        class="flex-shrink-0 mt-1 p-0.5 text-gray-300 hover:text-amber-400 {starredThreadIds.has(String(thread.id)) ? 'text-amber-400' : ''}"
+                                        onclick={(e) => toggleThreadStar(e, thread.id)}
+                                        onkeydown={(e) => e.key === 'Enter' && toggleThreadStar(e, thread.id)}
+                                        aria-label="Важное"
+                                    >
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill={starredThreadIds.has(String(thread.id)) ? 'currentColor' : 'none'} stroke="currentColor" stroke-width="2"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    </span>
+                                    <div class="flex-shrink-0 w-9 h-9 rounded-full bg-[#ffdb4d]/40 flex items-center justify-center text-sm font-bold text-gray-800 select-none mt-0.5">
                                         {(thread.subject || '?').charAt(0).toUpperCase()}
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-baseline justify-between gap-2">
-                                            <span class="text-sm font-semibold text-white truncate group-hover:text-indigo-300 transition-colors">
+                                            <span class="text-sm font-semibold text-gray-900 truncate">
                                                 {thread.subject || 'Без темы'}
                                             </span>
                                             <span class="text-xs text-gray-500 flex-shrink-0">{formatThreadTime(thread.lastMessageAt)}</span>
@@ -529,7 +452,7 @@
                                         {/if}
                                         <p class="text-xs text-gray-400 truncate mt-0.5">{thread.snippet || ''}</p>
                                     </div>
-                                </button>
+                                </div>
                             {/each}
                         </div>
                     {/each}

@@ -8,7 +8,7 @@
 | **Интеграции CRM** (подключение внешних CRM, перед лидами) | [`platform/F4_CRM_INTEGRATIONS_ACCEPTANCE.md`](platform/F4_CRM_INTEGRATIONS_ACCEPTANCE.md) |
 | **Лиды** (обход Ф4: CRUD, карточка) | [`leads/F4_LEADS_ACCEPTANCE.md`](leads/F4_LEADS_ACCEPTANCE.md) |
 | **Лиды — «Мой день»** (очередь приоритета) | [`leads/F4_DAY_PRIORITY.md`](leads/F4_DAY_PRIORITY.md) |
-| **Email** (тюнинг после Ф2–Ф3) | [`email/F4_EMAIL_TUNING.md`](email/F4_EMAIL_TUNING.md) |
+| **Email** (тюнинг после Ф2–Ф3) | [`email/F4_EMAIL_TUNING.md`](email/F4_EMAIL_TUNING.md) · UI: [`email/F4_EMAIL_YANDEX_UI.md`](email/F4_EMAIL_YANDEX_UI.md) |
 | Vendor crawl → RAG `tech_specialist` | [`rag/F4_VENDOR_CRAWL_TUNING.md`](rag/F4_VENDOR_CRAWL_TUNING.md) |
 | A/B промптов по трейсам (Hermes / агенты) | [`agents/F4_PROMPT_AB_TUNING.md`](agents/F4_PROMPT_AB_TUNING.md) |
 | Авто-суфлёр Стратега (все агенты + Hermes) | [`agents/F4_STRATEGIST_SUGGESTER_TUNING.md`](agents/F4_STRATEGIST_SUGGESTER_TUNING.md) |
