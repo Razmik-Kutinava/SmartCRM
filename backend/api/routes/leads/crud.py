@@ -13,6 +13,7 @@ from core.lead_contacts import apply_contacts_patch, normalize_contacts
 from core.lead_field_audit_util import TRACKED_ORM_FIELDS, append_lead_field_audits
 from core.lead_manager import catalog_managers, normalize_manager_key
 from core.lead_day_priority_attach import attach_lead_day_priority
+from core.lead_list_coach import attach_lead_list_coach
 from core.lead_manager_attach import attach_lead_manager_labels
 from core.lead_coverage import summarize_coverage
 from core.lead_coverage_attach import attach_lead_coverage_flags
@@ -55,7 +56,8 @@ async def list_leads(db: AsyncSession = Depends(get_db)):
     with_tasks = attach_lead_task_flags(with_score, tasks_by_lead)
     with_coverage = attach_lead_coverage_flags(with_tasks, tasks_by_lead)
     with_day = attach_lead_day_priority(with_coverage, tasks_by_lead, settings=settings)
-    return attach_lead_manager_labels(with_day)
+    with_coach = attach_lead_list_coach(with_day)
+    return attach_lead_manager_labels(with_coach)
 
 
 async def list_lead_managers(db: AsyncSession = Depends(get_db)):

@@ -19,6 +19,7 @@ def lead_score_flags(
             "scoreDivergent": False,
             "scoreWarningsCount": 0,
             "scoreDelta": 0,
+            "scoreWarningPreview": "",
         }
     advisory = compute_lead_score_advisory(lead, tasks, settings)
     mgr = int(lead.get("score") or 0)
@@ -32,6 +33,7 @@ def lead_score_flags(
         "scoreDivergent": score_divergent(mgr, sug_int, settings),
         "scoreWarningsCount": len(warnings),
         "scoreDelta": delta,
+        "scoreWarningPreview": str(warnings[0]) if warnings else "",
     }
 
 

@@ -46,6 +46,7 @@
 		leadListViewFromVoiceSlots,
 		todayIsoDate,
 	} from '$lib/leads/leadListFilter.js';
+	import { coachItemsForLead, coachSeverityClass } from '$lib/leads/leadListCoach.js';
 	import {
 		voiceLeadFilter,
 		registerLeadIntentHandler,
@@ -1208,6 +1209,7 @@
 				{@const tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
 				{@const taskBadge = taskDueBadgeForLead(lead)}
 				{@const enrichBadge = needsEnrichBadgeForLead(lead)}
+				{@const coachItems = coachItemsForLead(lead)}
 				{@const subBadge = subscriptionBadgeForLead(lead)}
 				<tr class="hover:bg-gray-800/30 transition-colors group">
 					<td class="px-6 py-3 text-gray-600 text-xs">{i + 1}</td>
@@ -1215,7 +1217,17 @@
 						<a href="/leads/{lead.id}" class="font-medium text-white hover:text-indigo-400 transition-colors">
 							{lead.company}
 						</a>
-						{#if taskBadge || enrichBadge}
+						{#if coachItems.length}
+							<ul class="mt-1.5 space-y-0.5 max-w-[18rem]" data-testid="leads-list-coach">
+								{#each coachItems as item (item.code)}
+									<li
+										class="text-[10px] leading-snug px-1.5 py-0.5 rounded border {coachSeverityClass(item.severity)}"
+										data-coach-code={item.code}
+										title={item.text}
+									>{item.text}</li>
+								{/each}
+							</ul>
+						{:else if taskBadge || enrichBadge}
 							<div class="mt-1 flex flex-wrap items-center gap-1 max-w-[14rem]">
 								{#if enrichBadge}
 									<span
