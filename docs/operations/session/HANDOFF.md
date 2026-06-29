@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[B24 backfill] | Задача:[mass догрузка B24 → CRM] | Статус: 🔄 in_progress | 👤 мониторинг`
+
+**2026-06-29:** B24 API снова OK (3649 лидов в портале). Запущены: `spawn_bitrix_backfill_all` (поля, таймлайн, задачи, продукты) + `POST /api/leads/import-bitrix` (новые лиды). Почта: `EMAIL_FAQ_AUTOREPLY=0`, `EMAIL_AUTO_SYNC_MINUTES=0` в `.env` — **перезапустить uvicorn** чтобы IMAP не крутился. Монитор: `backend/data/bitrix_fields_resync_state.json`, `check_lead_coverage.py`.
+
+---
+
 `Спринт:[Ф4 Email] | Задача:[backfill всей истории] | Статус: ✅ done (код) | 👤 credentials + browser`
 
 **2026-06-27:** Фоновая догрузка почты — `backfill.py`, API `/api/email/backfill/*`, кнопка «Догрузить всю историю», скрипт `run_email_backfill.py`; батчи по 90 дней назад до 10 лет. **👤:** проверить пароль ib@ (AUTHENTICATIONFAILED); на `/email` нажать «Догрузить» или `python scripts/run_email_backfill.py`.

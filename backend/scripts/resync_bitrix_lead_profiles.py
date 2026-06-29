@@ -7,8 +7,19 @@ import sys
 from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND.parent
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
+
+
+def _load_env() -> None:
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv(BACKEND / ".env")
+        load_dotenv(REPO_ROOT / ".env", override=True)
+    except ImportError:
+        pass
 
 
 async def _run_import(date_from: str) -> dict:
@@ -45,6 +56,7 @@ async def _run_backfill() -> tuple[int, int]:
 
 
 async def main() -> int:
+    _load_env()
     parser = argparse.ArgumentParser(description="Битрикс re-import + backfill портрета")
     parser.add_argument("--date-from", default="2023-01-01", help="DATE_CREATE фильтр import")
     parser.add_argument("--skip-import", action="store_true", help="Только backfill")

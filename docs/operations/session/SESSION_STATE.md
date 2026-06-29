@@ -12,6 +12,8 @@
 
 2026-06-25 | Действие: UI /email Yandex Mail — sidebar, search chips, папки, звёзды; F4_EMAIL_YANDEX_UI.md; pytest 8 PASS | Коммит: `cb54ff8` | Хвост A: browser апрув не кликали | Хвост B: нет | Хвост C: Trash/Drafts/Spam placeholder | Статус: done
 
+2026-06-29 | Действие: B24 mass backfill — spawn 5 workers + import-bitrix API; B24 API OK; FAQ/почта выкл в .env; fix load_dotenv в resync_bitrix_lead_profiles | Коммит: `pending` | Хвост A: дождаться fields/tasks/products; перезапуск uvicorn для EMAIL_AUTO_SYNC=0 | Хвост B: нет | Хвост C: DB pool конкуренция import+workers — перезапуск sequential | Статус: in_progress
+
 2026-06-27 | Действие: кнопка «Сбросить» всегда видна в /leads/list (фикс. позиция после поиска); smoke test | Коммит: `490e5e5` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-06-27 | Действие: persistence фильтров /leads/list — sessionStorage leadListFilterState.js; restore при возврате с карточки; pytest 4 PASS | Коммит: `d790ee4` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
