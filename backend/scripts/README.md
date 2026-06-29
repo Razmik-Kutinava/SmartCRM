@@ -49,7 +49,7 @@
 | `smoke_email_connect.py` | Live connect из `.env` (`core.email_config`); или `POST /api/email/bootstrap-from-env` |
 | `smoke_email_sync.py` | Live POST `/api/email/sync` — обновить письма без пароля |
 | `smoke_email_smtp_send.py` | Live POST `/api/email/send` — SMTP self-test (ib@) |
-| `smoke_email_faq.py` | FAQ smoke: триггер «прайс» → `try_faq_autoreply` (SMTP mock) |
+| `disable_faq_smoke_intents.py` | Срочно выкл. smoke FAQ-интенты (прайс) в БД |
 | `smoke_email_faq_live.py` | Live: me@ SMTP + ib@→me@ «прайс» + sync + faq_auto outbound |
 | `smoke_email_nurture_live.py` | Live: тестовый лид-клиент → nurture start → process-due → 1-е письмо с `{{company}}` |
 | `smoke_email_nurture_segment_live.py` | Live: узкий сегмент `Nurture Live` → `start-segment` batch (без mass send) |
