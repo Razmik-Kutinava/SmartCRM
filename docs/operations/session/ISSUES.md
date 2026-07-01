@@ -86,17 +86,28 @@
 
 [2026-06-27] — B24 портал: MySQL Connection refused — mass resync стоит
 
-Приоритет: 🔴 | Статус: открыта
+Приоритет: 🟢 | Статус: закрыта (2026-07-01)
 
-Описание: `spawn_bitrix_backfill_all` — `crm.lead.get` / `crm.status.list` HTTP 500: `Bitrix\Main\DB\ConnectionException Mysql connect error [localhost]: (2002) Connection refused`. Поля `only-missing` → `status: failed`; таймлайн/tasks/products не двигают `processed`.
+Описание: было HTTP 500 MySQL Connection refused на портале.
 
-Влияние: догрузка ~618 таймлайн + ~191 полей + tasks/products заблокирована до восстановления Битрикс24 на портале.
-
-Решение: проверить MySQL/сервисы на хосте B24; после восстановления — `python scripts/spawn_bitrix_backfill_all.py` из `backend/`.
-
-Агент: B24 backfill restart
+Решение: портал восстановлен; `check_bitrix_webhook_scopes.py` — crm/user/task OK; `spawn_bitrix_backfill_focused.py` запущен.
 
 ---
+
+[2026-06-24] — B24 webhook: scope task missing
+
+Приоритет: 🟢 | Статус: закрыта (2026-07-01)
+
+Описание: `tasks.task.list` возвращал 401, отчёт `bitrix_webhook_scope_report.json` от 24.06.
+
+Решение: оператор добавил scope **task** в входящий вебхук; повторный probe 01.07 — **task: ok**, `tasks.task.list: OK`. Старый URL в `.env` уже с новыми правами.
+
+---
+
+[2026-06-27] — B24 портал: MySQL Connection refused — mass resync стоит (архив)
+
+Приоритет: 🔴 | Статус: superseded → закрыта выше
+
 
 [2026-06-07] — `test_hermes_eval.py`: 9 failed (интенты create/update/noop)
 

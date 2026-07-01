@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[B24 backfill] | Задача:[фокусный backfill + task scope] | Статус: 🔄 in_progress | 👤 мониторинг`
+
+**2026-07-01:** `spawn_bitrix_backfill_focused.py` — поля, задачи (scope task OK), продукты, import; таймлайн/watch **не** запускаются. Почта: FAQ=0, IMAP=0, uvicorn перезапущен. **👤:** `bitrix_fields_resync_state.json`, `check_lead_coverage.py`.
+
+---
+
 `Спринт:[B24 backfill] | Задача:[mass догрузка B24 → CRM] | Статус: 🔄 in_progress | 👤 мониторинг`
 
 **2026-06-29:** B24 API снова OK (3649 лидов в портале). Запущены: `spawn_bitrix_backfill_all` (поля, таймлайн, задачи, продукты) + `POST /api/leads/import-bitrix` (новые лиды). Почта: `EMAIL_FAQ_AUTOREPLY=0`, `EMAIL_AUTO_SYNC_MINUTES=0` в `.env` — **перезапустить uvicorn** чтобы IMAP не крутился. Монитор: `backend/data/bitrix_fields_resync_state.json`, `check_lead_coverage.py`.

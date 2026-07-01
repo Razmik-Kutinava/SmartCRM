@@ -84,6 +84,7 @@
 | `check_bitrix_engagement_backfill.py` | Счётчики истории B24 (`lead_communication_logs`) и дел |
 | `resync_bitrix_lead_engagement.py` | Backfill **истории** (`lead_communication_logs`) и **задач/встреч** (`tasks`) из Битрикс; `--timeline-only` / `--tasks-only`; `--resume`; state → `data/bitrix_timeline_resync_state.json` |
 | `spawn_bitrix_backfill_all.py` | Старт всех mass backfill в фоне (поля, таймлайн, дела, продукты, watch) |
+| `spawn_bitrix_backfill_focused.py` | Фокусный backfill: поля, задачи, продукты, import — без timeline/watch |
 | `resync_bitrix_lead_tasks.py` | Встречи/дела (`crm.activity`) + опционально `tasks.task`; без scope task — только activity |
 | `resync_bitrix_lead_fields.py` | Backfill **bitrix_extra**, **contacts**, **deal_amount**; `--resume` / `--only-missing` / `--offset`; state `data/bitrix_fields_resync_state.json` |
 | `watch_fields_resync_then_retry.py` | Ждёт `status=done`, затем `--only-missing` дожим |
