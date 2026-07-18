@@ -18,6 +18,7 @@
 | `zakupki_parser.py` | Парсер zakupki.gov.ru |
 | `lookalike_import.py` | Batch-импорт lookalike-кандидатов в CRM (`source: lookalike`) |
 | `email_bootstrap.py` | Подключение почты из `.env` в БД (`bootstrap-from-env`) |
+| `email_account_delete.py` | Отключение ящика: удаление аккаунта + очистка тредов/писем/кампаний/цепочек |
 | `email_thread_list.py` | Enriched список тредов для UI (`isArchived`, `previewFrom`) |
 | `email_thread_analyze.py` | Анализ треда: тип письма + черновик маркетолога |
 | `industry_catalog.py` | Справочник отраслей (фикс + CRM) и статистика сегмента |

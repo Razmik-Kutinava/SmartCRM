@@ -6,7 +6,7 @@
         fetchEmailAccounts, connectEmailAccount, syncAllEmailAccounts, fetchEmailThreads,
         fetchEmailCampaigns, createCampaign, fetchEmailSyncStatus, previewCampaignSegment,
         sendEmail, replyToEmail, fetchThreadMessages, analyzeEmailThread,
-        startEmailBackfill
+        startEmailBackfill, deleteEmailAccount
     } from '$lib/emailStorage.js';
     import {
         filterEmailThreads, countEmailFolder, groupThreadsByDate,
@@ -69,6 +69,7 @@
     let connectLoading = $state(false);
     let syncLoading    = $state(false);
     let backfillStarting = $state(false);
+    let removingAccountId = $state(null);
 
     // ─── кампании ────────────────────────────────────────────────
     let selectedAccountId = $state(null);
@@ -326,6 +327,21 @@
             activeFolder = 'inbox';
         } catch (e) { error = `❌ ${e.message}`; }
         finally { connectLoading = false; }
+    }
+
+    async function disconnectAccount(account) {
+        if (!confirm(`Отключить ящик ${account.username}? Вся переписка этого ящика будет удалена из CRM.`)) return;
+        error = ''; success = '';
+        removingAccountId = account.id;
+        try {
+            const r = await deleteEmailAccount(account.id, true);
+            if (String(filterAccountId) === String(account.id)) filterAccountId = '';
+            closeThread();
+            await load();
+            const rm = r.removed || {};
+            success = `✅ Ящик ${account.username} отключён (писем: ${rm.messages ?? 0}, тредов: ${rm.threads ?? 0}).`;
+        } catch (e) { error = `❌ ${e.message}`; }
+        finally { removingAccountId = null; }
     }
 
     // ─── кампания ────────────────────────────────────────────────
@@ -602,7 +618,15 @@
                 <div class="px-6 pb-5 border-t border-gray-800 pt-4">
                     <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Подключённые аккаунты</p>
                     {#each accounts as a (a.id)}
-                        <div class="text-sm text-gray-300">{a.name} <span class="text-gray-500">({a.username})</span></div>
+                        <div class="flex items-center justify-between gap-3 py-1.5">
+                            <div class="text-sm text-gray-300 min-w-0 truncate">{a.name} <span class="text-gray-500">({a.username})</span></div>
+                            <button
+                                onclick={() => disconnectAccount(a)}
+                                disabled={removingAccountId === a.id}
+                                class="flex-shrink-0 text-xs px-3 py-1 rounded-lg bg-red-900/40 border border-red-800 text-red-300 hover:bg-red-900/70 disabled:opacity-50 transition-colors"
+                                data-testid="email-account-disconnect"
+                            >{removingAccountId === a.id ? 'Отключение…' : 'Отключить'}</button>
+                        </div>
                     {/each}
                 </div>
             {/if}

@@ -20,6 +20,7 @@ from email_sync.sync_all import sync_all_email_accounts
 from email_sync.background import email_sync_status_payload
 from email_sync.backfill import backfill_status_payload, pause_backfill, start_backfill, run_backfill_batch
 from services.email_bootstrap import bootstrap_accounts_from_env, upsert_account_from_payload
+from services.email_account_delete import delete_email_account
 from services.email_thread_list import list_email_threads_enriched
 from services.email_thread_analyze import analyze_email_thread
 from services.email_smtp import send_email_via_smtp as _send_email_via_smtp
@@ -159,6 +160,19 @@ async def connect_email_account(body: EmailAccountCreate, db: AsyncSession = Dep
             detail = "Ошибка синхронизации почты. Проверьте учётные данные и настройки сервера."
         raise HTTPException(status_code=400, detail=detail) from e
     return {"account": row["account"], "sync": row["sync"]}
+
+
+@router.delete("/accounts/{account_id}")
+async def disconnect_email_account(
+    account_id: int,
+    purge: bool = True,
+    db: AsyncSession = Depends(get_db),
+):
+    """Отключить ящик из CRM. purge=true — удалить и всю переписку/кампании."""
+    result = await delete_email_account(db, account_id, purge=purge)
+    if not result.get("deleted"):
+        raise HTTPException(status_code=404, detail="Аккаунт не найден")
+    return result
 
 
 @router.post("/accounts/{account_id}/sync")

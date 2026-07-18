@@ -27,6 +27,10 @@ export async function syncEmailAccount(accountId) {
 	return emailJson(`/accounts/${accountId}/sync`, { method: 'POST' });
 }
 
+export async function deleteEmailAccount(accountId, purge = true) {
+	return emailJson(`/accounts/${accountId}?purge=${purge}`, { method: 'DELETE' });
+}
+
 export async function syncAllEmailAccounts() {
 	return emailJson('/sync', { method: 'POST' });
 }
