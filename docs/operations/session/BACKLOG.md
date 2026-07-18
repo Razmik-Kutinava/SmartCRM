@@ -314,3 +314,17 @@
 
 `[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: post-migration долги (таблица выше) | Причина: миграция закрыта | Нужна фаза MAP: — | Из шага: rules workflow step 6`
 
+---
+
+## Улучшения CI (`.github/workflows/`) — не срочно
+
+> CI сейчас рабочий (pytest + smoke). Ниже — апгрейды, когда будут руки/ключи.
+
+| Приоритет | Что сделать | Зачем |
+|-----------|-------------|-------|
+| 🟢 | Добавить `GROQ_API_KEY` в GitHub Secrets | оживить AI-ревью (`ai-review.yml`) — сейчас мёртвый без ключа |
+| 🟢 | Гонять `run_zone_regression.py` (зоны) в CI | падение по конкретной зоне (crm_leads/voice/…), а не общим pytest |
+| 🟢 | Прогонять `check_agent_step.py` в CI | правила ops/commit не забываются автоматически |
+
+`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: 3 апгрейда CI (GROQ_API_KEY secret, зоны регрессии, check_agent_step в CI) | Причина: CI рабочий, не срочно | Нужна фаза MAP: — | Из шага: разбор .github`
+
