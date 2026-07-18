@@ -38,6 +38,7 @@
 | R9 | Backend README sync | `workflow/repo-layout` §5 | финиш-чеклист |
 | R10 | SBR RED/GREEN + todo.md | `workflow/spec-build-review.mdc` | дисциплина |
 | R11 | Project rules по globs | `.cursor/rules/project/smartcrm-*.mdc` | Cursor globs |
+| R12 | Отчёт: Сделано/Не сделано + A/B/C | `workflow/task-workflow` § Отчёт | `check_agent_step.py` |
 
 ## Старт сессии
 
@@ -52,7 +53,7 @@
 1. Тесты зелёные (или docs-only)
 2. **`git commit` + ops** (`workflow/commit-ops.mdc`)
 3. `check_agent_step.py` + `check_rules_commit_conflict.py` + `verify_cursor_rules_precedence.py`
-4. Отчёт с **A / B / C** → **стоп до `go`**
+4. Отчёт с **таблицей + A/B/C** → **стоп до `go`**
 
 ## Регрессия
 

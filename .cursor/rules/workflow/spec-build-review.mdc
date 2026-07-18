@@ -53,7 +53,7 @@ alwaysApply: true
 
 1. Sanity: hot-path, N+1, `pytest`, UI — если затронут
 2. Ops: SESSION_STATE + CHANGELOG + HANDOFF
-3. Отчёт: хвост **A / B / C** + **`Коммит: <hash>`** + регрессия PASS/FAIL
+3. Отчёт: таблица **Сделано | Не сделано** + **B / C** + **`Коммит: <hash>`** + регрессия PASS/FAIL (A = колонка «Не сделано»)
 4. Очистить или архивировать todo → **стоп до `go`**
 5. `git push` / deploy — **только** по явной просьбе
 

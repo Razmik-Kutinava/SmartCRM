@@ -19,9 +19,12 @@ Commit **без согласования пользователя** — не ж�
 - **Project:** `.cursor/rules/project/` — core, tests, http, data, agents, performance
 - **Матрица:** `docs/operations/baselines/RULES_MATRIX.md`
 
-## Хвост A / B / C
+## Отчёт (каждый шаг)
 
-В каждом отчёте после работы — три блока (`нет` или список). См. `workflow/smartcrm-commit-ops.mdc`.
+Таблица **Сделано | Не сделано** + блоки **B / C** + **`Коммит: <hash>`**.  
+A = колонка «Не сделано». Канон: `workflow/smartcrm-task-workflow.mdc` § «Формат отчёта».
+
+## Хвост A / B / C (SESSION_STATE)
 
 ## Push
 

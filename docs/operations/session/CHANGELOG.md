@@ -2,6 +2,11 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-07-18 — CoffeeOS workflow: шаг 4 (merged отчёт)
+
+Таблица **Сделано | Не сделано** + A/B/C в task-workflow, commit-ops, agent-workflow, spec-build-review, AGENTS, RULES_MATRIX.  
+A = колонка «Не сделано»; RED-substep — без полного отчёта.
+
 ## 2026-07-18 — CoffeeOS workflow: шаг 3 (project-rules)
 
 6 файлов в `.cursor/rules/project/`: core, tests, http, data, agents, performance.  
