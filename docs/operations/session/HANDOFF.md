@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Наведение порядка] | Задача:[.claude → gitignore] | Статус: ✅ done | 👤 продукт / PRD_MAP`
+
+**2026-07-18:** `.claude/` в .gitignore, untrack (файлы на диске). Коммит `3e69864`. **👤:** следующая задача — PRD_MAP или чистка доков.
+
+---
+
 `Спринт:[CoffeeOS workflow] | Задача:[миграция rules] | Статус: ✅ done | 👤 продукт / PRD_MAP`
 
 **2026-07-18:** CoffeeOS workflow **закрыт** (1–6). SBR scope зафиксирован. Коммит `4a77384`. **👤:** PRD_MAP или `go` на долг из BACKLOG § post-migration.

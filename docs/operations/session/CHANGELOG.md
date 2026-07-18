@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-07-18 — `.claude/` в gitignore
+
+Папка Claude Code (agents, commands) убрана из git (`git rm --cached`), файлы на диске остались. `.gitignore`: `.claude/` вместо `.claude/settings.local.json` — секреты локальных настроек больше не попадут в git.
+
 ## 2026-07-18 — CoffeeOS workflow: шаг 6 + закрытие миграции
 
 SBR scope зафиксирован: PRD_MAP + фичи/API/миграции; one-liner без SBR.  
