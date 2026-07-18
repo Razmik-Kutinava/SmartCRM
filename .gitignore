@@ -10,7 +10,8 @@ __pycache__/
 dist/
 backend/.venv_wsl/
 **/.venv_wsl/
-.claude/settings.local.json
+# Claude Code — локальные помощники и настройки (не в git, файлы на диске остаются)
+.claude/
 
 # Runtime artifacts (скрипты, бенчмарки) — не в корне и не в git
 backend/data/artifacts/*
