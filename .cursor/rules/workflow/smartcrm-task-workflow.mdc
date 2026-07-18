@@ -29,8 +29,8 @@ alwaysApply: true
 
 - Ждать **явный пункт** (PRD_MAP / задача) + **что сделать**.
 - Пробежать **`docs/operations/session/BACKLOG.md`** на хвост по этому пункту MAP.
-- **SBR** (PRD_MAP / фича / API): PHASE 1 SPEC → заполнить **`todo.md`** → план → **`go`** → BUILD. См. `spec-build-review.mdc`.
-- **Без SBR** (one-liner, docs-only): план на 1 шаг → **`go`** → работа.
+- **SBR** (см. scope в `spec-build-review.mdc`): PRD_MAP, фича, API, миграция, 2+ файла → PHASE 1 + `todo.md` → **`go`**
+- **Без SBR:** one-liner, docs/rules-only, chore → план на 1 шаг → **`go`**
 - Без `go` на **новую** задачу — код не трогать.
 
 ---

@@ -36,11 +36,17 @@
 | R7 | BACKLOG ↔ PRD_MAP | `BACKLOG.md` | таблица |
 | R8 | Сплит >200 строк | `workflow/file-size-split.mdc` | ревью |
 | R9 | Backend README sync | `workflow/repo-layout` §5 | финиш-чеклист |
-| R10 | SBR RED/GREEN + todo.md | `workflow/spec-build-review.mdc` | дисциплина |
+| R10 | SBR RED/GREEN + todo.md + scope | `workflow/spec-build-review.mdc` § Scope | дисциплина |
 | R11 | Project rules по globs | `.cursor/rules/project/smartcrm-*.mdc` | Cursor globs |
 | R12 | Отчёт: Сделано/Не сделано + A/B/C | `workflow/task-workflow` § Отчёт | `check_agent_step.py` |
 
-## Старт сессии
+## SBR scope (апрув 2026-07-18)
+
+**Да:** PRD_MAP, фича, API, миграция, 2+ файла логики, hot-path по плану.  
+**Нет:** one-liner, docs/rules-only, chore.  
+**Серая зона:** спросить один раз. Канон: [`spec-build-review.mdc`](../../.cursor/rules/workflow/spec-build-review.mdc) § Scope.
+
+## Регрессия
 
 | Поле | Источник |
 |------|----------|
@@ -54,6 +60,12 @@
 2. **`git commit` + ops** (`workflow/commit-ops.mdc`)
 3. `check_agent_step.py` + `check_rules_commit_conflict.py` + `verify_cursor_rules_precedence.py`
 4. Отчёт с **таблицей + A/B/C** → **стоп до `go`**
+
+## SBR scope (апрув 2026-07-18)
+
+**Да:** PRD_MAP, фича, API, миграция, 2+ файла логики.  
+**Нет:** one-liner, docs/rules-only, chore.  
+**Серая зона:** спросить один раз. Канон: [`spec-build-review.mdc`](../../.cursor/rules/workflow/spec-build-review.mdc) § Scope.
 
 ## Регрессия
 

@@ -1,12 +1,12 @@
 # HANDOFF
 
-`Спринт:[CoffeeOS workflow] | Задача:[шаг 5 — doc links + scratch] | Статус: ✅ done (код) | 👤 go / апрув шаг 6`
+`Спринт:[CoffeeOS workflow] | Задача:[миграция rules] | Статус: ✅ done | 👤 продукт / PRD_MAP`
 
-**2026-07-18:** Doc links → `workflow/`; `backend/scripts/scratch/`. Коммит `e89aa99`. **👤:** «ок» на SBR scope (шаг 6) или правки.
+**2026-07-18:** CoffeeOS workflow **закрыт** (шаги 1–6). SBR scope: PRD_MAP + фичи; one-liner без SBR. Коммиты `c4318aa`…`step6`. Post-migration долги → BACKLOG § CoffeeOS. **👤:** следующая задача из PRD_MAP или `go` на долг из BACKLOG.
 
 ---
 
-`Спринт:[CoffeeOS workflow] | Задача:[шаг 4 — merged отчёт] | Статус: ✅ done (код) | 👤 go на шаг 5`
+`Спринт:[CoffeeOS workflow] | Задача:[шаг 5 — doc links + scratch] | Статус: ✅ done (код) | 👤 go / апрув шаг 6`
 
 **2026-07-18:** SBR — `spec-build-review.mdc`, `todo.md`, RED/GREEN в commit-ops. Коммит `a5f72b3`. Scope: PRD_MAP + фичи; one-liner без SBR. **👤:** `go` на шаг 3 (project-rules) или правки scope SBR (BACKLOG §6).
 

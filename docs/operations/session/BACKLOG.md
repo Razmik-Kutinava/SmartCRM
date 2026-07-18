@@ -291,18 +291,26 @@
 
 ---
 
-## CoffeeOS workflow migration (2026-07-18)
+## CoffeeOS workflow migration (2026-07-18) — ✅ ЗАКРЫТО
 
-> Стандарт agent rules. Шаги 1–5 done.
+> Стандарт agent rules для всех проектов SmartCRM. Шаги 1–6 done.
 
-| Приоритет | Шаг | Статус | Отложено |
-|-----------|-----|--------|----------|
-| ✅ | **1 каркас** | done | — |
-| ✅ | **2 SBR** | done | — |
-| ✅ | **3 project-rules** | done | — |
-| ✅ | **4 отчёт** | done | — |
-| ✅ | **5 доки + scratch** | done | PRD_MAP, PHASE2_ENTRY, archive, scratch/ |
-| 🟢 | **6 scope** | pending | уточнить SBR scope (сейчас: MAP+фичи) |
+| Шаг | Статус |
+|-----|--------|
+| 1 каркас `workflow/` + `project/` | ✅ |
+| 2 SBR + todo.md + RED/GREEN | ✅ |
+| 3 project-rules (6× mdc) | ✅ |
+| 4 merged отчёт | ✅ |
+| 5 doc links + scratch | ✅ |
+| 6 SBR scope апрув | ✅ MAP + фичи; one-liner без SBR |
 
-`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: шаг 6 SBR scope апрув | Причина: шаг 5 закрыт | Нужна фаза MAP: — | Из шага: rules workflow step 5`
+### Долги post-migration (не блокер)
+
+| Приоритет | Отложено | Причина |
+|-----------|----------|---------|
+| 🟢 | `project/smartcrm-code-review.mdc` (agent_requestable, CoffeeOS шаблон) | опционально, когда понадобится ревью-гейт |
+| 🟢 | Скрипт grep stale paths `.cursor/rules/smartcrm-*.mdc` в CI | CHANGELOG/SESSION_STATE история — намеренно не трогаем |
+| 🟢 | Единый `docs/operations/baselines/AGENT_WORKFLOW.md` для людей | RULES_MATRIX достаточно |
+
+`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: post-migration долги (таблица выше) | Причина: миграция закрыта | Нужна фаза MAP: — | Из шага: rules workflow step 6`
 

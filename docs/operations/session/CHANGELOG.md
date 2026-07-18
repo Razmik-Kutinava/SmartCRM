@@ -2,6 +2,11 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-07-18 — CoffeeOS workflow: шаг 6 + закрытие миграции
+
+SBR scope зафиксирован: PRD_MAP + фичи/API/миграции; one-liner без SBR.  
+RULES_MATRIX § SBR scope; BACKLOG post-migration долги.
+
 ## 2026-07-18 — CoffeeOS workflow: шаг 5 (doc links + scratch)
 
 Ссылки на rules → `.cursor/rules/workflow/` в PRD_MAP, PHASE2_ENTRY, docs/README, archive, debt.  

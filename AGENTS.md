@@ -15,7 +15,7 @@ Commit **без согласования пользователя** — не ж�
 ## Индекс правил
 
 - **Workflow:** `.cursor/rules/workflow/` — процесс (alwaysApply)
-- **SBR:** `workflow/spec-build-review.mdc` + `docs/operations/session/todo.md`
+- **SBR:** `workflow/spec-build-review.mdc` — scope: PRD_MAP + фичи; one-liner без SBR
 - **Project:** `.cursor/rules/project/` — core, tests, http, data, agents, performance
 - **Матрица:** `docs/operations/baselines/RULES_MATRIX.md`
 
