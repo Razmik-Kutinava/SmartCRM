@@ -2,7 +2,7 @@
 
 `Спринт:[CoffeeOS workflow] | Задача:[миграция rules] | Статус: ✅ done | 👤 продукт / PRD_MAP`
 
-**2026-07-18:** CoffeeOS workflow **закрыт** (шаги 1–6). SBR scope: PRD_MAP + фичи; one-liner без SBR. Коммиты `c4318aa`…`step6`. Post-migration долги → BACKLOG § CoffeeOS. **👤:** следующая задача из PRD_MAP или `go` на долг из BACKLOG.
+**2026-07-18:** CoffeeOS workflow **закрыт** (1–6). SBR scope зафиксирован. Коммит `4a77384`. **👤:** PRD_MAP или `go` на долг из BACKLOG § post-migration.
 
 ---
 
