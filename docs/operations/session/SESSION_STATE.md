@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-07-18 | Действие: BACKLOG § улучшения CI — 3 апгрейда (GROQ_API_KEY secret, зоны регрессии в CI, check_agent_step в CI); не срочно | Коммит: `f58fbde` | Хвост A: нет | Хвост B: BACKLOG § улучшения CI | Хвост C: нет | Статус: done
+
 2026-07-18 | Действие: `.claude/` в .gitignore — untrack (git rm --cached), файлы на диске остались; секреты settings.local.json больше не в git | Коммит: `3e69864` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-07-18 | Действие: CoffeeOS workflow шаг 6 — SBR scope апрув (MAP+фичи; one-liner без SBR); миграция закрыта; BACKLOG post-migration долги | Коммит: `4a77384` | Хвост A: нет | Хвост B: BACKLOG § долги post-migration | Хвост C: нет | Статус: done
