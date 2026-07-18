@@ -8,7 +8,7 @@
 |------|-------|------------|
 | Индекс | [`.cursor/rules/smartcrm-index.mdc`](../../.cursor/rules/smartcrm-index.mdc) | alwaysApply, карта workflow + project |
 | Workflow | [`.cursor/rules/workflow/`](../../.cursor/rules/workflow/) | процесс: commit, go, тесты, layout, **SBR** |
-| Project | [`.cursor/rules/project/`](../../.cursor/rules/project/) | стек и домены (шаг 3+) |
+| Project | [`.cursor/rules/project/`](../../.cursor/rules/project/) | core, tests, http, data, agents, performance |
 
 ## Канон коммита
 
@@ -37,6 +37,7 @@
 | R8 | Сплит >200 строк | `workflow/file-size-split.mdc` | ревью |
 | R9 | Backend README sync | `workflow/repo-layout` §5 | финиш-чеклист |
 | R10 | SBR RED/GREEN + todo.md | `workflow/spec-build-review.mdc` | дисциплина |
+| R11 | Project rules по globs | `.cursor/rules/project/smartcrm-*.mdc` | Cursor globs |
 
 ## Старт сессии
 

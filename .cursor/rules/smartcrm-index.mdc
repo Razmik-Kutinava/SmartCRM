@@ -28,9 +28,16 @@ alwaysApply: true
 |------|--------|
 | `docs/operations/session/todo.md` | микро-чеклист фичи (SBR PHASE 1–3) |
 
-## Project (стек — шаг 3+, см. BACKLOG)
+## Project (стек)
 
-Папка `project/` — правила по доменам (core, tests, http, data, agents, performance).
+| Файл | Зона |
+|------|------|
+| [`project/smartcrm-core.mdc`](project/smartcrm-core.mdc) | стек, security, архитектура |
+| [`project/smartcrm-tests.mdc`](project/smartcrm-tests.mdc) | pytest, eval, регрессия |
+| [`project/smartcrm-http.mdc`](project/smartcrm-http.mdc) | FastAPI, API-контракт |
+| [`project/smartcrm-data.mdc`](project/smartcrm-data.mdc) | ORM, миграции |
+| [`project/smartcrm-agents.mdc`](project/smartcrm-agents.mdc) | Hermes, голос, LangGraph |
+| [`project/smartcrm-performance.mdc`](project/smartcrm-performance.mdc) | N+1, batch, hot-path (alwaysApply) |
 
 ## Приоритет (при конфликте)
 

@@ -1,0 +1,31 @@
+---
+description: SmartCRM — performance, N+1, batch, hot-path
+alwaysApply: true
+---
+
+# SmartCRM — performance
+
+## ORM / API
+
+- **No N+1** — `selectinload` / `joinedload` / batch-запросы до циклов
+- Списки лидов / API list — pagination, не тащить всё в память
+- Batch-операции предпочтительнее N отдельных HTTP/DB round-trips
+
+## Hot-path
+
+Не трогать без пункта MAP или бага в плане:
+
+- `agents/orchestrator.py`, `voice/pipeline.py`, `core/hermes/parse.py`
+- `leadgen/pipeline/run_pipeline.py`, `db/session.py`
+
+Минимальный diff + регрессия зоны обязательны.
+
+## Frontend
+
+- Тяжёлая логика → `frontend/src/lib/{домен}/`, не раздувать `+page.svelte`
+- Не делать лишних fetch в цикле; батчить API где возможно
+
+## Eval / LLM
+
+- Таймауты и retries — не блокировать hot-path голоса длинными синхронными вызовами
+- Кэши провайдеров — `backend/data/` (не корень репо)

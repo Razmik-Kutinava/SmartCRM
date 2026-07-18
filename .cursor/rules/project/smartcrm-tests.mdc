@@ -1,0 +1,43 @@
+---
+description: SmartCRM — pytest, зеркало структуры, регрессия
+globs:
+  - "backend/tests/**/*.py"
+  - "eval/**"
+alwaysApply: false
+---
+
+# SmartCRM — tests
+
+**Runner:** `cd backend && python -m pytest`
+
+Стратегия зон: [`docs/operations/baselines/RULES_MATRIX.md`](../../../docs/operations/baselines/RULES_MATRIX.md) § Регрессия.
+
+## Размещение
+
+- Все pytest → `backend/tests/` (зеркало `backend/`)
+- Фикстуры → `backend/tests/fixtures/{домен}/`
+- Eval вне pytest → `eval/` (`cases.jsonl`, `run_eval.py`)
+- Именование: `test_{модуль}.py` или `tests/{пакет}/test_{файл}.py`
+
+## На каждое изменение
+
+- Новый/изменённый роут, сервис, скрипт → **свой тест** в том же шаге
+- SBR RED: тест **падает** до реализации → commit `[RED]`
+- SBR GREEN: код + зелёный тест → commit `[GREEN]`
+- **Намеренный RED ≠ ISSUES**
+
+## Регрессия зоны (после GREEN / финиша)
+
+```bash
+cd backend
+python scripts/run_zone_regression.py crm_leads   # лиды
+python scripts/run_zone_regression.py voice       # голос
+python scripts/run_zone_regression.py p1            # смоук P1
+python scripts/run_zone_regression.py p6            # после сплитов
+```
+
+Полная таблица — `workflow/smartcrm-dev-gates.mdc`.
+
+## Отчёт
+
+Команда + PASS/FAIL + последние 2–3 строки pytest в ответ пользователю и SESSION_STATE.

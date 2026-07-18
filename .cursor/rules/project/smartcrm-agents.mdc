@@ -1,0 +1,49 @@
+---
+description: SmartCRM — Hermes, LangGraph, голос, orchestrator (hot-path)
+globs:
+  - "backend/agents/**"
+  - "backend/core/hermes/**"
+  - "backend/core/llm.py"
+  - "backend/voice/**"
+alwaysApply: false
+---
+
+# SmartCRM — agents / голос / Hermes
+
+## Пайплайн (не менять порядок)
+
+```
+Аудио → voice/whisper.py → voice/pipeline.py → core/hermes/ → agents/orchestrator.py
+```
+
+## Hot-path — только с причиной в плане
+
+| Путь | Риск |
+|------|------|
+| `backend/agents/orchestrator.py` | голос → все интенты |
+| `backend/voice/pipeline.py` | WS / process_text |
+| `backend/core/hermes/parse.py` | разбор интентов |
+| `backend/leadgen/pipeline/run_pipeline.py` | карточка лида |
+| `backend/leadgen/pipeline/__init__.py` | публичный API pipeline |
+
+Любое изменение → регрессия:
+
+```bash
+cd backend
+python -m pytest tests/test_voice_pipeline.py -q
+python -m pytest tests/core/test_hermes_eval.py -q   # может требовать Ollama/LLM
+python scripts/run_zone_regression.py voice
+```
+
+Hermes eval без LLM → запись в ISSUES, не блокировать зону «голос» если pytest pipeline зелёный.
+
+## Hermes / LLM
+
+- Парсинг интентов — `core/hermes/parse.py`
+- Промпты и профили — `core/hermes_prompt_profiles.py`, `backend/data/`
+- Не менять контракт интентов без тестов в `tests/core/test_hermes_eval.py`
+
+## LangGraph
+
+- Агенты — `backend/agents/` (analyst, qa, …)
+- Оркестратор — единая точка маршрутизации голосовых интентов

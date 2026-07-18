@@ -19,6 +19,17 @@
 | [`workflow/smartcrm-file-size-split.mdc`](.cursor/rules/workflow/smartcrm-file-size-split.mdc) | лимит файлов, сплит |
 | [`workflow/spec-build-review.mdc`](.cursor/rules/workflow/spec-build-review.mdc) | SBR: RED/GREEN TDD |
 
+## Project rules (по globs)
+
+| Файл | Зона |
+|------|------|
+| [`project/smartcrm-core.mdc`](.cursor/rules/project/smartcrm-core.mdc) | стек, security |
+| [`project/smartcrm-tests.mdc`](.cursor/rules/project/smartcrm-tests.mdc) | pytest, регрессия |
+| [`project/smartcrm-http.mdc`](.cursor/rules/project/smartcrm-http.mdc) | FastAPI, API |
+| [`project/smartcrm-data.mdc`](.cursor/rules/project/smartcrm-data.mdc) | ORM, миграции |
+| [`project/smartcrm-agents.mdc`](.cursor/rules/project/smartcrm-agents.mdc) | Hermes, голос |
+| [`project/smartcrm-performance.mdc`](.cursor/rules/project/smartcrm-performance.mdc) | perf (alwaysApply) |
+
 Микро-чеклист: [`docs/operations/session/todo.md`](docs/operations/session/todo.md).
 
 Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md).

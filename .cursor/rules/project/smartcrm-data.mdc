@@ -1,0 +1,31 @@
+---
+description: SmartCRM — ORM, миграции, PostgreSQL
+globs:
+  - "backend/db/**"
+  - "backend/**/alembic/**"
+alwaysApply: false
+---
+
+# SmartCRM — data / БД
+
+Модели: `backend/db/models/` · README: [`backend/db/README.md`](../../../backend/db/README.md)
+
+## Migration Gate (жёстко)
+
+Перед **любым** DDL / миграцией / изменением `db/models/`:
+
+1. Показать: что меняется, pending миграции, **план откала**
+2. Ждать **`go`**
+3. После — smoke: `cd backend && python -m pytest tests/api/test_leads_api.py -q`
+
+**Запрещено без `go`:** `DROP`, `TRUNCATE`, `db:reset`, удаление миграций.
+
+## ORM
+
+- SQLAlchemy **async**; session — `backend/db/session.py` (**hot-path**)
+- Не добавлять raw SQL от LLM; миграции Alembic — единственный DDL-канал
+- Новая модель → `db/README.md` § models + pytest
+
+## Hot-path
+
+`backend/db/session.py` — не трогать без явной причины в плане; регрессия обязательна.

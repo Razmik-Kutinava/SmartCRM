@@ -16,7 +16,7 @@ Commit **без согласования пользователя** — не ж�
 
 - **Workflow:** `.cursor/rules/workflow/` — процесс (alwaysApply)
 - **SBR:** `workflow/spec-build-review.mdc` + `docs/operations/session/todo.md`
-- **Project:** `.cursor/rules/project/` — стек (шаг 3+)
+- **Project:** `.cursor/rules/project/` — core, tests, http, data, agents, performance
 - **Матрица:** `docs/operations/baselines/RULES_MATRIX.md`
 
 ## Хвост A / B / C

@@ -1,0 +1,34 @@
+---
+description: SmartCRM — FastAPI routes, API-контракт, WebSocket
+globs:
+  - "backend/api/**/*.py"
+  - "docs/api/**"
+alwaysApply: false
+---
+
+# SmartCRM — HTTP / API
+
+Карта роутов: [`backend/api/routes/README.md`](../../../backend/api/routes/README.md)  
+Контракт: [`docs/api/API.md`](../../../docs/api/API.md)
+
+## Роуты
+
+- Handlers — тонкие: валидация → сервис → ответ
+- Pydantic для request/response; без dict-свалок в публичном API
+- `async` endpoints; типы обязательны
+
+## При изменении API
+
+| Действие | Обязательно |
+|----------|-------------|
+| Новый/изменённый роут | строка в `backend/api/routes/README.md` |
+| Смена контракта | `docs/api/` + smoke pytest |
+| Поля лида / CRM config | `test_leads_api` + фронт-роут если есть UI |
+| WebSocket голос | `test_voice_pipeline` |
+
+Breaking change без версии / миграции фронта → **стоп**, ISSUES, ждать решения.
+
+## Тесты
+
+- `backend/tests/api/test_leads_api.py` — минимальный smoke для CRM
+- Зона: `python scripts/run_zone_regression.py crm_leads`

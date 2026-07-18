@@ -293,17 +293,17 @@
 
 ## CoffeeOS workflow migration (2026-07-18)
 
-> Стандарт agent rules для всех проектов. Шаги 1–2 done.
+> Стандарт agent rules. Шаги 1–3 done.
 
 | Приоритет | Шаг | Статус | Отложено |
 |-----------|-----|--------|----------|
 | ✅ | **1 каркас** | done | — |
-| ✅ | **2 SBR** | done | `spec-build-review.mdc`, `todo.md`, RED/GREEN |
-| 🟡 | **3 project-rules** | pending | `project/smartcrm-{core,tests,http,data,agents,performance}.mdc` |
+| ✅ | **2 SBR** | done | — |
+| ✅ | **3 project-rules** | done | 6× `project/smartcrm-*.mdc` |
 | 🟢 | **4 отчёт** | pending | слить CoffeeOS «Сделано/Не сделано» + хвост A/B/C |
 | 🟢 | **5 доки** | pending | массовое обновление ссылок PRD_MAP, PHASE2_ENTRY |
 | 🟢 | **5 scratch** | pending | `backend/scripts/scratch/` |
-| 🟢 | **6 scope** | pending | уточнить SBR: только PRD_MAP vs все задачи (сейчас: MAP+фичи) |
+| 🟢 | **6 scope** | pending | уточнить SBR scope (сейчас: MAP+фичи) |
 
-`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: шаги 3–6 CoffeeOS migration | Причина: шаг 2 закрыт | Нужна фаза MAP: — | Из шага: rules workflow step 2`
+`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: шаги 4–6 CoffeeOS migration | Причина: шаг 3 закрыт | Нужна фаза MAP: — | Из шага: rules workflow step 3`
 

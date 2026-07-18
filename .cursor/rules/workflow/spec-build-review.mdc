@@ -41,7 +41,7 @@ alwaysApply: true
 
 ### GREEN
 
-- Код по домену (`backend/`, `frontend/`); project-rules — шаг 3+
+- Код по домену — **`project/smartcrm-{core,http,data,agents}`** + perf
 - До **3** попыток fix; завис — откат **только** файлов реализации (не тесты / todo / ops)
 - **Регрессия зоны** — таблица `smartcrm-dev-gates.mdc` (обязательно)
 - `[x]` в `todo.md`

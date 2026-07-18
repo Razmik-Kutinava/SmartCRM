@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[CoffeeOS workflow] | Задача:[шаг 3 — project-rules] | Статус: ✅ done (код) | 👤 go на шаг 4`
+
+**2026-07-18:** Project rules — 6× `project/smartcrm-*.mdc` (core, tests, http, data, agents, performance). **👤:** `go` на шаг 4 (merged отчёт) или правки project-rules.
+
+---
+
 `Спринт:[CoffeeOS workflow] | Задача:[шаг 2 — SBR] | Статус: ✅ done (код) | 👤 go на шаг 3`
 
 **2026-07-18:** SBR — `spec-build-review.mdc`, `todo.md`, RED/GREEN в commit-ops. Коммит `a5f72b3`. Scope: PRD_MAP + фичи; one-liner без SBR. **👤:** `go` на шаг 3 (project-rules) или правки scope SBR (BACKLOG §6).

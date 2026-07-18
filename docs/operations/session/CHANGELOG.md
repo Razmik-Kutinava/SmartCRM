@@ -2,6 +2,11 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-07-18 — CoffeeOS workflow: шаг 3 (project-rules)
+
+6 файлов в `.cursor/rules/project/`: core, tests, http, data, agents, performance.  
+Globs по зонам; performance — alwaysApply. Обновлены index, `.cursorrules`, RULES_MATRIX, spec-build-review, BACKLOG.
+
 ## 2026-07-18 — CoffeeOS workflow: шаг 2 (SBR)
 
 `workflow/spec-build-review.mdc` — PHASE 1 SPEC / RED / GREEN / REVIEW.  

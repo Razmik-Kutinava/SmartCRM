@@ -1,0 +1,40 @@
+---
+description: SmartCRM — ядро, стек, security, архитектура
+globs:
+  - "backend/**/*.py"
+  - "frontend/**/*.{js,ts,svelte}"
+alwaysApply: false
+---
+
+# SmartCRM — core
+
+Канон при спорах: [`docs/product/ARCHITECTURE.md`](../../../docs/product/ARCHITECTURE.md), [`docs/product/PRD.md`](../../../docs/product/PRD.md).
+
+## Стек
+
+- **Backend:** Python 3.11+, FastAPI, SQLAlchemy **async**, PostgreSQL, Redis
+- **Агенты:** LangGraph · Hermes: `backend/core/hermes/` · LLM: `backend/core/llm.py`
+- **Frontend:** SvelteKit + Tailwind, UI на **русском**
+
+## Security (обязательно)
+
+- Секреты только `.env`; новые ключи → `.env.example` с комментарием
+- **Не коммитить** `.env`, кэши с ключами, sqlite с прод-данными
+- **Без raw SQL от LLM** — только ORM / параметризованные запросы в коде
+- Auth middleware и permission checks — не обходить в роутах
+
+## Код
+
+- Python: `async` handlers, типы, Pydantic-схемы
+- Бизнес-логика — `backend/core/`, `backend/services/` (не в роутах)
+- Не выдумывать поля API / ORM — сверяться с моделями и `docs/api/`
+- Комментарии и ops-логи — **русский**
+- Лимиты файлов — `workflow/smartcrm-file-size-split.mdc`
+
+## Голосовой пайплайн (порядок не ломать)
+
+```
+Аудио → voice/whisper.py → voice/pipeline.py → core/hermes/ → agents/orchestrator.py
+```
+
+Детали hot-path — `project/smartcrm-agents.mdc`, `workflow/smartcrm-dev-gates.mdc`.
