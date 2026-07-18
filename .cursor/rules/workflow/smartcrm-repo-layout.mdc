@@ -26,12 +26,15 @@ alwaysApply: true
 | Для разработчиков | `docs/dev/` | `CONTRIBUTING.md`, `REPO_LAYOUT.md` |
 | Устаревшее | `docs/archive/` | только по явному решению |
 | Референс (чужой проект) | `docs/reference/` | не трогать без `go` |
+| **Правила workflow** | `.cursor/rules/workflow/` | commit-ops, task-workflow, dev-gates |
+| **Правила project** | `.cursor/rules/project/` | core, tests, http (шаг 3+) |
 | FastAPI роуты | `backend/api/routes/` | `leads.py` |
 | Бизнес-логика | `backend/core/`, `backend/services/` | по домену |
 | Агенты LangGraph | `backend/agents/` | `analyst.py` |
 | ORM | `backend/db/models/` | `lead.py` |
 | RAG | `backend/rag/` | |
 | Скрипты (не тесты) | `backend/scripts/` | |
+| Scratch агента | `backend/scripts/scratch/` | одноразовые скрипты (шаг 5+) |
 | Артефакты, кэш, eval JSON | `backend/data/` | не в корень репо |
 | Тесты backend | `backend/tests/` | зеркало структуры `backend/` |
 | Фикстуры тестов | `backend/tests/fixtures/{домен}/` | |
@@ -155,5 +158,5 @@ alwaysApply: true
 ## 6. Связь с workflow
 
 - **Задачи PRD_MAP / фичи / фиксы:** `smartcrm-task-workflow.mdc` + `smartcrm-dev-gates.mdc` (DoD, регрессия, миграции, API, hot-path).
-- **Структура репо:** коммит + `SESSION_STATE` + при смене статуса `HANDOFF`.
+- **Структура репо:** commit + `SESSION_STATE` + при смене статуса `HANDOFF`.
 - **`backend/`:** также §5 Backend README Sync.

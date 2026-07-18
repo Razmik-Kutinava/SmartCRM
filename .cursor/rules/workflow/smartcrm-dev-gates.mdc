@@ -5,7 +5,7 @@ alwaysApply: true
 
 # SmartCRM — dev gates
 
-Дополняет `smartcrm-task-workflow.mdc`, `smartcrm-repo-layout.mdc`, `smartcrm-code-split.mdc`.
+Дополняет `smartcrm-task-workflow.mdc`, `smartcrm-repo-layout.mdc`, `smartcrm-file-size-split.mdc`.
 
 ---
 
@@ -16,9 +16,9 @@ alwaysApply: true
 2. **`docs/operations/session/ISSUES.md`** — открытые 🔴 блокеры
 3. **`smartcrm-task-workflow.mdc`** — go, тесты, honest report, BACKLOG, старт сессии
 4. **`smartcrm-dev-gates.mdc`** (этот файл) — миграции, API, регрессия, hot-path
-5. **`smartcrm-repo-layout.mdc`** + **`smartcrm-code-split.mdc`**
+5. **`smartcrm-repo-layout.mdc`** + **`smartcrm-file-size-split.mdc`**
 6. **`smartcrm-agent-workflow.mdc`** — коммит, ops (обязательны всегда)
-7. **`.cursorrules`** — стиль кода и стек (краткий индекс)
+7. **`.cursor/rules/project/`** + **`.cursorrules`** — стек и код
 
 ---
 

@@ -1,0 +1,34 @@
+---
+description: SmartCRM — индекс правил Cursor (workflow + project)
+alwaysApply: true
+---
+
+# SmartCRM — индекс правил
+
+**Канон процесса:** `.cursor/rules/workflow/` (alwaysApply)  
+**Стек и код:** `.cursor/rules/project/` (globs — шаг 3+)  
+**Матрица для людей:** `docs/operations/baselines/RULES_MATRIX.md`  
+**Краткий вход:** `.cursorrules`, `AGENTS.md`
+
+## Workflow (процесс — не менять логику без go)
+
+| Файл | За что |
+|------|--------|
+| [`workflow/smartcrm-commit-ops.mdc`](workflow/smartcrm-commit-ops.mdc) | **всегда** commit + ops; push только по go |
+| [`workflow/smartcrm-task-workflow.mdc`](workflow/smartcrm-task-workflow.mdc) | PRD_MAP, go, тесты, хвост A/B/C |
+| [`workflow/smartcrm-agent-workflow.mdc`](workflow/smartcrm-agent-workflow.mdc) | порядок шага |
+| [`workflow/smartcrm-dev-gates.mdc`](workflow/smartcrm-dev-gates.mdc) | DoD, регрессия, миграции, hot-path |
+| [`workflow/smartcrm-repo-layout.mdc`](workflow/smartcrm-repo-layout.mdc) | куда класть файлы, Backend README sync |
+| [`workflow/smartcrm-file-size-split.mdc`](workflow/smartcrm-file-size-split.mdc) | лимит файлов, сплит |
+
+## Project (стек — шаг 3+, см. BACKLOG)
+
+Папка `project/` — правила по доменам (core, tests, http, data, agents, performance).
+
+## Приоритет (при конфликте)
+
+```
+0. commit-ops → 1. безопасность → 2. ISSUES 🔴 → 3. agent-workflow → 4. dev-gates → 5. layout + file-size → 6. project/* → 7. User Rules
+```
+
+Project Rules **важнее** User Rules Cursor про отложенный commit.

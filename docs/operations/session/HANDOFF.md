@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[CoffeeOS workflow] | Задача:[шаг 1 — каркас rules] | Статус: ✅ done (код) | 👤 go на шаг 2`
+
+**2026-07-18:** Правила Cursor реорганизованы: `.cursor/rules/workflow/` (6 файлов), `smartcrm-index.mdc`, `project/` placeholder. `code-split` → `file-size-split`. Скрипт `verify_cursor_rules_precedence.py` обновлён. **👤:** `go` на шаг 2 (SBR) или правки по таблице в BACKLOG § CoffeeOS migration.
+
+---
+
 `Спринт:[B24 backfill] | Задача:[фокусный backfill + task scope] | Статус: 🔄 in_progress | 👤 мониторинг`
 
 **2026-07-01:** `spawn_bitrix_backfill_focused.py` — поля, задачи (scope task OK), продукты, import; таймлайн/watch **не** запускаются. Почта: FAQ=0, IMAP=0, uvicorn перезапущен. **👤:** `bitrix_fields_resync_state.json`, `check_lead_coverage.py`.

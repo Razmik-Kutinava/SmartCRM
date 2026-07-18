@@ -58,7 +58,7 @@
 
 ---
 
-## Код > 200 строк (legacy — сплит по `smartcrm-code-split.mdc`)
+## Код > 200 строк (legacy — сплит по `workflow/smartcrm-file-size-split.mdc`)
 
 Приоритет для P6 (после Фазы 1 по PRD_MAP):
 

@@ -2,6 +2,13 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-07-18 — CoffeeOS workflow: шаг 1 (каркас + перенос)
+
+`.cursor/rules/workflow/` — 6 правил (commit-ops, task-workflow, agent-workflow, dev-gates, repo-layout, file-size-split).  
+`smartcrm-index.mdc`, `project/README.md` (placeholder).  
+Обновлены: `AGENTS.md`, `.cursorrules`, `RULES_MATRIX.md`, `verify_cursor_rules_precedence.py`, CONTRIBUTING, REPO_LAYOUT, LAYOUT_AUDIT.  
+BACKLOG: шаги 2–6 (SBR, project-rules, отчёт, doc links, scratch).
+
 ## 2026-06-27 — Ф4: backfill полной истории почты
 
 `email_sync/backfill.py` — батчи по датам назад; интеграция в фоновый poll; API `/api/email/backfill/*`; кнопка на `/email`; CLI `run_email_backfill.py`.

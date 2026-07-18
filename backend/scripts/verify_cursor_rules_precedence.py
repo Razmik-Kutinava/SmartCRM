@@ -9,7 +9,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 AGENTS = REPO / "AGENTS.md"
-COMMIT_OPS = REPO / ".cursor" / "rules" / "smartcrm-commit-ops.mdc"
+COMMIT_OPS = REPO / ".cursor" / "rules" / "workflow" / "smartcrm-commit-ops.mdc"
 CONFLICT_CHECK = REPO / "backend" / "scripts" / "check_rules_commit_conflict.py"
 
 REQUIRED_PHRASES = (

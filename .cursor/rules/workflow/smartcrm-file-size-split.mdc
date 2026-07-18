@@ -5,6 +5,8 @@ alwaysApply: true
 
 # SmartCRM — размер файлов и сплит кода
 
+> Было: `smartcrm-code-split.mdc` — переименовано при миграции CoffeeOS workflow (2026-07-18).
+
 ---
 
 ## 1. Лимиты (новый и изменяемый код)

@@ -1,7 +1,7 @@
 ﻿# Руководство для разработчиков SmartCRM
 
 **Структура репо и лимиты кода:** [REPO_LAYOUT.md](REPO_LAYOUT.md) · [LAYOUT_AUDIT.md](LAYOUT_AUDIT.md)  
-**Правила агента:** `.cursor/rules/smartcrm-repo-layout.mdc`, `smartcrm-code-split.mdc`  
+**Правила агента:** `.cursor/rules/workflow/smartcrm-repo-layout.mdc`, `smartcrm-file-size-split.mdc`  
 Переносы файлов и сплит монолитов >200 строк — только после **`go`** (см. аудит).
 
 ---

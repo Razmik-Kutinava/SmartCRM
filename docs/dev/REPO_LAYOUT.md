@@ -1,6 +1,6 @@
 # SmartCRM — канон структуры репозитория
 
-> Правила для агентов: `.cursor/rules/smartcrm-repo-layout.mdc`, `.cursor/rules/smartcrm-code-split.mdc`  
+> Правила для агентов: `.cursor/rules/workflow/smartcrm-repo-layout.mdc`, `.cursor/rules/workflow/smartcrm-file-size-split.mdc`  
 > Что ещё не на месте: [LAYOUT_AUDIT.md](LAYOUT_AUDIT.md) — переносы только после **`go`**.
 
 ---
@@ -69,7 +69,7 @@ docs/
 
 **Карта папок простыми словами:** [`backend/README.md`](../../backend/README.md) и README в каждой зоне (`api/`, `core/`, `leadgen/`, …).
 
-**Правила разработки агента:** `.cursor/rules/smartcrm-*.mdc` (workflow, dev-gates, layout, code-split).
+**Правила разработки агента:** `.cursor/rules/workflow/smartcrm-*.mdc`, [`smartcrm-index.mdc`](../../.cursor/rules/smartcrm-index.mdc)
 
 ```
 backend/

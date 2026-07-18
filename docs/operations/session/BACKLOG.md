@@ -289,3 +289,20 @@
 
 `[2026-06-17] | PRD_MAP: «Импорт/экспорт CRM» | Отложено: AmoCRM import (шаг 3), HubSpot import (шаг 4), push export Amo/HubSpot (шаг 5) | Причина: шаг 1 CSV + шаг 2 Битрикс push — по порядку MAP | Нужна фаза MAP: 3 | Из шага: CSV sync`
 
+---
+
+## CoffeeOS workflow migration (2026-07-18)
+
+> Стандарт agent rules для всех проектов. Шаг 1 done — каркас `workflow/` + `project/`.
+
+| Приоритет | Шаг | Отложено | Причина |
+|-----------|-----|----------|---------|
+| 🟡 | **2 SBR** | `spec-build-review.mdc`, `todo.md`, RED/GREEN в commit-ops | шаг 1 — только каркас |
+| 🟡 | **3 project-rules** | `project/smartcrm-{core,tests,http,data,agents,performance}.mdc` | после SBR или по go |
+| 🟢 | **4 отчёт** | слить CoffeeOS «Сделано/Не сделано» + хвост A/B/C | подстройка пользователя |
+| 🟢 | **5 доки** | массовое обновление ссылок в PRD_MAP, PHASE2_ENTRY, archive | stale links не ломают runtime |
+| 🟢 | **5 scratch** | `backend/scripts/scratch/` | одноразовые скрипты агента |
+| 🟢 | **6** | решение scope SBR: все задачи vs только PRD_MAP | ждёт апрув пользователя |
+
+`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: шаги 2–6 CoffeeOS-SBR миграции (см. таблицу выше) | Причина: шаг 1 — каркас + перенос | Нужна фаза MAP: — | Из шага: rules workflow step 1`
+

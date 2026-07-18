@@ -1,8 +1,8 @@
 # SmartCRM — Cursor Rules (индекс)
 
-**Канон процесса — `.cursor/rules/smartcrm-*.mdc` (alwaysApply).**
+**Канон процесса — `.cursor/rules/workflow/` + [`smartcrm-index.mdc`](.cursor/rules/smartcrm-index.mdc) (alwaysApply).**
 
-**Жёстко:** [`smartcrm-commit-ops.mdc`](.cursor/rules/smartcrm-commit-ops.mdc) — `git commit` **до** ответа пользователю; **`git push`** — только по явному go.
+**Жёстко:** [`workflow/smartcrm-commit-ops.mdc`](.cursor/rules/workflow/smartcrm-commit-ops.mdc) — `git commit` **до** ответа пользователю; **`git push`** — только по явному go.
 
 Этот файл — стек, стиль кода, вход в проект.
 
@@ -10,12 +10,13 @@
 
 | Файл | Содержание |
 |------|------------|
-| [`smartcrm-commit-ops.mdc`](.cursor/rules/smartcrm-commit-ops.mdc) | **всегда** commit + ops; push по апруву |
-| [`smartcrm-task-workflow.mdc`](.cursor/rules/smartcrm-task-workflow.mdc) | PRD_MAP, `go`, тесты, BACKLOG |
-| [`smartcrm-dev-gates.mdc`](.cursor/rules/smartcrm-dev-gates.mdc) | DoD, регрессия pytest, миграции |
-| [`smartcrm-agent-workflow.mdc`](.cursor/rules/smartcrm-agent-workflow.mdc) | порядок шага, ops-файлы |
-| [`smartcrm-repo-layout.mdc`](.cursor/rules/smartcrm-repo-layout.mdc) | структура репо, backend README |
-| [`smartcrm-code-split.mdc`](.cursor/rules/smartcrm-code-split.mdc) | лимит файлов, сплит |
+| [`smartcrm-index.mdc`](.cursor/rules/smartcrm-index.mdc) | индекс workflow + project |
+| [`workflow/smartcrm-commit-ops.mdc`](.cursor/rules/workflow/smartcrm-commit-ops.mdc) | **всегда** commit + ops; push по апруву |
+| [`workflow/smartcrm-task-workflow.mdc`](.cursor/rules/workflow/smartcrm-task-workflow.mdc) | PRD_MAP, `go`, тесты, BACKLOG |
+| [`workflow/smartcrm-dev-gates.mdc`](.cursor/rules/workflow/smartcrm-dev-gates.mdc) | DoD, регрессия pytest, миграции |
+| [`workflow/smartcrm-agent-workflow.mdc`](.cursor/rules/workflow/smartcrm-agent-workflow.mdc) | порядок шага, ops-файлы |
+| [`workflow/smartcrm-repo-layout.mdc`](.cursor/rules/workflow/smartcrm-repo-layout.mdc) | структура репо, backend README |
+| [`workflow/smartcrm-file-size-split.mdc`](.cursor/rules/workflow/smartcrm-file-size-split.mdc) | лимит файлов, сплит |
 
 Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md).
 
@@ -52,4 +53,4 @@ SmartCRM — мультиагентная CRM. Один оператор + 5 AI-
 Аудио → voice/whisper.py → voice/pipeline.py → core/hermes/ → agents/orchestrator.py
 ```
 
-Изменения hot-path — см. `smartcrm-dev-gates.mdc`.
+Изменения hot-path — см. `workflow/smartcrm-dev-gates.mdc`.
