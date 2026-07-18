@@ -2,7 +2,7 @@
 
 `Спринт:[CoffeeOS workflow] | Задача:[шаг 3 — project-rules] | Статус: ✅ done (код) | 👤 go на шаг 4`
 
-**2026-07-18:** Project rules — 6× `project/smartcrm-*.mdc` (core, tests, http, data, agents, performance). **👤:** `go` на шаг 4 (merged отчёт) или правки project-rules.
+**2026-07-18:** Project rules — 6× `project/smartcrm-*.mdc`. Коммит `4456d72`. **👤:** `go` на шаг 4 (merged отчёт) или правки project-rules.
 
 ---
 

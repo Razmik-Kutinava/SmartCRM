@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-07-18 | Действие: CoffeeOS workflow шаг 3 — project-rules: 6× smartcrm-{core,tests,http,data,agents,performance}.mdc; index, .cursorrules, RULES_MATRIX; BACKLOG 4–6 | Хвост A: merged отчёт, doc links, scratch, SBR scope | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: in_progress
+2026-07-18 | Действие: CoffeeOS workflow шаг 3 — project-rules: 6× smartcrm-{core,tests,http,data,agents,performance}.mdc; index, .cursorrules, RULES_MATRIX; BACKLOG 4–6 | Коммит: `4456d72` | Хвост A: merged отчёт, doc links, scratch, SBR scope | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: done
 
 2026-07-18 | Действие: CoffeeOS workflow шаг 2 — SBR: spec-build-review.mdc, todo.md, RED/GREEN в commit-ops/task-workflow/dev-gates/index; BACKLOG шаги 3–6 | Коммит: `a5f72b3` | Хвост A: project-rules, merged отчёт, doc links, scratch, scope SBR апрув | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: done
 
