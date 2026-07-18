@@ -2,7 +2,7 @@
 
 `Спринт:[CoffeeOS workflow] | Задача:[шаг 5 — doc links + scratch] | Статус: ✅ done (код) | 👤 go / апрув шаг 6`
 
-**2026-07-18:** Doc links → `workflow/`; `backend/scripts/scratch/`. CoffeeOS migration почти закрыта — остался апрув SBR scope (шаг 6). **👤:** «ок» на scope или правки.
+**2026-07-18:** Doc links → `workflow/`; `backend/scripts/scratch/`. Коммит `e89aa99`. **👤:** «ок» на SBR scope (шаг 6) или правки.
 
 ---
 

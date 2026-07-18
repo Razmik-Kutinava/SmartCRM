@@ -4,7 +4,7 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
-2026-07-18 | Действие: CoffeeOS workflow шаг 5 — doc links workflow/ (PRD_MAP, PHASE2_ENTRY, docs/README, archive, debt); backend/scripts/scratch/; scripts/README | Хвост A: SBR scope апрув (шаг 6) | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: in_progress
+2026-07-18 | Действие: CoffeeOS workflow шаг 5 — doc links workflow/ (PRD_MAP, PHASE2_ENTRY, docs/README, archive, debt); backend/scripts/scratch/; scripts/README | Коммит: `e89aa99` | Хвост A: SBR scope апрув (шаг 6) | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: done
 
 2026-07-18 | Действие: CoffeeOS workflow шаг 4 — merged отчёт: таблица Сделано/Не сделано + A/B/C в task-workflow, commit-ops, agent-workflow, SBR, AGENTS, RULES_MATRIX | Коммит: `c872031` | Хвост A: doc links, scratch, SBR scope | Хвост B: BACKLOG обновлён | Хвост C: нет | Статус: done
 
