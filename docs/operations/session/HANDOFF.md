@@ -2,7 +2,7 @@
 
 `Спринт:[CoffeeOS workflow] | Задача:[шаг 1 — каркас rules] | Статус: ✅ done (код) | 👤 go на шаг 2`
 
-**2026-07-18:** Правила Cursor реорганизованы: `.cursor/rules/workflow/` (6 файлов), `smartcrm-index.mdc`, `project/` placeholder. `code-split` → `file-size-split`. Коммит `c4318aa`. **👤:** `go` на шаг 2 (SBR) или правки по таблице в BACKLOG § CoffeeOS migration.
+**2026-07-18:** Правила Cursor реорганизованы: `.cursor/rules/workflow/` (6 файлов), `smartcrm-index.mdc`, `project/` placeholder. Коммиты `c4318aa` + `4861e9e`. **👤:** `go` на шаг 2 (SBR) или правки по BACKLOG § CoffeeOS migration.
 
 ---
 
