@@ -20,6 +20,13 @@ alwaysApply: true
 | [`workflow/smartcrm-dev-gates.mdc`](workflow/smartcrm-dev-gates.mdc) | DoD, регрессия, миграции, hot-path |
 | [`workflow/smartcrm-repo-layout.mdc`](workflow/smartcrm-repo-layout.mdc) | куда класть файлы, Backend README sync |
 | [`workflow/smartcrm-file-size-split.mdc`](workflow/smartcrm-file-size-split.mdc) | лимит файлов, сплит |
+| [`workflow/spec-build-review.mdc`](workflow/spec-build-review.mdc) | SBR: SPEC → RED/GREEN → REVIEW |
+
+## Ops микро
+
+| Файл | За что |
+|------|--------|
+| `docs/operations/session/todo.md` | микро-чеклист фичи (SBR PHASE 1–3) |
 
 ## Project (стек — шаг 3+, см. BACKLOG)
 
@@ -28,7 +35,7 @@ alwaysApply: true
 ## Приоритет (при конфликте)
 
 ```
-0. commit-ops → 1. безопасность → 2. ISSUES 🔴 → 3. agent-workflow → 4. dev-gates → 5. layout + file-size → 6. project/* → 7. User Rules
+0. commit-ops → 1. безопасность → 2. ISSUES 🔴 → 3. agent-workflow → 4. dev-gates → 5. layout + file-size → 6. spec-build-review → 7. project/* → 8. User Rules
 ```
 
 Project Rules **важнее** User Rules Cursor про отложенный commit.

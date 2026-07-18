@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[CoffeeOS workflow] | Задача:[шаг 2 — SBR] | Статус: ✅ done (код) | 👤 go на шаг 3`
+
+**2026-07-18:** SBR — `spec-build-review.mdc`, `todo.md`, RED/GREEN в commit-ops. Scope: PRD_MAP + фичи; one-liner без SBR. **👤:** `go` на шаг 3 (project-rules) или правки scope SBR (BACKLOG §6).
+
+---
+
 `Спринт:[CoffeeOS workflow] | Задача:[шаг 1 — каркас rules] | Статус: ✅ done (код) | 👤 go на шаг 2`
 
 **2026-07-18:** Правила Cursor реорганизованы: `.cursor/rules/workflow/` (6 файлов), `smartcrm-index.mdc`, `project/` placeholder. Коммиты `c4318aa` + `4861e9e`. **👤:** `go` на шаг 2 (SBR) или правки по BACKLOG § CoffeeOS migration.

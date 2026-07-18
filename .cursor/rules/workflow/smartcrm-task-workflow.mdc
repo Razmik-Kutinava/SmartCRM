@@ -11,7 +11,7 @@ alwaysApply: true
 
 ## Старт сессии (обязательно в каждом новом чате)
 
-Прочитать: `docs/operations/session/HANDOFF.md`, `SESSION_STATE.md`, `ISSUES.md` (🔴), `BACKLOG.md`, `docs/operations/baselines/RULES_MATRIX.md`.
+Прочитать: `docs/operations/session/HANDOFF.md`, `SESSION_STATE.md`, `todo.md`, `ISSUES.md` (🔴), `BACKLOG.md`, `docs/operations/baselines/RULES_MATRIX.md`.
 
 Первый ответ пользователю — **таблица** (все три поля заполнены):
 
@@ -29,7 +29,8 @@ alwaysApply: true
 
 - Ждать **явный пункт** (PRD_MAP / задача) + **что сделать**.
 - Пробежать **`docs/operations/session/BACKLOG.md`** на хвост по этому пункту MAP.
-- Показать **план на 1 шаг** (файлы, тесты, риски) → **`go`** → работа.
+- **SBR** (PRD_MAP / фича / API): PHASE 1 SPEC → заполнить **`todo.md`** → план → **`go`** → BUILD. См. `spec-build-review.mdc`.
+- **Без SBR** (one-liner, docs-only): план на 1 шаг → **`go`** → работа.
 - Без `go` на **новую** задачу — код не трогать.
 
 ---
@@ -38,7 +39,9 @@ alwaysApply: true
 
 - У **каждой** новой или изменённой фичи, файла, функции, роута, скрипта — **свой тест** в том же шаге.
 - Порядок: **тест под задачу** → код → **регрессия зоны** (`smartcrm-dev-gates.mdc`, `run_zone_regression.py`).
-- Красные тесты → **`ISSUES.md`** → фикс (после `go`) → снова тесты. Шаг не закрывать без зелёного **или** явного `blocked` + запись в ISSUES.
+- **SBR:** RED → commit `[RED]` → `go` → GREEN → регрессия → commit `[GREEN]` → PHASE 3 REVIEW (полный ops).
+- **Намеренный RED** — не ISSUES. **Случайный** красный → **`ISSUES.md`** → фикс (после `go`) → снова тесты.
+- Шаг не закрывать без зелёного **или** явного `blocked` + запись в ISSUES.
 
 ---
 

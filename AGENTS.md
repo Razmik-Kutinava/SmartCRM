@@ -15,6 +15,7 @@ Commit **без согласования пользователя** — не ж�
 ## Индекс правил
 
 - **Workflow:** `.cursor/rules/workflow/` — процесс (alwaysApply)
+- **SBR:** `workflow/spec-build-review.mdc` + `docs/operations/session/todo.md`
 - **Project:** `.cursor/rules/project/` — стек (шаг 3+)
 - **Матрица:** `docs/operations/baselines/RULES_MATRIX.md`
 

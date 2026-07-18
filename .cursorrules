@@ -17,6 +17,9 @@
 | [`workflow/smartcrm-agent-workflow.mdc`](.cursor/rules/workflow/smartcrm-agent-workflow.mdc) | порядок шага, ops-файлы |
 | [`workflow/smartcrm-repo-layout.mdc`](.cursor/rules/workflow/smartcrm-repo-layout.mdc) | структура репо, backend README |
 | [`workflow/smartcrm-file-size-split.mdc`](.cursor/rules/workflow/smartcrm-file-size-split.mdc) | лимит файлов, сплит |
+| [`workflow/spec-build-review.mdc`](.cursor/rules/workflow/spec-build-review.mdc) | SBR: RED/GREEN TDD |
+
+Микро-чеклист: [`docs/operations/session/todo.md`](docs/operations/session/todo.md).
 
 Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md).
 

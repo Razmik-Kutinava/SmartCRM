@@ -2,6 +2,13 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-07-18 — CoffeeOS workflow: шаг 2 (SBR)
+
+`workflow/spec-build-review.mdc` — PHASE 1 SPEC / RED / GREEN / REVIEW.  
+`docs/operations/session/todo.md` — микро-чеклист фичи.  
+RED/GREEN substeps в `commit-ops.mdc`; SBR в `task-workflow`, `dev-gates`, index, `.cursorrules`.  
+Scope SBR по умолчанию: PRD_MAP + фичи; one-liner — без SBR.
+
 ## 2026-07-18 — CoffeeOS workflow: шаг 1 (каркас + перенос)
 
 `.cursor/rules/workflow/` — 6 правил (commit-ops, task-workflow, agent-workflow, dev-gates, repo-layout, file-size-split).  

@@ -1,0 +1,64 @@
+---
+description: "SBR Engine: Spec-Build-Review для SmartCRM"
+globs: ["*"]
+alwaysApply: true
+---
+
+# SmartCRM SBR ENGINE
+
+Приоритет: `smartcrm-commit-ops` → `smartcrm-task-workflow` → `smartcrm-dev-gates` → **spec-build-review**.
+
+**Микро:** [`docs/operations/session/todo.md`](../../../docs/operations/session/todo.md)  
+**Макро:** SESSION_STATE / HANDOFF — полный батч только **PHASE 3 REVIEW**
+
+**Коммиты:** RED (без CHANGELOG/HANDOFF) · GREEN (+ регрессия зоны) · REVIEW = обычный финиш шага  
+**TDD-RED ≠ ISSUES** — намеренный падающий тест не баг.
+
+## Когда SBR обязателен
+
+| Тип задачи | SBR |
+|------------|-----|
+| Пункт **PRD_MAP**, новая фича, API, миграция | **да** — PHASE 1 → go → BUILD |
+| One-liner фикс, опечатка, только docs/rules | **нет** — обычный шаг task-workflow |
+| Несколько файлов без MAP — по решению пользователя | спросить или SBR |
+
+## PHASE 1: SPEC
+
+1. Security + file-size: секреты в `.env`; без raw SQL от LLM; лимиты `smartcrm-file-size-split.mdc`
+2. Обновить **`todo.md`** — чеклист микро-шагов фичи
+3. Краткая строка **`SESSION_STATE`** (без CHANGELOG/HANDOFF)
+4. **СТОП** → показать todo → ждать **`go`**
+
+## PHASE 2: BUILD
+
+### RED
+
+- Тесты в `backend/tests/` (зеркало кода)
+- `cd backend && python -m pytest <path> -q` — **падение** на новой логике
+- `git commit` — сообщение `test: … [RED]`
+- **Без** CHANGELOG / HANDOFF; SESSION_STATE — `in_progress`
+- **СТОП** → лог pytest → ждать **`go`**
+
+### GREEN
+
+- Код по домену (`backend/`, `frontend/`); project-rules — шаг 3+
+- До **3** попыток fix; завис — откат **только** файлов реализации (не тесты / todo / ops)
+- **Регрессия зоны** — таблица `smartcrm-dev-gates.mdc` (обязательно)
+- `[x]` в `todo.md`
+- `git commit` — `feat: … [GREEN]` или `fix: … [GREEN]`
+
+## PHASE 3: REVIEW
+
+После всех `[x]` в todo (или явный scope-cut в BACKLOG):
+
+1. Sanity: hot-path, N+1, `pytest`, UI — если затронут
+2. Ops: SESSION_STATE + CHANGELOG + HANDOFF
+3. Отчёт: хвост **A / B / C** + **`Коммит: <hash>`** + регрессия PASS/FAIL
+4. Очистить или архивировать todo → **стоп до `go`**
+5. `git push` / deploy — **только** по явной просьбе
+
+## Связь с PRD_MAP
+
+- **todo.md** — микро внутри одного пункта MAP
+- **PRD_MAP `[x]`** — только после «ок» пользователя (не после GREEN)
+- Отложенный scope из SBR → **BACKLOG.md** в том же коммите

@@ -19,7 +19,7 @@ alwaysApply: true
 | Стек (LLM, RAG) | `docs/stack/` | `LLM.md`, `RAG.md` |
 | Запуск, runbook | `docs/start/` | `SETUP.md`, `RUNBOOK.md` |
 | API-контракт | `docs/api/` | `API.md` |
-| Операционка сессий | `docs/operations/session/` | `HANDOFF.md`, `ISSUES.md`, `SESSION_STATE.md` |
+| Операционка сессий | `docs/operations/session/` | `HANDOFF.md`, `ISSUES.md`, `SESSION_STATE.md`, `todo.md` |
 | Acceptance Ф1 | `docs/operations/phase1/{домен}/` | `LEADS_BLOCK_ACCEPTANCE.md` |
 | Acceptance Ф2 | `docs/operations/phase2/{домен}/` | `AGENTS_QUALITY_GATE_ACCEPTANCE.md` |
 | Baselines ops | `docs/operations/baselines/` | `COVERAGE_BASELINE.md`, `CI_BASELINE.md` |

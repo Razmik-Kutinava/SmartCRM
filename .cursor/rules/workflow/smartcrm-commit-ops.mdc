@@ -31,6 +31,19 @@ alwaysApply: true
 | Конец шага | `CHANGELOG.md`, `HANDOFF.md` |
 | Баг | `ISSUES.md` |
 | Отложено | `BACKLOG.md` |
+| SBR микро-чеклист | `todo.md` |
+
+## SBR: RED / GREEN substep
+
+| Substep | Коммит | Ops |
+|---------|--------|-----|
+| **RED** | `test: … [RED]` | Только commit + краткий SESSION_STATE. **Без** CHANGELOG/HANDOFF. `in_progress`, стоп до `go` |
+| **GREEN** | `feat:` / `fix: … [GREEN]` | commit + регрессия зоны. CHANGELOG/HANDOFF — **PHASE 3 REVIEW** |
+| **REVIEW** / обычный шаг | как обычно | SESSION_STATE + CHANGELOG + HANDOFF |
+
+**TDD-RED ≠ баг** → не `ISSUES.md`. Случайный красный тест → ISSUES → fix после `go`.
+
+Детали: `spec-build-review.mdc`.
 
 ## Хвост прогона A / B / C
 

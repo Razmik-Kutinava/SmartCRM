@@ -17,7 +17,7 @@ alwaysApply: true
 3. **`smartcrm-task-workflow.mdc`** — go, тесты, honest report, BACKLOG, старт сессии
 4. **`smartcrm-dev-gates.mdc`** (этот файл) — миграции, API, регрессия, hot-path
 5. **`smartcrm-repo-layout.mdc`** + **`smartcrm-file-size-split.mdc`**
-6. **`smartcrm-agent-workflow.mdc`** — коммит, ops (обязательны всегда)
+6. **`spec-build-review.mdc`** — SBR TDD (RED/GREEN) поверх workflow
 7. **`.cursor/rules/project/`** + **`.cursorrules`** — стек и код
 
 ---
