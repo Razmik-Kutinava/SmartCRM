@@ -2,7 +2,7 @@
 
 `Спринт:[CoffeeOS workflow] | Задача:[шаг 2 — SBR] | Статус: ✅ done (код) | 👤 go на шаг 3`
 
-**2026-07-18:** SBR — `spec-build-review.mdc`, `todo.md`, RED/GREEN в commit-ops. Scope: PRD_MAP + фичи; one-liner без SBR. **👤:** `go` на шаг 3 (project-rules) или правки scope SBR (BACKLOG §6).
+**2026-07-18:** SBR — `spec-build-review.mdc`, `todo.md`, RED/GREEN в commit-ops. Коммит `a5f72b3`. Scope: PRD_MAP + фичи; one-liner без SBR. **👤:** `go` на шаг 3 (project-rules) или правки scope SBR (BACKLOG §6).
 
 ---
 
