@@ -93,4 +93,10 @@
 | `check_bitrix_webhook_scopes.py` | Probe crm/user/task + feature API → `data/bitrix_webhook_scope_report.json` |
 | `_resplit_leadgen_pkgs.py` | One-off: пересборка pipeline/checko пакетов |
 
+## scratch/
+
+| Путь | За что |
+|------|--------|
+| `scratch/` | Одноразовые скрипты агента; см. `scratch/README.md` |
+
 Вывод скриптов → `data/artifacts/`, не в корень репо.

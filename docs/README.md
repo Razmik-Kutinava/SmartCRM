@@ -35,7 +35,7 @@
 
 **Три канона:** `PRD.md` (продукт) · `ARCHITECTURE.md` (техника) · `CHANGELOG.md` (история).
 
-**Агент:** HANDOFF → PRD_MAP → модульный doc → код → commit + ops (`smartcrm-commit-ops.mdc`).
+**Агент:** HANDOFF → PRD_MAP → модульный doc → код → commit + ops ([`workflow/smartcrm-commit-ops.mdc`](../../.cursor/rules/workflow/smartcrm-commit-ops.mdc)).
 
 ---
 

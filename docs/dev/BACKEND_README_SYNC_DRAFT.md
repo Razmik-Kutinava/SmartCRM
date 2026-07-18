@@ -1,6 +1,6 @@
 # Правило: синхронизация backend README
 
-> **Статус:** **применено** — активное правило в `.cursor/rules/smartcrm-repo-layout.mdc` §5.  
+> **Статус:** **применено** — активное правило в `.cursor/rules/workflow/smartcrm-repo-layout.mdc` §5.  
 > Этот файл — справочник и история решения (2026-06-07, апрув `go readme rule`).
 
 ---

@@ -56,7 +56,7 @@
 3. **Процесс:** один пункт MAP → тест → код → commit → `SESSION_STATE` + `HANDOFF` + `CHANGELOG`.
 4. **Push/deploy** — только по явному go.
 
-**Канон:** [`PRD_MAP.md`](../product/PRD_MAP.md) · [`HANDOFF.md`](HANDOFF.md) · [`BACKLOG.md`](BACKLOG.md) · [`smartcrm-task-workflow.mdc`](../../.cursor/rules/smartcrm-task-workflow.mdc)
+**Канон:** [`PRD_MAP.md`](../product/PRD_MAP.md) · [`HANDOFF.md`](HANDOFF.md) · [`BACKLOG.md`](BACKLOG.md) · [`smartcrm-index.mdc`](../../.cursor/rules/smartcrm-index.mdc) · [`task-workflow`](../../.cursor/rules/workflow/smartcrm-task-workflow.mdc)
 
 ---
 

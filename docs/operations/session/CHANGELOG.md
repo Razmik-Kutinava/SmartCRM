@@ -2,6 +2,11 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
 
+## 2026-07-18 — CoffeeOS workflow: шаг 5 (doc links + scratch)
+
+Ссылки на rules → `.cursor/rules/workflow/` в PRD_MAP, PHASE2_ENTRY, docs/README, archive, debt.  
+`backend/scripts/scratch/` + README; repo-layout, scripts/README.
+
 ## 2026-07-18 — CoffeeOS workflow: шаг 4 (merged отчёт)
 
 Таблица **Сделано | Не сделано** + A/B/C в task-workflow, commit-ops, agent-workflow, spec-build-review, AGENTS, RULES_MATRIX.  

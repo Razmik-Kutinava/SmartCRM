@@ -14,7 +14,7 @@
 |---|-----|--------------|
 | 1 | Сплит файлов >200 строк | `LAYOUT_AUDIT.md` § монолиты |
 | 2 | `.gitignore` runtime в `backend/data/` | дубли кэшей в git status |
-| 3 | Новый код — только по REPO_LAYOUT | правило `smartcrm-repo-layout.mdc` |
+| 3 | Новый код — только по REPO_LAYOUT | [`workflow/smartcrm-repo-layout.mdc`](../../.cursor/rules/workflow/smartcrm-repo-layout.mdc) |
 
 ## Не делать в этом долге
 

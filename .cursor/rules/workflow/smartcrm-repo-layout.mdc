@@ -34,7 +34,7 @@ alwaysApply: true
 | ORM | `backend/db/models/` | `lead.py` |
 | RAG | `backend/rag/` | |
 | Скрипты (не тесты) | `backend/scripts/` | |
-| Scratch агента | `backend/scripts/scratch/` | одноразовые скрипты (шаг 5+) |
+| Scratch агента | `backend/scripts/scratch/` | одноразовые скрипты агента |
 | Артефакты, кэш, eval JSON | `backend/data/` | не в корень репо |
 | Тесты backend | `backend/tests/` | зеркало структуры `backend/` |
 | Фикстуры тестов | `backend/tests/fixtures/{домен}/` | |

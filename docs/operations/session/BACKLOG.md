@@ -293,17 +293,16 @@
 
 ## CoffeeOS workflow migration (2026-07-18)
 
-> Стандарт agent rules. Шаги 1–4 done.
+> Стандарт agent rules. Шаги 1–5 done.
 
 | Приоритет | Шаг | Статус | Отложено |
 |-----------|-----|--------|----------|
 | ✅ | **1 каркас** | done | — |
 | ✅ | **2 SBR** | done | — |
 | ✅ | **3 project-rules** | done | — |
-| ✅ | **4 отчёт** | done | таблица Сделано/Не сделано + A/B/C |
-| 🟢 | **5 доки** | pending | mass doc links PRD_MAP, PHASE2_ENTRY |
-| 🟢 | **5 scratch** | pending | `backend/scripts/scratch/` |
+| ✅ | **4 отчёт** | done | — |
+| ✅ | **5 доки + scratch** | done | PRD_MAP, PHASE2_ENTRY, archive, scratch/ |
 | 🟢 | **6 scope** | pending | уточнить SBR scope (сейчас: MAP+фичи) |
 
-`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: шаги 5–6 CoffeeOS migration | Причина: шаг 4 закрыт | Нужна фаза MAP: — | Из шага: rules workflow step 4`
+`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: шаг 6 SBR scope апрув | Причина: шаг 5 закрыт | Нужна фаза MAP: — | Из шага: rules workflow step 5`
 

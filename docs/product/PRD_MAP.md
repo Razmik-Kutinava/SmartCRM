@@ -15,7 +15,7 @@
 >
 > **Закрытие пункта MAP:** pytest + acceptance → `[x]` / ✅ в «Итог». **Снять ⚠️:** ручной E2E OK → `SESSION_STATE` → убрать ⚠️ в MAP + строку в `BACKLOG`.
 >
-> **DoD пункта** (pytest, smoke, миграции) → `.cursor/rules/smartcrm-dev-gates.mdc`.
+> **DoD пункта** (pytest, smoke, миграции) → `.cursor/rules/workflow/smartcrm-dev-gates.mdc`.
 
 ---
 
@@ -44,7 +44,7 @@
 
 ### Definition of Done — Фаза 1
 
-> **DoD фазы** (здесь) ≠ **DoD пункта** — pytest, smoke, миграции на строку MAP → [`.cursor/rules/smartcrm-dev-gates.mdc`](../../.cursor/rules/smartcrm-dev-gates.mdc).
+> **DoD фазы** (здесь) ≠ **DoD пункта** — pytest, smoke, миграции на строку MAP → [`.cursor/rules/workflow/smartcrm-dev-gates.mdc`](../../.cursor/rules/workflow/smartcrm-dev-gates.mdc).
 
 **Фаза 1 закрыта**, когда все 6 пунктов ниже ✅ **или** п.5 остаётся ⚠️, но владелец явно сказал **«ок, идём в Фазу 2»** (п.6) — не автозакрытие.
 
@@ -61,7 +61,7 @@
 
 ### Definition of Done — Фаза 2
 
-> Шаблон — заполняем по мере закрытия очереди 1–9. **DoD фазы** ≠ DoD пункта → [dev-gates](../../.cursor/rules/smartcrm-dev-gates.mdc).
+> Шаблон — заполняем по мере закрытия очереди 1–9. **DoD фазы** ≠ DoD пункта → [dev-gates](../../.cursor/rules/workflow/smartcrm-dev-gates.mdc).
 
 | # | Критерий | Статус |
 |---|----------|--------|
@@ -298,7 +298,7 @@
 
 ### Качество кода и coverage (сквозное)
 
-> **Обязательно:** регрессия по зонам + smoke + acceptance ([`smartcrm-dev-gates.mdc`](../../.cursor/rules/smartcrm-dev-gates.mdc)).  
+> **Обязательно:** регрессия по зонам + smoke + acceptance ([`smartcrm-dev-gates.mdc`](../../.cursor/rules/workflow/smartcrm-dev-gates.mdc)).  
 > **Coverage %:** **не gate** закрытия фазы; ориентир **soft ~40% Ф2**, **~60% к концу Ф2**, **~75% к концу Ф3**.  
 > **Baseline:** **51.4%** (2026-06-11) — [`COVERAGE_BASELINE.md`](../operations/baselines/COVERAGE_BASELINE.md); команда `cd backend && pytest --cov=. --cov-config=.coveragerc --cov-report=term-missing`.  
 > **CI:** [`CI_BASELINE.md`](../operations/baselines/CI_BASELINE.md) — pytest + smoke на каждый push/PR (`main`). pytest-cov fail-under в CI — отдельный шаг.  
