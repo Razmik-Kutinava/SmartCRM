@@ -159,18 +159,29 @@
 		{/each}
 	</nav>
 
-	{#if accounts.length > 1}
-		<div class="px-3 pb-2">
-			<select
-				class="w-full rounded-xl bg-white/70 border border-black/5 px-2 py-1.5 text-xs text-gray-800"
-				bind:value={filterAccountId}
-				onchange={onAccountFilterChange}
+	{#if accounts.length}
+		<div class="px-3 pb-2 space-y-1.5">
+			{#if accounts.length > 1}
+				<select
+					class="w-full rounded-xl bg-white/70 border border-black/5 px-2 py-1.5 text-xs text-gray-800"
+					bind:value={filterAccountId}
+					onchange={onAccountFilterChange}
+				>
+					<option value="">Все ящики</option>
+					{#each accounts as a (a.id)}
+						<option value={String(a.id)}>{a.username}</option>
+					{/each}
+				</select>
+			{/if}
+			<button
+				type="button"
+				class="w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-black/15 bg-white/40 hover:bg-white/70 px-2 py-1.5 text-xs font-medium text-gray-700 transition-colors"
+				onclick={onSettings}
+				data-testid="email-add-account"
 			>
-				<option value="">Все ящики</option>
-				{#each accounts as a (a.id)}
-					<option value={String(a.id)}>{a.username}</option>
-				{/each}
-			</select>
+				<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" /></svg>
+				Добавить ящик
+			</button>
 		</div>
 	{/if}
 
