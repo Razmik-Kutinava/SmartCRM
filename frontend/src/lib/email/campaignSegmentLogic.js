@@ -15,6 +15,8 @@ export function buildSegmentFilters(state) {
 	if (selected.length) seg.industries = selected;
 
 	if (state.industryVerified) seg.industry_verified = true;
+	const source = (state.source || '').trim();
+	if (source && source !== 'all') seg.source = source;
 	const city = (state.city || '').trim();
 	if (city) seg.city = city;
 	const q = (state.search || '').trim();

@@ -20,12 +20,15 @@
 		selectIndustriesWithLeads,
 	} from '$lib/email/campaignIndustryFilters.js';
 	import { fetchLeadIndustryCatalog } from '$lib/leads/industryCatalog.js';
+	import { fetchLeadSources } from '$lib/leadsStorage.js';
 
 	let { accounts = [], error = $bindable(''), success = $bindable('') } = $props();
 
 	let accountId = $state(null);
 	let stage = $state('all');
 	let minScore = $state(50);
+	let source = $state('all');
+	let sourceItems = $state([]);
 	let selectedIndustries = $state([]);
 	let industryVerified = $state(false);
 	let industryItems = $state([]);
@@ -54,6 +57,7 @@
 	const filterState = $derived({
 		stage,
 		minScore,
+		source,
 		selectedIndustries,
 		industryVerified,
 		city,
@@ -104,6 +108,14 @@
 		} catch {
 			industryItems = [];
 			withoutIndustryPool = 0;
+		}
+	}
+
+	async function loadSourceOptions() {
+		try {
+			sourceItems = await fetchLeadSources();
+		} catch {
+			sourceItems = [];
 		}
 	}
 
@@ -181,6 +193,7 @@
 	$effect(() => {
 		loadHistory();
 		loadIndustryOptions();
+		loadSourceOptions();
 	});
 </script>
 
@@ -194,15 +207,30 @@
 			</select>
 			<input bind:value={campaignName} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2 text-sm text-white" placeholder="Название кампании" />
 			<div class="grid grid-cols-2 gap-2">
-				<select bind:value={stage} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white">
-					<option value="all">Все этапы</option>
-					<option value="Новый">Новый</option>
-					<option value="Квалифицирован">Квалифицирован</option>
-					<option value="Переговоры">Переговоры</option>
-					<option value="КП отправлено">КП отправлено</option>
-				</select>
-				<input type="number" bind:value={minScore} class="rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Min score" />
+				<label class="text-[11px] text-gray-500 space-y-1">
+					<span>Этап воронки</span>
+					<select bind:value={stage} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white">
+						<option value="all">Все этапы</option>
+						<option value="Новый">Новый</option>
+						<option value="Квалифицирован">Квалифицирован</option>
+						<option value="Переговоры">Переговоры</option>
+						<option value="КП отправлено">КП отправлено</option>
+					</select>
+				</label>
+				<label class="text-[11px] text-gray-500 space-y-1">
+					<span>Мин. балл лида (0 — все)</span>
+					<input type="number" bind:value={minScore} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" placeholder="Min score" />
+				</label>
 			</div>
+			<label class="block text-[11px] text-gray-500 space-y-1">
+				<span>Источник (база лидов — метка импорта)</span>
+				<select bind:value={source} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-3 py-2 text-sm text-white" data-testid="campaign-source">
+					<option value="all">Все источники</option>
+					{#each sourceItems as s (s.name)}
+						<option value={s.name}>{s.name} — {s.withEmail} с email из {s.count}</option>
+					{/each}
+				</select>
+			</label>
 			<div class="space-y-2 rounded-xl border border-gray-800 bg-gray-950 p-3" data-testid="campaign-industry-box">
 				<div class="flex items-center justify-between gap-2">
 					<p class="text-xs text-gray-400 uppercase font-semibold">Отрасли сегмента</p>

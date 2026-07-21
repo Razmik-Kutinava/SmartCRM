@@ -28,12 +28,12 @@
 
 ## Чеклист
 
-- [ ] **RED:** `tests/api/test_lead_source_segment.py` — import-csv c `?source=`, `GET /api/leads/sources`, segment-preview по source
-- [ ] **GREEN backend:** параметр `source` в `import_leads_from_csv` + роут `GET /sources`
-- [ ] **GREEN frontend:** метка базы при импорте CSV (`/leads/list`), фильтр «Источник» в рассылке (`EmailCampaignPanel`, `campaignSegmentLogic`, `leadsStorage`)
-- [ ] Регрессия: crm_leads + email
-- [ ] Доки: `api/routes/README.md`, `tests/README.md`
-- [ ] UI-проверка DevTools: импорт CSV с меткой → фильтр в рассылке → счётчик сегмента
+- [x] **RED:** `tests/api/test_lead_source_segment.py` — 4 FAIL (`4144758`)
+- [x] **GREEN backend:** параметр `source` в `import_leads_from_csv` + роут `GET /sources` — 8 PASS (вместе с `test_leads_csv_api.py`)
+- [x] **GREEN frontend:** метка базы при импорте CSV (`/leads/list`), фильтр «Источник» в рассылке (`EmailCampaignPanel`, `campaignSegmentLogic` + smoke, `leadsStorage`)
+- [x] Регрессия: crm_leads 109 PASS / 1 pre-existing (`test_tasks_filter_done_and_combined`, падает на чистом HEAD) → ISSUES; email 33 PASS / 1 pre-existing (`test_faq_autoreply_mocked`, уже в ISSUES)
+- [x] Доки: `api/routes/README.md`, `tests/README.md`, `F4_EMAIL_TUNING.md` § C
+- [x] UI-проверка DevTools: `/email` → Массовая — селект «Источник» со справочником живой БД, Plixer + балл 0 → «Лидов: 27»; `/leads/list` → меню «Импорт и экспорт» — поле «Метка базы (source)» перед «Импорт CSV»
 
 ## Архив (последние закрытые)
 

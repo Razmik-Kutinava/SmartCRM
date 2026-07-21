@@ -17,7 +17,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `activities_routes.py` | `GET /api/leads/activities` — дела по лидам; сортировка по `dayRank` («Мой день») |
 | `analytics_routes.py` | Сводка KPI и экспорт `/analytics/summary`, `/analytics/export` — query `period`, `source`, `format=csv|xlsx|pdf` |
 | `export_routes.py` | PDF карточки лида `GET /{lead_id}/export?format=pdf` |
-| `csv_routes.py` | CSV базы лидов `POST /import-csv`, `GET /export?format=csv` |
+| `csv_routes.py` | CSV базы лидов `POST /import-csv` (query `mode`, `source` — метка базы всем строкам), `GET /export?format=csv`, `GET /sources` — справочник источников (count / withEmail) для фильтра рассылки |
 | `engagement.py` | Комментарии, логи связи, аудит полей, стадии |
 | `bitrix_routes.py` | Импорт лидов из Битрикс24, статус синка |
 | `sla_routes.py` | `GET /sla-protocols`, `PUT /{id}/sla-protocol` — назначение SLA-протокола |

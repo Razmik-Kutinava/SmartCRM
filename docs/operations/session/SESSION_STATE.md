@@ -4,6 +4,8 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
+2026-07-21 | Действие: SBR GREEN+REVIEW — «база → рассылка по source»: `import-csv?source=` (метка всем строкам, важнее колонки), `GET /leads/sources` (count/withEmail), фильтр «Источник» в массовой рассылке (`EmailCampaignPanel` + `campaignSegmentLogic` + smoke) и поле «Метка базы» в меню импорта `/leads/list`; тесты 4/4 + смоук 8 PASS; регрессия crm_leads 109 PASS / 1 pre-existing (`test_tasks_filter_done_and_combined` → ISSUES), email 33 PASS / 1 pre-existing (уже в ISSUES); DevTools: Plixer + балл 0 → «Лидов: 27» | Коммит: `этот` | Хвост A: нет | Хвост B: BACKLOG «фильтр даты регистрации компании» | Хвост C: ISSUES 🟡 `test_tasks_filter_done_and_combined` (pre-existing) | Статус: done
+
 2026-07-21 | Действие: SBR RED — «база → рассылка по source»: `tests/api/test_lead_source_segment.py` (4 FAIL: import-csv?source=, GET /leads/sources 422, segment-preview по source 0) | Коммит: `этот` | Статус: in_progress
 
 2026-07-21 | Действие: SBR GREEN+REVIEW — Ф4 Email «Ящики в UI без .env»: явный commit в `POST /accounts/connect` (тест 4/4 PASS); UI модал «Почтовые ящики» — синк per-account, секция «Ящики в .env» + импорт (`bootstrapEmailFromEnv`), скролл модалки; регрессия зоны email 33 PASS / 1 pre-existing FAIL → ISSUES; DevTools MCP проверено; доки F4_EMAIL_TUNING §A, tests/README | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: ISSUES 🟡 `test_faq_autoreply_mocked` env-зависимый (pre-existing) | Статус: done

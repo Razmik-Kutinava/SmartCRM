@@ -123,6 +123,7 @@
 	let csvImporting = $state(false);
 	let csvExporting = $state(false);
 	let csvInput = $state(null);
+	let csvSourceLabel = $state(''); // метка базы (source) для всех строк CSV-импорта
 	/** @type {{ bitrix_total: number | null, local_bitrix_leads_count: number, date_from?: string } | null} */
 	let bitrixStats = $state(null);
 	/** @type {{ total?: number, bitrixTotal?: number, segments?: Record<string, number>, resync?: { status?: string, processed?: number, totalB24?: number } } | null} */
@@ -434,12 +435,13 @@
 		if (!file || csvImporting) return;
 		csvImporting = true;
 		try {
-			const res = await apiImportLeadsCsv(file, 'upsert');
+			const res = await apiImportLeadsCsv(file, 'upsert', csvSourceLabel);
 			const fresh = await fetchLeads();
 			leads = fresh;
 			writeLeadsCache(leads);
+			const srcNote = csvSourceLabel.trim() ? ` · база «${csvSourceLabel.trim()}»` : '';
 			notify(
-				`CSV: +${res.imported} новых, обновлено ${res.updated}, пропущено ${res.skipped}`,
+				`CSV: +${res.imported} новых, обновлено ${res.updated}, пропущено ${res.skipped}${srcNote}`,
 				'success',
 			);
 		} catch (e) {
@@ -907,6 +909,13 @@
 							class="hidden"
 							data-testid="leads-csv-input"
 							onchange={onCsvFileChange}
+						/>
+						<input
+							bind:value={csvSourceLabel}
+							class="mx-2 my-1 w-[calc(100%-1rem)] rounded-lg bg-gray-900 border border-gray-800 px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600"
+							placeholder="Метка базы (source), напр. «база_июль»"
+							title="Проставится всем строкам CSV — потом рассылка строго по этой базе"
+							data-testid="leads-csv-source"
 						/>
 						<button
 							type="button"

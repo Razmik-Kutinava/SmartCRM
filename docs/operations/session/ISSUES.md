@@ -12,6 +12,10 @@
 
 ---
 
+`[2026-07-21] — test_tasks_filter_done_and_combined падает (комбо-фильтр задач)`  
+`Приоритет: 🟡 | Статус: открыта`  
+`Описание: tests/api/test_tasks_api.py::test_tasks_filter_done_and_combined — assert "Смотрим сегодня" in titles → titles пуст (GET /api/tasks?task_status=open&due=today); падает и на чистом HEAD — вероятно, зависит от текущей даты/часового пояса при создании задачи | Влияние: ложный FAIL регрессии зоны crm_leads; не связан с шагом «база → рассылка по source» | Решение: разобрать генерацию due в тесте (freeze времени или задать дату явно) | Агент: найден при регрессии crm_leads 2026-07-21`
+
 `[2026-07-21] — test_faq_autoreply_mocked зависит от окружения`  
 `Приоритет: 🟡 | Статус: открыта`  
 `Описание: tests/email/test_email_f3.py::test_faq_autoreply_mocked падает при EMAIL_FAQ_AUTOREPLY=0 / EMAIL_FAQ_MAX_PER_DAY=0 в корневом .env — сервис читает env, тест его не изолирует (monkeypatch нет) | Влияние: ложный FAIL регрессии зоны email на машинах с выключенным FAQ-автоответом; падает и на чистом HEAD — не связан с шагом «Ящики в UI» | Решение: добавить monkeypatch.setenv("EMAIL_FAQ_AUTOREPLY","1") и MAX_PER_DAY в тест | Агент: найден при регрессии зоны email 2026-07-21`

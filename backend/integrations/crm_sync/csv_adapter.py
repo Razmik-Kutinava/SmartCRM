@@ -216,8 +216,14 @@ async def import_leads_from_csv(
     csv_text: str,
     *,
     mode: str = "upsert",
+    source: str | None = None,
 ) -> dict[str, Any]:
-    """mode: upsert — обновить при совпадении; skip — пропустить дубликаты."""
+    """mode: upsert — обновить при совпадении; skip — пропустить дубликаты.
+
+    source — метка базы: проставляется всем строкам импорта (важнее колонки
+    `source` в файле), чтобы потом слать рассылку строго по этой базе.
+    """
+    source_label = (source or "").strip()[:100]
     rows = parse_csv_rows(csv_text)
     imported = 0
     updated = 0
@@ -232,6 +238,8 @@ async def import_leads_from_csv(
             errors.append(f"строка {i}: {e}")
             skipped += 1
             continue
+        if source_label:
+            fields["source"] = source_label
         existing = await _find_existing(db, fields)
         if existing:
             if not upsert:

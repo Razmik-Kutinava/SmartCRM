@@ -312,9 +312,10 @@ export async function apiImportHubspot() {
 	return body;
 }
 
-/** Импорт лидов из CSV (mode: upsert | skip). */
-export async function apiImportLeadsCsv(file, mode = 'upsert') {
-	const url = `${API()}/import-csv?mode=${encodeURIComponent(mode)}`;
+/** Импорт лидов из CSV (mode: upsert | skip; source — метка базы всем строкам). */
+export async function apiImportLeadsCsv(file, mode = 'upsert', source = '') {
+	let url = `${API()}/import-csv?mode=${encodeURIComponent(mode)}`;
+	if ((source || '').trim()) url += `&source=${encodeURIComponent(source.trim())}`;
 	const fd = new FormData();
 	fd.append('file', file);
 	const r = await fetch(url, { method: 'POST', body: fd });
@@ -338,6 +339,14 @@ export async function apiImportLeadsCsv(file, mode = 'upsert') {
 		throw new Error(msg);
 	}
 	return body;
+}
+
+/** Справочник источников (баз) лидов: [{ name, count, withEmail }]. */
+export async function fetchLeadSources() {
+	const r = await fetch(`${API()}/sources`);
+	if (!r.ok) throw new Error(`Источники лидов: HTTP ${r.status}`);
+	const body = await r.json().catch(() => ({}));
+	return body.sources || [];
 }
 
 /** Скачать все лиды CSV. */
