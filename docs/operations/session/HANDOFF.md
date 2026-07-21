@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Наведение порядка] | Задача:[чистка git status] | Статус: ✅ done | 👤 продукт / PRD_MAP`
+
+**2026-07-21:** Runtime-файлы `backend/data/` (api_stats, traces, checko_cache, ops_queue, sqlite, state/notifications) → `.gitignore` + untrack (диск цел); `eval_benchmark_data.py` → `backend/scripts/`; `.pytest_cache` корня удалён. git status теперь чистый. Коммит `7a57856`. **👤:** следующая задача — PRD_MAP или BACKLOG (архивация толстых ops-файлов — записана).
+
+---
+
 `Спринт:[Ф4 Email] | Задача:[+ Добавить ящик в сайдбаре] | Статус: ✅ done | 👤 проверка`
 
 **2026-07-18:** Кнопка «+ Добавить ящик» под селектом «Все ящики» в сайдбаре `/email` (открывает модал подключения). Диагностика DevTools MCP: оба ящика уже подключены (`me@agneko.am` + `ib@agneko.com`), второй был в скрытом селекте. **👤:** обновить `/email`, кнопка под «Все ящики».
