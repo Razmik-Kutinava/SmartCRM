@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-21 — PHASE 0 INTAKE в SBR: заказ дословно → доки → код
+
+По `go` («сделай всё что задумал… код пока не надо»). В SBR добавлена **PHASE 0 INTAKE**: слова пользователя записываются **дословной цитатой** в `todo.md` § «Заказ (дословно)» (цитата = источник истины, спор о scope решается по ней), под ней «Как понял» 1–2 строки; до кода подготавливается всё остальное — пункт в чеклист фазы (если его нет) и спека/док области `docs/operations/phase{N}/{область}/` (если нужен и не существует); отдельного стопа нет — сразу PHASE 1 SPEC и обычный `go` на BUILD. Правки: `spec-build-review.mdc` (секция PHASE 0 + таблица «Когда SBR обязателен»), `smartcrm-task-workflow.mdc` (§ Старт задачи), `smartcrm-index.mdc`, `RULES_MATRIX.md` § SBR scope, шаблон `todo.md` (новая секция). `verify_cursor_rules_precedence.py` — OK.
+
 ## 2026-07-21 — Свежесть CHANGELOG/HANDOFF в check_step + реанимация pre-commit hook
 
 По `go` (разбор «что критичное упустили»). **(1) Свежесть журналов:** `check_agent_step.py` — новая `ops_freshness_errors()`: если последний done-шаг SESSION_STATE датирован позже последней записи CHANGELOG (`## YYYY-MM-DD`) или HANDOFF (`**YYYY-MM-DD:**`) → FAIL в `check_step.cmd`; подшаги in_progress (SBR RED) не проверяются — для них журналы по правилу не пишутся. Гранулярность — день. +8 тестов `tests/scripts/test_check_agent_step.py`; `pytest tests/scripts/ -q` — **30 passed**. README: scripts (добавлены 3 валидатора шага), tests (новый файл). **(2) Pre-commit hook:** обнаружен мёртвым — в `.git/hooks/` лежала старая версия с путём `docs/operations/SESSION_STATE.md` (до переезда в `session/`), проверка не срабатывала вообще; переустановлен пользователем через `scripts/install_git_hooks.ps1`. Попутно в BACKLOG записано (отдельным шагом `91d10e3`): агент сам начинает вести `todo.md` в ближайшие 3–6 прогонов.

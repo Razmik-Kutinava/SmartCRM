@@ -18,7 +18,7 @@ alwaysApply: true
 | [`workflow/smartcrm-repo-layout.mdc`](workflow/smartcrm-repo-layout.mdc) | куда класть файлы, Backend README sync | по файлам (globs) |
 | [`workflow/smartcrm-file-size-split.mdc`](workflow/smartcrm-file-size-split.mdc) | лимит файлов, сплит | по файлам (globs) |
 
-Микро-чеклист фичи (SBR PHASE 1–3): `docs/operations/session/todo.md`.
+Микро-чеклист фичи (SBR PHASE 0–3, вкл. заказ дословно): `docs/operations/session/todo.md`.
 
 ## Project (стек, по globs)
 
