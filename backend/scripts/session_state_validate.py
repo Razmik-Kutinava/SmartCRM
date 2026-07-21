@@ -8,11 +8,18 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Кириллица в выводе не должна зависеть от кодовой страницы консоли (cp866 на Windows)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SESSION_STATE = REPO_ROOT / "docs" / "operations" / "session" / "SESSION_STATE.md"
 
 ENTRY_LINE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\s*\|")
 COMMIT_HASH_RE = re.compile(r"Коммит:\s*`([0-9a-f]{7,40})`", re.I)
+# «Коммит: `этот`» — запись едет в том же коммите, что и код (один коммит на шаг);
+# реальный хеш агент называет в ответе пользователю после git commit.
+COMMIT_SELF_RE = re.compile(r"Коммит:\s*`этот`", re.I)
 
 DEFER_MARKERS = (
     "коммит по запросу",
@@ -61,8 +68,8 @@ def validate_journal_line(line: str, *, require_tail: bool = False) -> list[str]
         errors.append("«Коммит: pending» — сначала git commit, потом хеш")
 
     is_done = bool(re.search(r"статус:\s*done", stripped, re.I))
-    if is_done and not COMMIT_HASH_RE.search(stripped):
-        errors.append("Статус done без «Коммит: `hash`»")
+    if is_done and not COMMIT_HASH_RE.search(stripped) and not COMMIT_SELF_RE.search(stripped):
+        errors.append("Статус done без «Коммит: `hash`» или «Коммит: `этот`»")
 
     return errors
 

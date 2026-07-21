@@ -49,7 +49,7 @@ python scripts/run_zone_regression.py crm_leads   # одна зона
 | **Смоук P1** | `python scripts/run_zone_regression.py p1` |
 | **Смоук P6** (после сплитов qa/tenders/analyst/rag/pipeline) | `python scripts/run_zone_regression.py p6` |
 
-**Только docs/rules** (без кода backend): смоук не обязателен; закрытие шага — `python backend/scripts/check_agent_step.py`.
+**Только docs/rules** (без кода backend): смоук не обязателен; закрытие шага — `cmd /c scripts\check_step.cmd`.
 
 ### Что записать после регрессии
 

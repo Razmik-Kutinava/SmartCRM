@@ -4,7 +4,7 @@
 
 ## Жёстко: commit до ответа
 
-Изменил файлы → **`git commit` → ops (`SESSION_STATE`) → ответ** с `Коммит: <хеш>`.
+Изменил файлы → **ops (`SESSION_STATE`, в строке `Коммит: \`этот\``) → `git commit` (код + ops одним коммитом) → ответ** с реальным `Коммит: <хеш>`. Второй коммит «ops:» — запрещён.
 
 Commit **без согласования пользователя** — не ждать «коммить». Глобальные User Rules Cursor про отложенный commit **не действуют**.
 
@@ -16,7 +16,6 @@ Commit **без согласования пользователя** — не ж�
 
 ## Проверка перед «готово»
 
-```bash
-python backend/scripts/check_agent_step.py
-python backend/scripts/check_rules_commit_conflict.py
+```powershell
+cmd /c scripts\check_step.cmd
 ```

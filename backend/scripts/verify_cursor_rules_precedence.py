@@ -7,6 +7,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Кириллица в выводе не должна зависеть от кодовой страницы консоли (cp866 на Windows)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 REPO = Path(__file__).resolve().parents[2]
 AGENTS = REPO / "AGENTS.md"
 COMMIT_OPS = REPO / ".cursor" / "rules" / "workflow" / "smartcrm-commit-ops.mdc"

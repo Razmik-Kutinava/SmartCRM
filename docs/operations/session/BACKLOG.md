@@ -1,7 +1,8 @@
 # BACKLOG — отложенная работа (хвост)
 
 > **Баги и поломки** → [`ISSUES.md`](ISSUES.md).  
-> Здесь только «сделать позже»: техдолг, не вошло в текущий шаг, scope отложен по решению.
+> Здесь только «сделать позже»: техдолг, не вошло в текущий шаг, scope отложен по решению.  
+> Закрытые записи → `docs/archive/ops/YYYY-MM_BACKLOG.md` (история не удаляется).
 
 **Связь с продуктом:** каждая запись **обязательно** привязана к **пункту чеклиста фазы** (`../phase{N}/CHECKLIST.md`; активная — [`phase4`](../phase4/CHECKLIST.md)). Старые записи со ссылкой на PRD_MAP — историчны, не переписывать.
 
@@ -11,8 +12,8 @@
 
 | Метка | Смысл |
 |-------|--------|
-| 🔴 | Блокирует закрытие пункта MAP или следующий шаг по нему |
-| 🟡 | Важно, можно идти дальше по MAP |
+| 🔴 | Блокирует закрытие пункта чеклиста или следующий шаг по нему |
+| 🟡 | Важно, можно идти дальше по чеклисту |
 | 🟢 | Улучшение, не блокер |
 
 ---
@@ -21,29 +22,31 @@
 
 > Агент закрыл автомат и код. Ниже — что **нельзя** закрыть без тебя: микрофон, живой браузер, ключи, туннель.
 
-| Приоритет | Фаза MAP | Блок PRD_MAP | Пункт блока | Что сделать руками | Как проверить / док |
-|-----------|----------|--------------|-------------|-------------------|---------------------|
-| ✅ закрыто | **Фаза 1** | **Голос → лиды** | **п.1** Whisper STT | E2E audio WS + dev `voice-simulate-mic` — `smoke_voice_mic_e2e.py`, `VOICE_MIC_E2E_ACCEPTANCE.md` (2026-06-11) |
+| Приоритет | Фаза | Блок | Пункт | Что сделать руками | Как проверить / док |
+|-----------|------|------|-------|-------------------|---------------------|
 | 🟡 желательно | **Фаза 1** | **Голос → лиды** | **п.3** voice_action | Spot-check: **удаление лида** — модалка approve → «Подтвердить» → лид исчез из списка (S04) | `VOICE_LEAD_SCENARIOS_ACCEPTANCE.md` S04; кнопки `data-testid=voice-approve-confirm` |
 | 🟡 желательно | **Фаза 1** | **Голос → лиды** | **п.5** смоук | Spot-check: **fanout** — фраза «проанализируй лид …» / «создай лид …» — индикатор «Агенты анализируют…», модалка/ответ 15–30 с (S02, S06) | Голосовая панель в layout; live Groq |
 | 🟢 опционально | **Фаза 1** | **Голос → лиды** | **п.2** Hermes live | Прогон **live LLM** (не CPU rescue): `GROQ_API_KEY=… python scripts/smoke_hermes_leads_live.py` | Артефакт `backend/data/artifacts/voice/hermes_leads_live.json` |
 | 🟢 опционально | **Фаза 1** | **Голос → лиды** | **п.1** health | `curl "http://127.0.0.1:8000/health/whisper?ping=1"` — reachable с твоим ключом | `VOICE_LEADS_TAIL_ACCEPTANCE.md` |
 | 🟡 отложено | **Фаза 2** / DevOps | **Лиды** | **п.2** Битрикс синк | Туннель **:8000** (ngrok/cloudflared) + исходящий вебхук в портале Битрикс | Инструкция: [`docs/start/BITRIX_OUTBOUND_WEBHOOK.md`](../../start/BITRIX_OUTBOUND_WEBHOOK.md); сейчас импорт + опрос 5 мин |
 
-**Критерий «Фаза 1 / Голос → лиды закрыт»:** ✅ mic E2E (WS bytes + dev sim). Опц. spot-check 🟡 ниже.
-
-**Снять ⚠️ в MAP (после ручного прогона):**
-
-1. `SESSION_STATE.md` — строка «микрофон E2E OK / дата».
-2. `PRD_MAP.md` — «Голос → лиды» п.1: колонка **Статус** → ✅, убрать ⚠️ из **Итог**; сводка «Голос лиды» → ✅.
-3. Здесь — отметить 🔴 выполненным или перенести в § Записи.
-4. `PRD_MAP.md` DoD Ф1 п.5 → ✅ (E2E); при полном закрытии голоса — п.6 «ок в Ф2» отдельно по решению владельца.
-
 ---
 
 ## Записи
 
 [2026-06-22] | PRD_MAP: «Карточка — enrich, паспорт» | Отложено: разделы паспорта «Вакансии», «Налоги и сборы», «История изменений» | Причина: Checko API не подключены в enrich (нет fetch в endpoints) | Нужна фаза MAP: 4 | Из шага: enrich→полный checko_json
+
+`[2026-06-16] | PRD_MAP: Ф3 Email · лимит писем/день | Отложено: счётчик отправок/день, warn/block перед send_now | Причина: после этапа C | Нужна фаза MAP: 3 → пункт Ф4 Email чеклиста | Из шага: этап C`
+
+`[2026-06-15] | PRD_MAP: Ф3 Email · LLM nurture под продукт | **ПИЛОТ ✅ 3 письма** MaxPatrol VM; расширение до 20 — после апрув | `docs/modules/email_nurture.md` | Из шага: start-llm live`
+
+`[2026-06-15] | PRD_MAP: Ф3 Email · 20 касаний | Отложено: LLM-генерация текстов nurture (Маркетолог) вместо детерминированных шаблонов | Причина: ждём апрув пользователя на текущий nurture (шаблоны + персонализация OK) | Нужна фаза MAP: 3 → пункт Ф4 Email чеклиста`
+
+`[2026-06-11] | PRD_MAP: «Аналитика (базовая)» п.7 голос | Отложено: голосовые запросы к воронке/KPI | Причина: scope Ф2 (`PRD_MAP` п.188) | Сейчас: UI+API baseline на `/leads/analytics` | Действие: Voice Layer + intent «покажи воронку»`
+
+`[из Ф2 Voice Layer хвоста] | Чеклист: «Платформа · layout кода» | Отложено: сплит монолитов | Причина: не блокер | см. [`debt/REPO_LAYOUT_DEBT.md`](../debt/REPO_LAYOUT_DEBT.md) | Приоритет: 🟢`
+
+`[из Ф2 Voice Layer хвоста] | Чеклист: «Лидоген · portrait» | Отложено: LLM review без Groq — graceful fallback | Приоритет: 🟢 | агент по go`
 
 ### Фаза 4 — авто-суфлёр Стратега (тюнинг, не блокер Ф3)
 
@@ -76,7 +79,7 @@
 | 🟢 | История отчётов A/B | Нет сравнения версий во времени |
 | 🟢 | Dr. QA в UI | Сейчас CLI/скрипты |
 
-`[2026-06-17] | PRD_MAP: Ф4 · A/B промптов тюнинг | Отложено: 7 пунктов выше | Причина: Ф4 polish до MVP, после базового Ф3 A/B | Нужна фаза MAP: 4 | Из шага: обсуждение улучшений Ops UI`
+`[2026-06-17] | PRD_MAP: Ф4 · A/B промптов тюнинг | Отложено: 7 пунктов выше | Причина: Ф4 polish до MVP, после базового Ф3 A/B | Из шага: обсуждение улучшений Ops UI`
 
 ### Фаза 4 — vendor crawl → tech_specialist (тюнинг, не блокер Ф3)
 
@@ -89,102 +92,16 @@
 | 🟡 | Метаданные чанков (продукт, тип дока) | Точнее retrieval |
 | 🟡 | Eval retrieval 10–20 вопросов tech_specialist | Дыры не видны без метрик |
 
-`[2026-06-17] | PRD_MAP: Ф4 · vendor crawl тюнинг | Отложено: 4 пункта выше | Причина: Ф4 тюнинг до MVP, после «ок» Ф3 crawl | Нужна фаза MAP: 4 | Из шага: обсуждение улучшений tech_specialist`
-
-`[2026-06-17] | PRD_MAP: Ф3 Self-improvement · vendor crawl UI + cron | **✅ сделано** — `/ops/vendor-crawl` + `vendor_crawl_background.py` | Коммит: см. CHANGELOG`
-
-`[2026-06-15] | PRD_MAP: Ф3 Email · этап B массовый сегмент | **✅ сделано** — `EmailCampaignPanel`, preview-llm, send_now | Коммит: см. CHANGELOG`
-
-`[2026-06-15] | PRD_MAP: Ф3 Email · этап B массовый сегмент | ~~Отложено~~ → закрыто в коммите этапа B`
-
-`[2026-06-16] | PRD_MAP: Ф3 Email · лимит писем/день | Отложено: счётчик отправок/день, warn/block перед send_now | Причина: после этапа C | Нужна фаза MAP: 3 | Из шага: этап C`
-
-`[2026-06-15] | PRD_MAP: Ф3 Email · лимит писем/день | Отложено: антиспам лимит nurture+campaigns | Причина: после этапа B | BACKLOG`
-
-`[2026-06-15] | PRD_MAP: Ф3 Email · LLM nurture под продукт | **ПИЛОТ ✅ 3 письма** MaxPatrol VM; расширение до 20 — после апрув | `docs/modules/email_nurture.md` | Из шага: start-llm live`
-
-`[2026-06-15] | PRD_MAP: Ф3 Email · 20 касаний | Отложено: LLM-генерация текстов nurture (Маркетолог) вместо детерминированных шаблонов | Причина: ждём апрув пользователя на текущий nurture (шаблоны + персонализация OK) | Нужна фаза MAP: 3 | Из шага: nurture хвост A закрыт`
-
-`[2026-06-13] | PRD_MAP: переход Ф1→Ф2 | DoD Ф1 6/6; хвосты L306–318 не блокируют; PHASE2_ENTRY.md | **Push:** ждём go | **Ф2 код:** ждём go + номер очереди | gate live — параллельно`
-
-`[2026-06-14] | PRD_MAP: «§4 факты диалога» | **ЗАКРЫТО ✅** | `RAG_DIALOGUE_LLM=0/1` + `collect_deal_facts`; pytest | Коммит: см. CHANGELOG RAG tail`
-
-`[2026-06-14] | PRD_MAP: «§4 Авто-чанки» | **ЗАКРЫТО ✅** | `RAG_AUTO_STRUCTURE_LLM=0/1` + `qa_structure.py`; pytest | Коммит: см. CHANGELOG RAG tail`
-
-`[2026-06-14] | PRD_MAP: «Quality gates Ф3 тюнинг» | Отложено: довести всех агентов ≥85%; baseline `AGENTS_GATE_TUNING_BASELINE.md` | Причина: **Ф3**, не блокер Ф2; нужен live Ollama/Groq + go | Нужна фаза MAP: **3** | Действие: Hermes/Tech/Economist промпты → re-gate` | Коммит 7be7bdb: tuning import failed, delta was→became % | **Не вышло:** live gate MAP 🔲 | Действие: EVAL_OLLAMA_TIMEOUT=1200`
-
-`[2026-06-13] | PRD_MAP: Агенты quality gates UI финал | Коммит 596d2e1: вкладки Hermes/gate, download, режимы, bulk→eval-failed-gate, insights pass rate | **Не вышло:** live gate MAP 🔲; agents-only оборван analyst | Действие: EVAL_OLLAMA_TIMEOUT=1200 --write-acceptance`
-
-
-`[2026-06-11] | PRD_MAP: инфра email me@agneko.am | **ЗАКРЫТО ✅ 2026-06-14** | Пароль в `.env`; ib@ + me@ через `EMAIL_ACCOUNT_*` | Коммит: см. CHANGELOG cleanup`
-
-`[2026-06-11] | PRD_MAP: «Ops /ops» п.10 версионирование промптов | **ЗАКРЫТО ✅ 2026-06-14** | `agent_prompt_versions.py` + API + UI `/ops/agents` | `OPS_PROMPT_VERSIONING_ACCEPTANCE.md`
-
-`[2026-06-11] | PRD_MAP: «Аналитика (базовая)» п.7 голос | Отложено: голосовые запросы к воронке/KPI | Причина: scope Ф2 (`PRD_MAP` п.188) | Сейчас: UI+API baseline на `/leads/analytics` | Действие: Voice Layer + intent «покажи воронку»`
-
-`[2026-06-08] | PRD_MAP: п.2 «Поля Битрикс + синк» | Отложено: туннель (ngrok/cloudflared) + исходящий вебхук в портале | Причина: dev на localhost — Битрикс не достучится; мгновенный синк не проверить без публичного URL | Нужна фаза MAP: 2 / DevOps | Сейчас работает: полный импорт (кнопка) + опрос BITRIX_AUTO_SYNC_MINUTES=5 | Действие: туннель :8000 → URL в Битриксе ONCRMLEADADD → /api/webhooks/bitrix/events?token=...; опционально :5173 для UI`
-
-`[2026-06-08] | PRD_MAP: «Голос → лиды» п.2 Hermes — ЗАКРЫТО ✅ | Scope: CRUD, стадия, задача (`create_lead`, `update_lead`, `delete_lead`, `list_leads`, `create_task`) | Сделано: `slot_normalize`, rescue/fastpath, `smoke_hermes_leads.py` 40 passed, `HERMES_LEADS_ACCEPTANCE.md` | Коммит: `be70615` | Хвост п.2 (не блокер): 3 LLM eval Groq — см. таблицу ниже 🟢`
-
-`[2026-06-08] | PRD_MAP: стек / Email API | ЗАКРЫТО ✅ | `@field_validator` в `email.py` | Коммит: см. CHANGELOG 2026-06-08 хвост голос`
-
----
-
-## Блок «Голос → лиды» — статус PRD_MAP п.1–5 (2026-06-08)
-
-| # | Пункт | Статус | Acceptance |
-|---|--------|--------|------------|
-| 1 | Whisper STT | ✅ | `WHISPER_STT_ACCEPTANCE.md` |
-| 2 | Hermes CRUD/стадия/задача | ✅ | `HERMES_LEADS_ACCEPTANCE.md` |
-| 3 | voice_action UI | ✅ | `VOICE_ACTION_ACCEPTANCE.md` |
-| 4 | Полные интенты | ✅ | `HERMES_LEADS_FULL_ACCEPTANCE.md` |
-| 5 | Смоук сценариев | ✅ автомат | `VOICE_LEAD_SCENARIOS_ACCEPTANCE.md` |
-
-**Команда полного прогона:** `cd backend && python scripts/smoke_voice_lead_scenarios.py`
-
-### Сводный хвост блока «Голос → лиды»
-
-| Приоритет | Источник | Что | Статус |
-|-----------|----------|-----|--------|
-| 🔴 | п.1 | E2E микрофон | 👤 **см. § «Ручная работа»** |
-| 🟡 | п.3, п.5 | Spot-check approve + fanout | 👤 **см. § «Ручная работа»** |
-| ✅ | хвост #2–#11 | код + pytest | `VOICE_LEADS_TAIL_ACCEPTANCE.md` |
-| 🟢 | Ф2 | LiveKit вместо WS | см. инфра ниже |
-
----
-
-## Блок «Поиск и RAG» — хвост на потом (п.1–5 закрыты ✅)
-
-| Приоритет | PRD_MAP | Что | Фаза MAP | Кто |
-|-----------|---------|-----|----------|-----|
-| ✅ | enrich-lead | Смоук `enrich-lead` live E2E | **1** | `SEARCH_ENRICH_LEAD_ACCEPTANCE.md` |
-| 🟢 | prospect/agent | Spot-check live Groq в UI (prospect, enrich, agent) | **1** | 👤 опционально |
-| ✅ | Ф2 §4 | Кэш результата enrich (company+ИНН+industry, TTL ~24 ч) | **2** | `SEARCH_ENRICH_CACHE_ACCEPTANCE.md` |
-| ✅ | Ф2 §9 | Кнопка «Обогатить» на `/leads/{id}` | **2** | `LEADS_CARD_ENRICH_ACCEPTANCE.md` |
-| ✅ | RAG tail | LLM flags + page_fetch + smoke cache | **2** | `RAG_BACKLOG_TAIL_CLOSED.md` |
-| ✅ | Ф2 §4 | Авто-чанки «поиск → RAG» | **2** | `SEARCH_RAG_AUTO_CHUNKS_ACCEPTANCE.md` |
-
-**Ф1 enrich** — `phase1/search/SEARCH_ENRICH_LEAD_ACCEPTANCE.md` ✅. **п.1–5 RAG** — `docs/operations/phase1/search/`.
-
----
-
-## Блок «Тендеры» — закрыто baseline (2026-06-11)
-
-П.2–5, п.7 — код + pytest. Осталось опционально:
-
-| Приоритет | PRD_MAP | Что | Фаза |
-|-----------|---------|-----|------|
-| 🟢 | Тендеры | Live spot-check поиска с `SERPER_API_KEY` / `TAVILY_API_KEY` | **1** |
-| 🔲 | Тендеры | Контур.Закупки API — **Ф4** после 1-й сделки · `F4_KONTUR_GATE.md` | **4** |
+`[2026-06-17] | PRD_MAP: Ф4 · vendor crawl тюнинг | Отложено: 4 пункта выше | Причина: Ф4 тюнинг до MVP, после «ок» Ф3 crawl | Из шага: обсуждение улучшений tech_specialist`
 
 ---
 
 ## Фаза 4 — «Мой день» (лиды)
 
-| Шаг | PRD_MAP | Статус | Док |
-|-----|---------|--------|-----|
+| Шаг | Пункт | Статус | Док |
+|-----|-------|--------|-----|
 | Спека | «Мой день» | ✅ 2026-06-27 | [`F4_DAY_PRIORITY.md`](../phase4/leads/F4_DAY_PRIORITY.md) |
-| 1–7 код | те же пункты MAP | ✅ код 2026-06-27; 👤 приёмка §11 | §10 плана в спеке |
+| 1–7 код | те же пункты | ✅ код 2026-06-27; 👤 **приёмка §11 ждёт** | §10 плана в спеке |
 
 `[2026-06-27] | PRD_MAP: «Мой день (приоритет очереди)» | Отложено: имплементация lead_day_priority + UI | Причина: сначала спека и согласование с оператором | Нужна фаза MAP: 4 | Из шага: docs prep`
 
@@ -192,8 +109,8 @@
 
 ## Фаза 4 — X5-gap прогон (шаги 1–6)
 
-| Шаг | PRD_MAP | Отложено | Приоритет |
-|-----|---------|----------|-----------|
+| Шаг | Пункт | Отложено | Приоритет |
+|-----|-------|----------|-----------|
 | 1 | UF → `bitrix_extra` | Mass backfill: **~960/3228** (~30%); resync running ETA ~3.7ч | 🔴 |
 | 2 | Мультиконтакты | тот же resync — **952** contacts json, **441** multi | 🔴 |
 | 3 | Сумма + валюта | **~987/3228** deal_amount (~31%); DevTools ✅ `15 780 $`; 👤 → [`F4_X5_DEAL_AMOUNT_ACCEPTANCE.md`](../phase4/leads/F4_X5_DEAL_AMOUNT_ACCEPTANCE.md) | 🟡 |
@@ -204,27 +121,9 @@
 
 `[2026-06-24] | PRD_MAP: Ф4 · X5-gap mass-resync bitrix_extra | Отложено: дождаться прогона 3225 (50/3225 на 2026-06-24) | Причина: Access denied при workers=3 — снижен до 1 | Из шага: F4_BITRIX_FIELDS_RESYNC.md`
 
-`[2026-06-19] | PRD_MAP: Ф4 · X5-gap шаг 6 mass-resync | Отложено: дождаться полного прогона + scope task п.4 + browser апрув | Причина: скрипт готов, прогон долгий | Нужна фаза MAP: 4 | Из шага: resync_bitrix_lead_fields.py`
+`[2026-06-19] | PRD_MAP: Ф4 · X5-gap шаг 6 mass-resync | Отложено: дождаться полного прогона + scope task п.4 + browser апрув | Причина: скрипт готов, прогон долгий | Из шага: resync_bitrix_lead_fields.py`
 
-`[2026-06-19] | PRD_MAP: Ф4 · X5-gap шаги 1–5 | Отложено: mass backfills 1–3, scope task п.4, browser апрув 3+5 | Причина: код закрыт, нужен webhook + оператор | Нужна фаза MAP: 4 | Из шага: сводка прогона шаг 5` **→ шаг 6 закрывает backfill 1–3 одним скриптом**
-
----
-
-`[2026-06-14] | PRD_MAP: «Ф2 §1 Voice Layer» — ЗАКРЫТО ✅ | Scope: Hermes modules + UI voice_action (modal/navigate/filter/approve) + rescue eval | Сделано: frontend voiceAction/VoiceActionHost, minScore, send_email/save_to_rag approve, `smoke_voice_layer.py` 72 passed, `VOICE_LAYER_ACCEPTANCE.md` | Хвост 🟢: live LLM eval всех модулей (не rescue) — опционально | Коммит: `f2b618e`
-
-| Приоритет | PRD_MAP | Что | Фаза MAP | Кто |
-|-----------|---------|-----|----------|-----|
-| 🟢 | Ф2 §1 Voice Layer | Live LLM eval analytics/RAG (не только rescue) — опционально при Groq/Ollama | **2** | агент |
-| 🔴 | Агенты · quality gates | **Полный live Ollama** ≥ порогов — **не закрыто** (Hermes ReadTimeout CPU; прогон 5 агентов оборвался/долгий) | **2** | `run_agents_quality_gate.py --write-acceptance` |
-| 🟡 | Агенты · quality gates | Hermes: GPU / `EVAL_OLLAMA_TIMEOUT=1200` / ночной прогон 36 кейсов | **2** | 👤/агент |
-| 🟡 | Агенты · quality gates | `[x]` в MAP — только после зелёного `overall_gate` | **2** | после live |
-| 🟢 | Агенты · quality gates | Тюнинг `must_contain` под hermes3 JSON | **2** | агент |
-| 🟡 | Голос → лиды п.3, п.5 | Spot-check approve / fanout | **1** | 👤 ты |
-| 🟡 | Ф2 §9 | Кнопка «Обогатить» на карточке лида `/leads/{id}` | **2** | ✅ `LEADS_CARD_ENRICH_ACCEPTANCE.md` |
-| 🟡 | Лиды п.2 Битрикс синк | Туннель :8000 + вебхук | **2** / DevOps | 👤 ты |
-| 🟡 | Ф2 очередь 5 §8 leadgen голос | Голос `/leadgen` | **2** | агент по `go` |
-| 🟢 | Layout кода (не ops) | Сплит монолитов, backend/data gitignore | **2+** | см. [`debt/REPO_LAYOUT_DEBT.md`](../debt/REPO_LAYOUT_DEBT.md) |
-| 🟢 | Leadgen portrait | LLM review без Groq — graceful fallback | **2** | агент по `go` |
+`[2026-06-19] | PRD_MAP: Ф4 · X5-gap шаги 1–5 | Отложено: mass backfills 1–3, scope task п.4, browser апрув 3+5 | Причина: код закрыт, нужен webhook + оператор | Из шага: сводка прогона шаг 5` **→ шаг 6 закрывает backfill 1–3 одним скриптом**
 
 ---
 
@@ -232,8 +131,8 @@
 
 Отсутствующие канонические доки — без них агент угадывает:
 
-| Документ | Зачем | Фаза MAP |
-|----------|-------|----------|
+| Документ | Зачем | Фаза |
+|----------|-------|------|
 | `docs/agents/AGENTS/marketer.md` | промпт маркетолога | 2 |
 | `docs/agents/AGENTS/analyst.md` | промпт аналитика | 2 |
 | `docs/voice/VOICE.md` | полная схема Voice Layer | 2 |
@@ -242,7 +141,7 @@
 
 ---
 
-## Безопасность (сквозное — PRD_MAP §Безопасность)
+## Безопасность (сквозное)
 
 > **Ф2** — перед выходом в интернет (очередь **10**). **Ф3** — роли и аудит. Сейчас dev: `.env` + опциональный `X-API-Key`.
 
@@ -263,13 +162,13 @@
 
 ## Инфраструктура (отложено — решить по триггеру)
 
-> Не блокирует закрытие Ф1. Не трогать, пока не закрыт 🔴 E2E микрофон (`§ Ручная работа`). Hermes/voice_action — ✅. Триггер — когда боль станет реальной.
+> Триггер — когда боль станет реальной.
 
-`[2026-06-08] | PRD_MAP: «Поиск и RAG» / Ф2 п.4 «Поиск → RAG авто» | Отложено: Chroma → pgvector в PostgreSQL | Причина: сейчас ~1.6k чанков, Chroma работает; миграция = риск регрессии без выигрыша по PRD | Триггер: массовые авто-чанки, нужен гибрид SQL (лид + семантика в одном запросе), один контейнер в проде | Нужна фаза MAP: конец 2 / начало 3 | Приоритет: 🟢`
+`[2026-06-08] | PRD_MAP: «Поиск и RAG» / Ф2 п.4 «Поиск → RAG авто» | Отложено: Chroma → pgvector в PostgreSQL | Причина: сейчас ~1.6k чанков, Chroma работает; миграция = риск регрессии без выигрыша по PRD | Триггер: массовые авто-чанки, гибрид SQL, один контейнер в проде | Приоритет: 🟢`
 
-`[2026-06-08] | PRD_MAP: «Голос → лиды» / Ф2 «Voice Layer» | Отложено: LiveKit (WebRTC) вместо сырого WS `/ws/voice` | Причина: сейчас batch STT (запись → Whisper → Hermes), не дуплекс-звонок | Триггер: живой аудиострим, эхо, мобильный интернет, удержание связи | Нужна фаза MAP: 3 (или поздняя 2) | Приоритет: 🟢`
+`[2026-06-08] | PRD_MAP: «Голос → лиды» / Ф2 «Voice Layer» | Отложено: LiveKit (WebRTC) вместо сырого WS `/ws/voice` | Причина: сейчас batch STT, не дуплекс-звонок | Триггер: живой аудиострим, эхо, мобильный интернет | Приоритет: 🟢`
 
-`[2026-06-08] | PRD_MAP: стек (FastAPI) | Отложено: Litestar вместо FastAPI | Причина: полная переписка бэкенда, ноль фич для пользователя; FastAPI достаточен | Триггер: конкретный потолок FastAPI (маловероятно) или greenfield | Решение: скорее не делать | Приоритет: 🟢`
+`[2026-06-08] | PRD_MAP: стек (FastAPI) | Отложено: Litestar вместо FastAPI | Решение: скорее не делать | Приоритет: 🟢`
 
 ---
 
@@ -287,24 +186,11 @@
 
 `[2026-06-17] | PRD_MAP: «Telegram-бот» | Отложено: Ops critical → Telegram (wiring в ops_store) | Причина: функция notify_ops_critical есть, hook отложен | Нужна фаза MAP: 3 | Из шага: Telegram MVP`
 
-`[2026-06-17] | PRD_MAP: «Импорт/экспорт CRM» | Отложено: AmoCRM import (шаг 3), HubSpot import (шаг 4), push export Amo/HubSpot (шаг 5) | Причина: шаг 1 CSV + шаг 2 Битрикс push — по порядку MAP | Нужна фаза MAP: 3 | Из шага: CSV sync`
+`[2026-06-17] | PRD_MAP: «Импорт/экспорт CRM» | Отложено: AmoCRM import (шаг 3), HubSpot import (шаг 4), push export Amo/HubSpot (шаг 5) | Причина: шаг 1 CSV + шаг 2 Битрикс push — по порядку | Нужна фаза MAP: 3 | Из шага: CSV sync`
 
 ---
 
-## CoffeeOS workflow migration (2026-07-18) — ✅ ЗАКРЫТО
-
-> Стандарт agent rules для всех проектов SmartCRM. Шаги 1–6 done.
-
-| Шаг | Статус |
-|-----|--------|
-| 1 каркас `workflow/` + `project/` | ✅ |
-| 2 SBR + todo.md + RED/GREEN | ✅ |
-| 3 project-rules (6× mdc) | ✅ |
-| 4 merged отчёт | ✅ |
-| 5 doc links + scratch | ✅ |
-| 6 SBR scope апрув | ✅ MAP + фичи; one-liner без SBR |
-
-### Долги post-migration (не блокер)
+## Долги post-migration CoffeeOS (не блокер) — миграция закрыта, архив: [`2026-07_BACKLOG.md`](../../archive/ops/2026-07_BACKLOG.md)
 
 | Приоритет | Отложено | Причина |
 |-----------|----------|---------|
@@ -312,7 +198,7 @@
 | 🟢 | Скрипт grep stale paths `.cursor/rules/smartcrm-*.mdc` в CI | CHANGELOG/SESSION_STATE история — намеренно не трогаем |
 | 🟢 | Единый `docs/operations/baselines/AGENT_WORKFLOW.md` для людей | RULES_MATRIX достаточно |
 
-`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: post-migration долги (таблица выше) | Причина: миграция закрыта | Нужна фаза MAP: — | Из шага: rules workflow step 6`
+`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: post-migration долги (таблица выше) | Причина: миграция закрыта | Из шага: rules workflow step 6`
 
 ---
 
@@ -326,7 +212,7 @@
 | 🟢 | Гонять `run_zone_regression.py` (зоны) в CI | падение по конкретной зоне (crm_leads/voice/…), а не общим pytest |
 | 🟢 | Прогонять `check_agent_step.py` в CI | правила ops/commit не забываются автоматически |
 
-`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: 3 апгрейда CI (GROQ_API_KEY secret, зоны регрессии, check_agent_step в CI) | Причина: CI рабочий, не срочно | Нужна фаза MAP: — | Из шага: разбор .github`
+`[2026-07-18] | PRD_MAP: «Ops / agent workflow» | Отложено: 3 апгрейда CI (GROQ_API_KEY secret, зоны регрессии, check_agent_step в CI) | Причина: CI рабочий, не срочно | Из шага: разбор .github`
 
 ---
 
@@ -342,7 +228,8 @@
 
 `[2026-07-21] | PRD_MAP: «Платформа / UX» | Отложено: BFF-прокси, SSR-load, стриминг агентов | Причина: идеи-буст, приоритет за пользователем | Нужна фаза MAP: 2/3 | Из шага: обсуждение связки фронт/бэк`
 
-`[2026-07-21] | PRD_MAP: «Ops / agent workflow» | Отложено: архивация разжиревших ops-файлов (CHANGELOG ~1500 строк, HANDOFF ~780, SESSION_STATE ~670) — старое в docs/archive/ | Причина: пользователь решит формат позже | Нужна фаза MAP: — | Из шага: чистка git status` → ✅ **сделано 2026-07-21** (архив по месяцам, `docs/archive/ops/`)
-
 `[2026-07-21] | PRD_MAP: «Платформа / UX» | Отложено: редизайн UI — собственные токены @theme, единые оттенки статусов, icon-set вместо юникода | Причина: сначала зафиксировали текущее в DESIGN_SYSTEM.md, редизайн отдельным спринтом | Нужна фаза MAP: 4+ | Из шага: разгрузка доков и токенов`
 
+---
+
+> Архив закрытого: [`2026-06_BACKLOG.md`](../../archive/ops/2026-06_BACKLOG.md) · [`2026-07_BACKLOG.md`](../../archive/ops/2026-07_BACKLOG.md)

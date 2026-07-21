@@ -9,6 +9,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Кириллица в выводе не должна зависеть от кодовой страницы консоли (cp866 на Windows)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 OPS = REPO_ROOT / "docs" / "operations" / "session"
 SESSION_STATE = OPS / "SESSION_STATE.md"
@@ -71,13 +75,20 @@ def session_state_has_recent_entry(max_days: int = 2) -> bool:
     return False
 
 
-def handoff_lists_recent_commit() -> bool:
+def handoff_lists_recent_commit(depth: int = 20) -> bool:
+    """HANDOFF должен ссылаться на один из последних коммитов или «этот».
+
+    Проверка по HEAD невыполнима по построению: HANDOFF коммитится вместе с шагом
+    и не может содержать собственный хеш. Поэтому принимаем любой из последних
+    `depth` хешей либо маркер «Коммит: `этот`» (один коммит на шаг).
+    """
     if not HANDOFF.is_file():
         return False
-    head = run_git("rev-parse", "--short", "HEAD").strip()
-    if not head:
-        return False
-    return head in HANDOFF.read_text(encoding="utf-8")
+    text = HANDOFF.read_text(encoding="utf-8")
+    if re.search(r"Коммит[:\s]*`этот`", text, re.I):
+        return True
+    hashes = run_git("log", f"-{depth}", "--format=%h").split()
+    return any(h and h in text for h in hashes)
 
 
 def main() -> int:

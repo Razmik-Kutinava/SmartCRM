@@ -5,13 +5,13 @@ alwaysApply: true
 
 # ЖЁСТКОЕ ПРАВИЛО КОММИТА
 
-**Изменил любой файл** → порядок **только такой**:
+**Изменил любой файл** → порядок **только такой** (один коммит на шаг):
 
-1. `git commit` (все файлы шага)
-2. `SESSION_STATE` → при конце шага `CHANGELOG` + `HANDOFF`
-3. **Потом** ответ пользователю с **`Коммит: <хеш>`**
+1. Обновить ops: `SESSION_STATE` (при конце шага + `CHANGELOG` и `HANDOFF`) — в журнальной строке писать **`Коммит: \`этот\``** (хеша ещё нет)
+2. `git commit` — **код + ops одним коммитом**
+3. **Потом** ответ пользователю с реальным хешем **`Коммит: <хеш>`** (`git rev-parse --short HEAD`)
 
-**Ответ пользователю до `git commit` — запрещён.**
+**Ответ пользователю до `git commit` — запрещён.** Отдельный второй коммит «ops: SESSION_STATE» — тоже запрещён (шум в истории); хеш шага живёт в ответе и в git, в файлах — маркер `этот`.
 
 Шаг без хеша коммита в ответе — **не закрыт**. Статус `done` без коммита — **ложь**.
 
@@ -23,7 +23,7 @@ alwaysApply: true
 
 ## Порядок шага
 
-1. Один логический шаг → 2. Тесты (`smartcrm-dev-gates.mdc`) → 3. **commit + ops до ответа** → 4. `check_agent_step.py` + `check_rules_commit_conflict.py` OK → 5. Отчёт (таблица + A/B/C + хеш) → 6. **Стоп до `go`**. Срочность не отменяет коммит и ops.
+1. Один логический шаг → 2. Тесты (`smartcrm-dev-gates.mdc`) → 3. **ops + commit (одним коммитом) до ответа** → 4. `cmd /c scripts\check_step.cmd` OK → 5. Отчёт (таблица + A/B/C + хеш) → 6. **Стоп до `go`**. Срочность не отменяет коммит и ops.
 
 ---
 
@@ -61,19 +61,17 @@ alwaysApply: true
 | **B** | BACKLOG в прогоне → строка в `BACKLOG.md` в том же коммите |
 | **C** | Доп. починки / новые задачи → `ISSUES` / `BACKLOG` |
 
-`SESSION_STATE`: `… | Коммит:\`hash\` | Хвост A:[…] | Хвост B:[…] | Хвост C:[…] | …`
+`SESSION_STATE`: `… | Коммит:\`этот\` | Хвост A:[…] | Хвост B:[…] | Хвост C:[…] | …` (хеш прошлых шагов в старых записях — норм, не переписывать)
 
 Полный шаблон ответа: `smartcrm-task-workflow.mdc` § «Формат отчёта».
 
 ## Проверка перед ответом «готово»
 
-```bash
-python backend/scripts/check_agent_step.py
-python backend/scripts/check_rules_commit_conflict.py
-python backend/scripts/session_state_validate.py
+```powershell
+cmd /c scripts\check_step.cmd
 ```
 
-Все **OK**. Иначе — не отправлять финальный отчёт.
+Одна команда гоняет все три валидатора (`check_agent_step`, `check_rules_commit_conflict`, `session_state_validate`) с UTF-8. Все **OK** — иначе не отправлять финальный отчёт. Не запускать python-валидаторы напрямую в PowerShell Cursor — exit code теряется.
 
 ## Git pre-commit hook (блокирует мусор в SESSION_STATE)
 

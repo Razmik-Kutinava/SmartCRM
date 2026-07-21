@@ -7,6 +7,10 @@ import re
 import sys
 from pathlib import Path
 
+# Кириллица в выводе не должна зависеть от кодовой страницы консоли (cp866 на Windows)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 SCAN_DIRS = (
@@ -30,9 +34,10 @@ BAD_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("commit_if_user_asks", re.compile(r"коммит\s+только\s+по\s+запросу", re.I)),
     ("go_then_commit", re.compile(r"`go`\s+commit|go\s+commit\s*→", re.I)),
     ("committing_changes_rule", re.compile(r"committing-changes-with-git", re.I)),
-    ("ask_if_commit_needed", re.compile(r"скажи.*коммит|нужен\s+ли\s+коммит|напиши.*коммит", re.I)),
+    # Ограничение {0,25} — чтобы не ловить легитимные фразы через полстроки
+    ("ask_if_commit_needed", re.compile(r"скажи[^\n]{0,25}коммит|нужен\s+ли\s+коммит|напиши[^\n]{0,25}коммит", re.I)),
     ("commit_not_done", re.compile(r"коммит\s+не\s+делал", re.I)),
-    ("wait_for_commit", re.compile(r"жду.*коммит|жду\s+явн", re.I)),
+    ("wait_for_commit", re.compile(r"жду[^\n]{0,25}коммит", re.I)),
     ("commit_dash", re.compile(r"Коммит:\s*—", re.I)),
     ("next_step_commit", re.compile(r"следующий\s+шаг:\s*(коммит|commit)\b", re.I)),
     ("defer_commit_phrase", re.compile(r"следующий\s+шаг:.*\b(коммит|commit)\b", re.I)),
@@ -77,7 +82,11 @@ def scan_file(path: Path) -> list[str]:
             continue
         for label, pattern in BAD_PATTERNS:
             if pattern.search(line):
-                hits.append(f"{path.relative_to(REPO_ROOT)}:{lineno} [{label}] {line.strip()[:120]}")
+                try:
+                    shown = path.relative_to(REPO_ROOT)
+                except ValueError:
+                    shown = path
+                hits.append(f"{shown}:{lineno} [{label}] {line.strip()[:120]}")
     return hits
 
 

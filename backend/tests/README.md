@@ -35,6 +35,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `api/` | `test_rag_api.py`, `test_rag_upload_api.py`, `test_rag_ingest_batch_api.py`, `test_search_enrich_lead_api.py` |
 | `rag/` | + `test_rag_upload.py`, `test_rag_ingest_batch.py` — ingest_bytes, metadata batch |
 | `integration/` | `test_email_integration.py` — смоук почты |
+| `scripts/` | `test_session_state_validate.py` — валидаторы шага (`Коммит: \`этот\``, regex конфликтов); `test_ci_smoke.py`; resync/backfill Битрикс |
 
 ---
 

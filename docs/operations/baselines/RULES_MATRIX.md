@@ -16,10 +16,10 @@
 
 | Действие | Когда |
 |----------|--------|
-| `git commit` + ops | **Всегда**, если шаг менял файлы |
+| ops + `git commit` (**одним** коммитом, в журнале `Коммит: \`этот\``) | **Всегда**, если шаг менял файлы |
 | `git push` | **Только** явный апрув пользователя |
 
-Проверки: `verify_cursor_rules_precedence.py`, `check_agent_step.py`, `check_rules_commit_conflict.py`.
+Проверки: `cmd /c scripts\check_step.cmd` (три валидатора разом, UTF-8) + `verify_cursor_rules_precedence.py`.
 
 `AGENTS.md` в корне — краткий дубль канона коммита (нужен для не-Cursor агентов).
 
@@ -40,6 +40,7 @@
 | R11 | Project rules по globs | `.cursor/rules/project/smartcrm-*.mdc` | Cursor globs |
 | R12 | Отчёт: Сделано/Не сделано + A/B/C | `workflow/task-workflow` § Отчёт | `check_agent_step.py` |
 | R13 | Ops-журналы: записи старше текущего месяца → `docs/archive/ops/` | `workflow/smartcrm-commit-ops.mdc` § Ops | дисциплина |
+| R14 | ISSUES: открытые записи старше месяца — «должки», показать пользователю и просить подтвердить закрытие | `workflow/task-workflow` § Старт сессии | дисциплина |
 
 ## SBR scope (апрув 2026-07-18)
 
@@ -58,9 +59,9 @@
 ## Финиш шага
 
 1. Тесты зелёные (или docs-only)
-2. **`git commit` + ops** (`workflow/commit-ops.mdc`)
-3. `check_agent_step.py` + `check_rules_commit_conflict.py` + `verify_cursor_rules_precedence.py`
-4. Отчёт с **таблицей + A/B/C** → **стоп до `go`**
+2. **ops + `git commit` одним коммитом** (`workflow/commit-ops.mdc`)
+3. `cmd /c scripts\check_step.cmd` (+ `verify_cursor_rules_precedence.py` при правке правил)
+4. Отчёт с **таблицей + A/B/C + хеш** → **стоп до `go`**
 
 ## Регрессия
 
@@ -71,4 +72,4 @@
 | Голос | `… voice` |
 | Hermes | `… hermes_eval` |
 | Несколько зон | `… p6` |
-| Только docs/rules | `check_agent_step.py` + `check_rules_commit_conflict.py` + `verify_cursor_rules_precedence.py` |
+| Только docs/rules | `cmd /c scripts\check_step.cmd` + `verify_cursor_rules_precedence.py` |
