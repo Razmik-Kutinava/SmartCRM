@@ -22,6 +22,23 @@ backend/data/bitrix_sync_state.json
 backend/server.log
 **/server.log
 
+# Runtime-state приложения (пишется на лету — не коммитить, чтобы git status был чистым)
+backend/data/api_stats.json
+backend/data/checko_cache.json
+backend/data/ops_queue.json
+backend/data/ops_snapshots.json
+backend/data/traces.json
+backend/data/agent_memory.sqlite3
+backend/data/hermes_system_prompt.txt
+backend/data/prompt_versions/
+backend/data/*_state.json
+backend/data/*_notifications.json
+backend/data/lead_hunt_config.json
+backend/data/tender_monitor_config.json
+backend/data/bitrix_lead_uf_labels.json
+backend/data/bitrix_webhook_scope_report.json
+backend/data/*.log
+
 # Случайные выводы в корне
 /result.json
 
