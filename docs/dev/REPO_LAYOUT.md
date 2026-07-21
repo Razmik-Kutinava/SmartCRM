@@ -41,7 +41,7 @@ SmartCRM/
 ```
 docs/
 ├── README.md           # Карта доков — входная точка
-├── product/            # PRD, ARCHITECTURE, PRD_MAP, PRD_NOTES
+├── product/            # PRD, VISION, ROADMAP, PRD_MAP, ARCHITECTURE, BUSINESS_LOGIC, FUNCTIONAL, DESIGN_SYSTEM
 ├── modules/            # Описание модулей продукта
 ├── agents/             # LangGraph, Hermes
 ├── stack/              # LLM, RAG, LangGraph, SvelteKit

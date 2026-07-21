@@ -8,9 +8,13 @@
 
 | Задача | Файл |
 |--------|------|
-| Чеклисты фаз (проходим по порядку) | [product/PRD_MAP.md](product/PRD_MAP.md) — сценарии Ф1 → техтаблицы; **⚠️**=хвост BACKLOG |
+| Видение: что и зачем строим | [product/VISION.md](product/VISION.md) |
+| План фаз и статусы | [product/ROADMAP.md](product/ROADMAP.md) |
+| Чеклисты активной фазы | [product/PRD_MAP.md](product/PRD_MAP.md) — Ф4; Ф1–Ф3 → [архив](archive/product/PRD_MAP_F1-F3.md) |
 | Полный PRD | [product/PRD.md](product/PRD.md) |
-| Черновики и детали модулей | [product/PRD_NOTES.md](product/PRD_NOTES.md) |
+| Сквозные бизнес-процессы | [product/BUSINESS_LOGIC.md](product/BUSINESS_LOGIC.md) |
+| Главные функции системы | [product/FUNCTIONAL.md](product/FUNCTIONAL.md) |
+| Дизайн-система UI | [product/DESIGN_SYSTEM.md](product/DESIGN_SYSTEM.md) |
 | Понять устройство системы | [product/ARCHITECTURE.md](product/ARCHITECTURE.md) |
 | Запустить локально | [start/SETUP.md](start/SETUP.md) |
 | Как идёт запрос, LLM, пути данных | [start/RUNBOOK.md](start/RUNBOOK.md) |
@@ -22,8 +26,8 @@
 
 | Ситуация | Документ |
 |----------|----------|
-| Новая сессия агента | **`operations/session/PHASE2_ENTRY.md`** (Ф2) → `HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
-| Что строим | `product/PRD_MAP.md` → `product/PRD.md` |
+| Новая сессия агента | `HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
+| Что строим | `product/VISION.md` → `product/ROADMAP.md` → `product/PRD_MAP.md` |
 | Как устроено технически | `product/ARCHITECTURE.md` |
 | Стек, API, БД | `product/ARCHITECTURE.md#справочник-стека` |
 | Что сломалось | `operations/session/ISSUES.md` |
@@ -53,7 +57,7 @@
 | **[stack/](stack/)** | Технологии: LLM, RAG, SvelteKit, LangGraph |
 | **[operations/](operations/)** | [`operations/README.md`](operations/README.md) — session, baselines, phase1/, phase2/, debt |
 | **[dev/](dev/)** | Для разработчиков: workflow, [REPO_LAYOUT](dev/REPO_LAYOUT.md), [LAYOUT_AUDIT](dev/LAYOUT_AUDIT.md), code review |
-| **[archive/](archive/)** | Старые отчёты и тест-планы (не актуальный канон) |
+| **[archive/](archive/)** | Не актуальный канон: `ops/` — журналы по месяцам, `product/` — PRD_NOTES/DELTA/чеклисты Ф1–Ф3 |
 | **[reference/](reference/)** | Клон референс-проекта CRM Points (только для сравнения) |
 
 ---

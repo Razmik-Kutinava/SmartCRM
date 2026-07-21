@@ -9,4 +9,4 @@
 | *(будущее)* | §3 Email | `email/` |
 | *(будущее)* | §8 leadgen+голос | `leadgen/` |
 
-Старт Ф2: [`../session/PHASE2_ENTRY.md`](../session/PHASE2_ENTRY.md) · очередь — [`PRD_MAP § Порядок Ф2`](../../product/PRD_MAP.md#порядок-фазы-2).
+Старт Ф2: [`../session/PHASE2_ENTRY.md`](../session/PHASE2_ENTRY.md) · очередь — [архив PRD_MAP § Порядок Ф2](../../archive/product/PRD_MAP_F1-F3.md).
