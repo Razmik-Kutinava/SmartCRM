@@ -6,7 +6,7 @@ from __future__ import annotations
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 # Кириллица в выводе не должна зависеть от кодовой страницы консоли (cp866 на Windows)
@@ -75,6 +75,53 @@ def session_state_has_recent_entry(max_days: int = 2) -> bool:
     return False
 
 
+def _latest_date(text: str, pattern: str) -> date | None:
+    dates = []
+    for m in re.finditer(pattern, text, re.M):
+        try:
+            dates.append(datetime.strptime(m.group(1), "%Y-%m-%d").date())
+        except ValueError:
+            continue
+    return max(dates) if dates else None
+
+
+def ops_freshness_errors(
+    entry: str | None,
+    changelog_text: str,
+    handoff_text: str,
+) -> list[str]:
+    """CHANGELOG/HANDOFF не должны отставать от последнего done-шага SESSION_STATE.
+
+    Гранулярность — день: последний done-шаг датирован N → в CHANGELOG (`## N — …`)
+    и HANDOFF (`**N:**`) должна быть запись с датой ≥ N. Подшаги in_progress
+    (SBR RED) проверку не запускают — CHANGELOG/HANDOFF для них по правилу не пишутся.
+    """
+    if not entry or not re.search(r"Статус:\s*done", entry):
+        return []
+    m = re.match(r"^(\d{4}-\d{2}-\d{2})", entry)
+    if not m:
+        return []
+    try:
+        step_date = datetime.strptime(m.group(1), "%Y-%m-%d").date()
+    except ValueError:
+        return []
+
+    errors: list[str] = []
+    checks = [
+        ("CHANGELOG.md", changelog_text, r"^##\s+(\d{4}-\d{2}-\d{2})"),
+        ("HANDOFF.md", handoff_text, r"\*\*(\d{4}-\d{2}-\d{2})"),
+    ]
+    for name, text, pattern in checks:
+        latest = _latest_date(text, pattern)
+        if latest is None or latest < step_date:
+            errors.append(
+                f"FAIL: {name} отстаёт — последний done-шаг SESSION_STATE от {step_date}, "
+                f"последняя запись {name}: {latest or 'нет'} (smartcrm-commit-ops.mdc: "
+                "CHANGELOG+HANDOFF в конце шага)."
+            )
+    return errors
+
+
 def handoff_lists_recent_commit(depth: int = 20) -> bool:
     """HANDOFF должен ссылаться на один из последних коммитов или «этот».
 
@@ -113,6 +160,14 @@ def main() -> int:
     for name, path in [("HANDOFF.md", HANDOFF), ("CHANGELOG.md", CHANGELOG)]:
         if file_modified_in_worktree(path):
             errors.append(f"FAIL: {name} изменён, но не закоммичен.")
+
+    errors.extend(
+        ops_freshness_errors(
+            latest_session_state_entry(),
+            CHANGELOG.read_text(encoding="utf-8") if CHANGELOG.is_file() else "",
+            HANDOFF.read_text(encoding="utf-8") if HANDOFF.is_file() else "",
+        )
+    )
 
     if not handoff_lists_recent_commit():
         warnings.append("HANDOFF.md не содержит хеш текущего HEAD.")

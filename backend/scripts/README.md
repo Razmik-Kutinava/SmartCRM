@@ -43,6 +43,9 @@
 
 | Скрипт | За что |
 |--------|--------|
+| `check_agent_step.py` | Валидатор закрытия шага: коммит, свежесть SESSION_STATE + CHANGELOG/HANDOFF (запуск — `cmd /c scripts\check_step.cmd` из корня) |
+| `session_state_validate.py` | Формат журнальной строки SESSION_STATE (`Коммит: \`этот\``, хвосты A/B/C); `--pre-commit` в git hook |
+| `check_rules_commit_conflict.py` | Ловит формулировки «отложенный коммит» в правилах/доках |
 | `ci_smoke.py` | CI smoke: ops + leads + voice (pytest, без live Groq) |
 | `smoke_leads_block.py` | Смоук блока «Лиды»: pytest-регрессия + опц. GET фронта |
 | `smoke_analytics_baseline.py` | Смоук Ф1 «Аналитика»: pytest метрик/API + опц. GET `/leads/analytics` |
