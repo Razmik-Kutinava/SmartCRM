@@ -1,6 +1,10 @@
 # CHANGELOG (операционный)
 
-**Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`.
+**Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
+
+## 2026-07-21 — Разгрузка токенов: правила, ops-архив, продуктовые доки
+
+По `go` («ебашь», 4 шага). **(1) Дедуп правил:** `smartcrm-agent-workflow.mdc` удалён (порядок шага влит в `commit-ops`), `task-workflow` сокращён ~в 2 раза (дубли канона коммита → ссылки), `.cursorrules` и `AGENTS.md` и `smartcrm-index` сжаты, `dev-gates` без дубля приоритета/секретов; `repo-layout` и `file-size-split` переведены с alwaysApply на globs (подтягиваются при работе с кодом). SBR, commit-ops, task-workflow, dev-gates — остались всегда. **(2) Архив ops:** CHANGELOG/HANDOFF/SESSION_STATE распилены по месяцам в `docs/archive/ops/YYYY-MM_*.md`, живые файлы — только текущий месяц; правило R13 в RULES_MATRIX. **(3) Продукт:** созданы `VISION.md`, `ROADMAP.md`, `BUSINESS_LOGIC.md`, `FUNCTIONAL.md`; `PRD.md` разгружен (идея/принципы → VISION, roadmap → ROADMAP); `PRD_MAP.md` — чеклисты Ф1–Ф3 → `docs/archive/product/PRD_MAP_F1-F3.md`, живой MAP = Ф4 + сводка; `PRD_NOTES.md`, `PRD_DELTA_v2.md` → `docs/archive/product/`. **(4) `DESIGN_SYSTEM.md`** — снимок текущего UI (тёмная тема gray-950/900/800, акцент indigo-600, паттерны). Связи: линк-чекер по живым докам — 0 битых (попутно починены 7 старых); `check_rules_commit_conflict`, `verify_cursor_rules_precedence`, `session_state_validate` — OK. Итог по токенам: always-правила 46.4k → 23.6k знаков (−49%); старт сессии (журналы+MAP+PRD) ~450k → ~49k знаков (−89%). Коммиты `fdadf31`, `119d94d`, `8ffc43b`, `5b2070d`.
 
 ## 2026-07-21 — Чистка git status: runtime-данные вне git
 

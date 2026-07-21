@@ -31,7 +31,7 @@
 |---|---|
 | **DoD Ф1** | ✅ 6/6 — mic E2E, блоки MAP baseline |
 | **Не блокер Ф1** | 🟡 spot-check approve/fanout (5 мин руками); 🟡 Битрикс туннель (Ф2/DevOps); quality gates live (Ф2) |
-| **MAP § хвосты Ф1** | [`PRD_MAP.md` L306–318](../product/PRD_MAP.md) — указатель → `BACKLOG.md` |
+| **MAP § хвосты Ф1** | [архив PRD_MAP § хвосты Ф1](../../archive/product/PRD_MAP_F1-F3.md) — указатель → `BACKLOG.md` |
 
 ---
 
@@ -56,7 +56,7 @@
 3. **Процесс:** один пункт MAP → тест → код → commit → `SESSION_STATE` + `HANDOFF` + `CHANGELOG`.
 4. **Push/deploy** — только по явному go.
 
-**Канон:** [`PRD_MAP.md`](../product/PRD_MAP.md) · [`HANDOFF.md`](HANDOFF.md) · [`BACKLOG.md`](BACKLOG.md) · [`smartcrm-index.mdc`](../../.cursor/rules/smartcrm-index.mdc) · [`task-workflow`](../../.cursor/rules/workflow/smartcrm-task-workflow.mdc)
+**Канон:** [`PRD_MAP.md`](../../product/PRD_MAP.md) · [`HANDOFF.md`](HANDOFF.md) · [`BACKLOG.md`](BACKLOG.md) · [`smartcrm-index.mdc`](../../../.cursor/rules/smartcrm-index.mdc) · [`task-workflow`](../../../.cursor/rules/workflow/smartcrm-task-workflow.mdc)
 
 ---
 

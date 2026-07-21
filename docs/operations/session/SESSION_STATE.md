@@ -4,6 +4,8 @@
 
 **По завершении задачи:** сначала `git commit`, затем в строке `Коммит: \`hash\`` — хеш из этого коммита (не прочерк, не «потом»).
 
+2026-07-21 | Действие: разгрузка токенов — 4 шага: (1) дедуп правил: agent-workflow влит в commit-ops, task-workflow/-40%, .cursorrules/AGENTS.md/index сжаты, repo-layout+file-size-split на globs; (2) архив ops по месяцам → docs/archive/ops/; (3) продукт: VISION/ROADMAP/BUSINESS_LOGIC/FUNCTIONAL созданы, PRD/PRD_MAP разгружены, NOTES/DELTA/Ф1-Ф3 в архив; (4) DESIGN_SYSTEM.md; линк-чек 0 битых, все валидаторы OK | Коммит: `fdadf31`+`119d94d`+`8ffc43b`+`5b2070d`+ops | Хвост A: нет | Хвост B: BACKLOG редизайн UI | Хвост C: починены 7 старых битых ссылок в доках | Статус: done
+
 2026-07-21 | Действие: чистка git status — runtime backend/data (api_stats, traces, checko_cache, ops_queue, sqlite и др.) в .gitignore + untrack; eval_benchmark_data.py → scripts/; .pytest_cache корня удалён; pytest tests/scripts 12 PASS | Коммит: `7a57856` | Хвост A: нет | Хвост B: BACKLOG архивация толстых ops-файлов | Хвост C: нет | Статус: done
 
 2026-07-21 | Действие: BACKLOG § фронт/бэк связка — BFF-прокси, SSR-load, стриминг агентов; пока не делаем, ждёт go | Коммит: `3a98435` | Хвост A: нет | Хвост B: BACKLOG § фронт/бэк связка | Хвост C: нет | Статус: done

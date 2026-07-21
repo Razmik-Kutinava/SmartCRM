@@ -2,7 +2,7 @@
 
 > **Живой чеклист шага.** PRD_MAP — макро-веха.  
 > SBR: PHASE 1 заполняет этот файл → PHASE 3 очищает или архивирует.  
-> Канон: [`spec-build-review.mdc`](../../.cursor/rules/workflow/spec-build-review.mdc)
+> Канон: [`spec-build-review.mdc`](../../../.cursor/rules/workflow/spec-build-review.mdc)
 
 ---
 

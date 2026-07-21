@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Наведение порядка] | Задача:[разгрузка токенов: правила + ops-архив + продуктовые доки] | Статус: ✅ done | 👤 ревью новых доков`
+
+**2026-07-21:** 4 шага: дедуп правил (agent-workflow удалён, layout/file-size на globs, always-объём −49%); ops-журналы по месяцам → `docs/archive/ops/` (живые — текущий месяц); продукт: +VISION/ROADMAP/BUSINESS_LOGIC/FUNCTIONAL/DESIGN_SYSTEM, PRD/PRD_MAP разгружены, NOTES/DELTA/Ф1-Ф3 → `docs/archive/product/`; линк-чек 0 битых. Коммиты `fdadf31`, `119d94d`, `8ffc43b`, `5b2070d`. **👤:** прочитать новые доки `docs/product/` — поправить формулировки под себя; дальше PRD_MAP Ф4 или редизайн UI (BACKLOG).
+
+---
+
 `Спринт:[Наведение порядка] | Задача:[чистка git status] | Статус: ✅ done | 👤 продукт / PRD_MAP`
 
 **2026-07-21:** Runtime-файлы `backend/data/` (api_stats, traces, checko_cache, ops_queue, sqlite, state/notifications) → `.gitignore` + untrack (диск цел); `eval_benchmark_data.py` → `backend/scripts/`; `.pytest_cache` корня удалён. git status теперь чистый. Коммит `7a57856`. **👤:** следующая задача — PRD_MAP или BACKLOG (архивация толстых ops-файлов — записана).
