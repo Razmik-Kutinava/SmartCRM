@@ -1,70 +1,27 @@
-# SmartCRM — Cursor Rules (индекс)
+# SmartCRM — Cursor Rules (вход)
 
-**Канон процесса — `.cursor/rules/workflow/` + [`smartcrm-index.mdc`](.cursor/rules/smartcrm-index.mdc) (alwaysApply).**
+**Канон процесса:** `.cursor/rules/workflow/` + [`smartcrm-index.mdc`](.cursor/rules/smartcrm-index.mdc) — там индекс всех правил.
 
 **Жёстко:** [`workflow/smartcrm-commit-ops.mdc`](.cursor/rules/workflow/smartcrm-commit-ops.mdc) — `git commit` **до** ответа пользователю; **`git push`** — только по явному go.
 
-Этот файл — стек, стиль кода, вход в проект.
-
-## Правила разработки (читать агенту)
-
-| Файл | Содержание |
-|------|------------|
-| [`smartcrm-index.mdc`](.cursor/rules/smartcrm-index.mdc) | индекс workflow + project |
-| [`workflow/smartcrm-commit-ops.mdc`](.cursor/rules/workflow/smartcrm-commit-ops.mdc) | **всегда** commit + ops; push по апруву |
-| [`workflow/smartcrm-task-workflow.mdc`](.cursor/rules/workflow/smartcrm-task-workflow.mdc) | PRD_MAP, `go`, тесты, BACKLOG |
-| [`workflow/smartcrm-dev-gates.mdc`](.cursor/rules/workflow/smartcrm-dev-gates.mdc) | DoD, регрессия pytest, миграции |
-| [`workflow/smartcrm-agent-workflow.mdc`](.cursor/rules/workflow/smartcrm-agent-workflow.mdc) | порядок шага, ops-файлы |
-| [`workflow/smartcrm-repo-layout.mdc`](.cursor/rules/workflow/smartcrm-repo-layout.mdc) | структура репо, backend README |
-| [`workflow/smartcrm-file-size-split.mdc`](.cursor/rules/workflow/smartcrm-file-size-split.mdc) | лимит файлов, сплит |
-| [`workflow/spec-build-review.mdc`](.cursor/rules/workflow/spec-build-review.mdc) | SBR: RED/GREEN TDD |
-
-## Project rules (по globs)
-
-| Файл | Зона |
-|------|------|
-| [`project/smartcrm-core.mdc`](.cursor/rules/project/smartcrm-core.mdc) | стек, security |
-| [`project/smartcrm-tests.mdc`](.cursor/rules/project/smartcrm-tests.mdc) | pytest, регрессия |
-| [`project/smartcrm-http.mdc`](.cursor/rules/project/smartcrm-http.mdc) | FastAPI, API |
-| [`project/smartcrm-data.mdc`](.cursor/rules/project/smartcrm-data.mdc) | ORM, миграции |
-| [`project/smartcrm-agents.mdc`](.cursor/rules/project/smartcrm-agents.mdc) | Hermes, голос |
-| [`project/smartcrm-performance.mdc`](.cursor/rules/project/smartcrm-performance.mdc) | perf (alwaysApply) |
-
-Микро-чеклист: [`docs/operations/session/todo.md`](docs/operations/session/todo.md).
-
-Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md).
-
-## Документация
-
-- Карта: [`docs/README.md`](docs/README.md)
-- Чеклисты: [`docs/product/PRD_MAP.md`](docs/product/PRD_MAP.md)
-- Продукт: [`docs/product/PRD.md`](docs/product/PRD.md), [`docs/product/ARCHITECTURE.md`](docs/product/ARCHITECTURE.md)
-- Операционка: `docs/operations/` — [`README.md`](docs/operations/README.md): `session/`, `phase1/`, `phase2/`, `baselines/`, `debt/`
-- Backend-карта: [`backend/README.md`](backend/README.md)
-
 ## Контекст
 
-SmartCRM — мультиагентная CRM. Один оператор + 5 AI-агентов + голос. См. PRD и RUNBOOK (`docs/start/RUNBOOK.md`).
+SmartCRM — мультиагентная CRM: один оператор + 5 AI-агентов + голос. Продукт: `docs/product/` (PRD, VISION, ROADMAP). Запуск: `docs/start/RUNBOOK.md`.
 
 ## Стек
 
 - **Backend:** Python 3.11+, FastAPI, SQLAlchemy async, PostgreSQL, Redis
 - **Агенты:** LangGraph · **Hermes:** `backend/core/hermes/` · **LLM:** `core/llm.py`
-- **Голос:** `voice/` → Hermes → `agents/orchestrator.py`
-- **Лидоген:** `leadgen/pipeline/`
-- **Frontend:** SvelteKit + Tailwind
+- **Голос:** `voice/` → Hermes → `agents/orchestrator.py` (порядок не ломать)
+- **Лидоген:** `leadgen/pipeline/` · **Frontend:** SvelteKit + Tailwind
 
-## Правила кода (кратко)
+## Код (кратко)
 
 - Python: `async` handlers, типы, Pydantic, без raw SQL от LLM
 - Svelte: UI на русском, Tailwind
 - Секреты только `.env`; новые ключи → `.env.example`
 - Комментарии и ops-логи — русский
 
-## Голосовой пайплайн (не ломать порядок)
+## Документация
 
-```
-Аудио → voice/whisper.py → voice/pipeline.py → core/hermes/ → agents/orchestrator.py
-```
-
-Изменения hot-path — см. `workflow/smartcrm-dev-gates.mdc`.
+Карта доков: [`docs/README.md`](docs/README.md) · Чеклисты: [`docs/product/PRD_MAP.md`](docs/product/PRD_MAP.md) · Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md)

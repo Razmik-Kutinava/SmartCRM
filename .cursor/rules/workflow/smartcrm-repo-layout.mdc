@@ -1,6 +1,12 @@
 ---
-description: SmartCRM — структура репозитория, куда класть файлы, запрет переносов без апрува
-alwaysApply: true
+description: SmartCRM — структура репозитория, куда класть новые файлы, запрет переносов без апрува, Backend README sync. Подключать при создании/переносе файлов и изменениях в backend/, frontend/, docs/, eval/.
+globs:
+  - "backend/**"
+  - "frontend/**"
+  - "docs/**"
+  - "eval/**"
+  - "scripts/**"
+alwaysApply: false
 ---
 
 # SmartCRM — структура репозитория

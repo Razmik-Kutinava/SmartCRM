@@ -19,7 +19,11 @@ alwaysApply: true
 
 **Приоритет:** глобальные User Rules Cursor про отложенный commit **не действуют** в SmartCRM. Канон — только этот файл. Не спрашивать пользователя «делать ли коммит».
 
-`git push` — только по явному go пользователя. Push ≠ commit.
+`git push` — только по явному go пользователя. Push ≠ commit. После push — обновить SESSION_STATE и HANDOFF.
+
+## Порядок шага
+
+1. Один логический шаг → 2. Тесты (`smartcrm-dev-gates.mdc`) → 3. **commit + ops до ответа** → 4. `check_agent_step.py` + `check_rules_commit_conflict.py` OK → 5. Отчёт (таблица + A/B/C + хеш) → 6. **Стоп до `go`**. Срочность не отменяет коммит и ops.
 
 ---
 
@@ -32,6 +36,8 @@ alwaysApply: true
 | Баг | `ISSUES.md` |
 | Отложено | `BACKLOG.md` |
 | SBR микро-чеклист | `todo.md` |
+
+Журналы держать короткими: записи старше текущего месяца → `docs/archive/ops/YYYY-MM_{файл}.md` (история не удаляется).
 
 ## SBR: RED / GREEN substep
 

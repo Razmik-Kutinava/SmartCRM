@@ -1,6 +1,10 @@
 ---
-description: SmartCRM — лимиты размера файлов, сплит кода, запрет монолитов
-alwaysApply: true
+description: SmartCRM — лимиты размера файлов (цель ≤50, стоп >200 строк), сплит кода, запрет монолитов. Подключать при написании или изменении кода.
+globs:
+  - "backend/**/*.py"
+  - "frontend/src/**"
+  - "eval/**/*.py"
+alwaysApply: false
 ---
 
 # SmartCRM — размер файлов и сплит кода

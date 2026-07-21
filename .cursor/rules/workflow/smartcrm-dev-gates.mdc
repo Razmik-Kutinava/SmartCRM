@@ -5,20 +5,7 @@ alwaysApply: true
 
 # SmartCRM — dev gates
 
-Дополняет `smartcrm-task-workflow.mdc`, `smartcrm-repo-layout.mdc`, `smartcrm-file-size-split.mdc`.
-
----
-
-## Приоритет правил (при конфликте)
-
-0. **`smartcrm-commit-ops.mdc`** — **всегда** `git commit` + ops при закрытии шага; **`git push`** — только по явному go.
-1. **Безопасность** — секреты, auth, prod
-2. **`docs/operations/session/ISSUES.md`** — открытые 🔴 блокеры
-3. **`smartcrm-task-workflow.mdc`** — go, тесты, honest report, BACKLOG, старт сессии
-4. **`smartcrm-dev-gates.mdc`** (этот файл) — миграции, API, регрессия, hot-path
-5. **`smartcrm-repo-layout.mdc`** + **`smartcrm-file-size-split.mdc`**
-6. **`spec-build-review.mdc`** — SBR TDD (RED/GREEN) поверх workflow
-7. **`.cursor/rules/project/`** + **`.cursorrules`** — стек и код
+Дополняет `smartcrm-task-workflow.mdc`. Приоритет правил при конфликте — `smartcrm-index.mdc`.
 
 ---
 
@@ -119,6 +106,4 @@ Breaking change без версии/миграции фронта → **стоп
 
 ## Секреты и ENV
 
-- Ключи только в `.env` (локально); шаблон — `.env.example` с комментарием
-- **Не коммитить** `.env`, кэши с ключами, sqlite с прод-данными
-- Новая переменная → сразу `.env.example`
+Канон — `project/smartcrm-core.mdc` § Security: ключи только `.env`, новая переменная → сразу `.env.example`.
