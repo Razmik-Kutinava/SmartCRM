@@ -10,9 +10,9 @@
 
 > Цитата пользователя из чата — **источник истины** (PHASE 0 INTAKE). Спор о scope решается по ней.
 
-> «иатк вот тебе задача · ### Email (тюнинг Ф4) · доку мент @docs/operations/phase4/CHECKLIST.md · сделай ка · [ ] Ящики в UI (`/email` Настройки или `/ops/integrations`) — без единственной зависимости от `.env` · сделай ее»
+> «иатк это вот задача сделай · мне надо чтобы я мог так любые базы подклчюбчать к рассылке если мне нужно или тип такого · и чтобы фильтры тоже были такие · ебашь · я зорчу увидетьт в клиенте как это работает и на ьбэке и ьдж чтоб се работало» (контекст обсуждения: купленная база → CSV-импорт с меткой → массовая рассылка строго по этой базе, без возни со скором/отраслями)
 
-**Как понял:** закрыть пункт Ф4 Email «Ящики в UI»: управление почтовыми ящиками полностью из UI `/email` (Настройки), чтобы `.env` был лишь опциональным bootstrap, а не единственным путём.
+**Как понял:** «подключить базу к рассылке» = (1) при CSV-импорте на `/leads/list` можно задать метку базы (`source`) для всех строк; (2) в массовой рассылке появляется фильтр «Источник (база)» со справочником источников; бэк сегмента по `source` уже умеет. `go` на весь цикл дан сразу («ебашь», «хочу увидеть чтоб всё работало»).
 
 ---
 
@@ -20,23 +20,21 @@
 
 | Поле | Значение |
 |------|----------|
-| **Пункт чеклиста** | Ф4 · Email (тюнинг) · «Ящики в UI (`/email` Настройки или `/ops/integrations`) — без единственной зависимости от `.env`» |
-| **Описание** | Модалка подключения, `POST /accounts/connect`, шифрование и DELETE уже есть. Гэпы: в настройках `/email` нет списка ящиков со сводкой env (хелпер `fetchEmailConfigStatus` мёртвый), bootstrap из env не выведен в UI, нет API-тестов на `GET /accounts` / `POST /accounts/connect`. Поверхность — модалка настроек `/email` (роута `/ops/integrations` не существует, он — отдельный пункт «Интеграции CRM») |
-| **Started** | 2026-07-21 (PHASE 1 SPEC, ждём `go` на BUILD) |
+| **Пункт чеклиста** | Ф4 · Email (тюнинг) · рассылка по «подключённой базе» (source) — примыкает к «История кампаний и цепочек» и импорту CSV из «Интеграции CRM» |
+| **Описание** | Бэк: `POST /import-csv?source=…` (метка всем строкам), `GET /api/leads/sources` (справочник). Фронт: поле «Метка базы» в меню импорта `/leads/list`; селект «Источник (база)» в массовой рассылке (`EmailCampaignPanel` + `buildSegmentFilters`). Сегмент по source в бэке уже есть (`lead_segment_query.py`) |
+| **Started** | 2026-07-21 (полный цикл по go «ебашь») |
 
 ---
 
 ## Чеклист
 
-- [x] **RED:** `backend/tests/api/test_email_accounts_api.py` — 3 FAIL / 1 PASS (`ae5d842`)
-- [x] **GREEN backend:** явный `commit` в `POST /accounts/connect` (`api/routes/email.py`) — 4 PASS
-- [x] **GREEN frontend:** модал «Почтовые ящики»: синк на каждый ящик + IMAP/дата синка, секция «Ящики в .env» + «Импортировать из .env» (`bootstrapEmailFromEnv`), скролл модалки
-- [x] Регрессия зоны email: 33 PASS, 1 FAIL `test_faq_autoreply_mocked` — **pre-existing** (падает и на чистом HEAD: в корневом `.env` `EMAIL_FAQ_AUTOREPLY=0` — тест зависит от окружения) → ISSUES
-- [x] Доки: `F4_EMAIL_TUNING.md` § A + `backend/tests/README.md`
-- [x] UI-проверка `/email` (DevTools MCP) — модалка: список ящиков (Agneko AM/IB), синк/отключить, «Все ящики из .env уже подключены (2)»
-
----
+- [ ] **RED:** `tests/api/test_lead_source_segment.py` — import-csv c `?source=`, `GET /api/leads/sources`, segment-preview по source
+- [ ] **GREEN backend:** параметр `source` в `import_leads_from_csv` + роут `GET /sources`
+- [ ] **GREEN frontend:** метка базы при импорте CSV (`/leads/list`), фильтр «Источник» в рассылке (`EmailCampaignPanel`, `campaignSegmentLogic`, `leadsStorage`)
+- [ ] Регрессия: crm_leads + email
+- [ ] Доки: `api/routes/README.md`, `tests/README.md`
+- [ ] UI-проверка DevTools: импорт CSV с меткой → фильтр в рассылке → счётчик сегмента
 
 ## Архив (последние закрытые)
 
-_После PHASE 3 REVIEW — перенести сюда одной строкой или очистить._
+- 2026-07-21 · Ф4 Email «Ящики в UI без .env» — RED `ae5d842`, GREEN `928179f`; регрессия 33 PASS / 1 pre-existing → ISSUES

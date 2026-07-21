@@ -4,6 +4,8 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
+2026-07-21 | Действие: SBR RED — «база → рассылка по source»: `tests/api/test_lead_source_segment.py` (4 FAIL: import-csv?source=, GET /leads/sources 422, segment-preview по source 0) | Коммит: `этот` | Статус: in_progress
+
 2026-07-21 | Действие: SBR GREEN+REVIEW — Ф4 Email «Ящики в UI без .env»: явный commit в `POST /accounts/connect` (тест 4/4 PASS); UI модал «Почтовые ящики» — синк per-account, секция «Ящики в .env» + импорт (`bootstrapEmailFromEnv`), скролл модалки; регрессия зоны email 33 PASS / 1 pre-existing FAIL → ISSUES; DevTools MCP проверено; доки F4_EMAIL_TUNING §A, tests/README | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: ISSUES 🟡 `test_faq_autoreply_mocked` env-зависимый (pre-existing) | Статус: done
 
 2026-07-21 | Действие: SBR RED — `tests/api/test_email_accounts_api.py` (4 теста): 3 FAIL / 1 PASS — connect не коммитит сам (держится на commit внутри sync), bootstrap после UI-connect видит created=True; GREEN — явный commit в connect-потоке | Коммит: `этот` | Статус: in_progress
