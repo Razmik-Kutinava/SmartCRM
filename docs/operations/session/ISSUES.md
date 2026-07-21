@@ -12,6 +12,8 @@
 
 ---
 
-_Открытых записей нет (триаж 2026-07-21: 4 стейл-записи закрыты с подтверждения пользователя)._
+`[2026-07-21] — test_faq_autoreply_mocked зависит от окружения`  
+`Приоритет: 🟡 | Статус: открыта`  
+`Описание: tests/email/test_email_f3.py::test_faq_autoreply_mocked падает при EMAIL_FAQ_AUTOREPLY=0 / EMAIL_FAQ_MAX_PER_DAY=0 в корневом .env — сервис читает env, тест его не изолирует (monkeypatch нет) | Влияние: ложный FAIL регрессии зоны email на машинах с выключенным FAQ-автоответом; падает и на чистом HEAD — не связан с шагом «Ящики в UI» | Решение: добавить monkeypatch.setenv("EMAIL_FAQ_AUTOREPLY","1") и MAX_PER_DAY в тест | Агент: найден при регрессии зоны email 2026-07-21`
 
 > Архив: [`docs/archive/ops/2026-05_ISSUES.md`](../../archive/ops/2026-05_ISSUES.md) · [`2026-06_ISSUES.md`](../../archive/ops/2026-06_ISSUES.md)

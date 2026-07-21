@@ -6,7 +6,8 @@
         fetchEmailAccounts, connectEmailAccount, syncAllEmailAccounts, fetchEmailThreads,
         fetchEmailCampaigns, createCampaign, fetchEmailSyncStatus, previewCampaignSegment,
         sendEmail, replyToEmail, fetchThreadMessages, analyzeEmailThread,
-        startEmailBackfill, deleteEmailAccount
+        startEmailBackfill, deleteEmailAccount, syncEmailAccount,
+        fetchEmailConfigStatus, bootstrapEmailFromEnv
     } from '$lib/emailStorage.js';
     import {
         filterEmailThreads, countEmailFolder, groupThreadsByDate,
@@ -70,6 +71,14 @@
     let syncLoading    = $state(false);
     let backfillStarting = $state(false);
     let removingAccountId = $state(null);
+    let syncingAccountId = $state(null);
+    let envStatus      = $state(null);
+    let bootstrapping  = $state(false);
+
+    // При открытии настроек подтягиваем сводку по .env (что настроено вне UI)
+    $effect(() => {
+        if (showSettings) loadEnvStatus();
+    });
 
     // ─── кампании ────────────────────────────────────────────────
     let selectedAccountId = $state(null);
@@ -329,6 +338,34 @@
         finally { connectLoading = false; }
     }
 
+    async function loadEnvStatus() {
+        try { envStatus = await fetchEmailConfigStatus(); }
+        catch { envStatus = null; }
+    }
+
+    async function syncOneAccount(account) {
+        error = ''; success = '';
+        syncingAccountId = account.id;
+        try {
+            const r = await syncEmailAccount(account.id);
+            await load();
+            success = `✅ ${account.username}: импортировано ${r.sync?.imported ?? 0} писем.`;
+        } catch (e) { error = `❌ ${e.message}`; }
+        finally { syncingAccountId = null; }
+    }
+
+    async function importFromEnv() {
+        error = ''; success = '';
+        bootstrapping = true;
+        try {
+            const r = await bootstrapEmailFromEnv(false);
+            await load();
+            await loadEnvStatus();
+            success = `✅ Из .env подключено ящиков: ${r.bootstrapped}. Нажмите «Синк», чтобы загрузить письма.`;
+        } catch (e) { error = `❌ ${e.message}`; }
+        finally { bootstrapping = false; }
+    }
+
     async function disconnectAccount(account) {
         if (!confirm(`Отключить ящик ${account.username}? Вся переписка этого ящика будет удалена из CRM.`)) return;
         error = ''; success = '';
@@ -585,9 +622,9 @@
 {#if showSettings}
     <button class="fixed inset-0 bg-black/70 z-40 cursor-default" onclick={() => showSettings = false} aria-label="Закрыть"></button>
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-        <div class="bg-gray-950 border border-gray-800 rounded-2xl shadow-2xl w-full max-w-lg pointer-events-auto">
+        <div class="bg-gray-950 border border-gray-800 rounded-2xl shadow-2xl w-full max-w-lg pointer-events-auto max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
-                <h2 class="text-sm font-semibold text-white">⚙ Подключить почту</h2>
+                <h2 class="text-sm font-semibold text-white">⚙ Почтовые ящики</h2>
                 <button onclick={() => showSettings = false} class="text-gray-500 hover:text-white text-xl">&times;</button>
             </div>
             <div class="px-6 py-4 space-y-3">
@@ -619,15 +656,45 @@
                     <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Подключённые аккаунты</p>
                     {#each accounts as a (a.id)}
                         <div class="flex items-center justify-between gap-3 py-1.5">
-                            <div class="text-sm text-gray-300 min-w-0 truncate">{a.name} <span class="text-gray-500">({a.username})</span></div>
-                            <button
-                                onclick={() => disconnectAccount(a)}
-                                disabled={removingAccountId === a.id}
-                                class="flex-shrink-0 text-xs px-3 py-1 rounded-lg bg-red-900/40 border border-red-800 text-red-300 hover:bg-red-900/70 disabled:opacity-50 transition-colors"
-                                data-testid="email-account-disconnect"
-                            >{removingAccountId === a.id ? 'Отключение…' : 'Отключить'}</button>
+                            <div class="min-w-0">
+                                <div class="text-sm text-gray-300 truncate">{a.name} <span class="text-gray-500">({a.username})</span></div>
+                                <div class="text-[11px] text-gray-600 truncate">{a.imap_server} · синк: {a.lastSyncedAt ? new Date(a.lastSyncedAt).toLocaleString('ru-RU') : 'ещё не было'}</div>
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <button
+                                    onclick={() => syncOneAccount(a)}
+                                    disabled={syncingAccountId === a.id}
+                                    class="text-xs px-3 py-1 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700 disabled:opacity-50 transition-colors"
+                                    data-testid="email-account-sync"
+                                >{syncingAccountId === a.id ? 'Синк…' : 'Синк'}</button>
+                                <button
+                                    onclick={() => disconnectAccount(a)}
+                                    disabled={removingAccountId === a.id}
+                                    class="text-xs px-3 py-1 rounded-lg bg-red-900/40 border border-red-800 text-red-300 hover:bg-red-900/70 disabled:opacity-50 transition-colors"
+                                    data-testid="email-account-disconnect"
+                                >{removingAccountId === a.id ? 'Отключение…' : 'Отключить'}</button>
+                            </div>
                         </div>
                     {/each}
+                </div>
+            {/if}
+
+            {#if envStatus && envStatus.env_account_count > 0}
+                <div class="px-6 pb-5 border-t border-gray-800 pt-4">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Ящики в .env (опционально)</p>
+                    {#if envStatus.missing_in_db.length}
+                        <p class="text-xs text-gray-400 mb-2">
+                            В <code>.env</code> настроено: {envStatus.env_account_count} · ещё не в CRM: {envStatus.missing_in_db.join(', ')}
+                        </p>
+                        <button
+                            onclick={importFromEnv}
+                            disabled={bootstrapping}
+                            class="text-xs px-3 py-1.5 rounded-lg bg-indigo-900/50 border border-indigo-700 text-indigo-200 hover:bg-indigo-900 disabled:opacity-50 transition-colors"
+                            data-testid="email-env-import"
+                        >{bootstrapping ? 'Импорт…' : 'Импортировать из .env'}</button>
+                    {:else}
+                        <p class="text-xs text-gray-500">Все ящики из <code>.env</code> уже подключены ({envStatus.env_account_count}).</p>
+                    {/if}
                 </div>
             {/if}
         </div>

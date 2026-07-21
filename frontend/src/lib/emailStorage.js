@@ -169,6 +169,14 @@ export async function fetchEmailConfigStatus() {
 	return emailJson('/config/status');
 }
 
+export async function bootstrapEmailFromEnv(sync = false) {
+	return emailJson('/bootstrap-from-env', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ sync }),
+	});
+}
+
 export async function fetchThreadMessages(threadId) {
 	return emailJson(`/threads/${threadId}/messages`);
 }

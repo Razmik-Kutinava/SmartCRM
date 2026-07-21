@@ -159,6 +159,8 @@ async def connect_email_account(body: EmailAccountCreate, db: AsyncSession = Dep
         else:
             detail = "Ошибка синхронизации почты. Проверьте учётные данные и настройки сервера."
         raise HTTPException(status_code=400, detail=detail) from e
+    # Явный commit: не полагаемся на побочный commit внутри sync (иначе ящик из UI теряется)
+    await db.commit()
     return {"account": row["account"], "sync": row["sync"]}
 
 
