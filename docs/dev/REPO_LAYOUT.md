@@ -41,7 +41,7 @@ SmartCRM/
 ```
 docs/
 ├── README.md           # Карта доков — входная точка
-├── product/            # PRD, VISION, ROADMAP, PRD_MAP, ARCHITECTURE, BUSINESS_LOGIC, FUNCTIONAL, DESIGN_SYSTEM
+├── product/            # PRD, VISION, ROADMAP, ARCHITECTURE, BUSINESS_LOGIC, FUNCTIONAL, DESIGN_SYSTEM
 ├── modules/            # Описание модулей продукта
 ├── agents/             # LangGraph, Hermes
 ├── stack/              # LLM, RAG, LangGraph, SvelteKit
@@ -52,8 +52,10 @@ docs/
 ├── operations/         # Операционка — см. operations/README.md
 │   ├── session/        # HANDOFF, SESSION_STATE, CHANGELOG, ISSUES, BACKLOG
 │   ├── baselines/      # COVERAGE, CI, RULES_MATRIX
-│   ├── phase1/         # Acceptance Ф1 по доменам
-│   ├── phase2/         # Acceptance Ф2
+│   ├── phase1/         # CHECKLIST.md + acceptance Ф1 по доменам
+│   ├── phase2/         # CHECKLIST.md + acceptance Ф2
+│   ├── phase3/         # CHECKLIST.md + acceptance Ф3
+│   ├── phase4/         # CHECKLIST.md + acceptance Ф4 — текущая фаза
 │   └── debt/           # Долг layout кода
 ├── dev/                # CONTRIBUTING, REPO_LAYOUT, LAYOUT_AUDIT, code-review
 ├── archive/            # Устаревшие доки

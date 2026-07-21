@@ -1,6 +1,6 @@
 # Фаза 1 — acceptance (baseline закрыт)
 
-DoD Ф1: 6/6 ✅. Документы — чеклисты закрытия блоков [`PRD_MAP`](../../product/PRD_MAP.md).
+DoD Ф1: 6/6 ✅. Чеклист фазы: [`CHECKLIST.md`](CHECKLIST.md).
 
 | Папка | Блок MAP | Файлы |
 |-------|----------|--------|

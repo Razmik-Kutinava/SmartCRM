@@ -26,6 +26,7 @@ alwaysApply: false
 | Запуск, runbook | `docs/start/` | `SETUP.md`, `RUNBOOK.md` |
 | API-контракт | `docs/api/` | `API.md` |
 | Операционка сессий | `docs/operations/session/` | `HANDOFF.md`, `ISSUES.md`, `SESSION_STATE.md`, `todo.md` |
+| Чеклист фазы | `docs/operations/phase{N}/CHECKLIST.md` | активная — `phase4/CHECKLIST.md` |
 | Acceptance Ф1 | `docs/operations/phase1/{домен}/` | `LEADS_BLOCK_ACCEPTANCE.md` |
 | Acceptance Ф2 | `docs/operations/phase2/{домен}/` | `AGENTS_QUALITY_GATE_ACCEPTANCE.md` |
 | Baselines ops | `docs/operations/baselines/` | `COVERAGE_BASELINE.md`, `CI_BASELINE.md` |
@@ -110,7 +111,7 @@ alwaysApply: false
 ## 4. Доки — без дублей
 
 - Канон продукта: `docs/product/PRD.md` + `ARCHITECTURE.md`.
-- Черновики: `docs/product/PRD_NOTES.md` — не копировать блоки в другие файлы; ссылка «→ см. PRD §…».
+- Черновики продукта — не заводить: сразу в целевой док (`PRD.md`, `docs/modules/`); старые черновики — `docs/archive/product/`.
 - Карта всех доков: `docs/README.md`.
 
 ---
@@ -163,6 +164,6 @@ alwaysApply: false
 
 ## 6. Связь с workflow
 
-- **Задачи PRD_MAP / фичи / фиксы:** `smartcrm-task-workflow.mdc` + `smartcrm-dev-gates.mdc` (DoD, регрессия, миграции, API, hot-path).
+- **Задачи чеклиста фазы / фичи / фиксы:** `smartcrm-task-workflow.mdc` + `smartcrm-dev-gates.mdc` (DoD, регрессия, миграции, API, hot-path).
 - **Структура репо:** commit + `SESSION_STATE` + при смене статуса `HANDOFF`.
 - **`backend/`:** также §5 Backend README Sync.

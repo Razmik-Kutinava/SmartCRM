@@ -1,55 +1,26 @@
-# SmartCRM — карта PRD
+# Чеклист: Фаза 4 — Тюнинг и MVP
 
-> Навигатор и **рабочие чеклисты по фазам**. Детали — [`PRD.md`](PRD.md); план фаз — [`ROADMAP.md`](ROADMAP.md).
-> **MAP-doc:** таблицы = истина; хвосты → [`BACKLOG.md`](../operations/session/BACKLOG.md).
->
-> **Легенда статусов**
->
-> | Метка | Смысл |
-> |-------|--------|
-> | ✅ | Готово полностью: код + автомат-смоук + acceptance (+ E2E, если нужен) |
-> | ⚠️ | **Код/автомат ✅**; хвост — `BACKLOG.md` или acceptance § хвост |
-> | 🔲 | Не начато / перенесено |
-> | `[x]` | = ✅ по коду и автомату (перепроходим на баги); **не** скрывает ⚠️ в колонке «Итог» |
-> | `[ ]` | = 🔲 или явный хвост |
->
-> **Закрытие пункта MAP:** pytest + acceptance → `[x]` / ✅ в «Итог». **Снять ⚠️:** ручной E2E OK → `SESSION_STATE` → убрать ⚠️ в MAP + строку в `BACKLOG`.
->
-> **DoD пункта** (pytest, smoke, миграции) → [`dev-gates`](../../.cursor/rules/workflow/smartcrm-dev-gates.mdc).
+**Статус фазы:** 🔄 **текущая фаза**
 
----
-
-## Что строим (одна строка)
-
-**Один человек голосом управляет 5 AI-агентами = полноценный отдел продаж.**
-
----
-
-## Фазы 1–3 — закрыты (архив)
-
-| Фаза | Итог | Полные чеклисты |
-|------|------|-----------------|
-| **Ф1 — MVP** | ✅ закрыта, DoD 6/6 (2026-06-11): лиды, баллы P1, голос базово, поиск/RAG, лидоген, тендеры baseline | [архив](../archive/product/PRD_MAP_F1-F3.md) |
-| **Ф2 — Автоматизация** | ✅ по очередям 1–9: Voice Layer, Email, RAG-авто, self-improvement, оркестрация | [архив](../archive/product/PRD_MAP_F1-F3.md) |
-| **Ф3 — Автономия** | ✅ по блокам: email-автономия, vendor crawl, тендер-мониторинг, аналитика v2, SLA P3 | [архив](../archive/product/PRD_MAP_F1-F3.md) |
-
-Возвраты по хвостам Ф1–Ф3 — через `BACKLOG.md`, не через архив.
+> **Легенда:** ✅ готово (код + смоук + acceptance) · ⚠️ код ✅, хвост в `BACKLOG.md` · 🔲 не начато · `[x]` = ✅ по коду/автомату · `[ ]` = 🔲 или хвост.
+> **Закрытие пункта:** pytest + acceptance → `[x]`; финальный `[x]` — только после «ок» оператора. DoD пункта → [`dev-gates`](../../../.cursor/rules/workflow/smartcrm-dev-gates.mdc).
+> Результаты (acceptance) — в папках областей рядом: `./{область}/*.md`. Хвосты → [`../session/BACKLOG.md`](../session/BACKLOG.md).
 
 ---
 
 ## Фаза 4 — Тюнинг и MVP
 
-> Polish и доводка после базового Ф3. **Старт Ф4:** обход с дашборда — см. [`F4_DASHBOARD_ACCEPTANCE.md`](../operations/phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md).
+> Polish и доводка после базового Ф3. **Старт Ф4:** обход с дашборда — см. [`F4_DASHBOARD_ACCEPTANCE.md`](../phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md).
 
 ### Дашборд (обход Ф4)
 
-Детали: [`F4_DASHBOARD_ACCEPTANCE.md`](../operations/phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md)
+Детали: [`F4_DASHBOARD_ACCEPTANCE.md`](../phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md)
 
-- [x] Модалка «Новый лид» — дашборд + `/leads/list`, POST в БД · [`F4_DASHBOARD_ACCEPTANCE.md`](../operations/phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md) · апрув 2026-06-19
+- [x] Модалка «Новый лид» — дашборд + `/leads/list`, POST в БД · [`F4_DASHBOARD_ACCEPTANCE.md`](../phase4/dashboard/F4_DASHBOARD_ACCEPTANCE.md) · апрув 2026-06-19
 
 ### Интеграции CRM (Ф4, перед обходом лидов)
 
-Детали: [`F4_CRM_INTEGRATIONS_ACCEPTANCE.md`](../operations/phase4/platform/F4_CRM_INTEGRATIONS_ACCEPTANCE.md) · тюнинг [`F4_PLATFORM_TUNING.md`](../operations/phase4/platform/F4_PLATFORM_TUNING.md)
+Детали: [`F4_CRM_INTEGRATIONS_ACCEPTANCE.md`](../phase4/platform/F4_CRM_INTEGRATIONS_ACCEPTANCE.md) · тюнинг [`F4_PLATFORM_TUNING.md`](../phase4/platform/F4_PLATFORM_TUNING.md)
 
 - [ ] Экран **`/ops/integrations`** — Битрикс, Amo, HubSpot; статусы подключения · шаг 1, **создаём**
 - [ ] **OAuth / credentials топ-3:** Битрикс24 (№1) → AmoCRM (№2) → HubSpot (№3)
@@ -63,7 +34,7 @@
 
 ### Лиды (обход Ф4)
 
-Детали: [`F4_LEADS_ACCEPTANCE.md`](../operations/phase4/leads/F4_LEADS_ACCEPTANCE.md)
+Детали: [`F4_LEADS_ACCEPTANCE.md`](../phase4/leads/F4_LEADS_ACCEPTANCE.md)
 
 - [x] Создание лида — модалка дашборд + `/leads/list`, POST в БД · апрув 2026-06-19
 - [x] Удаление лида — confirm, list + карточка, DELETE в БД · pytest `test_lead_delete_ui.py` · апрув 2026-06-19
@@ -93,7 +64,7 @@
 
 ### Мой день (приоритет очереди)
 
-Детали: [`F4_DAY_PRIORITY.md`](../operations/phase4/leads/F4_DAY_PRIORITY.md) · спека согласована 2026-06-27
+Детали: [`F4_DAY_PRIORITY.md`](../phase4/leads/F4_DAY_PRIORITY.md) · спека согласована 2026-06-27
 
 - [x] **Спека и формула** — этап+`dealPath` первичны, тип задачи вторичен, затухание «жду ответ» · док готов
 - [x] **`lead_day_priority.py`** — `dayRank`, `stageBoost`, `urgencyBucket`, `waitStalePenalty` · 2026-06-27
@@ -107,7 +78,7 @@
 
 ### Email (тюнинг Ф4)
 
-Детали: [`F4_EMAIL_TUNING.md`](../operations/phase4/email/F4_EMAIL_TUNING.md)
+Детали: [`F4_EMAIL_TUNING.md`](../phase4/email/F4_EMAIL_TUNING.md)
 
 - [ ] Ящики в UI (`/email` Настройки или `/ops/integrations`) — без единственной зависимости от `.env`
 - [ ] Тест IMAP/SMTP из формы; статусы подключения; шифрование пароля at rest
@@ -127,7 +98,7 @@
 - [ ] «Переделай короче» для черновика письма (F3 Voice §2)
 - [ ] Acceptance: pytest `tests/email/` + live smoke + DevTools `/email`, `/ops/email`, карточка
 
-**UI Яндекс.Почта:** [`F4_EMAIL_YANDEX_UI.md`](../operations/phase4/email/F4_EMAIL_YANDEX_UI.md)
+**UI Яндекс.Почта:** [`F4_EMAIL_YANDEX_UI.md`](../phase4/email/F4_EMAIL_YANDEX_UI.md)
 
 - [x] Сайдбар + папки + жёлтая «Написать» · код 2026-06-25
 - [x] Поиск pill + чипы фильтров · код 2026-06-25
@@ -138,7 +109,7 @@
 
 ### Vendor crawl → RAG tech_specialist (тюнинг)
 
-Детали: [`F4_VENDOR_CRAWL_TUNING.md`](../operations/phase4/rag/F4_VENDOR_CRAWL_TUNING.md)
+Детали: [`F4_VENDOR_CRAWL_TUNING.md`](../phase4/rag/F4_VENDOR_CRAWL_TUNING.md)
 
 - [ ] Автокраул (`auto_crawl_enabled`, интервал, фоновый poll)
 - [ ] Глубже `doc_urls` — KB, datasheet, release notes
@@ -147,7 +118,7 @@
 
 ### A/B промптов по трейсам (тюнинг)
 
-Детали: [`F4_PROMPT_AB_TUNING.md`](../operations/phase4/agents/F4_PROMPT_AB_TUNING.md)
+Детали: [`F4_PROMPT_AB_TUNING.md`](../phase4/agents/F4_PROMPT_AB_TUNING.md)
 
 - [ ] Эталон intent при 👎 на трейсе
 - [ ] Больше кейсов + регрессия на 👍 / approved eval
@@ -159,7 +130,7 @@
 
 ### Авто-суфлёр Стратега (тюнинг)
 
-Детали: [`F4_STRATEGIST_SUGGESTER_TUNING.md`](../operations/phase4/agents/F4_STRATEGIST_SUGGESTER_TUNING.md)
+Детали: [`F4_STRATEGIST_SUGGESTER_TUNING.md`](../phase4/agents/F4_STRATEGIST_SUGGESTER_TUNING.md)
 
 - [ ] Runtime агентов читает `agent_prompt_*.txt`
 - [ ] 👎 с ожидаемым ответом / intent
@@ -172,7 +143,7 @@
 
 ### Контур.Закупки (после gate)
 
-Детали: [`F4_KONTUR_GATE.md`](../operations/phase4/tenders/F4_KONTUR_GATE.md)
+Детали: [`F4_KONTUR_GATE.md`](../phase4/tenders/F4_KONTUR_GATE.md)
 
 - [ ] Gate: первая тендерная сделка + go оператора
 - [ ] Адаптер `tender_sources/kontur.py` + `TENDER_PROVIDER=kontur`
@@ -180,7 +151,7 @@
 
 ### Тех. спец — тендеры (тюнинг Ф4)
 
-Детали: [`F4_TECH_TENDER_TUNING.md`](../operations/phase4/tenders/F4_TECH_TENDER_TUNING.md)
+Детали: [`F4_TECH_TENDER_TUNING.md`](../phase4/tenders/F4_TECH_TENDER_TUNING.md)
 
 - [ ] Автопайплайн: мониторинг → скачать доки → оценка → пуш с вердиктом
 - [ ] Автозагрузка ТЗ/PDF с площадки (кэш по external_id)
@@ -190,7 +161,7 @@
 
 ### Аналитика v2 (тюнинг Ф4)
 
-Детали: [`F4_ANALYTICS_V2_TUNING.md`](../operations/phase4/analytics/F4_ANALYTICS_V2_TUNING.md)
+Детали: [`F4_ANALYTICS_V2_TUNING.md`](../phase4/analytics/F4_ANALYTICS_V2_TUNING.md)
 
 - [ ] Прогноз на карточке лида + поле `expected_close_at`
 - [ ] Срез «закрытие по кварталу/месяцу» на analytics
@@ -201,7 +172,7 @@
 
 ### Баллы (тюнинг Ф4)
 
-Детали: [`F4_SCORING_TUNING.md`](../operations/phase4/leads/F4_SCORING_TUNING.md)
+Детали: [`F4_SCORING_TUNING.md`](../phase4/leads/F4_SCORING_TUNING.md)
 
 - [ ] UI весов `scoring_advisory` в Ops (`/ops/crm`) — сейчас только API/JSON, на карточке ссылка врёт
 - [ ] Breakdown подсказки на карточке лида (этап, сумма, апрувы, штрафы)
@@ -212,15 +183,15 @@
 
 ### Платформа
 
-Детали: [`F4_PLATFORM_TUNING.md`](../operations/phase4/platform/F4_PLATFORM_TUNING.md)
+Детали: [`F4_PLATFORM_TUNING.md`](../phase4/platform/F4_PLATFORM_TUNING.md)
 
 - [ ] Экран интеграций в UI (Битрикс, Amo, HubSpot, Telegram) — без правки `.env`
 - [ ] Credentials в БД (шифрование), статусы подключения, OAuth/мастера
 - [ ] Расписание синка + маппинг стадий + конфликты полей
 - [ ] Битрикс: исходящий вебхук из UI + подсказка туннеля
 - [ ] Telegram: привязка чата из UI, дайджест, уведомления тендеров
-- [x] SLA-протоколы + эскалация — см. P3 [`F3_SLA_PROTOCOLS_ACCEPTANCE.md`](../operations/phase3/leads/F3_SLA_PROTOCOLS_ACCEPTANCE.md)
-- [x] Экспорт отчёта по баллам и воронке — см. P3 [`F3_SCORING_EXPORT_ACCEPTANCE.md`](../operations/phase3/leads/F3_SCORING_EXPORT_ACCEPTANCE.md)
+- [x] SLA-протоколы + эскалация — см. P3 [`F3_SLA_PROTOCOLS_ACCEPTANCE.md`](../phase3/leads/F3_SLA_PROTOCOLS_ACCEPTANCE.md)
+- [x] Экспорт отчёта по баллам и воронке — см. P3 [`F3_SCORING_EXPORT_ACCEPTANCE.md`](../phase3/leads/F3_SCORING_EXPORT_ACCEPTANCE.md)
 - [ ] Acceptance + smoke живых интеграций
 
 ---
@@ -230,13 +201,13 @@
 | Модуль | Фаза | Сдано | Вернуться / следующий шаг |
 |--------|------|-------|---------------------------|
 | Лиды | 1 | ✅ 2026-06-08 | — |
-| Баллы | 1 (+P3) | ✅ P3 | Ф4: [`F4_SCORING_TUNING.md`](../operations/phase4/leads/F4_SCORING_TUNING.md) |
+| Баллы | 1 (+P3) | ✅ P3 | Ф4: [`F4_SCORING_TUNING.md`](../phase4/leads/F4_SCORING_TUNING.md) |
 | Голос лиды | 1 | ✅ (хвосты 🟡) 2026-06-11 | `VOICE_MIC_E2E_ACCEPTANCE.md`; п.3/5 spot-check → `BACKLOG` |
 | Поиск/RAG | 1→2 | ✅ база | Ф2 §4: кэш enrich, авто-чанки |
 | Лиды enrich | 2 | ✅ | Ф2 §9: кнопка + голос enrich — `LEADS_CARD_ENRICH_ACCEPTANCE.md`, `LEADS_ENRICH_VOICE_ACCEPTANCE.md` |
 | Лидоген | 1→2 | ✅ Ф1 | **Ф2 §8:** голос ✅ · `LEADGEN_VOICE_F2_ACCEPTANCE.md` |
 | Тендеры | 1→2→3 | ✅ baseline 2026-06-11 | `TENDERS_BASELINE_ACCEPTANCE.md` · Ф2 §7 голос/платный API |
-| Email | 2→3→4 | 🔲 | Ф4: [`F4_EMAIL_TUNING.md`](../operations/phase4/email/F4_EMAIL_TUNING.md) |
+| Email | 2→3→4 | 🔲 | Ф4: [`F4_EMAIL_TUNING.md`](../phase4/email/F4_EMAIL_TUNING.md) |
 | Оркестрация | 2 | 🔲 | Ф2 §2: fanout |
 | Агенты | 1→2 | ✅ чат | Ф2 quality gates → `/ops/eval` |
 | Безопасность | 2→3 | ⚠️ dev OK | **Ф2 оч.10** перед продом · **Ф3** роли/аудит |
@@ -246,19 +217,3 @@
 | Аналитика | 1→2→3 | ✅ база | Ф2 §6: голос |
 
 ---
-
-## Связанные документы
-
-| Что | Где |
-|-----|-----|
-| Видение продукта | [`VISION.md`](VISION.md) |
-| План фаз | [`ROADMAP.md`](ROADMAP.md) |
-| Полный PRD | [`PRD.md`](PRD.md) |
-| Бизнес-процессы | [`BUSINESS_LOGIC.md`](BUSINESS_LOGIC.md) |
-| Главные функции | [`FUNCTIONAL.md`](FUNCTIONAL.md) |
-| Архитектура | [`ARCHITECTURE.md`](ARCHITECTURE.md) |
-| Дизайн-система | [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) |
-| Чеклисты Ф1–Ф3 (архив) | [`../archive/product/PRD_MAP_F1-F3.md`](../archive/product/PRD_MAP_F1-F3.md) |
-| Черновики (архив) | [`../archive/product/PRD_NOTES.md`](../archive/product/PRD_NOTES.md) |
-| Операционка | `docs/operations/` (CHANGELOG, ISSUES, HANDOFF) |
-| Модули | `docs/modules/` · агенты: `docs/agents/langgraph.md` |

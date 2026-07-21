@@ -33,7 +33,7 @@
 | R4 | `go` на новую задачу; стоп после шага | `workflow/task-workflow` | дисциплина |
 | R5 | Тест + регрессия зоны | `workflow/task-workflow`, `dev-gates` | `run_zone_regression.py` |
 | R6 | Хвост прогона A+B+C | `workflow/task-workflow` | `check_agent_step.py` FAIL |
-| R7 | BACKLOG ↔ PRD_MAP | `BACKLOG.md` | таблица |
+| R7 | BACKLOG ↔ чеклист фазы | `BACKLOG.md` | таблица |
 | R8 | Сплит >200 строк | `workflow/file-size-split.mdc` (globs) | ревью |
 | R9 | Backend README sync | `workflow/repo-layout` §5 (globs) | финиш-чеклист |
 | R10 | SBR RED/GREEN + todo.md + scope | `workflow/spec-build-review.mdc` § Scope | дисциплина |
@@ -43,7 +43,7 @@
 
 ## SBR scope (апрув 2026-07-18)
 
-**Да:** PRD_MAP, фича, API, миграция, 2+ файла логики, hot-path по плану.
+**Да:** пункт чеклиста фазы, фича, API, миграция, 2+ файла логики, hot-path по плану.
 **Нет:** one-liner, docs/rules-only, chore.
 **Серая зона:** спросить один раз. Канон: [`spec-build-review.mdc`](../../../.cursor/rules/workflow/spec-build-review.mdc) § Scope.
 
@@ -53,7 +53,7 @@
 |------|----------|
 | `last_done:` | `HANDOFF.md` |
 | `current_state:` | `SESSION_STATE`, `ISSUES` 🔴 |
-| `next_step:` | `HANDOFF`, `PRD_MAP` — один шаг |
+| `next_step:` | `HANDOFF`, чеклист активной фазы (`operations/phase4/CHECKLIST.md`) — один шаг |
 
 ## Финиш шага
 

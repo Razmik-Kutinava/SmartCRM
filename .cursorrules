@@ -24,4 +24,4 @@ SmartCRM — мультиагентная CRM: один оператор + 5 AI-
 
 ## Документация
 
-Карта доков: [`docs/README.md`](docs/README.md) · Чеклисты: [`docs/product/PRD_MAP.md`](docs/product/PRD_MAP.md) · Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md)
+Карта доков: [`docs/README.md`](docs/README.md) · Чеклист активной фазы: [`docs/operations/phase4/CHECKLIST.md`](docs/operations/phase4/CHECKLIST.md) · Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md)

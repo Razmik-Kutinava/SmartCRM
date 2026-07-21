@@ -12,7 +12,7 @@ alwaysApply: true
 | Файл | За что | Подключение |
 |------|--------|-------------|
 | [`workflow/smartcrm-commit-ops.mdc`](workflow/smartcrm-commit-ops.mdc) | commit + ops до ответа; порядок шага; push по go | всегда |
-| [`workflow/smartcrm-task-workflow.mdc`](workflow/smartcrm-task-workflow.mdc) | PRD_MAP, go, тесты, хвост A/B/C, формат отчёта | всегда |
+| [`workflow/smartcrm-task-workflow.mdc`](workflow/smartcrm-task-workflow.mdc) | чеклист фазы, go, тесты, хвост A/B/C, формат отчёта | всегда |
 | [`workflow/smartcrm-dev-gates.mdc`](workflow/smartcrm-dev-gates.mdc) | DoD, регрессия, миграции, hot-path | всегда |
 | [`workflow/spec-build-review.mdc`](workflow/spec-build-review.mdc) | SBR + scope (MAP+фичи; one-liner без) | всегда |
 | [`workflow/smartcrm-repo-layout.mdc`](workflow/smartcrm-repo-layout.mdc) | куда класть файлы, Backend README sync | по файлам (globs) |

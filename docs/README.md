@@ -10,7 +10,7 @@
 |--------|------|
 | Видение: что и зачем строим | [product/VISION.md](product/VISION.md) |
 | План фаз и статусы | [product/ROADMAP.md](product/ROADMAP.md) |
-| Чеклисты активной фазы | [product/PRD_MAP.md](product/PRD_MAP.md) — Ф4; Ф1–Ф3 → [архив](archive/product/PRD_MAP_F1-F3.md) |
+| Чеклист активной фазы (Ф4) | [operations/phase4/CHECKLIST.md](operations/phase4/CHECKLIST.md); закрытые Ф1–Ф3 — `operations/phase{1,2,3}/CHECKLIST.md` |
 | Полный PRD | [product/PRD.md](product/PRD.md) |
 | Сквозные бизнес-процессы | [product/BUSINESS_LOGIC.md](product/BUSINESS_LOGIC.md) |
 | Главные функции системы | [product/FUNCTIONAL.md](product/FUNCTIONAL.md) |
@@ -27,7 +27,7 @@
 | Ситуация | Документ |
 |----------|----------|
 | Новая сессия агента | `HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
-| Что строим | `product/VISION.md` → `product/ROADMAP.md` → `product/PRD_MAP.md` |
+| Что строим | `product/VISION.md` → `product/ROADMAP.md` → `operations/phase4/CHECKLIST.md` |
 | Как устроено технически | `product/ARCHITECTURE.md` |
 | Стек, API, БД | `product/ARCHITECTURE.md#справочник-стека` |
 | Что сломалось | `operations/session/ISSUES.md` |
@@ -39,7 +39,7 @@
 
 **Три канона:** `PRD.md` (продукт) · `ARCHITECTURE.md` (техника) · `CHANGELOG.md` (история).
 
-**Агент:** HANDOFF → PRD_MAP → модульный doc → код → commit + ops ([`workflow/smartcrm-commit-ops.mdc`](../.cursor/rules/workflow/smartcrm-commit-ops.mdc)).
+**Агент:** HANDOFF → чеклист фазы → модульный doc → код → commit + ops ([`workflow/smartcrm-commit-ops.mdc`](../.cursor/rules/workflow/smartcrm-commit-ops.mdc)).
 
 ---
 
@@ -55,7 +55,7 @@
 | **[voice/](voice/)** | Голосовые команды и фразы для лидов |
 | **[agents/](agents/)** | AI-агенты LangGraph и Hermes |
 | **[stack/](stack/)** | Технологии: LLM, RAG, SvelteKit, LangGraph |
-| **[operations/](operations/)** | [`operations/README.md`](operations/README.md) — session, baselines, phase1/, phase2/, debt |
+| **[operations/](operations/)** | [`operations/README.md`](operations/README.md) — session, baselines, phase1–4 (CHECKLIST + acceptance), debt |
 | **[dev/](dev/)** | Для разработчиков: workflow, [REPO_LAYOUT](dev/REPO_LAYOUT.md), [LAYOUT_AUDIT](dev/LAYOUT_AUDIT.md), code review |
 | **[archive/](archive/)** | Не актуальный канон: `ops/` — журналы по месяцам, `product/` — PRD_NOTES/DELTA/чеклисты Ф1–Ф3 |
 | **[reference/](reference/)** | Клон референс-проекта CRM Points (только для сравнения) |
@@ -89,11 +89,10 @@
 Обновляется агентами в процессе работы:
 
 - [CHANGELOG.md](operations/session/CHANGELOG.md) — **история** (формат записи, хронология, статус продукта)
-- [PHASE2_ENTRY.md](operations/session/PHASE2_ENTRY.md) — **вход в Ф2** (2026-06-13): git, хвосты Ф1, gate, порядок очереди
 - [HANDOFF.md](operations/session/HANDOFF.md) — статус задачи, следующий шаг
 - [SESSION_STATE.md](operations/session/SESSION_STATE.md) — краткий прогресс сессии
 - [ISSUES.md](operations/session/ISSUES.md) — баги и инциденты
-- [BACKLOG.md](operations/session/BACKLOG.md) — отложено по PRD_MAP
+- [BACKLOG.md](operations/session/BACKLOG.md) — отложено по пунктам чеклистов фаз
 
 ---
 

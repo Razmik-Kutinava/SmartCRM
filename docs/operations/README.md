@@ -6,11 +6,11 @@
 
 | Порядок | Файл | Зачем |
 |---------|------|--------|
-| 1 | [`session/PHASE2_ENTRY.md`](session/PHASE2_ENTRY.md) | Вход в Ф2: git, gate, очередь MAP |
-| 2 | [`session/HANDOFF.md`](session/HANDOFF.md) | Текущая задача, следующий шаг |
-| 3 | [`session/SESSION_STATE.md`](session/SESSION_STATE.md) | Журнал шагов (pre-commit) |
-| 4 | [`session/ISSUES.md`](session/ISSUES.md) | Баги 🔴 |
-| 5 | [`session/BACKLOG.md`](session/BACKLOG.md) | Хвосты по PRD_MAP |
+| 1 | [`session/HANDOFF.md`](session/HANDOFF.md) | Текущая задача, следующий шаг |
+| 2 | [`session/SESSION_STATE.md`](session/SESSION_STATE.md) | Журнал шагов (pre-commit) |
+| 3 | [`session/ISSUES.md`](session/ISSUES.md) | Баги 🔴 |
+| 4 | [`session/BACKLOG.md`](session/BACKLOG.md) | Хвосты по пунктам чеклистов |
+| 5 | [`phase4/CHECKLIST.md`](phase4/CHECKLIST.md) | Чеклист активной фазы (Ф4) |
 
 ## Дерево
 
@@ -19,11 +19,14 @@ docs/operations/
 ├── README.md                 ← вы здесь
 ├── session/                  # Живые журналы (обновляются каждый шаг)
 ├── baselines/                # Coverage, CI, матрица правил
-├── phase1/                   # Acceptance Фазы 1 (закрытые блоки MAP)
-├── phase2/                   # Acceptance Фазы 2 (в работе)
-├── phase4/                   # Тюнинг / доводка до MVP (после Ф3)
+├── phase1/                   # CHECKLIST.md + acceptance Фазы 1 (закрыта)
+├── phase2/                   # CHECKLIST.md + acceptance Фазы 2 (закрыта)
+├── phase3/                   # CHECKLIST.md + acceptance Фазы 3 (закрыта)
+├── phase4/                   # CHECKLIST.md + тюнинг / доводка до MVP — текущая
 └── debt/                     # Отложенная уборка (не блокер)
 ```
+
+**Чеклист фазы** — `phase{N}/CHECKLIST.md`: рабочие пункты `[ ]`/`[x]`, управление фазой. Активная фаза — **Ф4**. Результаты (acceptance) — в папках областей той же фазы (`phase4/leads/`, `phase4/agents/`, …).
 
 ### `session/` — каждый шаг агента
 
@@ -33,8 +36,7 @@ docs/operations/
 | `SESSION_STATE.md` | Строки «что сделано + hash коммита» |
 | `CHANGELOG.md` | История изменений (канон хронологии) |
 | `ISSUES.md` | Инциденты и баги |
-| `BACKLOG.md` | Отложено по пунктам PRD_MAP |
-| `PHASE2_ENTRY.md` | Handoff Ф1→Ф2 для следующего агента |
+| `BACKLOG.md` | Отложено по пунктам чеклистов фаз |
 
 ### `baselines/` — сквозные метрики
 
@@ -50,7 +52,7 @@ docs/operations/
 
 ### `phase2/` — acceptance Ф2
 
-См. [`phase2/README.md`](phase2/README.md) — quality gates агентов; новые acceptance — в подпапку по домену MAP.
+См. [`phase2/README.md`](phase2/README.md) — quality gates агентов; новые acceptance — в подпапку по домену.
 
 ### `phase4/` — тюнинг и доводка до MVP (после Ф3)
 

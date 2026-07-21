@@ -1,22 +1,24 @@
 ---
-description: SmartCRM — PRD_MAP, go, тесты, хвост A/B/C (коммит/ops → smartcrm-commit-ops.mdc)
+description: SmartCRM — чеклист фазы, go, тесты, хвост A/B/C (коммит/ops → smartcrm-commit-ops.mdc)
 alwaysApply: true
 ---
 
 # SmartCRM — workflow задач
 
-Канон процесса для пунктов **PRD_MAP**, фич и фиксов.
+Канон процесса для пунктов **чеклиста фазы**, фич и фиксов.
+
+**Чеклисты фаз:** `docs/operations/phase{N}/CHECKLIST.md` — активная фаза: **`phase4`**. Ими управляется работа; результаты (acceptance) — в папках областей той же фазы.
 
 ## Старт сессии (каждый новый чат)
 
 Прочитать: `docs/operations/session/HANDOFF.md`, `SESSION_STATE.md`, `todo.md`, `ISSUES.md` (🔴), `BACKLOG.md`.
 
-Первый ответ — **таблица** (все три поля): `last_done:` (из HANDOFF) | `current_state:` (SESSION_STATE + ISSUES 🔴) | `next_step:` (HANDOFF + PRD_MAP, **один** шаг). Без таблицы работу не начинать.
+Первый ответ — **таблица** (все три поля): `last_done:` (из HANDOFF) | `current_state:` (SESSION_STATE + ISSUES 🔴) | `next_step:` (HANDOFF + чеклист активной фазы, **один** шаг). Без таблицы работу не начинать.
 
 ## Старт задачи
 
-- Ждать **явный пункт** (PRD_MAP / задача) + **что сделать**; пробежать `BACKLOG.md` на хвост по пункту.
-- **SBR** (scope в `spec-build-review.mdc`): PRD_MAP, фича, API, миграция, 2+ файла → PHASE 1 + `todo.md` → **`go`**.
+- Ждать **явный пункт** (чеклист фазы / задача) + **что сделать**; пробежать `BACKLOG.md` на хвост по пункту.
+- **SBR** (scope в `spec-build-review.mdc`): пункт чеклиста, фича, API, миграция, 2+ файла → PHASE 1 + `todo.md` → **`go`**.
 - **Без SBR:** one-liner, docs/rules-only, chore → план на 1 шаг → **`go`**.
 - Без `go` на **новую** задачу — код не трогать.
 
@@ -33,8 +35,8 @@ alwaysApply: true
 
 - [ ] `BACKLOG.md` — если отложен scope; `ISSUES.md` — если был баг
 - [ ] `backend/**/README.md` — если менялся `backend/` (`smartcrm-repo-layout.mdc` §5)
-- [ ] **`[x]` в PRD_MAP** — только после явного **«ок»** пользователя
-- [ ] Один шаг = одна связная задача; несколько пунктов MAP — только с отдельным `go` на каждый
+- [ ] **`[x]` в чеклисте фазы** — только после явного **«ок»** пользователя
+- [ ] Один шаг = одна связная задача; несколько пунктов чеклиста — только с отдельным `go` на каждый
 
 ## Хвост прогона A / B / C (обязательно в отчёте и SESSION_STATE)
 
@@ -57,6 +59,6 @@ alwaysApply: true
 
 ## Бэклог
 
-Формат строки: `[дата] | PRD_MAP: «…» | Отложено: … | Причина: … | Нужна фаза MAP: … | Из шага: …`
+Формат строки: `[дата] | Чеклист: «Ф{N} · пункт» | Отложено: … | Причина: … | Фаза: … | Из шага: …` (старые записи с `PRD_MAP:` не переписывать)
 
 Баги — только в `ISSUES.md`, отложенный scope — только в `BACKLOG.md`.

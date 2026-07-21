@@ -59,7 +59,7 @@ frontend/src/routes/leads/[id]/      → +page.svelte + lib/leadCardLogic.js
 ## 4. Исключения (допустимо > 200 без срочного сплита)
 
 - Автогенерация, vendor, миграции Alembic
-- `docs/product/PRD_NOTES.md` и прочие **документы** (лимит 200 — только для **кода**)
+- **Документы** (`docs/**`) — лимит 200 только для **кода**
 - Данные JSON/фикстуры
 
 Список legacy-монолитов: **`docs/dev/LAYOUT_AUDIT.md`** § «Код > 200 строк».

@@ -113,4 +113,4 @@ Start-Process powershell -ArgumentList @(
 
 - Пороги и таблица: [`AGENTS_QUALITY_GATE_ACCEPTANCE.md`](AGENTS_QUALITY_GATE_ACCEPTANCE.md)
 - Карта обучения: [`AGENTS_LEARNING_MAP.md`](AGENTS_LEARNING_MAP.md)
-- Вход в Ф2: [`../../session/PHASE2_ENTRY.md`](../../session/PHASE2_ENTRY.md)
+- Вход в Ф2 (история): [`архив PHASE2_ENTRY.md`](../../../archive/ops/PHASE2_ENTRY.md)

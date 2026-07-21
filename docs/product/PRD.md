@@ -1,6 +1,6 @@
 ﻿# SmartCRM — Product Requirements Document
 
-> **Видение:** [VISION.md](VISION.md) · **План фаз:** [ROADMAP.md](ROADMAP.md) · **Чеклисты:** [PRD_MAP.md](PRD_MAP.md). Черновики — [архив](../archive/product/PRD_NOTES.md).
+> **Видение:** [VISION.md](VISION.md) · **План фаз:** [ROADMAP.md](ROADMAP.md) · **Чеклисты фаз:** `docs/operations/phase{N}/CHECKLIST.md`. Черновики — [архив](../archive/product/PRD_NOTES.md).
 
 **Версия:** v2 (объединён с PRD Delta 2026-06-07)
 
@@ -10,7 +10,7 @@
 |-----|-----|
 | Идея, проблема, решение, принципы | [VISION.md](VISION.md) |
 | Фазы 1→4 и статусы | [ROADMAP.md](ROADMAP.md) |
-| DoD фаз, рабочие чеклисты | [PRD_MAP.md](PRD_MAP.md) |
+| DoD фаз, рабочие чеклисты | [operations/phase4/CHECKLIST.md](../operations/phase4/CHECKLIST.md) (активная Ф4) |
 | Сквозные бизнес-процессы | [BUSINESS_LOGIC.md](BUSINESS_LOGIC.md) |
 | Главные функции | [FUNCTIONAL.md](FUNCTIONAL.md) |
 | Хвосты, spot-check | [BACKLOG.md](../operations/session/BACKLOG.md) |
@@ -29,7 +29,7 @@
 
 ## Roadmap по фазам
 
-Вынесен в [ROADMAP.md](ROADMAP.md) (фазы 1→4, статусы). Done-критерии закрытых фаз — [архив PRD_MAP](../archive/product/PRD_MAP_F1-F3.md).
+Вынесен в [ROADMAP.md](ROADMAP.md) (фазы 1→4, статусы). Done-критерии закрытых фаз — чеклисты [`phase1`](../operations/phase1/CHECKLIST.md)–[`phase3`](../operations/phase3/CHECKLIST.md).
 
 ---
 
@@ -322,7 +322,7 @@ RAG:       Brave/Tavily/Serper → Chroma → агенты
 |------|-----------|
 | 2026-05-04 | Балльная воронка: роли, P1–P3, метрики, приложения A–G |
 | 2026-06-07 | Слияние PRD Delta v2: Voice Layer, Email, Self-improvement, оркестрация, тендеры roadmap, аналитика v2; roadmap по фазам 1–3 |
-| 2026-06-07 | Карта PRD вынесена в `PRD_MAP.md` (навигатор, статусы модулей, диаграммы) |
+| 2026-06-07 | Карта PRD вынесена в `PRD_MAP.md` (с 2026-07-21 — чеклисты фаз в `docs/operations/phase{N}/CHECKLIST.md`) |
 | 2026-06-07 | Техдельта: `voice_action`, режимы email, Search-to-Q&A, gate тендеров, lookalike, оркестрация JSON → PRD + ARCHITECTURE + модули |
 
 ---
