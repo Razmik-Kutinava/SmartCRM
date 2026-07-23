@@ -1,4 +1,4 @@
-# Матрица правил SmartCRM
+﻿# Матрица правил SmartCRM
 
 > Обновлять при изменении `.cursor/rules/workflow/` или `.cursor/rules/project/`.
 
@@ -55,7 +55,7 @@
 |------|----------|
 | `last_done:` | `HANDOFF.md` |
 | `current_state:` | `SESSION_STATE`, `ISSUES` 🔴 |
-| `next_step:` | `HANDOFF`, чеклист активной фазы ([`Чеклист: Фаза 4 — Тюнинг и MVP`](../phase4/CHECKLIST.md)) — один шаг |
+| `next_step:` | `HANDOFF`, чеклист активной фазы ([`Чеклист: Фаза 4 — Тюнинг и MVP`](../phase4/CHECKLIST_F4.md)) — один шаг |
 
 ## Финиш шага
 

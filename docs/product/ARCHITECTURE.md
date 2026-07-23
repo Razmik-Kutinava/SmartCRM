@@ -401,9 +401,9 @@ leads, tasks, lead_comments, lead_field_audits, lead_communication_logs
 
 | Раздел | Статус |
 |--------|--------|
-| Домен лидов P1–P3 | **В коде** — разделы as-is/to-be выше описывают план; фактическое состояние сверять с чеклистами фаз (`docs/operations/phase{N}/CHECKLIST.md`) |
+| Домен лидов P1–P3 | **В коде** — разделы as-is/to-be выше описывают план; фактическое состояние сверять с чеклистами фаз (`docs/operations/phase{N}/CHECKLIST_F{N}.md`) |
 | Матрица агентов | Не отражает fanout Фазы 2 — см. `langgraph.md` |
-| Порядок внедрения P1–P3 | Закрыт; новые инкременты — чеклист активной фазы (`docs/operations/phase4/CHECKLIST.md`) |
+| Порядок внедрения P1–P3 | Закрыт; новые инкременты — чеклист активной фазы (`docs/operations/phase4/CHECKLIST_F4.md`) |
 
 ---
 

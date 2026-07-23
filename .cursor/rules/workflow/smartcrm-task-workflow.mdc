@@ -1,4 +1,4 @@
----
+﻿---
 description: SmartCRM — чеклист фазы, go, тесты, хвост A/B/C (коммит/ops → smartcrm-commit-ops.mdc)
 alwaysApply: true
 ---
@@ -7,7 +7,7 @@ alwaysApply: true
 
 Канон процесса для пунктов **чеклиста фазы**, фич и фиксов.
 
-**Чеклисты фаз:** `docs/operations/phase{N}/CHECKLIST.md` — активная фаза: **`phase4`**. Ими управляется работа; результаты (acceptance) — в папках областей той же фазы.
+**Чеклисты фаз:** `docs/operations/phase{N}/CHECKLIST_F{N}.md` — активная фаза: **`phase4`**. Ими управляется работа; результаты (acceptance) — в папках областей той же фазы.
 
 ## Старт сессии (каждый новый чат)
 

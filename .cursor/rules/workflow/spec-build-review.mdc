@@ -1,4 +1,4 @@
----
+﻿---
 description: "SBR Engine: Spec-Build-Review для SmartCRM"
 globs: ["*"]
 alwaysApply: true
@@ -79,6 +79,6 @@ alwaysApply: true
 
 ## Связь с чеклистом фазы
 
-- **todo.md** — микро внутри одного пункта чеклиста (`docs/operations/phase{N}/CHECKLIST.md`)
+- **todo.md** — микро внутри одного пункта чеклиста (`docs/operations/phase{N}/CHECKLIST_F{N}.md`)
 - **`[x]` в чеклисте** — только после «ок» пользователя (не после GREEN)
 - Отложенный scope из SBR → **BACKLOG.md** в том же коммите

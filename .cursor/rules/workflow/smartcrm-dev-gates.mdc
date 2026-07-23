@@ -1,4 +1,4 @@
----
+﻿---
 description: SmartCRM — технические гейты (DoD, регрессия, миграции, API, hot-path)
 alwaysApply: true
 ---
@@ -9,7 +9,7 @@ alwaysApply: true
 
 ---
 
-## Definition of Done — пункт чеклиста фазы (`docs/operations/phase{N}/CHECKLIST.md`)
+## Definition of Done — пункт чеклиста фазы (`docs/operations/phase{N}/CHECKLIST_F{N}.md`)
 
 Пункт чеклиста **не закрыт**, пока не выполнено всё:
 

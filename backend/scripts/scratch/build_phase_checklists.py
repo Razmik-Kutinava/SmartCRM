@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Одноразовая сборка чеклистов фаз: архив Ф1-Ф3 + живой PRD_MAP Ф4 → docs/operations/phaseN/CHECKLIST.md."""
+"""Одноразовая сборка чеклистов фаз: архив Ф1-Ф3 + живой PRD_MAP Ф4 → docs/operations/phaseN/CHECKLIST_F{N}.md."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -31,23 +31,23 @@ f2 = find(arc, "## Фаза 2 — Автоматизация")
 f3 = find(arc, "## Фаза 3 — Автономия")
 
 phases = {
-    "phase1": ("Фаза 1 — MVP", "✅ закрыта (DoD 6/6, 2026-06-11)", arc[dod1:dod2] + arc[scen1:f2]),
-    "phase2": ("Фаза 2 — Автоматизация", "✅ очереди 1–9 пройдены", arc[dod2:scen1] + arc[f2:f3]),
-    "phase3": ("Фаза 3 — Автономия", "✅ по блокам", arc[f3:]),
+    "phase1": (1, "Фаза 1 — MVP", "✅ закрыта (DoD 6/6, 2026-06-11)", arc[dod1:dod2] + arc[scen1:f2]),
+    "phase2": (2, "Фаза 2 — Автоматизация", "✅ очереди 1–9 пройдены", arc[dod2:scen1] + arc[f2:f3]),
+    "phase3": (3, "Фаза 3 — Автономия", "✅ по блокам", arc[f3:]),
 }
 
 # Ф4 из живого PRD_MAP: от "## Фаза 4" до "## Связанные документы" (включая сводку модулей)
 l4 = find(live, "## Фаза 4")
 lend = find(live, "## Связанные документы")
-phases["phase4"] = ("Фаза 4 — Тюнинг и MVP", "🔄 **текущая фаза**", live[l4:lend])
+phases["phase4"] = (4, "Фаза 4 — Тюнинг и MVP", "🔄 **текущая фаза**", live[l4:lend])
 
-for folder, (title, status, body) in phases.items():
+for folder, (num, title, status, body) in phases.items():
     text = "\n".join(body).strip()
     # Пути были относительны docs/product/ → теперь docs/operations/phaseN/
     text = text.replace("](../operations/session/", "](../session/")
     text = text.replace("](../operations/", "](../")
     text = text.replace("](../../.cursor/", "](../../../.cursor/")
-    out = OPS / folder / "CHECKLIST.md"
+    out = OPS / folder / f"CHECKLIST_F{num}.md"
     header = f"# Чеклист: {title}\n\n**Статус фазы:** {status}\n\n{LEGEND}\n---\n\n"
     out.write_text(header + text + "\n", encoding="utf-8", newline="\n")
     print(f"{out.relative_to(REPO)}: {len(body)} строк")

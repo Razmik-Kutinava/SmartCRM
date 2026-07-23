@@ -4,6 +4,8 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
+2026-07-23 | Действие: переименование чеклистов фаз — `CHECKLIST.md` → `CHECKLIST_F1.md`…`CHECKLIST_F4.md`; ссылки в rules/docs/README обновлены; исторические записи в журналах не переписывались | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
+
 2026-07-23 | Действие: подписи чеклистов фаз — H1 уже «Чеклист: Фаза N»; тексты ссылок и README (phase1–4, docs/README, operations/README, ROADMAP, PRD, BACKLOG, todo, RULES_MATRIX, REPO_LAYOUT) приведены к «Чеклист: Фаза N — …»; файлы CHECKLIST.md не переименовывались | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
 2026-07-21 | Действие: SBR GREEN+REVIEW — «база → рассылка по source»: `import-csv?source=` (метка всем строкам, важнее колонки), `GET /leads/sources` (count/withEmail), фильтр «Источник» в массовой рассылке (`EmailCampaignPanel` + `campaignSegmentLogic` + smoke) и поле «Метка базы» в меню импорта `/leads/list`; тесты 4/4 + смоук 8 PASS; регрессия crm_leads 109 PASS / 1 pre-existing (`test_tasks_filter_done_and_combined` → ISSUES), email 33 PASS / 1 pre-existing (уже в ISSUES); DevTools: Plixer + балл 0 → «Лидов: 27» | Коммит: `этот` | Хвост A: нет | Хвост B: BACKLOG «фильтр даты регистрации компании» | Хвост C: ISSUES 🟡 `test_tasks_filter_done_and_combined` (pre-existing) | Статус: done

@@ -1,4 +1,4 @@
----
+﻿---
 description: SmartCRM — структура репозитория, куда класть новые файлы, запрет переносов без апрува, Backend README sync. Подключать при создании/переносе файлов и изменениях в backend/, frontend/, docs/, eval/.
 globs:
   - "backend/**"
@@ -26,7 +26,7 @@ alwaysApply: false
 | Запуск, runbook | `docs/start/` | `SETUP.md`, `RUNBOOK.md` |
 | API-контракт | `docs/api/` | `API.md` |
 | Операционка сессий | `docs/operations/session/` | `HANDOFF.md`, `ISSUES.md`, `SESSION_STATE.md`, `todo.md` |
-| Чеклист фазы | `docs/operations/phase{N}/CHECKLIST.md` | активная — `phase4/CHECKLIST.md` |
+| Чеклист фазы | `docs/operations/phase{N}/CHECKLIST_F{N}.md` | активная — `phase4/CHECKLIST_F4.md` |
 | Acceptance Ф1 | `docs/operations/phase1/{домен}/` | `LEADS_BLOCK_ACCEPTANCE.md` |
 | Acceptance Ф2 | `docs/operations/phase2/{домен}/` | `AGENTS_QUALITY_GATE_ACCEPTANCE.md` |
 | Baselines ops | `docs/operations/baselines/` | `COVERAGE_BASELINE.md`, `CI_BASELINE.md` |

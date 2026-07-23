@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-23 — Переименование чеклистов: CHECKLIST.md → CHECKLIST_F{N}.md
+
+По `go` («просто переименуй в фазах»). Файлы: `phase1/CHECKLIST_F1.md` … `phase4/CHECKLIST_F4.md`. Ссылки обновлены в rules (task-workflow, SBR, dev-gates, repo-layout), `.cursorrules`, README фаз/операционки/docs, ROADMAP, PRD, ARCHITECTURE, FUNCTIONAL, BACKLOG, todo, RULES_MATRIX, archive (PHASE2_ENTRY и др.), scratch-скрипт сборки. Исторические строки в старых записях CHANGELOG/HANDOFF/SESSION_STATE не переписывались.
+
 ## 2026-07-23 — Подписи чеклистов фаз: «Чеклист: Фаза N» в ссылках
 
 По `go` («переименуй чтоб было понятно · файлы не трогать»). H1 внутри `phase{N}/CHECKLIST.md` уже были вида «Чеклист: Фаза N — …». Поправлены **тексты ссылок** и подписи в README/навигации, чтобы везде читалось с номером фазы, а не голое `CHECKLIST.md`: `phase1–4/README.md`, `docs/README.md`, `operations/README.md`, `ROADMAP.md`, `PRD.md`, `BACKLOG.md`, `todo.md`, `RULES_MATRIX.md`, `REPO_LAYOUT.md`. Имена файлов `CHECKLIST.md` не менялись (без шума по путям).

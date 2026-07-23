@@ -10,7 +10,7 @@
 |--------|------|
 | Видение: что и зачем строим | [product/VISION.md](product/VISION.md) |
 | План фаз и статусы | [product/ROADMAP.md](product/ROADMAP.md) |
-| Чеклист активной фазы (Ф4) | [Чеклист: Фаза 4 — Тюнинг и MVP](operations/phase4/CHECKLIST.md); закрытые Ф1–Ф3 — `operations/phase{1,2,3}/CHECKLIST.md` |
+| Чеклист активной фазы (Ф4) | [Чеклист: Фаза 4 — Тюнинг и MVP](operations/phase4/CHECKLIST_F4.md); закрытые Ф1–Ф3 — `operations/phase{1,2,3}/CHECKLIST_F{N}.md` |
 | Полный PRD | [product/PRD.md](product/PRD.md) |
 | Сквозные бизнес-процессы | [product/BUSINESS_LOGIC.md](product/BUSINESS_LOGIC.md) |
 | Главные функции системы | [product/FUNCTIONAL.md](product/FUNCTIONAL.md) |
@@ -27,7 +27,7 @@
 | Ситуация | Документ |
 |----------|----------|
 | Новая сессия агента | `HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
-| Что строим | `product/VISION.md` → `product/ROADMAP.md` → `operations/phase4/CHECKLIST.md` |
+| Что строим | `product/VISION.md` → `product/ROADMAP.md` → `operations/phase4/CHECKLIST_F4.md` |
 | Как устроено технически | `product/ARCHITECTURE.md` |
 | Стек, API, БД | `product/ARCHITECTURE.md#справочник-стека` |
 | Что сломалось | `operations/session/ISSUES.md` |

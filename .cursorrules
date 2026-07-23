@@ -1,4 +1,4 @@
-# SmartCRM — Cursor Rules (вход)
+﻿# SmartCRM — Cursor Rules (вход)
 
 **Канон процесса:** `.cursor/rules/workflow/` + [`smartcrm-index.mdc`](.cursor/rules/smartcrm-index.mdc) — там индекс всех правил.
 
@@ -24,4 +24,4 @@ SmartCRM — мультиагентная CRM: один оператор + 5 AI-
 
 ## Документация
 
-Карта доков: [`docs/README.md`](docs/README.md) · Чеклист активной фазы: [`docs/operations/phase4/CHECKLIST.md`](docs/operations/phase4/CHECKLIST.md) · Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md)
+Карта доков: [`docs/README.md`](docs/README.md) · Чеклист активной фазы: [`docs/operations/phase4/CHECKLIST_F4.md`](docs/operations/phase4/CHECKLIST_F4.md) · Матрица правил: [`RULES_MATRIX.md`](docs/operations/baselines/RULES_MATRIX.md)

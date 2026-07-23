@@ -1,6 +1,6 @@
-# SmartCRM — главные функции
+﻿# SmartCRM — главные функции
 
-> Что система обязана уметь — без этого продукта нет. Сквозные процессы — [`BUSINESS_LOGIC.md`](BUSINESS_LOGIC.md); статусы реализации — чеклисты фаз (`../operations/phase{N}/CHECKLIST.md`).
+> Что система обязана уметь — без этого продукта нет. Сквозные процессы — [`BUSINESS_LOGIC.md`](BUSINESS_LOGIC.md); статусы реализации — чеклисты фаз (`../operations/phase{N}/CHECKLIST_F{N}.md`).
 
 ## 1. Лиды (CRM-ядро)
 

@@ -1,4 +1,4 @@
-# Операционка SmartCRM
+﻿# Операционка SmartCRM
 
 Журналы сессий, acceptance по фазам, baselines. **Код и layout репо** — отдельный долг: [`debt/REPO_LAYOUT_DEBT.md`](debt/REPO_LAYOUT_DEBT.md).
 
@@ -10,7 +10,7 @@
 | 2 | [`session/SESSION_STATE.md`](session/SESSION_STATE.md) | Журнал шагов (pre-commit) |
 | 3 | [`session/ISSUES.md`](session/ISSUES.md) | Баги 🔴 |
 | 4 | [`session/BACKLOG.md`](session/BACKLOG.md) | Хвосты по пунктам чеклистов |
-| 5 | [`Чеклист: Фаза 4 — Тюнинг и MVP`](phase4/CHECKLIST.md) | Чеклист активной фазы (Ф4) |
+| 5 | [`Чеклист: Фаза 4 — Тюнинг и MVP`](phase4/CHECKLIST_F4.md) | Чеклист активной фазы (Ф4) |
 
 ## Дерево
 
@@ -26,7 +26,7 @@ docs/operations/
 └── debt/                     # Отложенная уборка (не блокер)
 ```
 
-**Чеклист фазы** — `phase{N}/CHECKLIST.md`: рабочие пункты `[ ]`/`[x]`, управление фазой. Активная фаза — **Ф4**. Результаты (acceptance) — в папках областей той же фазы (`phase4/leads/`, `phase4/agents/`, …).
+**Чеклист фазы** — `phase{N}/CHECKLIST_F{N}.md`: рабочие пункты `[ ]`/`[x]`, управление фазой. Активная фаза — **Ф4**. Результаты (acceptance) — в папках областей той же фазы (`phase4/leads/`, `phase4/agents/`, …).
 
 ### `session/` — каждый шаг агента
 
