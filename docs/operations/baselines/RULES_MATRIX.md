@@ -41,6 +41,7 @@
 | R12 | Отчёт: Сделано/Не сделано + A/B/C | `workflow/task-workflow` § Отчёт | `check_agent_step.py` |
 | R13 | Ops-журналы: записи старше текущего месяца → `docs/archive/ops/` | `workflow/smartcrm-commit-ops.mdc` § Ops | дисциплина |
 | R14 | ISSUES: открытые записи старше месяца — «должки», показать пользователю и просить подтвердить закрытие | `workflow/task-workflow` § Старт сессии | дисциплина |
+| R15 | Токены: широкий заказ→варианты; короткие логи; лёгкие доки; зона×3→`all` (`Регрессия_счёт`) | `task-workflow`, `dev-gates`, SBR GREEN | дисциплина + SESSION_STATE |
 
 ## SBR scope (апрув 2026-07-18)
 

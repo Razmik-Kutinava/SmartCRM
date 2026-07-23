@@ -63,7 +63,7 @@ alwaysApply: true
 
 - Код по домену — **`project/smartcrm-{core,http,data,agents}`** + perf
 - До **3** попыток fix; завис — откат **только** файлов реализации (не тесты / todo / ops)
-- **Регрессия зоны** — таблица `smartcrm-dev-gates.mdc` (обязательно)
+- **Регрессия зоны** — таблица `smartcrm-dev-gates.mdc`; каждый **3-й** GREEN → ещё `all` (или p1+p6) — счётчик в SESSION_STATE (`Регрессия_счёт`)
 - `[x]` в `todo.md`
 - `git commit` — `feat: … [GREEN]` или `fix: … [GREEN]`
 
