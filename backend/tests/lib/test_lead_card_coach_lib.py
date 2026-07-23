@@ -4,13 +4,11 @@ from __future__ import annotations
 
 def coach_panel_for_code(code: str) -> str:
     c = str(code or "")
-    if c.startswith("task_"):
-        return "tasks"
-    if c in ("needs_enrich", "passport_empty"):
-        return "passport"
-    if c.startswith("score_"):
-        return "card"
-    return "stages"
+    if c.startswith("task_") or c == "no_tasks":
+        return "work"
+    if c in ("needs_enrich", "passport_empty") or c.startswith("score_"):
+        return "client"
+    return "header"
 
 
 def build_lead_card_coach_items(lead: dict, tasks: list[dict]) -> list[dict]:
@@ -34,16 +32,16 @@ def build_lead_card_coach_items(lead: dict, tasks: list[dict]) -> list[dict]:
                 "severity": "info",
                 "code": "no_tasks",
                 "text": "Нет открытых дел",
-                "panel": "tasks",
+                "panel": "work",
             }
         )
     return items[:8]
 
 
 def test_coach_panel_routing():
-    assert coach_panel_for_code("task_12") == "tasks"
-    assert coach_panel_for_code("passport_empty") == "passport"
-    assert coach_panel_for_code("stage_stale") == "stages"
+    assert coach_panel_for_code("task_12") == "work"
+    assert coach_panel_for_code("passport_empty") == "client"
+    assert coach_panel_for_code("stage_stale") == "header"
 
 
 def test_build_includes_stage_hints():

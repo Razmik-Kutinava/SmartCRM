@@ -16,11 +16,12 @@ def test_hub_panels_are_five_new_ids():
     assert "id: 'work'" in text
     assert "title: 'Клиент'" in text
     assert "title: 'Работа'" in text
-    assert "id: 'stages'" not in text
-    assert "id: 'passport'" not in text or "client" in text  # passport только как таб, не плитка
-    # ровно 5 плиток в HUB_PANELS
+    # плитки только 5; passport/stages не id плитки
     ids = [ln for ln in text.splitlines() if "id:" in ln and "icon:" in ln]
     assert len(ids) == 5, f"ожидалось 5 плиток, сейчас {len(ids)}: {ids}"
+    joined = "\n".join(ids)
+    assert "passport" not in joined
+    assert "stages" not in joined
 
 
 def test_default_hub_order_matches_five():

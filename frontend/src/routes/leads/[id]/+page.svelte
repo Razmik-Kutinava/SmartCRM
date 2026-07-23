@@ -118,10 +118,8 @@
 		loadIndustryOptions();
 		loadSlaCatalog();
 		const panel = get(page).url.searchParams.get('panel');
-		if (panel && PANEL_TITLES[panel]) {
-			openPanel = panel;
-			if (panel === 'emails') loadEmails();
-		}
+		const tab = get(page).url.searchParams.get('tab');
+		if (panel) openHubPanel(panel, tab || undefined);
 		return page.subscribe(pullLead);
 	});
 
@@ -501,6 +499,10 @@
 	}
 
 	let openPanel = $state(null);
+	/** @type {'card' | 'passport'} */
+	let clientTab = $state('card');
+	/** @type {'activity' | 'tasks'} */
+	let workTab = $state('activity');
 	let hubTileOrder = $state(readHubTileOrder());
 	let draggingHubId = $state(/** @type {string | null} */ (null));
 	let hubDropTarget = $state(/** @type {string | null} */ (null));
@@ -714,20 +716,78 @@
 		}
 	}
 
-	function openHubPanel(panel) {
-		openPanel = panel;
-		if (panel === 'emails') loadEmails();
-		if (panel === 'tasks' || panel === 'activity' || panel === 'stages') loadLeadTasks();
-		if (panel === 'activity') loadLeadActivity();
+	/** @param {string | null} panel @param {string} [tab] */
+	function openHubPanel(panel, tab) {
+		if (!panel) {
+			openPanel = null;
+			const url = new URL(get(page).url);
+			url.searchParams.delete('panel');
+			url.searchParams.delete('tab');
+			const q = url.searchParams.toString();
+			goto(`${url.pathname}${q ? `?${q}` : ''}`, { replaceState: true, keepFocus: true, noScroll: true });
+			return;
+		}
+		if (panel === 'stages' || panel === 'header' || panel === 'dealPath') {
+			openPanel = null;
+			const url = new URL(get(page).url);
+			url.searchParams.delete('panel');
+			url.searchParams.delete('tab');
+			const q = url.searchParams.toString();
+			goto(`${url.pathname}${q ? `?${q}` : ''}`, { replaceState: true, keepFocus: true, noScroll: true });
+			queueMicrotask(() => {
+				document
+					.querySelector('[data-testid="lead-card-header-stages"]')
+					?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+			});
+			return;
+		}
+		let next = panel;
+		let nextClient = clientTab;
+		let nextWork = workTab;
+		if (panel === 'card' || panel === 'passport') {
+			next = 'client';
+			nextClient = panel === 'passport' ? 'passport' : 'card';
+		} else if (panel === 'activity' || panel === 'tasks') {
+			next = 'work';
+			nextWork = panel === 'tasks' ? 'tasks' : 'activity';
+		} else if (panel === 'client') {
+			nextClient = tab === 'passport' ? 'passport' : 'card';
+		} else if (panel === 'work') {
+			nextWork = tab === 'tasks' ? 'tasks' : 'activity';
+		}
+		openPanel = next;
+		clientTab = nextClient;
+		workTab = nextWork;
+		if (next === 'emails') loadEmails();
+		if (next === 'work') {
+			loadLeadTasks();
+			if (nextWork === 'activity') loadLeadActivity();
+		}
+		if (next === 'client' && nextClient === 'card') {
+			/* noop */
+		}
 		const url = new URL(get(page).url);
-		if (panel) url.searchParams.set('panel', panel);
-		else url.searchParams.delete('panel');
+		url.searchParams.set('panel', next);
+		const sub =
+			next === 'client' ? nextClient : next === 'work' ? nextWork : '';
+		if (sub && (next === 'client' || next === 'work')) url.searchParams.set('tab', sub);
+		else url.searchParams.delete('tab');
 		const q = url.searchParams.toString();
 		goto(`${url.pathname}${q ? `?${q}` : ''}`, { replaceState: true, keepFocus: true, noScroll: true });
 	}
 
 	function closeHubPanel() {
 		openHubPanel(null);
+	}
+
+	function setClientTab(tab) {
+		clientTab = tab;
+		openHubPanel('client', tab);
+	}
+
+	function setWorkTab(tab) {
+		workTab = tab;
+		openHubPanel('work', tab);
 	}
 
 	// ─── Compose ────────────────────────────────────────────────
@@ -817,11 +877,12 @@
 	</div>
 {:else if lead}
 	{@const _tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
-	<!-- Единая шапка: назад + название + мета + действия -->
+	<!-- Единая шапка: назад + название + мета + действия; этап и путь сделки -->
 	<header
-		class="flex items-start justify-between gap-3 px-4 sm:px-6 pt-[18px] pb-[19px] border-b border-gray-800 bg-gray-900 shrink-0 overflow-visible"
+		class="flex flex-col gap-3 px-4 sm:px-6 pt-[18px] pb-3 border-b border-gray-800 bg-gray-900 shrink-0 overflow-visible"
 		data-testid="lead-card-header"
 	>
+		<div class="flex items-start justify-between gap-3">
 		<div class="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
 			<a
 				href="/leads/list"
@@ -872,26 +933,6 @@
 				aria-label="Исследовать"
 				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
 			>🔍</button>
-			<button
-				type="button"
-				title="Написать"
-				aria-label="Написать"
-				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
-				onclick={() => { openHubPanel('emails'); openCompose(lead.email, ''); }}
-			>✉️</button>
-			<button
-				type="button"
-				data-testid="lead-mailing-open"
-				title="Рассылка"
-				aria-label="Рассылка"
-				class="w-9 h-9 flex items-center justify-center bg-violet-700 hover:bg-violet-600 text-sm text-white rounded-lg transition-colors relative"
-				onclick={() => lead && openLeadMailing(lead)}
-			>
-				🔗
-				{#if nurtureChainCount > 0}
-					<span class="absolute top-0 right-0 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-indigo-500 text-[10px] leading-[1.1rem] text-center font-bold translate-x-1/4 -translate-y-1/4">{nurtureChainCount}</span>
-				{/if}
-			</button>
 			<button
 				type="button"
 				data-testid="lead-export-pdf"
@@ -950,6 +991,58 @@
 				onclick={deleteCurrentLead}
 			>{deleteBusy ? '…' : '🗑'}</button>
 		</div>
+		</div>
+
+		<div class="space-y-2 min-w-0" data-testid="lead-card-header-stages">
+			<div class="space-y-2" data-testid="lead-card-stages">
+				<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Этап воронки</div>
+				<div class="flex flex-wrap gap-1.5">
+					{#each CRM_STAGES as stage}
+						{@const stageRules = rulesForTargetStage(stageTransitionRules, stage)}
+						<button
+							type="button"
+							disabled={stageSaving}
+							onclick={() => setStage(stage)}
+							title={stageRules.length
+								? `Требования: ${stageRules.map(describeTransitionRule).join('; ')}`
+								: stage}
+							class="px-2.5 py-1 text-xs rounded-full transition-all disabled:opacity-50 {stageBadgeClass(stage)}
+								{lead.stage === stage
+								? 'ring-2 ring-white/35 font-semibold shadow-md'
+								: 'opacity-80 hover:opacity-100'}"
+						>
+							{stage}
+						</button>
+					{/each}
+				</div>
+				{#if stageTransitionRules.length}
+					<p class="text-[10px] text-gray-600 leading-snug">
+						Правила из CRM/Ops: наведи на стадию — подсказка; при блокировке покажем детали.
+					</p>
+				{/if}
+			</div>
+			<LeadStageHints hints={lead.stageHints || []} />
+			<div data-testid="lead-card-header-deal">
+				<LeadDealPathPanel
+					dealPath={lead.dealPath}
+					approvalsDraft={approvalsDraft}
+					stage={lead.stage}
+					saving={approvalsSaving}
+					onToggleApproval={toggleApprovalKey}
+					onSave={saveApprovalsChecklist}
+				/>
+			</div>
+			{#if lead.tenderLink?.title}
+				<p class="text-xs text-indigo-400" data-testid="lead-tender-link">
+					◇ Тендер:
+					{#if lead.tenderLink.url && lead.tenderLink.url !== '#'}
+						<a href={lead.tenderLink.url} target="_blank" rel="noopener" class="hover:underline">{lead.tenderLink.title}</a>
+					{:else}
+						{lead.tenderLink.title}
+					{/if}
+				</p>
+			{/if}
+		</div>
 	</header>
 	{#if enrichMsg}
 		<div class="px-6 py-1.5 text-xs border-b border-gray-800 bg-gray-900/80 text-gray-400" data-testid="lead-card-enrich-msg">{enrichMsg}</div>
@@ -995,64 +1088,14 @@
 		onClose={closeHubPanel}
 		testId="lead-slide-over-{openPanel || 'closed'}"
 	>
-			{#if openPanel === 'stages'}
-			<div class="space-y-4 min-w-0" data-testid="lead-card-overview-stages">
-					<div class="p-0 space-y-4 min-w-0" data-testid="lead-card-overview-left">
-					<div class="space-y-2" data-testid="lead-card-stages">
-						<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Этап воронки</div>
-						<div class="flex flex-wrap gap-1.5">
-							{#each CRM_STAGES as stage}
-								{@const stageRules = rulesForTargetStage(stageTransitionRules, stage)}
-								<button
-									type="button"
-									disabled={stageSaving}
-									onclick={() => setStage(stage)}
-									title={stageRules.length
-										? `Требования: ${stageRules.map(describeTransitionRule).join('; ')}`
-										: stage}
-									class="px-2.5 py-1 text-xs rounded-full transition-all disabled:opacity-50 {stageBadgeClass(stage)}
-										{lead.stage === stage
-										? 'ring-2 ring-white/35 font-semibold shadow-md'
-										: 'opacity-80 hover:opacity-100'}"
-								>
-									{stage}
-								</button>
-							{/each}
-						</div>
-						{#if stageTransitionRules.length}
-							<p class="text-[10px] text-gray-600 leading-snug">
-								Правила из CRM/Ops: наведи на стадию — подсказка; при блокировке покажем детали.
-							</p>
-						{/if}
-					</div>
-
-					<LeadStageHints hints={lead.stageHints || []} />
-
-					<LeadDealPathPanel
-						dealPath={lead.dealPath}
-						approvalsDraft={approvalsDraft}
-						stage={lead.stage}
-						saving={approvalsSaving}
-						onToggleApproval={toggleApprovalKey}
-						onSave={saveApprovalsChecklist}
-					/>
-
-					{#if lead.tenderLink?.title}
-						<p class="text-xs text-indigo-400" data-testid="lead-tender-link">
-							◇ Тендер:
-							{#if lead.tenderLink.url && lead.tenderLink.url !== '#'}
-								<a href={lead.tenderLink.url} target="_blank" rel="noopener" class="hover:underline">{lead.tenderLink.title}</a>
-							{:else}
-								{lead.tenderLink.title}
-							{/if}
-						</p>
-					{/if}
-					</div>
-			</div>
-
-			{:else if openPanel === 'products'}
+			{#if openPanel === 'products'}
 				<LeadProductsPanel {lead} />
-			{:else if openPanel === 'card'}
+			{:else if openPanel === 'client'}
+				<div class="flex gap-2 mb-3" data-testid="lead-client-tabs">
+					<button type="button" class="px-3 py-1.5 text-xs rounded-lg {clientTab === 'card' ? 'bg-indigo-700 text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}" onclick={() => setClientTab('card')} data-testid="lead-client-tab-card">Карточка</button>
+					<button type="button" class="px-3 py-1.5 text-xs rounded-lg {clientTab === 'passport' ? 'bg-indigo-700 text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}" onclick={() => setClientTab('passport')} data-testid="lead-client-tab-passport">Паспорт</button>
+				</div>
+				{#if clientTab === 'card'}
 				<div class="min-w-0" data-testid="lead-card-overview-card">
 					<div class="space-y-5 min-w-0" data-testid="lead-card-overview-center">
 				<div class="space-y-2">
@@ -1205,7 +1248,21 @@
 					</div>
 				</div>
 
-			{:else if openPanel === 'activity'}
+				{:else}
+					{#if !passportHasData(lead)}
+						<div class="text-center py-12 text-gray-600 text-sm" data-testid="lead-passport-empty">
+							Паспорт пуст. Укажите ИНН, создайте лид через Лидогенератор или нажмите ✨ Обогатить.
+						</div>
+					{:else}
+						<LeadPassportPanel {lead} />
+					{/if}
+				{/if}
+			{:else if openPanel === 'work'}
+				<div class="flex gap-2 mb-3" data-testid="lead-work-tabs">
+					<button type="button" class="px-3 py-1.5 text-xs rounded-lg {workTab === 'activity' ? 'bg-indigo-700 text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}" onclick={() => setWorkTab('activity')} data-testid="lead-work-tab-activity">История</button>
+					<button type="button" class="px-3 py-1.5 text-xs rounded-lg {workTab === 'tasks' ? 'bg-indigo-700 text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}" onclick={() => setWorkTab('tasks')} data-testid="lead-work-tab-tasks">Задачи</button>
+				</div>
+				{#if workTab === 'activity'}
 				<div class="min-w-0" data-testid="lead-card-overview-activity">
 					<div class="min-w-0 flex-1" data-testid="lead-card-overview-right">
 						<LeadActivityPanel
@@ -1222,7 +1279,7 @@
 					</div>
 				</div>
 
-			{:else if openPanel === 'tasks'}
+				{:else}
 					<div class="mb-4 rounded-xl border border-gray-800 bg-gray-900/80 p-4 space-y-2" data-testid="lead-sla-protocol">
 						<div class="text-sm font-medium text-white">SLA-протокол</div>
 						<select
@@ -1332,21 +1389,35 @@
 					</div>
 
 				<!-- ── ПИСЬМА ── -->
-				{:else if openPanel === 'emails'}
+				{/if}
+			{:else if openPanel === 'emails'}
 					<div class="flex flex-col h-full gap-4">
 
 						<!-- шапка таба -->
-						<div class="flex items-center justify-between">
+						<div class="flex items-center justify-between gap-2 flex-wrap">
 							<div>
 								<h3 class="text-sm font-semibold text-white">Переписка с {lead.company}</h3>
 								{#if lead.email && lead.email !== '—'}
 									<p class="text-xs text-gray-500 mt-0.5">{lead.email}</p>
 								{/if}
 							</div>
-							<button
-								class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500 transition-colors"
-								onclick={() => openCompose(lead.email)}
-							>✏ Написать письмо</button>
+							<div class="flex items-center gap-2">
+								<button
+									type="button"
+									data-testid="lead-mailing-open"
+									class="flex items-center gap-2 px-3 py-2 rounded-xl bg-violet-700 text-sm font-semibold text-white hover:bg-violet-600 transition-colors relative"
+									onclick={() => lead && openLeadMailing(lead)}
+								>
+									🔗 Рассылка
+									{#if nurtureChainCount > 0}
+										<span class="absolute -top-1 -right-1 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-indigo-500 text-[10px] leading-[1.1rem] text-center font-bold">{nurtureChainCount}</span>
+									{/if}
+								</button>
+								<button
+									class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500 transition-colors"
+									onclick={() => openCompose(lead.email)}
+								>✏ Написать</button>
+							</div>
 						</div>
 
 						<!-- нет аккаунта -->
@@ -1578,15 +1649,6 @@
 						{/if}
 					</div>
 
-				<!-- ── ПАСПОРТ КЛИЕНТА ── -->
-				{:else if openPanel === 'passport'}
-					{#if !passportHasData(lead)}
-						<div class="text-center py-12 text-gray-600 text-sm" data-testid="lead-passport-empty">
-							Паспорт пуст. Укажите ИНН, создайте лид через Лидогенератор или нажмите ✨ Обогатить.
-						</div>
-					{:else}
-						<LeadPassportPanel {lead} />
-					{/if}
 				{/if}
 	</LeadSlideOver>
 {:else}

@@ -1,4 +1,4 @@
-"""Контракт карточки лида /leads/[id] — хаб, slide-over, industryOptions."""
+"""Контракт карточки лида /leads/[id] — хаб 5 плиток, slide-over, industryOptions."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -29,14 +29,14 @@ def test_lead_card_score_breakdown_marker():
     assert "LeadScoreAdvisoryPanel" in text
     assert 'data-testid="lead-score-advisory-panel"' in panel
     assert 'data-testid="lead-score-breakdown"' in panel
-    card_panel = text.split("openPanel === 'card'", 1)[1].split("openPanel === 'activity'", 1)[0]
-    assert "LeadScoreAdvisoryPanel" in card_panel
-    stages_panel = text.split("openPanel === 'stages'", 1)[1].split("openPanel === 'card'", 1)[0]
-    assert "Подсказка (не меняет балл" not in stages_panel
+    client = text.split("openPanel === 'client'", 1)[1].split("openPanel === 'work'", 1)[0]
+    assert "LeadScoreAdvisoryPanel" in client
+    header = text.split('data-testid="lead-card-header"', 1)[1].split("</header>", 1)[0]
+    assert "Подсказка (не меняет балл" not in header
 
 
 def test_lead_card_hub_layout():
-    """Хаб: одна шапка + плитки 2×3 / 3×2; без дубля summary-карточки."""
+    """Хаб: одна шапка + плитки; без дубля summary-карточки."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert 'data-testid="lead-card-header"' in text
     assert 'data-testid="lead-card-header-meta"' in text
@@ -53,9 +53,6 @@ def test_lead_card_hub_layout():
     assert "LeadSlideOver" in text
     assert "buildHubTilePreviews" in text
     assert "grid-cols-2 lg:grid-cols-3" in text
-    assert "xl:grid-cols-3" not in text.split('data-testid="lead-card-hub"', 1)[1].split(
-        "<LeadSlideOver", 1
-    )[0]
     hub = text.split('data-testid="lead-card-hub"', 1)[1].split("<LeadSlideOver", 1)[0]
     assert "LeadDealPathPanel" not in hub
     assert "LeadActivityPanel" not in hub
@@ -76,50 +73,38 @@ def test_lead_card_unified_header():
 
 
 def test_lead_card_toolbar_compact():
-    """Шапка: иконки + title, одна полоска."""
+    """Шапка: иконки + title, одна полоска; без ✉️/рассылки."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert 'data-testid="lead-card-toolbar"' in text
     assert "flex-nowrap" in text
     assert 'data-testid="lead-card-header"' in text
+    header = text.split('data-testid="lead-card-header"', 1)[1].split("</header>", 1)[0]
+    assert 'title="Написать"' not in header
+    assert 'data-testid="lead-mailing-open"' not in header
 
 
 def test_lead_card_panels_in_slide_over():
-    """Панели стадий/карточки/действий — внутри openPanel, не на хабе."""
+    """Клиент/работа/письма — в slide-over; этап — в шапке."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     slide = text.split("<LeadSlideOver", 1)[1].split("</LeadSlideOver>", 1)[0]
-    assert 'data-testid="lead-card-overview-stages"' in slide
     assert 'data-testid="lead-card-overview-card"' in slide
     assert 'data-testid="lead-card-overview-activity"' in slide
-    assert 'data-testid="lead-card-overview-center"' in slide
-    assert 'data-testid="lead-card-overview-right"' in slide
-    stages = slide.split('data-testid="lead-card-overview-stages"', 1)[1].split(
-        "openPanel === 'card'", 1
-    )[0]
-    center = slide.split('data-testid="lead-card-overview-center"', 1)[1].split(
-        "openPanel === 'activity'", 1
-    )[0]
-    activity = slide.split('data-testid="lead-card-overview-activity"', 1)[1].split(
-        "openPanel === 'tasks'", 1
-    )[0]
-    assert "LeadDealPathPanel" in stages
-    assert "LeadActivityPanel" not in stages
-    assert "LeadContactsPanel" in center
-    assert "LeadContactsReadonlyList" in center
-    assert "LeadBitrixExtraPanel" in center
-    assert "Суммы сделки" in center
-    assert "LeadActivityPanel" in activity
-    assert "LeadDealPathPanel" not in activity
+    assert 'data-testid="lead-client-tabs"' in slide
+    assert 'data-testid="lead-work-tabs"' in slide
+    assert "LeadContactsPanel" in slide
+    assert "LeadActivityPanel" in slide
+    assert "LeadDealPathPanel" not in slide
+    assert "openPanel === 'stages'" not in text
 
 
-def test_lead_card_stages_in_stages_panel():
-    """Этапы и путь сделки — панель stages в slide-over."""
+def test_lead_card_stages_in_header():
+    """Этапы и путь сделки — в шапке, не в slide-over."""
     text = _LEAD_CARD.read_text(encoding="utf-8")
     assert text.count('data-testid="lead-card-stages"') == 1
-    stages = text.split("openPanel === 'stages'", 1)[1].split("openPanel === 'card'", 1)[0]
-    center = text.split("openPanel === 'card'", 1)[1].split("openPanel === 'activity'", 1)[0]
-    assert 'data-testid="lead-card-stages"' in stages
-    assert 'data-testid="lead-card-stages"' not in center
-    assert "LeadDealPathPanel" in stages
+    header = text.split('data-testid="lead-card-header"', 1)[1].split("</header>", 1)[0]
+    assert 'data-testid="lead-card-stages"' in header
+    assert "LeadDealPathPanel" in header
+    assert 'data-testid="lead-card-header-deal"' in header
 
 
 def test_lead_card_deal_path_and_hints_ui():
@@ -154,23 +139,29 @@ def test_lead_card_bitrix_extra_ui_markers():
 
 
 def test_lead_hub_preview_module():
-    """Превью плиток: 7 панелей, мета стадий и задач."""
+    """Превью плиток: 5 панелей Клиент/Работа/Письма/Продукты/Агенты."""
     text = _HUB_PREVIEW.read_text(encoding="utf-8")
     assert "export const HUB_PANELS" in text
     assert "buildHubTilePreviews" in text
-    assert "'stages'" in text
-    assert "'passport'" in text
-    assert "'products'" in text
+    assert "id: 'client'" in text
+    assert "id: 'work'" in text
+    assert "id: 'emails'" in text
     assert "hubProductsPreview" in text
-    assert "dealPathTotals" in text
     assert "passportHasData" in text
-    assert len([line for line in text.splitlines() if "id:" in line and "icon:" in line]) >= 7
+    ids = [line for line in text.splitlines() if "id:" in line and "icon:" in line]
+    assert len(ids) == 5
 
 
 def test_lead_hub_tile_and_slide_over_components():
     tile = _HUB_TILE.read_text(encoding="utf-8")
     slide = _SLIDE_OVER.read_text(encoding="utf-8")
-    assert 'data-testid={testId}' in tile
+    assert "data-testid={testId}" in tile
     assert "line-clamp-2" in tile
     assert "lg:w-[68%]" in slide or "xl:w-[62%]" in slide
     assert 'data-testid="{testId}-close"' in slide
+
+
+def test_emails_panel_has_mailing():
+    text = _LEAD_CARD.read_text(encoding="utf-8")
+    emails = text.split("openPanel === 'emails'", 1)[1].split("openPanel === 'agents'", 1)[0]
+    assert 'data-testid="lead-mailing-open"' in emails

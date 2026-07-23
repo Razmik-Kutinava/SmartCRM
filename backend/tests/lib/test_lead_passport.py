@@ -11,7 +11,7 @@ _PASSPORT_LIB = _REPO / "frontend" / "src" / "lib" / "leads" / "leadPassport.js"
 
 def test_lead_card_passport_tab_replaces_checko():
     text = _LEAD_CARD.read_text(encoding="utf-8")
-    assert "'passport', 'Паспорт'" in text
+    assert 'data-testid="lead-client-tab-passport"' in text or "setClientTab('passport')" in text
     assert "LeadPassportPanel" in text
     assert "activeTab === 'checko'" not in text
     assert "'checko', 'Checko'" not in text

@@ -102,7 +102,8 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `core/test_lead_priority_tier.py` | Приоритет лида (зеркало crmStages.js) |
 | `core/test_crm_stage_badge.py` | Цвета бейджей этапов воронки (stageBadgeClass) |
 | `smoke/test_scoring_funnel_smoke.py` | Смоук балльной воронки (API + формула) |
-| `smoke/test_lead_card_page.py` | Контракт карточки: industryOptions, breakdown, обзор 2 колонки |
+| `smoke/test_lead_card_page.py` | Контракт карточки: industryOptions, breakdown, хаб 5 плиток, этап в шапке |
+| `smoke/test_lead_card_hub_v2.py` | Редизайн хаба: client/work, шапка без ✉️/рассылки |
 | `frontend/test_lead_create_ui.py` | Модалка «Новый лид»: store smoke + разметка дашборд/list |
 | `frontend/test_app_sidebar_ui.py` | Сворачиваемый сайдбар layout + иконки тулбара карточки лида |
 | `frontend/test_hub_tile_order.py` | DnD порядка плиток хаба `/leads/[id]` + `hubTileOrder.js` smoke |

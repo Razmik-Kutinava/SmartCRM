@@ -23,8 +23,8 @@
 						type="button"
 						class="w-full text-left text-xs leading-snug rounded-lg border px-3 py-2 transition-colors hover:brightness-110 {coachSeverityClass(item.severity)}"
 						data-coach-code={item.code}
-						data-coach-panel={item.panel || 'stages'}
-						onclick={() => onOpen(item.panel || 'stages')}
+						data-coach-panel={item.panel || 'header'}
+						onclick={() => onOpen(item.panel || 'header')}
 					>
 						{#if item.severity === 'critical'}
 							<span class="mr-1">●</span>

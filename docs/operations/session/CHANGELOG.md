@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-23 — Редизайн хаба карточки лида (5 плиток)
+
+По `go` («ебашь… поэтапно»). SBR: **RED** `05ec765` — `test_lead_card_hub_v2.py` 5 FAIL. **GREEN:** хаб `Клиент` (табы Карточка|Паспорт) · `Работа` (История|Задачи) · `Письма` · `Продукты` · `Агенты`; этап воронки + путь сделки в шапке; из тулбара убраны ✉️ и 🔗 (рассылка в панели Писем); миграция `hubTileOrder` со старых id. Smoke 25 PASS. Пункт в CHECKLIST_F4 / acceptance §2b3 — `[x]` после «ок».
+
 ## 2026-07-23 — DnD порядка плиток хаба на карточке лида
 
 По `go` («ебашь… го»). SBR: **RED** `40dd5f2` — smoke/pytest без `hubTileOrder.js`. **GREEN:** native HTML5 DnD плиток хаба на `/leads/[id]` (как воронка); порядок в `localStorage` (`smartcrm-lead-hub-tile-order`); логика `frontend/src/lib/leads/hubTileOrder.js`; UI — `LeadHubTile` + сетка в `+page.svelte`. Тесты: `tests/frontend/test_hub_tile_order.py` 3 PASS. Пункт в `CHECKLIST_F4.md` (без `[x]` до «ок»), acceptance §2b2.

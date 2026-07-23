@@ -6,16 +6,20 @@ export const HUB_TILE_ORDER_KEY = 'smartcrm-lead-hub-tile-order';
 export const HUB_TILE_DRAG_MIME = 'application/x-smartcrm-hub-tile-id';
 
 /** Канон порядка = HUB_PANELS в leadHubPreview.js */
-export const DEFAULT_HUB_TILE_ORDER = [
-	'stages',
-	'products',
-	'card',
-	'activity',
-	'passport',
-	'tasks',
-	'emails',
-	'agents',
-];
+export const DEFAULT_HUB_TILE_ORDER = ['client', 'work', 'emails', 'products', 'agents'];
+
+/** Старые id плиток → новые (редизайн хаба). stages убираем из хаба. */
+export function migrateHubTileId(id) {
+	const raw = String(id || '').trim();
+	if (!raw || raw === 'stages') return null;
+	const map = {
+		card: 'client',
+		passport: 'client',
+		activity: 'work',
+		tasks: 'work',
+	};
+	return map[raw] ?? raw;
+}
 
 /** @param {string[] | null | undefined} saved @param {string[]} [defaults] */
 export function normalizeHubTileOrder(saved, defaults = DEFAULT_HUB_TILE_ORDER) {
@@ -23,8 +27,9 @@ export function normalizeHubTileOrder(saved, defaults = DEFAULT_HUB_TILE_ORDER) 
 	const seen = new Set();
 	const out = [];
 	if (Array.isArray(saved)) {
-		for (const id of saved) {
-			if (typeof id !== 'string') continue;
+		for (const raw of saved) {
+			const id = migrateHubTileId(raw);
+			if (!id) continue;
 			if (def.includes(id) && !seen.has(id)) {
 				out.push(id);
 				seen.add(id);

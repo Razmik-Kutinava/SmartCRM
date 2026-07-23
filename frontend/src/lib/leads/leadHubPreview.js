@@ -1,18 +1,15 @@
 /** Превью для плиток хаба карточки лида. */
-import { dealPathTotals, dealPathNextStep } from '$lib/leads/leadDealPathUi.js';
 import { passportHasData } from '$lib/leads/leadPassport.js';
 import { hubProductsPreview } from '$lib/leads/leadProducts.js';
 import { licensePreviewText } from '$lib/leads/leadBitrixExtra.js';
 import { slaStatus } from '$lib/tasks/taskSla.js';
 
+/** 5 плиток: Клиент · Работа · Письма · Продукты · Агенты */
 export const HUB_PANELS = [
-	{ id: 'stages', icon: '📊', title: 'Стадии и документы', accent: 'indigo' },
-	{ id: 'products', icon: '📦', title: 'Продукты', accent: 'emerald' },
-	{ id: 'card', icon: '👤', title: 'Карточка клиента', accent: 'emerald' },
-	{ id: 'activity', icon: '⚡', title: 'Действия и история', accent: 'violet' },
-	{ id: 'passport', icon: '🛂', title: 'Паспорт компании', accent: 'sky' },
-	{ id: 'tasks', icon: '✓', title: 'Задачи', accent: 'amber' },
+	{ id: 'client', icon: '👤', title: 'Клиент', accent: 'emerald' },
+	{ id: 'work', icon: '⚡', title: 'Работа', accent: 'violet' },
 	{ id: 'emails', icon: '✉️', title: 'Письма', accent: 'indigo' },
+	{ id: 'products', icon: '📦', title: 'Продукты', accent: 'emerald' },
 	{ id: 'agents', icon: '🤖', title: 'Агенты', accent: 'rose' },
 ];
 
@@ -25,8 +22,6 @@ export function buildHubTilePreviews(ctx) {
 	const comms = ctx.leadComms || [];
 	const threads = ctx.leadThreads || [];
 
-	const { done, total } = dealPathTotals(lead.dealPath);
-	const next = dealPathNextStep(lead.dealPath);
 	const openTasks = tasks.filter((t) => t.status !== 'done');
 	const overdue = openTasks.filter((t) => {
 		const s = slaStatus(t);
@@ -35,41 +30,36 @@ export function buildHubTilePreviews(ctx) {
 
 	const lastComm = comms[0]?.content || comms[0]?.body || '';
 	const productsHub = hubProductsPreview(lead);
+	const contactLine = [lead.contact, lead.phone !== '—' ? lead.phone : '', lead.email !== '—' ? lead.email : '']
+		.filter(Boolean)
+		.join(' · ');
+
 	const previews = {
-		stages: {
-			preview: next?.title ? `Следующий шаг: ${next.title}` : `Этап: ${lead.stage || '—'}`,
-			meta: total > 0 ? `${lead.stage || '—'} · ${done}/${total} шагов` : lead.stage || '—',
-		},
-		card: {
-			preview: [lead.contact, lead.phone !== '—' ? lead.phone : '', lead.email !== '—' ? lead.email : '']
-				.filter(Boolean)
-				.join(' · ') || 'Контакты и реквизиты',
+		client: {
+			preview: contactLine || (passportHasData(lead) ? 'Паспорт заполнен' : 'Карточка и паспорт'),
 			meta: [
 				lead.inn ? `ИНН ${lead.inn}` : '',
 				Array.isArray(lead.contacts) && lead.contacts.length ? `${lead.contacts.length} контакт(ов)` : '',
 				licensePreviewText(lead),
-			].filter(Boolean).join(' · ') || (lead.website !== '—' ? lead.website : ''),
+				passportHasData(lead) ? 'паспорт ✓' : 'паспорт пуст',
+			]
+				.filter(Boolean)
+				.join(' · ') || (lead.website !== '—' ? lead.website : ''),
+		},
+		work: {
+			preview: openTasks[0]?.title || lastComm?.slice?.(0, 120) || 'История и задачи',
+			meta: [
+				openTasks.length ? `${openTasks.length} задач` : 'нет задач',
+				overdue ? `${overdue} срочно` : '',
+				comms.length ? `${comms.length} в ленте` : '',
+			]
+				.filter(Boolean)
+				.join(' · '),
 		},
 		products: productsHub,
-		activity: {
-			preview: lastComm ? String(lastComm).slice(0, 120) : 'Касания, комментарии, лента',
-			meta: comms.length ? `${comms.length} записей в ленте` : 'Добавить касание',
-		},
-		passport: {
-			preview: passportHasData(lead)
-				? (lead.checko?.company?.okved_name || lead.industry || 'Данные Checko')
-				: 'ИНН + ✨ Обогатить для паспорта',
-			meta: lead.inn ? `ИНН ${lead.inn}` : 'Паспорт пуст',
-		},
-		tasks: {
-			preview: openTasks[0]?.title || 'Задачи и SLA по лиду',
-			meta: openTasks.length
-				? `${openTasks.length} открыто${overdue ? ` · ${overdue} срочно` : ''}`
-				: 'Нет открытых задач',
-		},
 		emails: {
-			preview: threads[0]?.subject || (lead.email !== '—' ? lead.email : 'Переписка с клиентом'),
-			meta: threads.length ? `${threads.length} тредов` : 'Написать письмо',
+			preview: threads[0]?.subject || (lead.email !== '—' ? lead.email : 'Переписка и рассылка'),
+			meta: threads.length ? `${threads.length} тредов` : 'Написать / цепочки',
 		},
 		agents: {
 			preview: 'Маркетолог, аналитик, стратег, экономист',
