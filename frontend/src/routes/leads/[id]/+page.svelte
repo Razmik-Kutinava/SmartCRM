@@ -582,6 +582,7 @@
 		{ key: 'analyst',    label: 'Аналитик',   desc: 'Пересчитает скоринг и даст рекомендации', icon: '📊' },
 		{ key: 'strategist', label: 'Стратег',    desc: 'Предложит следующий шаг по сделке', icon: '🧠' },
 		{ key: 'economist',  label: 'Экономист',  desc: 'Рассчитает ROI и обоснует бюджет', icon: '💰' },
+		{ key: 'tech_specialist', label: 'Тех. спец', desc: 'Стек, интеграции, тех. разбор карточки', icon: '⚙️' },
 	];
 
 	function startAgent(agentKey) {

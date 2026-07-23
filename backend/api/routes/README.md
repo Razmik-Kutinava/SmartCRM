@@ -83,7 +83,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `leads/` | `/api/leads` | См. пакет выше |
 | `tasks.py` | `/api/tasks` | Задачи: CRUD, `task_intent`, `GET /intent-catalog`, фильтры |
 | `email.py` | `/api/email` | IMAP/SMTP; аккаунты: `GET /accounts`, `POST /accounts/connect`, `DELETE /accounts/{id}?purge=` (отключить ящик + очистка); sync/backfill: `GET /sync/status`, `POST /sync`, `GET /backfill/status`, `POST /backfill/start`, `POST /backfill/pause`, `POST /backfill/run-once`; nurture: `/nurture/preview-llm`, `/start-llm` (`chain_type`: new/cross/upsell), `/start`, `/start-segment`, `/process-due`, `GET /nurture/chains`; кампании: `/campaign/preview-llm`, `/test-send`, `send_now` (фильтр `industries[]`) |
-| `agent_email.py` | `/api/agent-email` | AI-черновики писем по лиду |
+| `agent_email.py` | `/api/agents/email` | AI по лиду: marketer/analyst/strategist/economist/**tech_specialist**; intents, history, feedback |
 | `search.py` | `/api/search` | Поиск компаний; `enrich-lead` + кэш enrich; `auto-ingest-rag` |
 | `rag.py` | `/api/rag` | Загрузка документов, `ingest-dialogue`, **`/vendor-crawl`** (краулинг вендоров → tec) |
 | `news.py` | `/api/news` | Новости по компании |

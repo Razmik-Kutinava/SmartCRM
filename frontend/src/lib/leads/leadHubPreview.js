@@ -62,7 +62,7 @@ export function buildHubTilePreviews(ctx) {
 			meta: threads.length ? `${threads.length} тредов` : 'Написать / цепочки',
 		},
 		agents: {
-			preview: 'Маркетолог, аналитик, стратег, экономист',
+			preview: 'Маркетолог, аналитик, стратег, экономист, тех. спец',
 			meta: (ctx.agentHistory || []).length
 				? `${ctx.agentHistory.length} запусков в истории`
 				: 'Запуск по кнопке',

@@ -104,6 +104,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `smoke/test_scoring_funnel_smoke.py` | Смоук балльной воронки (API + формула) |
 | `smoke/test_lead_card_page.py` | Контракт карточки: industryOptions, breakdown, хаб 5 плиток, этап в шапке |
 | `smoke/test_lead_card_hub_v2.py` | Редизайн хаба: client/work, шапка без ✉️/рассылки |
+| `smoke/test_lead_card_tech_agent.py` | Тех. спец на карточке: AGENT_LIST + email/run |
 | `frontend/test_lead_create_ui.py` | Модалка «Новый лид»: store smoke + разметка дашборд/list |
 | `frontend/test_app_sidebar_ui.py` | Сворачиваемый сайдбар layout + иконки тулбара карточки лида |
 | `frontend/test_hub_tile_order.py` | DnD порядка плиток хаба `/leads/[id]` + `hubTileOrder.js` smoke |

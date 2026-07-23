@@ -1,37 +1,24 @@
 ﻿# todo — микро-чеклист текущей фичи
 
-> **Живой чеклист шага.** Макро-веха — пункт [`Чеклист: Фаза 4 — Тюнинг и MVP`](../phase4/CHECKLIST_F4.md).  
-> SBR: PHASE 1 заполняет этот файл → PHASE 3 очищает или архивирует.  
-> Канон: [`spec-build-review.mdc`](../../../.cursor/rules/workflow/spec-build-review.mdc)
+> **Живой чеклист шага.** Макро-веха — пункт [`Чеклист: Фаза 4 — Тюнинг и MVP`](../phase4/CHECKLIST_F4.md).
 
 ---
 
 ## Заказ (дословно)
 
 > «ебашь делай · так же записывай что делаем и чек листе тоже пробуй если надо»
->
-> Контекст: в лидах в агентах не хватает технического агента.
 
-**Как понял:** добавить `tech_specialist` в плитку «Агенты» на `/leads/[id]` + ветку в `POST /api/agents/email/run`.
-
----
-
-## Текущая задача
-
-| Поле | Значение |
-|------|----------|
-| **Пункт чеклиста** | Ф4 · Лиды · тех. спец на карточке (Агенты) |
-| **Started** | 2026-07-23 |
+**Как понял:** tech_specialist на карточке лида в «Агенты».
 
 ---
 
 ## Чеклист
 
-- [ ] **RED:** smoke — AGENT_LIST + agent_email без tech_specialist → FAIL
-- [ ] **GREEN:** AGENT_LIST + ветка `tech_specialist` → `analyze_lead`; превью хаба
-- [ ] Доки: CHECKLIST_F4, tests/README
+- [x] **RED:** `test_lead_card_tech_agent.py` 3 FAIL (`ac73088`)
+- [x] **GREEN:** AGENT_LIST + `agent_email` ветка + превью хаба
+- [x] Доки: CHECKLIST_F4, F4_LEADS_ACCEPTANCE §2b4, README
 
-## Архив (последние закрытые)
+## Архив
 
-- 2026-07-23 · Редизайн хаба карточки — RED `05ec765`, GREEN `dc18dca`
-- 2026-07-23 · DnD порядка плиток хаба
+- 2026-07-23 · tech_specialist на карточке — RED `ac73088`, GREEN+REVIEW
+- 2026-07-23 · Редизайн хаба карточки

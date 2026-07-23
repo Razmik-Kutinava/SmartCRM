@@ -332,6 +332,9 @@ async def run_agent_on_lead(body: RunAgentBody, db: AsyncSession = Depends(get_d
         elif body.agent == "economist":
             from agents.economist import _analyze as fn
             result = await fn("analyze_lead", slots)
+        elif body.agent == "tech_specialist":
+            from agents.tech_specialist import _analyze as fn
+            result = await fn("analyze_lead", slots)
         else:
             raise HTTPException(400, f"Агент {body.agent!r} не поддерживается")
     except ImportError as e:
