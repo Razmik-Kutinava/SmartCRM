@@ -10,7 +10,7 @@
 |-----|-----|
 | Идея, проблема, решение, принципы | [VISION.md](VISION.md) |
 | Фазы 1→4 и статусы | [ROADMAP.md](ROADMAP.md) |
-| DoD фаз, рабочие чеклисты | [operations/phase4/CHECKLIST.md](../operations/phase4/CHECKLIST.md) (активная Ф4) |
+| DoD фаз, рабочие чеклисты | [Чеклист: Фаза 4 — Тюнинг и MVP](../operations/phase4/CHECKLIST.md) (активная Ф4) |
 | Сквозные бизнес-процессы | [BUSINESS_LOGIC.md](BUSINESS_LOGIC.md) |
 | Главные функции | [FUNCTIONAL.md](FUNCTIONAL.md) |
 | Хвосты, spot-check | [BACKLOG.md](../operations/session/BACKLOG.md) |
@@ -29,7 +29,7 @@
 
 ## Roadmap по фазам
 
-Вынесен в [ROADMAP.md](ROADMAP.md) (фазы 1→4, статусы). Done-критерии закрытых фаз — чеклисты [`phase1`](../operations/phase1/CHECKLIST.md)–[`phase3`](../operations/phase3/CHECKLIST.md).
+Вынесен в [ROADMAP.md](ROADMAP.md) (фазы 1→4, статусы). Done-критерии закрытых фаз — [`Чеклист: Фаза 1`](../operations/phase1/CHECKLIST.md)–[`Чеклист: Фаза 3`](../operations/phase3/CHECKLIST.md).
 
 ---
 

@@ -1,6 +1,6 @@
 # todo — микро-чеклист текущей фичи
 
-> **Живой чеклист шага.** Макро-веха — пункт чеклиста фазы (`../phase4/CHECKLIST.md`).  
+> **Живой чеклист шага.** Макро-веха — пункт [`Чеклист: Фаза 4 — Тюнинг и MVP`](../phase4/CHECKLIST.md).  
 > SBR: PHASE 1 заполняет этот файл → PHASE 3 очищает или архивирует.  
 > Канон: [`spec-build-review.mdc`](../../../.cursor/rules/workflow/spec-build-review.mdc)
 

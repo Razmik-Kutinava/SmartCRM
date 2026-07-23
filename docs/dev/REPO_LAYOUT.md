@@ -52,10 +52,10 @@ docs/
 ├── operations/         # Операционка — см. operations/README.md
 │   ├── session/        # HANDOFF, SESSION_STATE, CHANGELOG, ISSUES, BACKLOG
 │   ├── baselines/      # COVERAGE, CI, RULES_MATRIX
-│   ├── phase1/         # CHECKLIST.md + acceptance Ф1 по доменам
-│   ├── phase2/         # CHECKLIST.md + acceptance Ф2
-│   ├── phase3/         # CHECKLIST.md + acceptance Ф3
-│   ├── phase4/         # CHECKLIST.md + acceptance Ф4 — текущая фаза
+│   ├── phase1/         # Чеклист: Фаза 1 — MVP + acceptance
+│   ├── phase2/         # Чеклист: Фаза 2 — Автоматизация + acceptance
+│   ├── phase3/         # Чеклист: Фаза 3 — Автономия + acceptance
+│   ├── phase4/         # Чеклист: Фаза 4 — Тюнинг и MVP — текущая фаза
 │   └── debt/           # Долг layout кода
 ├── dev/                # CONTRIBUTING, REPO_LAYOUT, LAYOUT_AUDIT, code-review
 ├── archive/            # Устаревшие доки

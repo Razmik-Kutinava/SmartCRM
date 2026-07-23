@@ -55,7 +55,7 @@
 |------|----------|
 | `last_done:` | `HANDOFF.md` |
 | `current_state:` | `SESSION_STATE`, `ISSUES` 🔴 |
-| `next_step:` | `HANDOFF`, чеклист активной фазы (`operations/phase4/CHECKLIST.md`) — один шаг |
+| `next_step:` | `HANDOFF`, чеклист активной фазы ([`Чеклист: Фаза 4 — Тюнинг и MVP`](../phase4/CHECKLIST.md)) — один шаг |
 
 ## Финиш шага
 

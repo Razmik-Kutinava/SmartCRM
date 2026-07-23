@@ -10,7 +10,7 @@
 | 2 | [`session/SESSION_STATE.md`](session/SESSION_STATE.md) | Журнал шагов (pre-commit) |
 | 3 | [`session/ISSUES.md`](session/ISSUES.md) | Баги 🔴 |
 | 4 | [`session/BACKLOG.md`](session/BACKLOG.md) | Хвосты по пунктам чеклистов |
-| 5 | [`phase4/CHECKLIST.md`](phase4/CHECKLIST.md) | Чеклист активной фазы (Ф4) |
+| 5 | [`Чеклист: Фаза 4 — Тюнинг и MVP`](phase4/CHECKLIST.md) | Чеклист активной фазы (Ф4) |
 
 ## Дерево
 
@@ -19,10 +19,10 @@ docs/operations/
 ├── README.md                 ← вы здесь
 ├── session/                  # Живые журналы (обновляются каждый шаг)
 ├── baselines/                # Coverage, CI, матрица правил
-├── phase1/                   # CHECKLIST.md + acceptance Фазы 1 (закрыта)
-├── phase2/                   # CHECKLIST.md + acceptance Фазы 2 (закрыта)
-├── phase3/                   # CHECKLIST.md + acceptance Фазы 3 (закрыта)
-├── phase4/                   # CHECKLIST.md + тюнинг / доводка до MVP — текущая
+├── phase1/                   # Чеклист: Фаза 1 — MVP + acceptance (закрыта)
+├── phase2/                   # Чеклист: Фаза 2 — Автоматизация + acceptance (закрыта)
+├── phase3/                   # Чеклист: Фаза 3 — Автономия + acceptance (закрыта)
+├── phase4/                   # Чеклист: Фаза 4 — Тюнинг и MVP — текущая
 └── debt/                     # Отложенная уборка (не блокер)
 ```
 
