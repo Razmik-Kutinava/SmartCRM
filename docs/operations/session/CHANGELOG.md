@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-23 — DnD порядка плиток хаба на карточке лида
+
+По `go` («ебашь… го»). SBR: **RED** `40dd5f2` — smoke/pytest без `hubTileOrder.js`. **GREEN:** native HTML5 DnD плиток хаба на `/leads/[id]` (как воронка); порядок в `localStorage` (`smartcrm-lead-hub-tile-order`); логика `frontend/src/lib/leads/hubTileOrder.js`; UI — `LeadHubTile` + сетка в `+page.svelte`. Тесты: `tests/frontend/test_hub_tile_order.py` 3 PASS. Пункт в `CHECKLIST_F4.md` (без `[x]` до «ок»), acceptance §2b2.
+
 ## 2026-07-23 — Токен-оптимизация workflow (зона×3, короткие логи, широкий заказ)
 
 По `go` («ебашь все · код не трогай · дай замеры»). В правила: (2) широкий заказ → 2–3 варианта до узкого `go`; (3) `Регрессия_счёт N/3` в шапке SESSION_STATE — каждый GREEN зона, на 3/3 ещё `all`/p1+p6, сброс; (4) в отчёте команда+PASS/FAIL+2–3 строки, не весь pytest; (5) читать пункт+спеку, не весь чеклист/PRD. Правки: `task-workflow`, `dev-gates`, SBR GREEN, RULES_MATRIX R15, шапка SESSION_STATE. Код продукта не трогали. Замеры — в отчёте шага (always-байты до/после + оценка экономии на SBR-цикле).

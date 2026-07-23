@@ -55,6 +55,14 @@
 	import LeadProductsPanel from '../../../components/LeadProductsPanel.svelte';
 	import { passportHasData } from '$lib/leads/leadPassport.js';
 	import { buildHubTilePreviews, PANEL_TITLES } from '$lib/leads/leadHubPreview.js';
+	import {
+		moveHubTile,
+		parseHubTileDragId,
+		readHubTileOrder,
+		setHubTileDragData,
+		sortTilesByOrder,
+		writeHubTileOrder,
+	} from '$lib/leads/hubTileOrder.js';
 	import { buildLeadCardCoachItems, hubTileAlertsFromCoach } from '$lib/leads/leadCardCoach.js';
 	import LeadCardCoachBanner from '../../../components/LeadCardCoachBanner.svelte';
 
@@ -493,16 +501,53 @@
 	}
 
 	let openPanel = $state(null);
+	let hubTileOrder = $state(readHubTileOrder());
+	let draggingHubId = $state(/** @type {string | null} */ (null));
+	let hubDropTarget = $state(/** @type {string | null} */ (null));
 
 	const hubTiles = $derived(
-		buildHubTilePreviews({
-			lead,
-			leadTasksList,
-			leadComms,
-			leadThreads,
-			agentHistory,
-		})
+		sortTilesByOrder(
+			buildHubTilePreviews({
+				lead,
+				leadTasksList,
+				leadComms,
+				leadThreads,
+				agentHistory,
+			}),
+			hubTileOrder
+		)
 	);
+
+	function onHubTileDragStart(e, tileId) {
+		draggingHubId = tileId;
+		hubDropTarget = null;
+		setHubTileDragData(e, tileId);
+	}
+
+	function onHubTileDragEnd() {
+		draggingHubId = null;
+		hubDropTarget = null;
+	}
+
+	function onHubTileDragOver(e, tileId) {
+		e.preventDefault();
+		if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+		if (draggingHubId && draggingHubId !== tileId) hubDropTarget = tileId;
+	}
+
+	function onHubTileDragLeave(tileId) {
+		if (hubDropTarget === tileId) hubDropTarget = null;
+	}
+
+	function onHubTileDrop(e, targetId) {
+		e.preventDefault();
+		const fromId = parseHubTileDragId(e.dataTransfer) || draggingHubId;
+		draggingHubId = null;
+		hubDropTarget = null;
+		if (!fromId || fromId === targetId) return;
+		hubTileOrder = moveHubTile(hubTileOrder, fromId, targetId);
+		writeHubTileOrder(hubTileOrder);
+	}
 
 	const cardCoachItems = $derived(buildLeadCardCoachItems(lead, leadTasksList));
 	const hubTileAlerts = $derived(hubTileAlertsFromCoach(cardCoachItems));
@@ -914,6 +959,9 @@
 		<div class="flex-1 overflow-y-auto p-4 sm:p-6" data-testid="lead-card-hub">
 			<div class="w-full" data-testid="lead-card-overview">
 				<LeadCardCoachBanner items={cardCoachItems} onOpen={openHubPanel} />
+				<p class="text-[11px] text-gray-500 mb-3" data-testid="lead-hub-dnd-hint">
+					Перетащите плитку, чтобы изменить порядок · сохраняется в этом браузере
+				</p>
 				<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" data-testid="lead-card-hub-grid">
 					{#each hubTiles as tile (tile.id)}
 						<LeadHubTile
@@ -924,6 +972,14 @@
 							accent={tile.accent}
 							alert={Boolean(hubTileAlerts[tile.id])}
 							testId="lead-hub-tile-{tile.id}"
+							draggable={true}
+							dragging={draggingHubId === tile.id}
+							dropTarget={hubDropTarget === tile.id}
+							ondragstart={(e) => onHubTileDragStart(e, tile.id)}
+							ondragend={onHubTileDragEnd}
+							ondragover={(e) => onHubTileDragOver(e, tile.id)}
+							ondragleave={() => onHubTileDragLeave(tile.id)}
+							ondrop={(e) => onHubTileDrop(e, tile.id)}
 							onclick={() => openHubPanel(tile.id)}
 						/>
 					{/each}

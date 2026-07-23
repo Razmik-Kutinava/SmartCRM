@@ -8,6 +8,14 @@
 		alert = false,
 		onclick = () => {},
 		testId = 'lead-hub-tile',
+		draggable = false,
+		dragging = false,
+		dropTarget = false,
+		ondragstart = undefined,
+		ondragend = undefined,
+		ondragover = undefined,
+		ondragleave = undefined,
+		ondrop = undefined,
 	} = $props();
 
 	const accents = {
@@ -19,13 +27,38 @@
 		rose: 'border-rose-800/50 hover:border-rose-500/60 bg-rose-950/15 hover:bg-rose-950/30 shadow-rose-950/20',
 	};
 	const accentClass = $derived(accents[accent] || accents.indigo);
+
+	let suppressClick = $state(false);
+
+	function handleClick() {
+		if (suppressClick) {
+			suppressClick = false;
+			return;
+		}
+		onclick();
+	}
+
+	function handleDragStart(e) {
+		suppressClick = true;
+		ondragstart?.(e);
+	}
+
+	function handleDragEnd(e) {
+		ondragend?.(e);
+	}
 </script>
 
 <button
 	type="button"
-	class="group text-left rounded-2xl border p-4 sm:p-5 min-h-[7.5rem] sm:min-h-[8.5rem] flex flex-col justify-between transition-all duration-200 shadow-lg hover:scale-[1.02] active:scale-[0.99] {accentClass}"
+	class="group text-left rounded-2xl border p-4 sm:p-5 min-h-[7.5rem] sm:min-h-[8.5rem] flex flex-col justify-between transition-all duration-200 shadow-lg hover:scale-[1.02] active:scale-[0.99] {accentClass} {draggable ? 'cursor-grab active:cursor-grabbing' : ''} {dragging ? 'opacity-40 scale-[0.98]' : ''} {dropTarget ? 'ring-2 ring-indigo-500/80' : ''}"
 	data-testid={testId}
-	onclick={onclick}
+	{draggable}
+	onclick={handleClick}
+	ondragstart={draggable ? handleDragStart : undefined}
+	ondragend={draggable ? handleDragEnd : undefined}
+	ondragover={draggable ? ondragover : undefined}
+	ondragleave={draggable ? ondragleave : undefined}
+	ondrop={draggable ? ondrop : undefined}
 >
 	<div class="flex items-start justify-between gap-2">
 		<span class="text-2xl sm:text-3xl" aria-hidden="true">{icon}</span>

@@ -6,7 +6,9 @@
 
 **Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
-2026-07-23 | Действие: SBR RED — DnD порядка плиток хаба: `tests/frontend/test_hub_tile_order.py` FAIL (нет hubTileOrder.js + маркеров DnD) | Коммит: `этот` | Статус: in_progress
+2026-07-23 | Действие: SBR GREEN+REVIEW — DnD порядка плиток хаба `/leads/[id]`: `hubTileOrder.js` (normalize/move/localStorage), DnD в `LeadHubTile`+карточке; тесты 3/3 PASS; регрессия frontend-only (счётчик не трогали) | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
+
+2026-07-23 | Действие: SBR RED — DnD порядка плиток хаба: `tests/frontend/test_hub_tile_order.py` FAIL (нет hubTileOrder.js + маркеров DnD) | Коммит: `40dd5f2` | Статус: in_progress
 
 2026-07-23 | Действие: токен-оптимизация workflow — широкий заказ→2–3 варианта; короткие pytest-логи в отчёте; лёгкое чтение доков (пункт+спека); Регрессия_счёт зона×3→all в SESSION_STATE/dev-gates/SBR; RULES_MATRIX R15 | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
 
