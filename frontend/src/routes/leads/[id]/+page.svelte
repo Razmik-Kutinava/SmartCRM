@@ -39,15 +39,12 @@
 	import { openLeadMailing } from '$lib/leads/leadMailingUi.js';
 	import { openLeadIndustryModal } from '$lib/leads/leadIndustryUi.js';
 	import { apiFetch } from '$lib/api.js';
-	import { fetchLeadIndustries, isIndustryEmpty } from '$lib/leads/industryCatalog.js';
+	import { fetchLeadIndustries } from '$lib/leads/industryCatalog.js';
 	import { assignLeadSlaProtocol, fetchSlaProtocols } from '$lib/leads/slaProtocol.js';
 	import { confirmAndDeleteLead } from '$lib/leads/leadDelete.js';
 	import LeadStageHints from '../../../components/LeadStageHints.svelte';
 	import LeadDealPathPanel from '../../../components/LeadDealPathPanel.svelte';
-	import LeadContactsPanel from '../../../components/LeadContactsPanel.svelte';
-	import LeadContactsReadonlyList from '../../../components/LeadContactsReadonlyList.svelte';
-	import LeadBitrixExtraPanel from '../../../components/LeadBitrixExtraPanel.svelte';
-	import LeadScoreAdvisoryPanel from '../../../components/LeadScoreAdvisoryPanel.svelte';
+	import LeadClientCardForm from '../../../components/LeadClientCardForm.svelte';
 	import LeadActivityPanel from '../../../components/LeadActivityPanel.svelte';
 	import LeadPassportPanel from '../../../components/LeadPassportPanel.svelte';
 	import LeadSlideOver from '../../../components/LeadSlideOver.svelte';
@@ -1097,157 +1094,23 @@
 					<button type="button" class="px-3 py-1.5 text-xs rounded-lg {clientTab === 'passport' ? 'bg-indigo-700 text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}" onclick={() => setClientTab('passport')} data-testid="lead-client-tab-passport">Паспорт</button>
 				</div>
 				{#if clientTab === 'card'}
-				<div class="min-w-0" data-testid="lead-card-overview-card">
-					<div class="space-y-5 min-w-0" data-testid="lead-card-overview-center">
-				<div class="space-y-2">
-					<div class="space-y-2 text-sm">
-						<label class="block">
-							<span class="text-gray-500 text-xs">Компания</span>
-							<input bind:value={detailsDraft.company} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<LeadBitrixExtraPanel {lead} />
-						<LeadContactsReadonlyList contacts={lead.contacts || []} />
-						<LeadContactsPanel
-							contacts={contactsDraft}
-							onChange={(c) => { contactsDraft = c; }}
-							onSave={saveContactsFields}
-							saving={contactsSaving}
-						/>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Сайт</span>
-							<input bind:value={detailsDraft.website} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Скоринг (0–100)</span>
-							<input bind:value={detailsDraft.scoreStr} inputmode="numeric" class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Отрасль</span>
-							<div class="flex gap-1 mt-0.5">
-								<input
-									list="lead-card-industries"
-									bind:value={detailsDraft.industry}
-									class="flex-1 bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm"
-									data-testid="lead-card-industry"
-								/>
-								{#if lead.industryVerified}
-									<span class="shrink-0 px-1.5 py-1 text-[10px] rounded bg-emerald-900/50 text-emerald-300" title="Проверено">✓</span>
-								{/if}
-							</div>
-							<datalist id="lead-card-industries">
-								{#each industryOptions as opt (opt)}<option value={opt}></option>{/each}
-							</datalist>
-							{#if isIndustryEmpty(lead.industry)}
-								<button type="button" class="mt-1 text-[11px] text-amber-400 hover:underline" onclick={openIndustryModal} data-testid="lead-industry-prompt">Указать отрасль</button>
-							{/if}
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Город</span>
-							<input bind:value={detailsDraft.city} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Сотрудники</span>
-							<input bind:value={detailsDraft.employees} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Бюджет (текст)</span>
-							<input bind:value={detailsDraft.budget} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Следующий звонок</span>
-							<input bind:value={detailsDraft.nextCall} class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm" />
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Уже купили (по строке)</span>
-							<textarea
-								bind:value={detailsDraft.productsOwnedText}
-								rows="2"
-								class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm resize-y"
-								placeholder="MaxPatrol VM&#10;OpManager"
-								data-testid="lead-card-products-owned"
-							></textarea>
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Описание / заметка</span>
-							<textarea bind:value={detailsDraft.description} rows="3" class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm resize-y"></textarea>
-						</label>
-						{#if lead.email && lead.email !== '—'}
-							<button
-								type="button"
-								class="text-xs text-indigo-400 hover:text-indigo-300 text-left"
-								onclick={() => { openHubPanel('emails'); openCompose(lead.email); }}
-							>✉ Написать на {lead.email}</button>
-						{/if}
-						<button
-							type="button"
-							disabled={detailsSaving}
-							onclick={saveDetailsFields}
-							class="w-full py-1.5 rounded-lg text-xs font-medium bg-indigo-900/60 hover:bg-indigo-800/70 text-indigo-100 disabled:opacity-50"
-						>
-							{detailsSaving ? 'Сохранение…' : 'Сохранить карточку'}
-						</button>
-					</div>
-				</div>
-
-				<div class="space-y-2">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Суммы сделки</div>
-					{#if formatDealAmountLabel(lead)}
-						<div class="text-sm text-gray-300" data-testid="lead-card-deal-amount-panel">
-							<span class="text-gray-500 text-xs">Сумма (Битрикс)</span>
-							<div class="text-amber-200/90 font-medium mt-0.5">{formatDealAmountLabel(lead)}</div>
-						</div>
-					{/if}
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium pt-1">В рублях (менеджер)</div>
-					<div class="space-y-2 text-sm">
-						<label class="block">
-							<span class="text-gray-500 text-xs">Сумма договора / сделки</span>
-							<input
-								type="text"
-								inputmode="decimal"
-								bind:value={moneyAmountStr}
-								class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm"
-								placeholder="например 1250000"
-							/>
-						</label>
-						<label class="block">
-							<span class="text-gray-500 text-xs">Оплачено</span>
-							<input
-								type="text"
-								inputmode="decimal"
-								bind:value={moneyPaidStr}
-								class="mt-0.5 w-full bg-gray-950 border border-gray-700 rounded px-2 py-1.5 text-gray-200 text-sm"
-								placeholder="0"
-							/>
-						</label>
-						<button
-							type="button"
-							disabled={moneySaving}
-							onclick={saveMoneyFields}
-							class="w-full py-1.5 rounded-lg text-xs font-medium bg-emerald-900/60 hover:bg-emerald-800/70 text-emerald-100 disabled:opacity-50"
-						>
-							{moneySaving ? 'Сохранение…' : 'Сохранить суммы'}
-						</button>
-					</div>
-				</div>
-
-				<div class="space-y-2">
-					<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Системные поля</div>
-					<div class="space-y-2 text-sm">
-						{#each [
-							['Источник', lead.source],
-							['Ответственный', lead.responsible],
-							['Создан', lead.created],
-						] as [label, value]}
-							<div class="flex justify-between gap-2">
-								<span class="text-gray-500 shrink-0">{label}</span>
-								<span class="text-gray-300 text-right">{value}</span>
-							</div>
-						{/each}
-					</div>
-					<LeadScoreAdvisoryPanel scoreAdvisory={lead.scoreAdvisory} />
-				</div>
-					</div>
-				</div>
+				<LeadClientCardForm
+					{lead}
+					bind:detailsDraft
+					bind:contactsDraft
+					bind:moneyAmountStr
+					bind:moneyPaidStr
+					{industryOptions}
+					{detailsSaving}
+					{contactsSaving}
+					{moneySaving}
+					onSaveDetails={saveDetailsFields}
+					onSaveContacts={saveContactsFields}
+					onSaveMoney={saveMoneyFields}
+					onOpenIndustry={openIndustryModal}
+					onWriteEmail={(email) => { openHubPanel('emails'); openCompose(email); }}
+					onOpenAgents={() => openHubPanel('agents')}
+				/>
 
 				{:else}
 					{#if !passportHasData(lead)}
