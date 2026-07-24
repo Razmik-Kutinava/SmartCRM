@@ -64,19 +64,19 @@ export function buildLeadCardCoachItems(lead, tasks = []) {
 		push(h.severity || 'warn', h.code || 'hint', h.message, coachPanelForCode(h.code));
 	}
 
-	const openTasks = (tasks || []).filter((t) => t.status !== 'done');
+	const openTasks = (tasks || []).filter((t) => t && t.status !== 'done');
 	for (const t of openTasks) {
 		const badge = taskDueBadge(t);
 		const sla = slaStatus(t);
-		if (badge.label === 'Просрочено' || sla.label === 'Просрочено') {
+		if (badge?.label === 'Просрочено' || sla?.label === 'Просрочено') {
 			const due = t.due && t.due !== '—' ? ` · ${t.due}` : '';
-			push('critical', `task_${t.id}`, `Просрочено: ${t.title}${due}`, 'work');
+			push('critical', `task_${t.id}`, `Просрочено: ${t.title || 'задача'}${due}`, 'work');
 		}
 	}
 	for (const t of openTasks) {
 		const badge = taskDueBadge(t);
-		if (badge.label === 'Сегодня') {
-			push('warn', `task_today_${t.id}`, `Сегодня: ${t.title}`, 'work');
+		if (badge?.label === 'Сегодня') {
+			push('warn', `task_today_${t.id}`, `Сегодня: ${t.title || 'задача'}`, 'work');
 		}
 	}
 

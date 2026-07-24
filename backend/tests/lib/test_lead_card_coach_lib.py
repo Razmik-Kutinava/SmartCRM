@@ -1,6 +1,17 @@
 """Зеркало frontend/src/lib/leads/leadCardCoach.js."""
 from __future__ import annotations
 
+from pathlib import Path
+
+_COACH_JS = (
+    Path(__file__).resolve().parents[3]
+    / "frontend"
+    / "src"
+    / "lib"
+    / "leads"
+    / "leadCardCoach.js"
+)
+
 
 def coach_panel_for_code(code: str) -> str:
     c = str(code or "")
@@ -52,3 +63,11 @@ def test_build_includes_stage_hints():
     }
     items = build_lead_card_coach_items(lead, [])
     assert any("контакт" in i["text"].lower() for i in items)
+
+
+def test_coach_js_null_safe_task_badge_label():
+    """taskDueBadge может вернуть null — без ?.label карточка падает при PATCH."""
+    text = _COACH_JS.read_text(encoding="utf-8")
+    assert "badge?.label" in text
+    assert "sla?.label" in text
+    assert "badge.label ===" not in text.replace("badge?.label", "")

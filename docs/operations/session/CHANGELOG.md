@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-24 — Fix: суфлёр карточки null.label
+
+При PATCH/создании `taskDueBadge` возвращал `null` → `Cannot read properties of null (reading 'label')` в `buildLeadCardCoachItems`. Фикс: `badge?.label` / `sla?.label`. Тест в `test_lead_card_coach_lib.py`.
+
 ## 2026-07-24 — Карточка клиента · Апрув 1 (каркас)
 
 По `go` («делай… переделать карточку… паспорт как есть»). Спека [`F4_LEADS_CARD.md`](../phase4/leads/F4_LEADS_CARD.md). **GREEN:** `LeadClientCardForm` — порядок секций компания→контакты→сайт→отрасль/ОКВЭД→сотрудники→обороты→агенты(placeholder)→системные→UF хвост; адрес/ОКВЭД read-only из Checko; доп. поля в свёртке. Паспорт не трогали. Smoke 22 PASS. Стоп до «ок» на Апрув 2 (контакты).
