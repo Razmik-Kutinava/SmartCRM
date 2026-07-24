@@ -9,6 +9,7 @@
 | **Дашборд** (обход Ф4, старт) | [`dashboard/F4_DASHBOARD_ACCEPTANCE.md`](dashboard/F4_DASHBOARD_ACCEPTANCE.md) |
 | **Интеграции CRM** (подключение внешних CRM, перед лидами) | [`platform/F4_CRM_INTEGRATIONS_ACCEPTANCE.md`](platform/F4_CRM_INTEGRATIONS_ACCEPTANCE.md) |
 | **Лиды** (обход Ф4: CRUD, карточка) | [`leads/F4_LEADS_ACCEPTANCE.md`](leads/F4_LEADS_ACCEPTANCE.md) |
+| **Лиды — направление (бриф)** | [`leads/F4_LEADS_DIRECTION.md`](leads/F4_LEADS_DIRECTION.md) |
 | **Лиды — «Мой день»** (очередь приоритета) | [`leads/F4_DAY_PRIORITY.md`](leads/F4_DAY_PRIORITY.md) |
 | **Email** (тюнинг после Ф2–Ф3) | [`email/F4_EMAIL_TUNING.md`](email/F4_EMAIL_TUNING.md) · UI: [`email/F4_EMAIL_YANDEX_UI.md`](email/F4_EMAIL_YANDEX_UI.md) |
 | Vendor crawl → RAG `tech_specialist` | [`rag/F4_VENDOR_CRAWL_TUNING.md`](rag/F4_VENDOR_CRAWL_TUNING.md) |

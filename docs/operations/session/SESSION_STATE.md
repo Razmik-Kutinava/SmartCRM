@@ -6,7 +6,9 @@
 
 **Регрессия_счёт:** `2/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
-2026-07-23 | Действие: SBR GREEN+REVIEW — tech_specialist на карточке лида: AGENT_LIST + POST /api/agents/email/run + превью хаба; smoke 15 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3
+2026-07-24 | Действие: бриф направления Лиды — `F4_LEADS_DIRECTION.md` + пункты CHECKLIST_F4 (автоскор, Мой день, шапка, путь сделки, 🔍); BACKLOG рабочий пул/умный импорт; код не трогали | Коммит: `этот` | Хвост A: нет | Хвост B: BACKLOG пул+импорт | Хвост C: нет | Статус: done
+
+2026-07-23 | Действие: SBR GREEN+REVIEW — tech_specialist на карточке лида: AGENT_LIST + POST /api/agents/email/run + превью хаба; smoke 15 PASS | Коммит: `81d9c89` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3
 
 2026-07-23 | Действие: SBR RED — tech_specialist на карточке лида: `test_lead_card_tech_agent.py` 3 FAIL | Коммит: `ac73088` | Статус: in_progress
 

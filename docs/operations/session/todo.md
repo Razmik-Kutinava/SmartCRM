@@ -1,24 +1,26 @@
 ﻿# todo — микро-чеклист текущей фичи
 
-> **Живой чеклист шага.** Макро-веха — пункт [`Чеклист: Фаза 4 — Тюнинг и MVP`](../phase4/CHECKLIST_F4.md).
+> **Живой чеклист шага.** Макро-веха — [`Чеклист: Фаза 4`](../phase4/CHECKLIST_F4.md).  
+> Бриф направления: [`F4_LEADS_DIRECTION.md`](../phase4/leads/F4_LEADS_DIRECTION.md).
 
 ---
 
 ## Заказ (дословно)
 
-> «ебашь делай · так же записывай что делаем и чек листе тоже пробуй если надо»
+> «давай делай» — записать бриф из чата (скор/Мой день/шапка/путь/🔍), чтобы следующий агент в новом окне не тупил.
 
-**Как понял:** tech_specialist на карточке лида в «Агенты».
+**Как понял:** docs/ops only — канон решений в `F4_LEADS_DIRECTION.md` + пункты в CHECKLIST_F4; код не трогать в этом шаге.
 
 ---
 
 ## Чеклист
 
-- [x] **RED:** `test_lead_card_tech_agent.py` 3 FAIL (`ac73088`)
-- [x] **GREEN:** AGENT_LIST + `agent_email` ветка + превью хаба
-- [x] Доки: CHECKLIST_F4, F4_LEADS_ACCEPTANCE §2b4, README
+- [x] Создать `F4_LEADS_DIRECTION.md` (решения + очередь работ)
+- [x] Пункты в CHECKLIST_F4 + строка acceptance §2b5
+- [x] HANDOFF / SESSION_STATE / CHANGELOG
 
 ## Архив
 
-- 2026-07-23 · tech_specialist на карточке — RED `ac73088`, GREEN+REVIEW
+- 2026-07-24 · бриф направления Лиды (docs)
+- 2026-07-23 · tech_specialist на карточке
 - 2026-07-23 · Редизайн хаба карточки
