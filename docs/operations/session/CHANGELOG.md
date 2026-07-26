@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-26 — Fix: нет скролла на карточке лида
+
+Шапка (этап + путь сделки + советы) ~450px при viewport ~666px оставляла hub ~90px — скролл формально был, но незаметен. Обёртка `lead-card-scroll` с `overflow-y-auto` на всю карточку. Smoke `test_lead_card_scroll.py` + card hub smokes 18 PASS.
+
 ## 2026-07-26 — Fix: «Лид не найден» при живом GET /api/leads/:id
 
 Кэш списка в localStorage ~4.8MB (лимит ~5MB): `cacheWrite` молча падал, карточка после `fetchLeadById` снова читала устаревший кэш → «Лид не найден», хотя API 200. Фикс: in-memory зеркало кэша + применение ответа API напрямую в `/leads/[id]`; сравнение id через `Number()`. Smoke `test_lead_card_cache_resilience.py`.

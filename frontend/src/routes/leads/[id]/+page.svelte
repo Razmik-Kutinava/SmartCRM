@@ -883,6 +883,8 @@
 	</div>
 {:else if lead}
 	{@const _tier = leadPriorityTier(lead.score, getCachedCrmConfig())}
+	<!-- Один скролл на всю карточку: шапка (этап+путь) иначе съедает высоту (~450px) и плитки остаются в ~90px без заметного скролла. -->
+	<div class="flex-1 min-h-0 overflow-y-auto flex flex-col" data-testid="lead-card-scroll">
 	<!-- Единая шапка: назад + название + мета + действия; этап и путь сделки -->
 	<header
 		class="flex flex-col gap-3 px-4 sm:px-6 pt-[18px] pb-3 border-b border-gray-800 bg-gray-900 shrink-0 overflow-visible"
@@ -1054,8 +1056,8 @@
 		<div class="px-6 py-1.5 text-xs border-b border-gray-800 bg-gray-900/80 text-gray-400" data-testid="lead-card-enrich-msg">{enrichMsg}</div>
 	{/if}
 
-	<div class="flex-1 flex flex-col overflow-hidden min-h-0" data-testid="lead-card-main">
-		<div class="flex-1 overflow-y-auto p-4 sm:p-6" data-testid="lead-card-hub">
+	<div class="flex flex-col" data-testid="lead-card-main">
+		<div class="p-4 sm:p-6" data-testid="lead-card-hub">
 			<div class="w-full" data-testid="lead-card-overview">
 				<LeadCardCoachBanner items={cardCoachItems} onOpen={openHubPanel} />
 				<p class="text-[11px] text-gray-500 mb-3" data-testid="lead-hub-dnd-hint">
@@ -1085,6 +1087,7 @@
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 
 	<LeadSlideOver
