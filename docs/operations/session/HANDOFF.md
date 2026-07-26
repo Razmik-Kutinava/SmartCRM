@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4] | Задача:[fix tenderApi createLeadFromTender] | Статус: ✅ done | 👤 F5 на /tenders`
+
+**2026-07-26:** Orphan-тело без `export async function createLeadFromTender` в `tenderApi.js` → Vite parse fail / preload Internal Error. Восстановлен экспорт. Коммит: `этот`. **👤:** F5 — `/tenders` и создание лида из тендера должны работать.
+
+---
+
 `Спринт:[Ф4] | Задача:[fix company is not defined в email placeholder] | Статус: ✅ done | 👤 F5 / перезапуск vite`
 
 **2026-07-26:** Svelte ломался на `placeholder="…{{company}}…"`. Исправлено в email и nurture. Коммит: `этот`. **👤:** обновить страницу — ошибка уйдёт. Tenders 500 — отдельно.
