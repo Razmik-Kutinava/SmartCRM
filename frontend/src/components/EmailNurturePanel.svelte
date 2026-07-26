@@ -256,8 +256,8 @@
 			</div>
 
 			{#if themeMode === 'manual'}
-				<input bind:value={subjectTemplate} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2 text-sm text-white" placeholder="Тема: {{company}} — {{product}} · {{n}}" />
-				<textarea bind:value={bodyTemplate} class="w-full h-24 rounded-xl bg-gray-950 border border-gray-800 px-4 py-2 text-sm text-white resize-none" placeholder="Текст… {{greeting}} {{company}} {{product}} {{sender}}"></textarea>
+				<input bind:value={subjectTemplate} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2 text-sm text-white" placeholder={'Тема: {{company}} — {{product}} · {{n}}'} />
+				<textarea bind:value={bodyTemplate} class="w-full h-24 rounded-xl bg-gray-950 border border-gray-800 px-4 py-2 text-sm text-white resize-none" placeholder={'Текст… {{greeting}} {{company}} {{product}} {{sender}}'}></textarea>
 			{/if}
 
 			<div class="grid grid-cols-2 gap-2">

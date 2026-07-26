@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4] | Задача:[fix company is not defined в email placeholder] | Статус: ✅ done | 👤 F5 / перезапуск vite`
+
+**2026-07-26:** Svelte ломался на `placeholder="…{{company}}…"`. Исправлено в email и nurture. Коммит: `этот`. **👤:** обновить страницу — ошибка уйдёт. Tenders 500 — отдельно.
+
+---
+
 `Спринт:[Ф4 Лиды] | Задача:[fix coach null.label на карточке] | Статус: ✅ done | 👤 обновить страницу; дальше go на Апрув 2`
 
 **2026-07-24:** `leadCardCoach.js` — безопасный доступ к `taskDueBadge`/`slaStatus` (null без due). Коммит: `этот`. **👤:** F5 на `/leads/{id}` — карточка не должна падать при сохранении; затем `go` на Апрув 2 (контакты).

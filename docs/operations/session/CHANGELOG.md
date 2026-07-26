@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-26 — Fix: company is not defined (Svelte placeholder)
+
+В `email/+page.svelte` и `EmailNurturePanel` placeholder с `{{company}}` парсился как переменная. Обёрнуто в `{'…{{company}}…'}`. Smoke `test_svelte_placeholder_mustache.py`.
+
 ## 2026-07-24 — Fix: суфлёр карточки null.label
 
 При PATCH/создании `taskDueBadge` возвращал `null` → `Cannot read properties of null (reading 'label')` в `buildLeadCardCoachItems`. Фикс: `badge?.label` / `sla?.label`. Тест в `test_lead_card_coach_lib.py`.

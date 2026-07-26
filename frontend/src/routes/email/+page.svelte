@@ -552,7 +552,7 @@
                         </select>
                         <input bind:value={campaignName}    class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white" placeholder="Название кампании" />
                         <input bind:value={campaignSubject} class="w-full rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white" placeholder="Тема письма" />
-                        <textarea bind:value={campaignBody} class="w-full h-28 rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white resize-none" placeholder="Текст письма... {{company}} {{contact}}"></textarea>
+                        <textarea bind:value={campaignBody} class="w-full h-28 rounded-xl bg-gray-950 border border-gray-800 px-4 py-2.5 text-sm text-white resize-none" placeholder={'Текст письма... {{company}} {{contact}}'}></textarea>
                         <label class="flex items-center gap-2 text-sm text-gray-300">
                             <input type="checkbox" bind:checked={campaignUseSegment} data-testid="campaign-use-segment" class="accent-indigo-500" />
                             Рассылка по сегменту (stage + min score)
