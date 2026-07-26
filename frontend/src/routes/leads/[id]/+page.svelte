@@ -98,25 +98,33 @@
 			const id = String(get(page).params.id ?? '');
 			if (id && id !== lastFetchedOkId) {
 				try {
-					await fetchLeadById(id);
+					// Источник правды — ответ API; кэш только ускоряет повторный заход.
+					// При квоте localStorage (~5MB на большой базе) запись молчит —
+					// без прямого применения ответа карточка показывала «Лид не найден».
+					const fetched = await fetchLeadById(id);
+					lead = enrichLeadForCard(fetched);
+					notFound = false;
 					lastFetchedOkId = id;
+					syncApprovalsDraft();
 				} catch {
 					/* офлайн / демо — остаётся кэш; id не фиксируем, чтобы повторить fetch при следующем заходе */
+					sync();
 				}
+			} else {
+				sync();
 			}
-			sync();
 			syncMoneyInputsFromLead();
 			syncDetailsDraftFromLead();
 			syncContactsDraftFromLead();
 			await loadLeadActivity();
 			await loadLeadTasks();
 		}
-		pullLead();
 		loadIndustryOptions();
 		loadSlaCatalog();
 		const panel = get(page).url.searchParams.get('panel');
 		const tab = get(page).url.searchParams.get('tab');
 		if (panel) openHubPanel(panel, tab || undefined);
+		// Только subscribe: он сразу вызывает pullLead (без двойного fetch).
 		return page.subscribe(pullLead);
 	});
 

@@ -28,22 +28,38 @@ function apiBase() {
 const API = () => `${apiBase()}/api/leads`;
 
 // ── Кэш ────────────────────────────────────────────────────────────
+/** In-memory зеркало: при переполнении localStorage (~5MB) запись молчит, память остаётся. */
+let memoryCache = null;
 
 function cacheWrite(leads) {
 	if (!browser || !Array.isArray(leads)) return;
-	try { localStorage.setItem(CACHE_KEY, JSON.stringify(leads)); } catch { /* квота */ }
+	memoryCache = leads;
+	try {
+		localStorage.setItem(CACHE_KEY, JSON.stringify(leads));
+	} catch {
+		/* квота — карточка всё равно видит memoryCache */
+	}
 }
 
 function cacheRead() {
 	if (!browser) return null;
+	if (Array.isArray(memoryCache) && memoryCache.length > 0) return memoryCache;
 	try {
 		const raw = localStorage.getItem(CACHE_KEY);
 		if (raw) {
 			const parsed = JSON.parse(raw);
-			if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+			if (Array.isArray(parsed) && parsed.length > 0) {
+				memoryCache = parsed;
+				return parsed;
+			}
 		}
 	} catch { /* пусто */ }
 	return null;
+}
+
+/** Сброс in-memory кэша (тесты / смена вкладки не трогаем). */
+export function clearLeadsMemoryCache() {
+	memoryCache = null;
 }
 
 // ── Демо-данные (показываются, пока API недоступен) ────────────────
@@ -125,8 +141,9 @@ export async function fetchLeadById(id) {
 	}
 	const lead = await r.json();
 	const all = readLeadsCache();
-	const idx = all.findIndex((l) => l.id === n);
-	const next = idx >= 0 ? all.map((l) => (l.id === n ? lead : l)) : [...all, lead];
+	const sameId = (l) => Number(l?.id) === n;
+	const idx = all.findIndex(sameId);
+	const next = idx >= 0 ? all.map((l) => (sameId(l) ? lead : l)) : [...all, lead];
 	cacheWrite(next);
 	return lead;
 }
@@ -410,5 +427,5 @@ export function getLeadById(id) {
 	const n = Number(id);
 	if (Number.isNaN(n)) return null;
 	const list = readLeadsCache();
-	return list.find((l) => l.id === n) ?? null;
+	return list.find((l) => Number(l?.id) === n) ?? null;
 }

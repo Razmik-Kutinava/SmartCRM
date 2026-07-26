@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-26 — Fix: «Лид не найден» при живом GET /api/leads/:id
+
+Кэш списка в localStorage ~4.8MB (лимит ~5MB): `cacheWrite` молча падал, карточка после `fetchLeadById` снова читала устаревший кэш → «Лид не найден», хотя API 200. Фикс: in-memory зеркало кэша + применение ответа API напрямую в `/leads/[id]`; сравнение id через `Number()`. Smoke `test_lead_card_cache_resilience.py`.
+
 ## 2026-07-26 — Fix: tenderApi.js createLeadFromTender (Vite parse)
 
 У `createLeadFromTender` пропал заголовок `export async function` — orphan-тело после `enrichTenderCustomer` ломало Vite import-analysis → 500/Internal Error на preload `/tenders` и HMR. Восстановлен экспорт; smoke `test_tender_api_exports.py`.

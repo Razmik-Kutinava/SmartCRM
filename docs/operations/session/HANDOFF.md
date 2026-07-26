@@ -1,5 +1,11 @@
 # HANDOFF
 
+`Спринт:[Ф4 Лиды] | Задача:[fix Лид не найден на карточке] | Статус: ✅ done | 👤 F5 на /leads/3262`
+
+**2026-07-26:** Карточка брала лид только из localStorage-кэша (~5MB на 3k лидов — запись молчала). Теперь: ответ `GET /api/leads/:id` сразу в UI + memoryCache. Коммит: `этот`. **👤:** F5 на карточке свежесохранённого лида — контент должен открыться.
+
+---
+
 `Спринт:[Ф4] | Задача:[fix tenderApi createLeadFromTender] | Статус: ✅ done | 👤 F5 на /tenders`
 
 **2026-07-26:** Orphan-тело без `export async function createLeadFromTender` в `tenderApi.js` → Vite parse fail / preload Internal Error. Восстановлен экспорт. Коммит: `этот`. **👤:** F5 — `/tenders` и создание лида из тендера должны работать.
