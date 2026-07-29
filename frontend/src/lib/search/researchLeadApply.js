@@ -42,14 +42,19 @@ export function researchResultToLeadPatch(result, lead = null) {
 	patch.checkoJson = mergeWebResearchIntoChecko(existing, web);
 
 	const summary = String(web.summary || result.answer || '').trim();
-	if (summary) {
+	const bad =
+		!summary ||
+		/^ошибка синтеза/i.test(summary) ||
+		/^ошибка исследования/i.test(summary) ||
+		/connection attempts failed/i.test(summary);
+	if (summary && !bad) {
 		const marker = '--- Исследование (веб) ---';
 		const prev = String(lead?.description || patch.description || '').trim();
-		const short = summary.length > 900 ? `${summary.slice(0, 900)}…` : summary;
+		const short = summary.length > 1200 ? `${summary.slice(0, 1200)}…` : summary;
 		const block = `${marker}\n${short}`;
-		if (!prev.includes(marker)) {
-			patch.description = prev ? `${prev}\n\n${block}` : block;
-		}
+		// Перезаписываем старый блок исследования / текст ошибки
+		const cleaned = prev.replace(/\n*--- Исследование \(веб\) ---[\s\S]*$/m, '').trim();
+		patch.description = cleaned ? `${cleaned}\n\n${block}` : block;
 	}
 	return patch;
 }

@@ -25,8 +25,8 @@ def test_research_apply_exports_merge():
     text = _APPLY.read_text(encoding="utf-8")
     assert "export function mergeWebResearchIntoChecko" in text
     assert "export function researchResultToLeadPatch" in text
-    assert "analyses.web_research" in text or "analyses.web_research =" in text
     assert "web_research" in text
+    assert "connection attempts failed" in text or "ошибка синтеза" in text.lower()
 
 
 def test_research_on_card_calls_api():

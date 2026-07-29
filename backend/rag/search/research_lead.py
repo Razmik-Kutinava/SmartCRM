@@ -6,6 +6,7 @@ import logging
 import re
 from datetime import datetime, timezone
 from typing import Any
+from urllib.parse import urlparse
 
 from .config import load_config
 from .merge import _deduplicate, _format_results
@@ -15,6 +16,15 @@ from .providers import _search_brave, _search_serper, _search_tavily
 logger = logging.getLogger(__name__)
 
 _WEB_PROVIDERS = frozenset({"serper", "brave", "tavily"})
+
+# Явный мусор (ложные срабатывания на «Russland» / Netherlands и т.п.)
+_JUNK_HOST_PARTS = (
+    "netherlandsworldwide",
+    "netherlandsandyou",
+    "wikipedia.org/wiki/netherlands",
+    "embassy",
+    "consulate",
+)
 
 
 def _compact_hits(hits: list[dict], limit: int = 20) -> list[dict[str, Any]]:
@@ -32,8 +42,93 @@ def _compact_hits(hits: list[dict], limit: int = 20) -> list[dict[str, Any]]:
     return out
 
 
+def _company_tokens(company: str) -> list[str]:
+    raw = re.findall(r"[a-zA-Zа-яА-ЯёЁ0-9]{3,}", (company or "").lower().replace("ё", "е"))
+    stop = {"ооо", "ао", "зао", "пао", "ltd", "llc", "inc", "gmbh", "the", "and"}
+    return [t for t in raw if t not in stop][:6]
+
+
+def _hit_text(h: dict) -> str:
+    return " ".join(
+        [
+            str(h.get("title") or ""),
+            str(h.get("snippet") or h.get("description") or ""),
+            str(h.get("url") or h.get("link") or ""),
+        ]
+    ).lower().replace("ё", "е")
+
+
+def filter_relevant_hits(company: str, hits: list[dict], *, limit: int = 18) -> list[dict]:
+    """Убирает явный мусор и поднимает хиты с токенами компании."""
+    tokens = _company_tokens(company)
+    scored: list[tuple[int, dict]] = []
+    for h in hits:
+        text = _hit_text(h)
+        url = (h.get("url") or h.get("link") or "").lower()
+        host = urlparse(url).netloc if url else ""
+        if any(j in url or j in host for j in _JUNK_HOST_PARTS):
+            continue
+        # tavily_answer без URL — оставляем только если есть токен компании
+        if not url and h.get("source") == "tavily_answer":
+            if tokens and not any(t in text for t in tokens):
+                continue
+        score = 0
+        for t in tokens:
+            if t in text:
+                score += 3
+        if any(x in host for x in ("official", "company", ".ru", ".com")):
+            score += 1
+        if h.get("date"):
+            score += 1
+        scored.append((score, h))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    # Сначала релевантные (score>0), потом остальные без мусора
+    relevant = [h for s, h in scored if s > 0]
+    other = [h for s, h in scored if s == 0]
+    out = (relevant + other)[:limit]
+    return out if out else hits[:limit]
+
+
+def fallback_summary_from_hits(company: str, hits: list[dict], today: str) -> str:
+    """Выжимка без LLM: факты из сниппетов поиска."""
+    lines = [
+        f"Исследование «{company}» на {today} (без LLM — собрано из поиска).",
+        "",
+        "Кратко по источникам:",
+    ]
+    if not hits:
+        lines.append("• Веб-результаты пусты. Проверьте ключи Serper/Brave/Tavily.")
+        return "\n".join(lines)
+
+    for i, h in enumerate(hits[:10], 1):
+        title = (h.get("title") or "без названия").strip()
+        snip = (h.get("snippet") or h.get("description") or "").strip().replace("\n", " ")
+        if len(snip) > 180:
+            snip = snip[:180] + "…"
+        url = (h.get("url") or h.get("link") or "").strip()
+        date = (h.get("date") or "").strip()
+        bit = f"[{i}] {title}"
+        if date:
+            bit += f" ({date})"
+        lines.append(bit)
+        if snip:
+            lines.append(f"    {snip}")
+        if url:
+            lines.append(f"    {url}")
+    lines.append("")
+    lines.append("Проверить дальше: официальный сайт, ИНН/Checko, свежие новости по бренду.")
+    return "\n".join(lines)
+
+
+def is_error_summary(text: str) -> bool:
+    s = (text or "").strip().lower()
+    if not s:
+        return True
+    return s.startswith("ошибка синтеза") or s.startswith("ошибка исследования") or "connection attempts failed" in s
+
+
 async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[str, Any]:
-    """Поиск через Serper/Brave/Tavily + синтез с акцентом на актуальность."""
+    """Поиск через Serper/Brave/Tavily + синтез (LLM или fallback)."""
     from core.llm import chat
 
     today = datetime.now(timezone.utc).date().isoformat()
@@ -65,7 +160,8 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
                     "content": (
                         f"Ты — B2B-аналитик. Задача:\n{task}\nКонтекст: {context}\n\n"
                         f"Сгенерируй 3–5 поисковых запросов (Google). "
-                        f"Хотя бы один запрос с годом {year} или словами «новости {year}».\n"
+                        f"Хотя бы один запрос с годом {year} или словами «новости {year}». "
+                        f"Запросы должны содержать название компании, не общие слова вроде Netherlands.\n"
                         'Ответь строго JSON-массивом: ["запрос 1", ...]'
                     ),
                 }
@@ -73,15 +169,15 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
             temperature=0.3,
             max_tokens=300,
         )
-        queries = [q for q in re.findall(r'"([^"]{5,})"', raw_queries)][:5]
+        queries = [q for q in re.findall(r'"([^"]{5,})"', raw_queries or "")][:5]
     except Exception as e:
         logger.warning("research_lead генерация запросов: %s", e)
 
     if not queries:
         queries = [
-            f"{company} официальный сайт",
-            f"{company} новости {year}",
-            f"{company} чем занимается отрасль",
+            f'"{company}" официальный сайт',
+            f'"{company}" новости {year}',
+            f'"{company}" чем занимается производство',
         ]
 
     cfg = load_config()
@@ -115,9 +211,10 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
             if prov not in providers_used:
                 providers_used.append(prov)
 
-    deduped = _deduplicate(all_raw)[:18]
+    deduped = filter_relevant_hits(company, _deduplicate(all_raw), limit=18)
     formatted = _format_results(deduped)
 
+    llm_used = False
     answer = ""
     try:
         answer = await chat(
@@ -131,6 +228,7 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
                         f"Источники из веба:\n{formatted}\n\n"
                         "На русском: (1) краткий вывод на сейчас; (2) факты со ссылками [N]; "
                         "(3) что устарело/неясно; (4) интересные находки; (5) что проверить дальше. "
+                        "Игнорируй нерелевантные источники (посольства, другие страны без связи с компанией). "
                         "Не выдумывай факты без источников."
                     ),
                 }
@@ -138,9 +236,17 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
             temperature=0.35,
             max_tokens=1400,
         )
+        answer = (answer or "").strip()
+        if answer and not is_error_summary(answer):
+            llm_used = True
+        else:
+            answer = ""
     except Exception as e:
         logger.warning("research_lead синтез: %s", e)
-        answer = f"Ошибка синтеза выжимки: {e}"
+        answer = ""
+
+    if not answer:
+        answer = fallback_summary_from_hits(company, deduped, today)
 
     return {
         "answer": answer,
@@ -153,6 +259,8 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
             "queries": queries,
             "raw_results": _compact_hits(deduped),
             "providers_used": providers_used,
+            "llm": llm_used,
+            "fallback": not llm_used,
         },
     }
 
@@ -172,6 +280,8 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
         enrich_coro, narrative_coro, return_exceptions=True
     )
 
+    today = datetime.now(timezone.utc).date().isoformat()
+
     if isinstance(enrich_res, Exception):
         logger.warning("research_lead enrich: %s", enrich_res)
         enrich_res = {
@@ -182,18 +292,20 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
         }
     if isinstance(narr_res, Exception):
         logger.warning("research_lead narrative: %s", narr_res)
-        today = datetime.now(timezone.utc).date().isoformat()
+        fb = fallback_summary_from_hits(company, [], today)
         narr_res = {
-            "answer": f"Ошибка исследования: {narr_res}",
+            "answer": fb,
             "queries_used": [],
             "raw_results": [],
             "providers_used": [],
             "web_research": {
                 "at": today,
-                "summary": f"Ошибка исследования: {narr_res}",
+                "summary": fb,
                 "queries": [],
                 "raw_results": [],
                 "providers_used": [],
+                "llm": False,
+                "fallback": True,
             },
         }
 
@@ -216,10 +328,12 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
         "queries_used": narr_res.get("queries_used") or [],
         "web_research": narr_res.get("web_research")
         or {
-            "at": datetime.now(timezone.utc).date().isoformat(),
+            "at": today,
             "summary": narr_res.get("answer") or "",
             "queries": [],
             "raw_results": [],
             "providers_used": [],
+            "llm": False,
+            "fallback": True,
         },
     }

@@ -14,6 +14,10 @@
 
 У `createLeadFromTender` пропал заголовок `export async function` — orphan-тело после `enrichTenderCustomer` ломало Vite import-analysis → 500/Internal Error на preload `/tenders` и HMR. Восстановлен экспорт; smoke `test_tender_api_exports.py`.
 
+## 2026-07-29 — Fix: исследование без падения LLM
+
+По `go` («исправь исследование»). Если Groq/Ollama недоступны — выжимка из сниппетов поиска (не текст ошибки в карточке); фильтр junk URL (embassy/Netherlands); description перезаписывает старый блок исследования. Тесты 8 PASS.
+
 ## 2026-07-29 — 🔍 Исследовать на карточке лида
 
 По `go` («кнопка исследовать… три поисковика… сырой JSON»). **GREEN:** `POST /api/search/research-lead` — параллельно enrich полей + narrative через Brave/Tavily/Serper с акцентом на актуальную дату; выжимка и сырые hits → `checkoJson.analyses.web_research`; кнопка 🔍 на `/leads/[id]`; свёртка «Исследование (веб)» в карточке. Тесты 5 PASS.
