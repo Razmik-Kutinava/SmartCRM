@@ -6,13 +6,13 @@
 
 **Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-07-29 | Действие: 🔍 Исследовать — `POST /api/search/research-lead` (Brave/Tavily/Serper + enrich + выжимка в `checkoJson.analyses.web_research`); кнопка на карточке; smoke 5 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (search+frontend)
+
 2026-07-26 | Действие: fix скролл карточки лида — шапка ~450px съедала экран, hub ~90px; единый `lead-card-scroll` overflow-y-auto; smoke 18 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (frontend layout)
 
 2026-07-26 | Действие: fix «Лид не найден» на карточке — API OK, кэш localStorage ~5MB молча падал; memoryCache + lead из ответа fetchLeadById напрямую; smoke 2 PASS; crm_leads 109 PASS / 1 pre-existing ISSUES; p1+p6 PASS → сброс счётчика | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3
 
 2026-07-26 | Действие: fix tenderApi.js — восстановлен `export async function createLeadFromTender` (orphan-тело ломало Vite/preload /tenders) | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (frontend + smoke; p1 PASS)
-
-2026-07-29 | Действие: 🔍 Исследовать — `POST /api/search/research-lead` (Brave/Tavily/Serper + enrich + выжимка в `checkoJson.analyses.web_research`); кнопка на карточке; smoke 5 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (search+frontend)
 
 2026-07-26 | Действие: fix Svelte `{{company}}` в placeholder (email + nurture) — ReferenceError company is not defined | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: tenders preload 500 (не в этом шаге) | Статус: done | Регрессия_счёт: 2/3
 
