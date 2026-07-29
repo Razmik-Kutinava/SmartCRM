@@ -35,6 +35,8 @@
 
 ---
 
-## Вне этого файла (не путать)
+### Исследовать (🔍)
 
-Шапка лида, автоскор, Мой день, путь сделки 0/0 — [`F4_LEADS_DIRECTION.md`](F4_LEADS_DIRECTION.md), отдельные пункты CHECKLIST_F4.
+Кнопка на шапке `/leads/[id]`: веб-поиск через **Brave + Tavily + Serper** → заполнение пустых полей лида + выжимка.  
+Сырьё и полный текст → `checkoJson.analyses.web_research` (как «сырой JSON», не в комментарии).  
+Отдельно от ✨ Обогатить (Checko + пустые поля). API: `POST /api/search/research-lead`.

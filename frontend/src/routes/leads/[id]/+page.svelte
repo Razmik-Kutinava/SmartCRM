@@ -36,6 +36,7 @@
 	import { slaStatus } from '$lib/tasks/taskSla.js';
 	import { formatRuDate } from '$lib/leads/leadActivityTasks.js';
 	import { enrichLeadOnCard } from '$lib/search/enrichLeadOnCard.js';
+	import { researchLeadOnCard } from '$lib/search/researchLeadOnCard.js';
 	import { openLeadMailing } from '$lib/leads/leadMailingUi.js';
 	import { openLeadIndustryModal } from '$lib/leads/leadIndustryUi.js';
 	import { apiFetch } from '$lib/api.js';
@@ -168,6 +169,7 @@
 	let detailsSaving = $state(false);
 	let contactsSaving = $state(false);
 	let enrichRunning = $state(false);
+	let researchRunning = $state(false);
 	let enrichMsg = $state('');
 	let exportPdfLoading = $state(false);
 	let bitrixPushLoading = $state(false);
@@ -198,7 +200,7 @@
 	}
 
 	async function runLeadEnrich(force = false) {
-		if (!lead || enrichRunning) return;
+		if (!lead || enrichRunning || researchRunning) return;
 		enrichRunning = true;
 		enrichMsg = '';
 		try {
@@ -220,6 +222,33 @@
 			enrichMsg = e?.message || String(e);
 		} finally {
 			enrichRunning = false;
+		}
+	}
+
+	async function runLeadResearch(force = true) {
+		if (!lead || researchRunning || enrichRunning) return;
+		researchRunning = true;
+		enrichMsg = '';
+		try {
+			const { data, patch, applied } = await researchLeadOnCard(lead, { force });
+			await fetchLeadById(lead.id);
+			const fresh = await fetchLeads();
+			writeLeadsCache(fresh);
+			sync();
+			syncDetailsDraftFromLead();
+			syncContactsDraftFromLead();
+			const providers = (data.providers_used || []).join(', ') || '—';
+			if (applied) {
+				enrichMsg = `Исследование готово (${providers}). Выжимка в карточке и сыром JSON.`;
+			} else {
+				enrichMsg = `Исследование без новых полей (${providers})`;
+			}
+			openHubPanel('client');
+			setClientTab('card');
+		} catch (e) {
+			enrichMsg = e?.message || String(e);
+		} finally {
+			researchRunning = false;
 		}
 	}
 
@@ -932,15 +961,17 @@
 				title={enrichRunning ? 'Обогащение…' : 'Обогатить'}
 				aria-label="Обогатить"
 				class="w-9 h-9 flex items-center justify-center bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-sm text-white rounded-lg transition-colors"
-				disabled={enrichRunning || !lead?.company}
+				disabled={enrichRunning || researchRunning || !lead?.company}
 				onclick={() => runLeadEnrich(false)}
-			>{enrichRunning ? '⟳' : '✨'}</button>
-			<button
+			>{enrichRunning ? '⟳' : '✨'}</button>			<button
 				type="button"
-				title="Исследовать"
+				data-testid="lead-card-research"
+				title={researchRunning ? 'Исследование…' : 'Исследовать в интернете (Brave / Tavily / Serper)'}
 				aria-label="Исследовать"
-				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-sm text-gray-300 rounded-lg transition-colors"
-			>🔍</button>
+				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg transition-colors"
+				disabled={researchRunning || enrichRunning || !lead?.company}
+				onclick={() => runLeadResearch(true)}
+			>{researchRunning ? '⟳' : '🔍'}</button>
 			<button
 				type="button"
 				data-testid="lead-export-pdf"

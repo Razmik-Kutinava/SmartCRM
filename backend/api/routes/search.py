@@ -8,6 +8,7 @@ DELETE /api/search/cache           — очистить кэш
 POST   /api/search/ask             — свободный запрос с LLM-ответом
 POST   /api/search/prospect        — проспектинг по ICP
 POST   /api/search/enrich-lead     — обогащение лида
+POST   /api/search/research-lead   — исследование (3 поисковика + выжимка + raw JSON)
 POST   /api/search/find-for-rag    — поиск контента для RAG
 POST   /api/search/auto-ingest-rag — авто-чанки при relevance > порога
 POST   /api/search/agent-task      — задача агенту через поиск (ReAct)
@@ -52,6 +53,11 @@ class ProspectBody(BaseModel):
 class EnrichLeadBody(BaseModel):
     lead: dict[str, Any]
     force: bool = False  # игнорировать кэш enrich (company+ИНН+industry)
+
+
+class ResearchLeadBody(BaseModel):
+    lead: dict[str, Any]
+    force: bool = False
 
 
 class FindForRagBody(BaseModel):
@@ -196,6 +202,26 @@ async def enrich_lead_search(body: EnrichLeadBody):
         return {"ok": True, **result}
     except Exception as e:
         logger.error("Search /enrich-lead ошибка: %s", e)
+        raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
+
+
+@router.post("/research-lead")
+async def research_lead_search(body: ResearchLeadBody):
+    """Исследование: Brave/Tavily/Serper + выжимка; поля + web_research для сырого JSON."""
+    if not body.lead:
+        raise HTTPException(400, detail="lead обязателен")
+    company = (body.lead.get("company") or body.lead.get("name") or "").strip()
+    if not company:
+        raise HTTPException(400, detail="lead.company обязателен")
+    try:
+        from rag.search import research_lead
+
+        result = await research_lead(lead=body.lead, force=body.force)
+        return {"ok": True, **result}
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e)) from e
+    except Exception as e:
+        logger.error("Search /research-lead ошибка: %s", e)
         raise HTTPException(500, detail="Внутренняя ошибка. Подробности в логах.")
 
 

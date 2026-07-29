@@ -12,6 +12,8 @@
 
 2026-07-26 | Действие: fix tenderApi.js — восстановлен `export async function createLeadFromTender` (orphan-тело ломало Vite/preload /tenders) | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (frontend + smoke; p1 PASS)
 
+2026-07-29 | Действие: 🔍 Исследовать — `POST /api/search/research-lead` (Brave/Tavily/Serper + enrich + выжимка в `checkoJson.analyses.web_research`); кнопка на карточке; smoke 5 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (search+frontend)
+
 2026-07-26 | Действие: fix Svelte `{{company}}` в placeholder (email + nurture) — ReferenceError company is not defined | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: tenders preload 500 (не в этом шаге) | Статус: done | Регрессия_счёт: 2/3
 
 2026-07-24 | Действие: fix coach — `taskDueBadge` null → `badge?.label` (карточка не падала при PATCH/создании) | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (frontend one-liner)

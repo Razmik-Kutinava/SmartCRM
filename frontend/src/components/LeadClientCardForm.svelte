@@ -30,9 +30,11 @@
 	} = $props();
 
 	let extraOpen = $state(false);
+	let researchOpen = $state(false);
 
 	const addressLine = $derived(cardAddressFromLead(lead));
 	const okvedLine = $derived(cardOkvedLineFromLead(lead));
+	const webResearch = $derived(lead?.checko?.analyses?.web_research || null);
 </script>
 
 <div class="min-w-0" data-testid="lead-card-overview-card">
@@ -297,8 +299,48 @@
 			<LeadScoreAdvisoryPanel scoreAdvisory={lead?.scoreAdvisory} />
 		</section>
 
-		<!-- Хвост: сырые UF / лицензия -->
+		<!-- Хвост: исследование + сырые UF -->
 		<section class="space-y-2" data-testid="lead-card-section-bitrix-uf">
+			{#if webResearch}
+				<div class="space-y-2" data-testid="lead-card-web-research">
+					<button
+						type="button"
+						class="flex w-full items-center justify-between gap-2 text-left text-xs text-gray-500 uppercase tracking-wide font-medium hover:text-gray-300"
+						onclick={() => {
+							researchOpen = !researchOpen;
+						}}
+						aria-expanded={researchOpen}
+						data-testid="lead-card-web-research-toggle"
+					>
+						<span>Исследование (веб){webResearch.at ? ` · ${webResearch.at}` : ''}</span>
+						<span class="text-[10px] normal-case text-gray-600">{researchOpen ? '▲' : '▼'}</span>
+					</button>
+					{#if researchOpen}
+						<div class="rounded-lg border border-gray-800 bg-gray-950/40 p-3 space-y-2 text-sm">
+							{#if webResearch.summary}
+								<pre class="whitespace-pre-wrap text-gray-300 text-xs leading-relaxed max-h-64 overflow-y-auto" data-testid="lead-card-web-research-summary">{webResearch.summary}</pre>
+							{/if}
+							{#if webResearch.providers_used?.length}
+								<p class="text-[11px] text-gray-600">Провайдеры: {webResearch.providers_used.join(', ')}</p>
+							{/if}
+							{#if webResearch.raw_results?.length}
+								<details class="text-[11px] text-gray-500">
+									<summary class="cursor-pointer hover:text-gray-300">Сырые результаты ({webResearch.raw_results.length})</summary>
+									<ul class="mt-2 space-y-2 max-h-48 overflow-y-auto font-mono">
+										{#each webResearch.raw_results as hit, i (hit.url || i)}
+											<li class="border-t border-gray-800/80 pt-2">
+												<div class="text-violet-300/80 break-all">{hit.title || hit.url}</div>
+												{#if hit.url}<a class="text-indigo-400 hover:underline break-all" href={hit.url} target="_blank" rel="noreferrer">{hit.url}</a>{/if}
+												{#if hit.snippet}<div class="text-gray-500 mt-0.5">{hit.snippet}</div>{/if}
+											</li>
+										{/each}
+									</ul>
+								</details>
+							{/if}
+						</div>
+					{/if}
+				</div>
+			{/if}
 			<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Битрикс (служебное)</div>
 			<LeadBitrixExtraPanel {lead} />
 		</section>
