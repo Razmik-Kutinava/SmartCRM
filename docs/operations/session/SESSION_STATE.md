@@ -6,6 +6,8 @@
 
 **Регрессия_счёт:** `1/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-07-30 | Действие: SBR RED — research→passport (почта/тел/контакты/отрасль): test_research_passport FAIL (нет research_passport.py) | Коммит: `этот` | Статус: in_progress
+
 2026-07-30 | Действие: полное досье исследования — Groq→Ollama синтез, fetch 3 страниц, agent_brief в контекст агентов; rag 102 PASS, analyst 5 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3 (rag)
 
 2026-07-30 | Действие: fix each_key_duplicate в «Исследование (веб)» — ключ `${i}:url` при дублях hits | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (frontend one-liner)
