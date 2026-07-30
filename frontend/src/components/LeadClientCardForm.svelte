@@ -327,7 +327,7 @@
 								<details class="text-[11px] text-gray-500">
 									<summary class="cursor-pointer hover:text-gray-300">Сырые результаты ({webResearch.raw_results.length})</summary>
 									<ul class="mt-2 space-y-2 max-h-48 overflow-y-auto font-mono">
-										{#each webResearch.raw_results as hit, i (hit.url || i)}
+										{#each webResearch.raw_results as hit, i (`${i}:${hit.url || hit.title || ''}`)}
 											<li class="border-t border-gray-800/80 pt-2">
 												<div class="text-violet-300/80 break-all">{hit.title || hit.url}</div>
 												{#if hit.url}<a class="text-indigo-400 hover:underline break-all" href={hit.url} target="_blank" rel="noreferrer">{hit.url}</a>{/if}

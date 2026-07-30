@@ -14,6 +14,10 @@
 
 У `createLeadFromTender` пропал заголовок `export async function` — orphan-тело после `enrichTenderCustomer` ломало Vite import-analysis → 500/Internal Error на preload `/tenders` и HMR. Восстановлен экспорт; smoke `test_tender_api_exports.py`.
 
+## 2026-07-30 — Fix: each_key_duplicate в «Исследование (веб)»
+
+Дубли URL в `raw_results` ломали `{#each (hit.url)}`. Ключ → `` `${i}:${url}` ``.
+
 ## 2026-07-29 — Fix: исследование без падения LLM
 
 По `go` («исправь исследование»). Если Groq/Ollama недоступны — выжимка из сниппетов поиска (не текст ошибки в карточке); фильтр junk URL (embassy/Netherlands); description перезаписывает старый блок исследования. Тесты 8 PASS.
