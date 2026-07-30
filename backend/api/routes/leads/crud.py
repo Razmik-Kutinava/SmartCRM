@@ -188,6 +188,9 @@ async def update_lead(
     if not lead:
         raise HTTPException(404, detail="Лид не найден")
     data = body.model_dump(exclude_unset=True, exclude_none=False)
+    from core.lead_json_merge import merge_lead_json_patch_fields
+
+    data = merge_lead_json_patch_fields(lead, data)
     for json_field in ("checko_json", "tech_json", "financials_json"):
         if json_field in data and isinstance(data[json_field], dict):
             data[json_field] = json.dumps(data[json_field], ensure_ascii=False, default=str)

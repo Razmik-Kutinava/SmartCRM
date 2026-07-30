@@ -4,7 +4,9 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
-**Регрессия_счёт:** `2/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+**Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+
+2026-07-30 | Действие: fix 🔍 не затирает UF/паспорт — mergeCheckoJson+mergeTechJson (фронт) + lead_json_merge на PATCH; test_leads 27 PASS; p1+p6 PASS → сброс | Коммит: `этот` | Хвост A: нет | Хвост B: BACKLOG restore UF #97 | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3
 
 2026-07-30 | Действие: SBR GREEN+REVIEW — 🔍→паспорт: research_passport (regex+LLM), merge Checko, contacts/industry/phone/email; rag 109 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (rag)
 

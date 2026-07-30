@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-30 — Fix: 🔍 не затирает UF Битрикс и паспорт
+
+При research/enrich `techJson`/`checkoJson` писались целиком → снос `bitrix24.uf` и `company`. Фикс: deep-merge на фронте (`mergeLeadJson.js`) + на PATCH (`core/lead_json_merge.py`). Уже снесённые UF — только resync Битрикс (BACKLOG). Тесты merge + leads API; p1+p6 PASS.
+
 ## 2026-07-30 — 🔍 Исследовать заполняет паспорт
 
 По `go`/SBR («ебашь… паспорт»). После досье: regex + LLM (Groq→Ollama) extract phones/emails/contacts/industry/city/website/ЛПР → merge в `passport` + `enriched` без затирания Checko; фронт пишет `contacts`/`industry`/`phone`/`email` в лид. Тесты `test_research_passport` 7 + rag 109 PASS.

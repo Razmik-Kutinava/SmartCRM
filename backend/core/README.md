@@ -38,6 +38,7 @@
 | `experiments.py` | A/B и прогоны |
 | `registry.py` | Реестр источников |
 | `stats.py` | Метрики |
+| `lead_json_merge.py` | Deep-merge `checko_json`/`tech_json` при PATCH (UF Битрикс не затирать) |
 | `tools.py` | Инструменты агента |
 | `prompts_data.py` | Промпты |
 

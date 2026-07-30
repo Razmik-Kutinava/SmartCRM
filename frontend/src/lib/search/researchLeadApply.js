@@ -3,6 +3,7 @@ import {
 	enrichResultToLeadPatch,
 	leadToEnrichPayload,
 } from '$lib/search/enrichLeadApply.js';
+import { mergeCheckoJson } from '$lib/search/mergeLeadJson.js';
 
 /**
  * @param {unknown} existingChecko
@@ -33,12 +34,11 @@ export function researchResultToLeadPatch(result, lead = null) {
 	const web = result?.web_research;
 	if (!web) return patch;
 
-	const existing =
-		lead?.checko && typeof lead.checko === 'object'
-			? lead.checko
-			: patch.checkoJson && typeof patch.checkoJson === 'object'
-				? patch.checkoJson
-				: {};
+	// lead.checko + passport.checko из patch — не терять company/financials
+	const existing = mergeCheckoJson(
+		lead?.checko && typeof lead.checko === 'object' ? lead.checko : {},
+		patch.checkoJson && typeof patch.checkoJson === 'object' ? patch.checkoJson : {},
+	);
 	patch.checkoJson = mergeWebResearchIntoChecko(existing, web);
 
 	const summary = String(web.summary || result.answer || '').trim();
@@ -52,7 +52,6 @@ export function researchResultToLeadPatch(result, lead = null) {
 		const prev = String(lead?.description || patch.description || '').trim();
 		const short = summary.length > 3500 ? `${summary.slice(0, 3500)}…` : summary;
 		const block = `${marker}\n${short}`;
-		// Перезаписываем старый блок исследования / текст ошибки
 		const cleaned = prev
 			.replace(/\n*--- Исследование \(веб\) ---[\s\S]*$/m, '')
 			.replace(/\n*Ошибка синтеза выжимки:[\s\S]*$/im, '')

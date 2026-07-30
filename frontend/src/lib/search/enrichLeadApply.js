@@ -1,4 +1,5 @@
 /** Маппинг enrich → PATCH лида. */
+import { mergeCheckoJson, mergeTechJson } from '$lib/search/mergeLeadJson.js';
 
 export function isValidPhone(phone) {
 	const s = String(phone || '').trim();
@@ -107,9 +108,13 @@ export function enrichResultToLeadPatch(result, lead = null) {
 
 	if (passport.inn) patch.inn = passport.inn;
 	if (passport.ogrn) patch.ogrn = passport.ogrn;
-	if (passport.checko) patch.checkoJson = passport.checko;
+	if (passport.checko) {
+		patch.checkoJson = mergeCheckoJson(lead?.checko, passport.checko);
+	}
 	if (passport.financials) patch.financialsJson = passport.financials;
-	if (passport.tech && Object.keys(passport.tech).length) patch.techJson = passport.tech;
+	if (passport.tech && Object.keys(passport.tech).length) {
+		patch.techJson = mergeTechJson(lead?.tech, passport.tech);
+	}
 
 	const cityEmpty = !lead?.city || lead.city === '—';
 	const industryEmpty = !lead?.industry || lead.industry === '—';

@@ -174,6 +174,71 @@ async def test_update_lead_checko_json_camelcase(client):
 
 
 @pytest.mark.asyncio
+async def test_update_lead_tech_json_preserves_bitrix_uf(client):
+    """PATCH techJson (BuiltWith) не сносит bitrix24.uf."""
+    create_r = await client.post("/api/leads", json={"company": "UF merge"})
+    lead_id = create_r.json()["id"]
+    seed = await client.patch(
+        f"/api/leads/{lead_id}",
+        json={
+            "techJson": {
+                "bitrix24": {"uf": {"UF_CRM_TEST": "сырое поле"}},
+                "domain": "old.ru",
+            }
+        },
+    )
+    assert seed.status_code == 200
+    assert seed.json()["tech"]["bitrix24"]["uf"]["UF_CRM_TEST"] == "сырое поле"
+
+    patch_r = await client.patch(
+        f"/api/leads/{lead_id}",
+        json={
+            "techJson": {
+                "domain": "hochland.ru",
+                "cms": ["WordPress"],
+            }
+        },
+    )
+    assert patch_r.status_code == 200
+    tech = patch_r.json()["tech"]
+    assert tech["bitrix24"]["uf"]["UF_CRM_TEST"] == "сырое поле"
+    assert tech["domain"] == "hochland.ru"
+    assert tech["cms"] == ["WordPress"]
+
+
+@pytest.mark.asyncio
+async def test_update_lead_checko_json_merges_company(client):
+    """PATCH checkoJson дописывает analyses, не затирая company."""
+    create_r = await client.post("/api/leads", json={"company": "Checko merge"})
+    lead_id = create_r.json()["id"]
+    await client.patch(
+        f"/api/leads/{lead_id}",
+        json={
+            "checkoJson": {
+                "company": {"phones": ["+7 495 111-11-11"], "director": "Иван"},
+                "financials": {"revenue": 42},
+            }
+        },
+    )
+    patch_r = await client.patch(
+        f"/api/leads/{lead_id}",
+        json={
+            "checkoJson": {
+                "analyses": {"web_research": {"summary": "досье"}},
+                "company": {"emails": ["a@b.ru"]},
+            }
+        },
+    )
+    assert patch_r.status_code == 200
+    checko = patch_r.json()["checko"]
+    assert checko["company"]["director"] == "Иван"
+    assert checko["company"]["phones"][0].startswith("+7")
+    assert checko["company"]["emails"] == ["a@b.ru"]
+    assert checko["financials"]["revenue"] == 42
+    assert checko["analyses"]["web_research"]["summary"] == "досье"
+
+
+@pytest.mark.asyncio
 async def test_update_lead_stage(client):
     """PATCH обновляет этап воронки."""
     create_r = await client.post("/api/leads", json={"company": "Сменить этап"})
