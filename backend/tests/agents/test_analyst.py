@@ -14,6 +14,24 @@ def test_format_lead_context():
     assert "Иван" in ctx
 
 
+def test_format_lead_context_includes_web_research():
+    lead = {
+        "company": "ХОХЛАНД",
+        "checko": {
+            "analyses": {
+                "web_research": {
+                    "at": "2026-07-30",
+                    "summary": "## 1. Профиль компании\nПроизводит сыр",
+                    "agent_brief": "## 1. Профиль компании\nПроизводит сыр",
+                }
+            }
+        },
+    }
+    ctx = format_lead_context(lead)
+    assert "Веб-исследование" in ctx
+    assert "сыр" in ctx
+
+
 def test_parse_json_safe_fallback():
     r = parse_json_safe("not json")
     assert r.get("_parse_error") is True

@@ -312,16 +312,30 @@
 						aria-expanded={researchOpen}
 						data-testid="lead-card-web-research-toggle"
 					>
-						<span>Исследование (веб){webResearch.at ? ` · ${webResearch.at}` : ''}</span>
+						<span>
+							Исследование (веб){webResearch.at ? ` · ${webResearch.at}` : ''}
+							{#if webResearch.llm_provider}
+								<span class="normal-case text-emerald-500/80"> · {webResearch.llm_provider}</span>
+							{:else if webResearch.fallback}
+								<span class="normal-case text-amber-500/80"> · без LLM</span>
+							{/if}
+						</span>
 						<span class="text-[10px] normal-case text-gray-600">{researchOpen ? '▲' : '▼'}</span>
 					</button>
 					{#if researchOpen}
 						<div class="rounded-lg border border-gray-800 bg-gray-950/40 p-3 space-y-2 text-sm">
 							{#if webResearch.summary}
-								<pre class="whitespace-pre-wrap text-gray-300 text-xs leading-relaxed max-h-64 overflow-y-auto" data-testid="lead-card-web-research-summary">{webResearch.summary}</pre>
+								<pre class="whitespace-pre-wrap text-gray-300 text-xs leading-relaxed max-h-96 overflow-y-auto" data-testid="lead-card-web-research-summary">{webResearch.summary}</pre>
 							{/if}
-							{#if webResearch.providers_used?.length}
-								<p class="text-[11px] text-gray-600">Провайдеры: {webResearch.providers_used.join(', ')}</p>
+							{#if webResearch.providers_used?.length || webResearch.pages_fetched}
+								<p class="text-[11px] text-gray-600">
+									{#if webResearch.providers_used?.length}
+										Провайдеры: {webResearch.providers_used.join(', ')}
+									{/if}
+									{#if webResearch.pages_fetched}
+										{' '}· страниц: {webResearch.pages_fetched}
+									{/if}
+								</p>
 							{/if}
 							{#if webResearch.raw_results?.length}
 								<details class="text-[11px] text-gray-500">

@@ -1,4 +1,4 @@
-"""Исследование лида: 3 веб-поисковика + актуальная выжимка + enrich полей."""
+"""Исследование лида: 3 веб-поисковика + актуальное досье + enrich полей."""
 from __future__ import annotations
 
 import asyncio
@@ -9,9 +9,16 @@ from typing import Any
 from urllib.parse import urlparse
 
 from .config import load_config
+from .enrich_sources import fetch_urls_from_hits
 from .merge import _deduplicate, _format_results
 from .prospect import enrich_lead
 from .providers import _search_brave, _search_serper, _search_tavily
+from .research_dossier import (
+    agent_brief_from_summary,
+    fallback_dossier_from_hits,
+    is_error_summary,
+    synthesize_dossier_llm,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +75,6 @@ def filter_relevant_hits(company: str, hits: list[dict], *, limit: int = 18) -> 
         host = urlparse(url).netloc if url else ""
         if any(j in url or j in host for j in _JUNK_HOST_PARTS):
             continue
-        # tavily_answer без URL — оставляем только если есть токен компании
         if not url and h.get("source") == "tavily_answer":
             if tokens and not any(t in text for t in tokens):
                 continue
@@ -82,7 +88,6 @@ def filter_relevant_hits(company: str, hits: list[dict], *, limit: int = 18) -> 
             score += 1
         scored.append((score, h))
     scored.sort(key=lambda x: x[0], reverse=True)
-    # Сначала релевантные (score>0), потом остальные без мусора
     relevant = [h for s, h in scored if s > 0]
     other = [h for s, h in scored if s == 0]
     out = (relevant + other)[:limit]
@@ -90,45 +95,12 @@ def filter_relevant_hits(company: str, hits: list[dict], *, limit: int = 18) -> 
 
 
 def fallback_summary_from_hits(company: str, hits: list[dict], today: str) -> str:
-    """Выжимка без LLM: факты из сниппетов поиска."""
-    lines = [
-        f"Исследование «{company}» на {today} (без LLM — собрано из поиска).",
-        "",
-        "Кратко по источникам:",
-    ]
-    if not hits:
-        lines.append("• Веб-результаты пусты. Проверьте ключи Serper/Brave/Tavily.")
-        return "\n".join(lines)
-
-    for i, h in enumerate(hits[:10], 1):
-        title = (h.get("title") or "без названия").strip()
-        snip = (h.get("snippet") or h.get("description") or "").strip().replace("\n", " ")
-        if len(snip) > 180:
-            snip = snip[:180] + "…"
-        url = (h.get("url") or h.get("link") or "").strip()
-        date = (h.get("date") or "").strip()
-        bit = f"[{i}] {title}"
-        if date:
-            bit += f" ({date})"
-        lines.append(bit)
-        if snip:
-            lines.append(f"    {snip}")
-        if url:
-            lines.append(f"    {url}")
-    lines.append("")
-    lines.append("Проверить дальше: официальный сайт, ИНН/Checko, свежие новости по бренду.")
-    return "\n".join(lines)
-
-
-def is_error_summary(text: str) -> bool:
-    s = (text or "").strip().lower()
-    if not s:
-        return True
-    return s.startswith("ошибка синтеза") or s.startswith("ошибка исследования") or "connection attempts failed" in s
+    """Совместимость: структурированное досье без LLM."""
+    return fallback_dossier_from_hits(company, hits, today)
 
 
 async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[str, Any]:
-    """Поиск через Serper/Brave/Tavily + синтез (LLM или fallback)."""
+    """Поиск через Serper/Brave/Tavily + досье (LLM Groq→Ollama или fallback)."""
     from core.llm import chat
 
     today = datetime.now(timezone.utc).date().isoformat()
@@ -147,31 +119,34 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
 
     task = (
         f"Исследуй компанию «{company}» на актуальную дату {today}. "
-        f"Найди свежие факты ({year}): чем занимаются, новости, продукты, рынок, риски, "
-        f"интересные находки в открытых источниках. Отделяй устаревшее от текущего."
+        f"Найди свежие факты ({year}): чем занимаются, новости, продукты, рынок, риски."
     )
 
     queries: list[str] = []
-    try:
-        raw_queries = await chat(
-            [
-                {
-                    "role": "user",
-                    "content": (
-                        f"Ты — B2B-аналитик. Задача:\n{task}\nКонтекст: {context}\n\n"
-                        f"Сгенерируй 3–5 поисковых запросов (Google). "
-                        f"Хотя бы один запрос с годом {year} или словами «новости {year}». "
-                        f"Запросы должны содержать название компании, не общие слова вроде Netherlands.\n"
-                        'Ответь строго JSON-массивом: ["запрос 1", ...]'
-                    ),
-                }
-            ],
-            temperature=0.3,
-            max_tokens=300,
-        )
-        queries = [q for q in re.findall(r'"([^"]{5,})"', raw_queries or "")][:5]
-    except Exception as e:
-        logger.warning("research_lead генерация запросов: %s", e)
+    for model in ("groq", "ollama"):
+        try:
+            raw_queries = await chat(
+                [
+                    {
+                        "role": "user",
+                        "content": (
+                            f"Ты — B2B-аналитик. Задача:\n{task}\nКонтекст: {context}\n\n"
+                            f"Сгенерируй 3–5 поисковых запросов (Google). "
+                            f"Хотя бы один запрос с годом {year} или словами «новости {year}». "
+                            f"Запросы должны содержать название компании, не общие слова вроде Netherlands.\n"
+                            'Ответь строго JSON-массивом: ["запрос 1", ...]'
+                        ),
+                    }
+                ],
+                model=model,
+                temperature=0.3,
+                max_tokens=300,
+            )
+            queries = [q for q in re.findall(r'"([^"]{5,})"', raw_queries or "")][:5]
+            if queries:
+                break
+        except Exception as e:
+            logger.warning("research_lead генерация запросов (%s): %s", model, e)
 
     if not queries:
         queries = [
@@ -214,39 +189,30 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
     deduped = filter_relevant_hits(company, _deduplicate(all_raw), limit=18)
     formatted = _format_results(deduped)
 
-    llm_used = False
-    answer = ""
+    page_texts = ""
+    pages_fetched = 0
     try:
-        answer = await chat(
-            [
-                {
-                    "role": "user",
-                    "content": (
-                        f"Ты — B2B-аналитик. Дата сегодня: {today}.\n"
-                        f"Задача: актуальное исследование компании «{company}».\n"
-                        f"Контекст: {context}\n\n"
-                        f"Источники из веба:\n{formatted}\n\n"
-                        "На русском: (1) краткий вывод на сейчас; (2) факты со ссылками [N]; "
-                        "(3) что устарело/неясно; (4) интересные находки; (5) что проверить дальше. "
-                        "Игнорируй нерелевантные источники (посольства, другие страны без связи с компанией). "
-                        "Не выдумывай факты без источников."
-                    ),
-                }
-            ],
-            temperature=0.35,
-            max_tokens=1400,
-        )
-        answer = (answer or "").strip()
-        if answer and not is_error_summary(answer):
-            llm_used = True
-        else:
-            answer = ""
+        page_texts, page_raw = await fetch_urls_from_hits(deduped, max_urls=3)
+        pages_fetched = len(page_raw)
+        if page_raw:
+            # Добавляем как доп. хиты для UI «сырые результаты»
+            deduped = list(deduped) + page_raw
     except Exception as e:
-        logger.warning("research_lead синтез: %s", e)
-        answer = ""
+        logger.warning("research_lead fetch страниц: %s", e)
 
+    answer, llm_provider = await synthesize_dossier_llm(
+        company=company,
+        today=today,
+        year=year,
+        context=context,
+        formatted_hits=formatted,
+        page_texts=page_texts,
+    )
+    llm_used = bool(llm_provider)
     if not answer:
-        answer = fallback_summary_from_hits(company, deduped, today)
+        answer = fallback_dossier_from_hits(company, deduped, today)
+
+    brief = agent_brief_from_summary(answer)
 
     return {
         "answer": answer,
@@ -256,18 +222,21 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
         "web_research": {
             "at": today,
             "summary": answer,
+            "agent_brief": brief,
             "queries": queries,
             "raw_results": _compact_hits(deduped),
             "providers_used": providers_used,
             "llm": llm_used,
+            "llm_provider": llm_provider,
             "fallback": not llm_used,
+            "pages_fetched": pages_fetched,
         },
     }
 
 
 async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[str, Any]:
     """
-    Исследование компании: параллельно enrich (поля) + narrative (выжимка 3 провайдеров).
+    Исследование компании: параллельно enrich (поля) + narrative (досье 3 провайдеров).
     web_research — сырой снимок для checkoJson.analyses.web_research.
     """
     company = (lead.get("company") or lead.get("name") or "").strip()
@@ -292,7 +261,7 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
         }
     if isinstance(narr_res, Exception):
         logger.warning("research_lead narrative: %s", narr_res)
-        fb = fallback_summary_from_hits(company, [], today)
+        fb = fallback_dossier_from_hits(company, [], today)
         narr_res = {
             "answer": fb,
             "queries_used": [],
@@ -301,11 +270,14 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
             "web_research": {
                 "at": today,
                 "summary": fb,
+                "agent_brief": agent_brief_from_summary(fb),
                 "queries": [],
                 "raw_results": [],
                 "providers_used": [],
                 "llm": False,
+                "llm_provider": None,
                 "fallback": True,
+                "pages_fetched": 0,
             },
         }
 
@@ -330,10 +302,13 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
         or {
             "at": today,
             "summary": narr_res.get("answer") or "",
+            "agent_brief": "",
             "queries": [],
             "raw_results": [],
             "providers_used": [],
             "llm": False,
+            "llm_provider": None,
             "fallback": True,
+            "pages_fetched": 0,
         },
     }

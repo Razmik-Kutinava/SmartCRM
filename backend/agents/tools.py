@@ -59,6 +59,8 @@ def normalize_lead_for_agents(raw: dict[str, Any]) -> dict[str, Any]:
     """Приводит ответ API /api/leads к полям, которые ждут агенты (snake_case, note, lead_id)."""
     if not raw:
         return {}
+    from rag.search.research_dossier import extract_web_research_brief
+
     out = dict(raw)
     nc = out.get("nextCall") or out.get("next_call")
     out["next_call"] = nc if nc not in (None, "") else "—"
@@ -67,6 +69,11 @@ def normalize_lead_for_agents(raw: dict[str, Any]) -> dict[str, Any]:
         out["lead_id"] = lid
     desc = out.get("description") or ""
     out["note"] = desc
+    # Досье из 🔍 — в note/description для агентов (без повторного веб-поиска)
+    brief = extract_web_research_brief(out)
+    if brief and "Веб-исследование" not in (out.get("note") or ""):
+        out["note"] = f"{out['note']}\n\n{brief}".strip() if out.get("note") else brief
+        out["description"] = out["note"]
     return out
 
 

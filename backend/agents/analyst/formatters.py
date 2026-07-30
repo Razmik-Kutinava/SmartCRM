@@ -4,6 +4,7 @@ import logging
 import re
 
 from agents.tools import read_tasks
+from rag.search.research_dossier import extract_web_research_brief
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +51,9 @@ def format_lead_context(lead: dict) -> str:
         val = lead.get(key, "")
         if val and val != "—":
             lines.append(f"  {label}: {val}")
+    brief = extract_web_research_brief(lead)
+    if brief:
+        lines.append(brief)
     return "\n".join(lines) if lines else "  (нет данных)"
 
 

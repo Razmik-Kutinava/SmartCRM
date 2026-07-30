@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-30 — Полное досье «Исследовать» для агентов
+
+По `go` («выжимка… для всех агентов… groq или ollama… ебашь»). Синтез: Groq → Ollama; fetch топ-3 страниц; досье из 9 разделов в `web_research.summary` + `agent_brief`; агенты получают brief через `format_lead_context` / `normalize_lead_for_agents` без повторного веб-поиска. Fallback — те же разделы из сниппетов (не текст ошибки). Тесты: dossier + rag 102 PASS, analyst 5 PASS.
+
 ## 2026-07-26 — Fix: нет скролла на карточке лида
 
 Шапка (этап + путь сделки + советы) ~450px при viewport ~666px оставляла hub ~90px — скролл формально был, но незаметен. Обёртка `lead-card-scroll` с `overflow-y-auto` на всю карточку. Smoke `test_lead_card_scroll.py` + card hub smokes 18 PASS.

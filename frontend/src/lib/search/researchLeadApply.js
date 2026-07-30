@@ -50,10 +50,13 @@ export function researchResultToLeadPatch(result, lead = null) {
 	if (summary && !bad) {
 		const marker = '--- Исследование (веб) ---';
 		const prev = String(lead?.description || patch.description || '').trim();
-		const short = summary.length > 1200 ? `${summary.slice(0, 1200)}…` : summary;
+		const short = summary.length > 3500 ? `${summary.slice(0, 3500)}…` : summary;
 		const block = `${marker}\n${short}`;
 		// Перезаписываем старый блок исследования / текст ошибки
-		const cleaned = prev.replace(/\n*--- Исследование \(веб\) ---[\s\S]*$/m, '').trim();
+		const cleaned = prev
+			.replace(/\n*--- Исследование \(веб\) ---[\s\S]*$/m, '')
+			.replace(/\n*Ошибка синтеза выжимки:[\s\S]*$/im, '')
+			.trim();
 		patch.description = cleaned ? `${cleaned}\n\n${block}` : block;
 	}
 	return patch;
