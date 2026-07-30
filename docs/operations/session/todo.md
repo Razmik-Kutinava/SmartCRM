@@ -12,15 +12,15 @@
 
 ### PHASE 1 SPEC
 - [x] Заказ в todo + пункт чеклиста / спека
-- [ ] `go` → BUILD (есть: «ебашь»)
+- [x] `go` → BUILD (есть: «ебашь»)
 
 ### PHASE 2 BUILD
-- [ ] RED: тесты extract→passport / merge contacts
-- [ ] GREEN: `research_passport.py` + wire в `research_lead` + фронт patch
-- [ ] Regex + LLM JSON (Groq→Ollama): phones, emails, contacts, industry…
-- [ ] Merge без затирания Checko/уже заполненного
-- [ ] `researchResultToLeadPatch` пишет contacts/industry/phone/email в лид
+- [x] RED: тесты extract→passport / merge contacts
+- [x] GREEN: `research_passport.py` + wire в `research_lead` + фронт patch
+- [x] Regex + LLM JSON (Groq→Ollama): phones, emails, contacts, industry…
+- [x] Merge без затирания Checko/уже заполненного
+- [x] `researchResultToLeadPatch` пишет contacts/industry/phone/email в лид
 
 ### PHASE 3 REVIEW
-- [ ] Регрессия rag + тесты
-- [ ] Ops + commit
+- [x] Регрессия rag + тесты
+- [x] Ops + commit

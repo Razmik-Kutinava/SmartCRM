@@ -12,8 +12,9 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `merge.py` | Слияние результатов источников |
 | `company_search.py` | Поиск компании по запросу |
 | `prospect.py` | prospect + `enrich_lead` |
-| `research_lead.py` | `research_lead` — 🔍 Brave/Tavily/Serper + досье (`web_research`) |
+| `research_lead.py` | `research_lead` — 🔍 Brave/Tavily/Serper + досье (`web_research`) + passport extract |
 | `research_dossier.py` | Синтез досье Groq→Ollama, fallback-секции, `agent_brief` для агентов |
+| `research_passport.py` | Extract паспорта из веб (regex+LLM): phones/emails/contacts/industry → merge |
 | `enrich_sources.py` | Checko/ИНН, таргет-запросы, парсинг сайта, fetch URL из поиска |
 | `checko_passport.py` | Сборка и merge `checko_json` для enrich (связи, финансы, tech) |
 | `brave_limit.py` | Кэш и semaphore Brave (429) |

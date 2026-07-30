@@ -10,6 +10,7 @@ def test_enriched_to_lead_patch_js_contract():
     assert "enrichResultToLeadPatch" in js
     assert "checkoJson" in js
     assert "isValidPhone" in js
+    assert "passport?.contacts" in js or "passport.contacts" in js
     assert "search-enrich-apply" not in js
 
 

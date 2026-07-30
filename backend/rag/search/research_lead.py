@@ -19,6 +19,10 @@ from .research_dossier import (
     is_error_summary,
     synthesize_dossier_llm,
 )
+from .research_passport import (
+    extract_passport_from_research_sources,
+    merge_research_passport,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -219,6 +223,7 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
         "queries_used": queries,
         "raw_results": deduped,
         "providers_used": providers_used,
+        "page_texts": page_texts,
         "web_research": {
             "at": today,
             "summary": answer,
@@ -267,6 +272,7 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
             "queries_used": [],
             "raw_results": [],
             "providers_used": [],
+            "page_texts": "",
             "web_research": {
                 "at": today,
                 "summary": fb,
@@ -289,26 +295,55 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
     )
     raw = list(enrich_res.get("raw_results") or []) + list(narr_res.get("raw_results") or [])
 
+    # Паспорт: regex + LLM из досье/страниц/хитов → merge с Checko enrich
+    page_texts = str(narr_res.get("page_texts") or "")
+    # сниппеты сайта из enrich тоже полезны
+    for h in enrich_res.get("raw_results") or []:
+        if (h.get("source") or "") in ("website_scrape", "page_fetch") and h.get("snippet"):
+            page_texts += f"\n\n--- {h.get('url') or ''} ---\n{h.get('snippet')}"
+
+    try:
+        extract = await extract_passport_from_research_sources(
+            company=company,
+            summary=str(narr_res.get("answer") or ""),
+            hits=list(narr_res.get("raw_results") or [])[:18],
+            page_texts=page_texts,
+        )
+    except Exception as e:
+        logger.warning("research_lead passport extract: %s", e)
+        extract = {}
+
+    enriched, passport = merge_research_passport(enrich_res, extract)
+    web_research = narr_res.get("web_research") or {
+        "at": today,
+        "summary": narr_res.get("answer") or "",
+        "agent_brief": "",
+        "queries": [],
+        "raw_results": [],
+        "providers_used": [],
+        "llm": False,
+        "llm_provider": None,
+        "fallback": True,
+        "pages_fetched": 0,
+    }
+    if isinstance(web_research, dict):
+        web_research = dict(web_research)
+        web_research["passport_extract"] = {
+            "phones": extract.get("phones") or [],
+            "emails": extract.get("emails") or [],
+            "industry": extract.get("industry"),
+            "contacts_count": len(extract.get("contacts") or []),
+            "director": extract.get("director"),
+        }
+
     return {
-        "enriched": enrich_res.get("enriched") or {},
+        "enriched": enriched,
         "missing_fields": enrich_res.get("missing_fields") or [],
-        "passport": enrich_res.get("passport"),
+        "passport": passport,
         "cached": enrich_res.get("cached", False),
         "raw_results": raw[:40],
         "providers_used": providers,
         "answer": narr_res.get("answer") or "",
         "queries_used": narr_res.get("queries_used") or [],
-        "web_research": narr_res.get("web_research")
-        or {
-            "at": today,
-            "summary": narr_res.get("answer") or "",
-            "agent_brief": "",
-            "queries": [],
-            "raw_results": [],
-            "providers_used": [],
-            "llm": False,
-            "llm_provider": None,
-            "fallback": True,
-            "pages_fetched": 0,
-        },
+        "web_research": web_research,
     }

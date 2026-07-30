@@ -35,28 +35,68 @@ export function enrichedToLeadPatch(enriched) {
 }
 
 function mergePassportContacts(existingContacts, passport) {
+	const list = Array.isArray(existingContacts) ? [...existingContacts] : [];
+
+	const hasPhone = (phones, p) => {
+		const dig = String(p || '').replace(/\D/g, '');
+		return (phones || []).some((x) => String(x).replace(/\D/g, '') === dig);
+	};
+	const hasEmail = (emails, e) => {
+		const low = String(e || '').trim().toLowerCase();
+		return (emails || []).some((x) => String(x).trim().toLowerCase() === low);
+	};
+	const contactOverlap = (a, b) => {
+		const ap = a?.phones || [];
+		const ae = a?.emails || [];
+		for (const p of b?.phones || []) if (hasPhone(ap, p)) return true;
+		for (const e of b?.emails || []) if (hasEmail(ae, e)) return true;
+		if (a?.name && b?.name && String(a.name).toLowerCase() === String(b.name).toLowerCase()) return true;
+		return false;
+	};
+
+	// 1) Явные контакты из веб-extract / passport.contacts
+	const webContacts = Array.isArray(passport?.contacts) ? passport.contacts : [];
+	for (const c of webContacts) {
+		if (!c || typeof c !== 'object') continue;
+		const phones = (c.phones || []).filter(isValidPhone);
+		const emails = (c.emails || []).filter(isValidEmail);
+		const name = String(c.name || '').trim() || 'Контакт';
+		const entry = {
+			id: c.id || `web-${Date.now()}-${list.length}`,
+			name,
+			role: c.role === 'other' || c.role === 'gatekeeper' ? c.role : 'lpr',
+			position: String(c.position || '').trim(),
+			phones,
+			emails,
+			messengers: Array.isArray(c.messengers) ? c.messengers : [],
+		};
+		if (!phones.length && !emails.length && !name) continue;
+		if (list.some((x) => contactOverlap(x, entry))) continue;
+		list.push(entry);
+	}
+
+	// 2) Checko company → один LPR, если ещё нет LPR с телефонами/email
 	const co = passport?.checko?.company || {};
 	const phones = (co.phones || []).filter(isValidPhone);
 	const emails = (co.emails || []).filter(isValidEmail);
 	const director = co.director;
 	const post = co.director_post;
-	if (!phones.length && !emails.length && !director) return existingContacts;
+	if (phones.length || emails.length || (director && director !== '—')) {
+		const hasLpr = list.some((c) => c?.role === 'lpr' && (c.phones?.length || c.emails?.length));
+		if (!hasLpr) {
+			list.push({
+				id: `checko-${Date.now()}`,
+				name: director && director !== '—' ? director : 'Контакт компании',
+				role: 'lpr',
+				position: post && post !== '—' ? post : '',
+				phones,
+				emails,
+				messengers: [],
+			});
+		}
+	}
 
-	const list = Array.isArray(existingContacts) ? [...existingContacts] : [];
-	const hasLpr = list.some((c) => c?.role === 'lpr' && (c.phones?.length || c.emails?.length));
-	if (hasLpr) return list.length ? list : undefined;
-
-	const entry = {
-		id: `checko-${Date.now()}`,
-		name: director && director !== '—' ? director : 'Контакт компании',
-		role: 'lpr',
-		position: post && post !== '—' ? post : '',
-		phones,
-		emails,
-		messengers: [],
-	};
-	list.push(entry);
-	return list;
+	return list.length ? list : existingContacts;
 }
 
 /** Полный ответ enrich-lead → PATCH (CRM + паспорт). */
@@ -75,6 +115,12 @@ export function enrichResultToLeadPatch(result, lead = null) {
 	const industryEmpty = !lead?.industry || lead.industry === '—';
 	if (passport.city && cityEmpty) patch.city = passport.city;
 	if (passport.industry && industryEmpty) patch.industry = passport.industry;
+
+	// CRM phone/email из checko.company, если enriched пуст
+	const coPhones = (passport.checko?.company?.phones || []).filter(isValidPhone);
+	const coEmails = (passport.checko?.company?.emails || []).filter(isValidEmail);
+	if (coPhones[0] && !patch.phone && (!lead?.phone || lead.phone === '—')) patch.phone = coPhones[0];
+	if (coEmails[0] && !patch.email && (!lead?.email || lead.email === '—')) patch.email = coEmails[0];
 
 	const profKeys = [
 		['okved_main', 'okvedMain'],
