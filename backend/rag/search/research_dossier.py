@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 from typing import Any
 
@@ -24,16 +25,73 @@ _SECTION_HEADERS = (
 )
 
 
+def _env_int(name: str, default: int) -> int:
+    raw = (os.getenv(name) or "").strip()
+    if not raw:
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+def _env_float(name: str, default: float) -> float:
+    raw = (os.getenv(name) or "").strip()
+    if not raw:
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        return default
+
+
 def is_error_summary(text: str) -> bool:
     s = (text or "").strip().lower()
     if not s:
         return True
-    return (
+    if (
         s.startswith("ошибка синтеза")
         or s.startswith("ошибка исследования")
         or "connection attempts failed" in s
         or "all connection attempts failed" in s
+    ):
+        return True
+    # Отказы / «переводчик» вместо досье (типично для tiny-моделей)
+    refuse = (
+        "извините, но я не могу",
+        "i cannot",
+        "i can't",
+        "as an ai",
+        "как языковая модель",
+        "предоставьте текст",
+        "не могу перевести",
     )
+    return any(x in s for x in refuse)
+
+
+def is_usable_dossier(text: str) -> bool:
+    """Ответ LLM годится как досье: есть структура разделов, не отказ."""
+    if is_error_summary(text):
+        return False
+    t = text or ""
+    # Минимум два заголовка разделов — иначе это не досье
+    hits = sum(1 for h in _SECTION_HEADERS if h in t)
+    if hits >= 2:
+        return True
+    # Модели иногда пишут без «## » — считаем нумерованные/текстовые маркеры
+    soft = sum(
+        1
+        for m in (
+            "профиль компании",
+            "продукты",
+            "источники",
+            "контакты",
+            "масштаб",
+            "новости",
+        )
+        if m in t.lower()
+    )
+    return soft >= 3 and len(t) >= 400
 
 
 def build_synthesis_prompt(
@@ -44,10 +102,12 @@ def build_synthesis_prompt(
     context: str,
     formatted_hits: str,
     page_texts: str = "",
+    pages_limit: int | None = None,
 ) -> str:
+    limit = pages_limit if pages_limit is not None else _env_int("RESEARCH_PAGES_CHARS", 6000)
     pages_block = ""
     if page_texts.strip():
-        pages_block = f"\n\nТексты страниц (фрагменты):\n{page_texts[:12000]}\n"
+        pages_block = f"\n\nТексты страниц (фрагменты):\n{page_texts[:limit]}\n"
 
     return (
         f"Ты — B2B-исследователь SmartCRM. Дата сегодня: {today}.\n"
@@ -212,9 +272,9 @@ def ensure_nonempty_summary(
     hits: list[dict] | None = None,
     today: str,
 ) -> str:
-    """Гарантия: в карточку никогда не уходит пустая или «ошибочная» выжимка."""
+    """Гарантия: в карточку уходит читаемое досье, не отказ/мусор LLM."""
     text = (summary or "").strip()
-    if text and not is_error_summary(text):
+    if text and is_usable_dossier(text):
         return text
     return readable_fallback_dossier(company, hits or [], today)
 
@@ -246,32 +306,63 @@ async def synthesize_dossier_llm(
     """
     Синтез досье: сначала Groq, затем Ollama.
     Возвращает (текст, провайдер) или ("", None) при полном провале.
+
+    Лимиты через env (без хардкода модели в коде):
+    RESEARCH_GROQ_MAX_TOKENS, RESEARCH_OLLAMA_MAX_TOKENS,
+    RESEARCH_OLLAMA_HITS_CHARS, RESEARCH_PAGES_CHARS, OLLAMA_CHAT_TIMEOUT.
     """
+    import asyncio
+
     from core.llm import chat
 
-    prompt = build_synthesis_prompt(
-        company=company,
-        today=today,
-        year=year,
-        context=context,
-        formatted_hits=formatted_hits,
-        page_texts=page_texts,
-    )
-    messages = [{"role": "user", "content": prompt}]
+    groq_tokens = _env_int("RESEARCH_GROQ_MAX_TOKENS", 2800)
+    ollama_tokens = _env_int("RESEARCH_OLLAMA_MAX_TOKENS", 1600)
+    ollama_hits_chars = _env_int("RESEARCH_OLLAMA_HITS_CHARS", 5000)
+    pages_chars = _env_int("RESEARCH_PAGES_CHARS", 4000)
+    ollama_timeout = _env_float("OLLAMA_CHAT_TIMEOUT", 180.0)
 
     for model in ("groq", "ollama"):
+        if model == "ollama":
+            hits = (formatted_hits or "")[:ollama_hits_chars]
+            pages = (page_texts or "")[:pages_chars]
+            tokens = ollama_tokens
+            pages_limit = pages_chars
+        else:
+            hits = formatted_hits or ""
+            pages = page_texts or ""
+            tokens = groq_tokens
+            pages_limit = _env_int("RESEARCH_PAGES_CHARS", 6000)
+
+        prompt = build_synthesis_prompt(
+            company=company,
+            today=today,
+            year=year,
+            context=context,
+            formatted_hits=hits,
+            page_texts=pages,
+            pages_limit=pages_limit,
+        )
+        messages = [{"role": "user", "content": prompt}]
         try:
-            answer = await chat(
+            coro = chat(
                 messages,
                 model=model,
                 temperature=0.3,
-                max_tokens=3200,
+                max_tokens=tokens,
             )
+            if model == "ollama":
+                answer = await asyncio.wait_for(coro, timeout=ollama_timeout)
+            else:
+                answer = await coro
             answer = (answer or "").strip()
-            if answer and not is_error_summary(answer):
+            if answer and is_usable_dossier(answer):
                 logger.info("research_dossier синтез через %s (%s симв.)", model, len(answer))
                 return answer, model
-            logger.warning("research_dossier %s: пустой/ошибочный ответ", model)
+            logger.warning(
+                "research_dossier %s: ответ не похож на досье (%s симв.)",
+                model,
+                len(answer or ""),
+            )
         except Exception as e:
             logger.warning("research_dossier %s недоступен: %s: %s", model, type(e).__name__, e)
 

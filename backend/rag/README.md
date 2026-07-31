@@ -13,9 +13,10 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `company_search.py` | Поиск компании по запросу |
 | `prospect.py` | prospect + `enrich_lead` |
 | `research_lead.py` | `research_lead` — 🔍 Brave/Tavily/Serper + досье (`web_research`) + passport extract |
-| `research_dossier.py` | Синтез досье Groq→Ollama (досье + JSON-паспорт одним проходом), читаемый fallback, `ensure_nonempty_summary`, `agent_brief` |
-| `research_passport.py` | Extract паспорта из веб (regex+LLM или JSON из досье): phones/emails/contacts/industry → merge |
+| `research_dossier.py` | Синтез досье Groq→Ollama (досье + JSON-паспорт одним проходом), читаемый fallback, `ensure_nonempty_summary` / `is_usable_dossier`, env-лимиты токенов/контекста |
+| `research_passport.py` | Extract паспорта из веб (regex+LLM или JSON из досье); `allow_llm=False` — без второго вызова |
 | `research_status.py` | Фазы 🔍 для UI/логов: `searching / synthesizing / done_llm / done_fallback` |
+| `research_lead.py` | Оркестрация 🔍: жёсткий `_deadline` enrich/narrative, запросы только через быстрый Groq |
 | `enrich_sources.py` | Checko/ИНН, таргет-запросы, парсинг сайта, fetch URL из поиска |
 | `checko_passport.py` | Сборка и merge `checko_json` для enrich (связи, финансы, tech) |
 | `brave_limit.py` | Кэш и semaphore Brave (429) |

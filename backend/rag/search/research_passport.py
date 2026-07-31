@@ -367,16 +367,20 @@ async def extract_passport_from_research_sources(
     hits: list[dict] | None = None,
     page_texts: str = "",
     llm_json: dict[str, Any] | None = None,
+    allow_llm: bool = True,
 ) -> dict[str, Any]:
     """Regex по тексту + LLM JSON → единый extract.
 
     `llm_json` — паспорт из раздела 10 досье: тогда второй LLM-вызов не нужен.
+    `allow_llm=False` — только regex (не удваивать время на локальной Ollama).
     """
     blob = sources_text_from_research(summary=summary, hits=hits, page_texts=page_texts)
     regex_part = extract_contacts_from_text(blob)
     llm_part = normalize_llm_passport_dict(llm_json) if llm_json else {}
-    if not llm_part:
+    if llm_part:
+        logger.info("research_passport: JSON из досье (без второго LLM-вызова)")
+    elif allow_llm:
         llm_part = await llm_extract_passport_fields(company=company, sources_text=blob)
     else:
-        logger.info("research_passport: JSON из досье (без второго LLM-вызова)")
+        logger.info("research_passport: второй LLM пропущен (regex-only)")
     return _merge_extract_layers(regex_part, llm_part)

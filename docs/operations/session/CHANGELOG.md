@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-31 — Fix: 🔍 не зависает на Ollama/enrich
+
+По `go` («подвисало… продолжи»). Причины: протухший Groq 401; Ollama 0.5b давала мусор; второй LLM на паспорт удваивал время; `asyncio.wait_for` ждал отмену httpx и тянул дольше таймаута; несколько uvicorn на :8000. Фикс: quality-gate досье, `RESEARCH_*` env-лимиты, жёсткий `_deadline` (enrich 45с / narrative 120с), второй passport-LLM только после Groq (auto), модель `llama3.2:latest`. Прогон #97: ответ за ~100с с читаемым fallback. Живой Groq — после смены ключа в `.env`.
+
 ## 2026-07-31 — 🔍 Надёжная выжимка (п.1–4) REVIEW
 
 По `go REVIEW` (п.5 Checko — потом). Один LLM-проход: досье + `## 10. JSON-паспорт` (без второго вызова на passport); `readable_fallback_dossier` + `ensure_nonempty_summary`/`ensureSummary`; UI-статус «ищу / синтез / готово без LLM» + секунды. MCP на #97: 58с, fallback без LLM, досье и сырые hits на месте, контакты не стёрты. Тесты: reliability 8, rag 117, leads+analyst 32 PASS.

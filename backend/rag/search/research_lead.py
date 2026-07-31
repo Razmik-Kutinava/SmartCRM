@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import re
 from datetime import datetime, timezone
 from typing import Any
@@ -18,6 +19,7 @@ from .research_dossier import (
     ensure_nonempty_summary,
     fallback_dossier_from_hits,
     is_error_summary,
+    is_usable_dossier,
     split_dossier_and_passport_json,
     synthesize_dossier_llm,
 )
@@ -30,6 +32,27 @@ from .research_status import done_status, research_status_label
 logger = logging.getLogger(__name__)
 
 _WEB_PROVIDERS = frozenset({"serper", "brave", "tavily"})
+
+
+def _env_float(name: str, default: float) -> float:
+    raw = (os.getenv(name) or "").strip()
+    if not raw:
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        return default
+
+
+async def _deadline(coro, seconds: float, label: str):
+    """Жёсткий дедлайн: по истечении сразу TimeoutError, не ждём отмены httpx/Ollama."""
+    task = asyncio.create_task(coro)
+    done, _pending = await asyncio.wait({task}, timeout=seconds)
+    if task in done:
+        return task.result()
+    task.cancel()
+    logger.warning("%s: дедлайн %.0fс — отдаём управление, фоновая отмена", label, seconds)
+    return TimeoutError(f"{label} deadline {seconds:.0f}s")
 
 # Явный мусор (ложные срабатывания на «Russland» / Netherlands и т.п.)
 _JUNK_HOST_PARTS = (
@@ -130,30 +153,34 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
     )
 
     queries: list[str] = []
-    for model in ("groq", "ollama"):
+    # Запросы: только быстрый Groq (короткий timeout). Ollama здесь не зовём —
+    # иначе до поиска уже минуты на локальной 8B.
+    query_mode = (os.getenv("RESEARCH_LLM_QUERIES") or "auto").strip().lower()
+    if query_mode not in ("0", "false", "no", "never", "off"):
         try:
-            raw_queries = await chat(
-                [
-                    {
-                        "role": "user",
-                        "content": (
-                            f"Ты — B2B-аналитик. Задача:\n{task}\nКонтекст: {context}\n\n"
-                            f"Сгенерируй 3–5 поисковых запросов (Google). "
-                            f"Хотя бы один запрос с годом {year} или словами «новости {year}». "
-                            f"Запросы должны содержать название компании, не общие слова вроде Netherlands.\n"
-                            'Ответь строго JSON-массивом: ["запрос 1", ...]'
-                        ),
-                    }
-                ],
-                model=model,
-                temperature=0.3,
-                max_tokens=300,
+            raw_queries = await asyncio.wait_for(
+                chat(
+                    [
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Ты — B2B-аналитик. Задача:\n{task}\nКонтекст: {context}\n\n"
+                                f"Сгенерируй 3–5 поисковых запросов (Google). "
+                                f"Хотя бы один запрос с годом {year} или словами «новости {year}». "
+                                f"Запросы должны содержать название компании, не общие слова вроде Netherlands.\n"
+                                'Ответь строго JSON-массивом: ["запрос 1", ...]'
+                            ),
+                        }
+                    ],
+                    model="groq",
+                    temperature=0.3,
+                    max_tokens=300,
+                ),
+                timeout=_env_float("RESEARCH_QUERY_LLM_TIMEOUT", 8.0),
             )
             queries = [q for q in re.findall(r'"([^"]{5,})"', raw_queries or "")][:5]
-            if queries:
-                break
         except Exception as e:
-            logger.warning("research_lead генерация запросов (%s): %s", model, e)
+            logger.warning("research_lead генерация запросов (groq): %s", e)
 
     if not queries:
         queries = [
@@ -215,9 +242,17 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
         formatted_hits=formatted,
         page_texts=page_texts,
     )
-    llm_used = bool(llm_provider) and not is_error_summary(answer)
-    answer, passport_json = split_dossier_and_passport_json(answer)
-    answer = ensure_nonempty_summary(answer, company=company, hits=deduped, today=today)
+    answer, passport_json = split_dossier_and_passport_json(answer or "")
+    # Флаги LLM только если итоговый текст — реальное досье от модели
+    if llm_provider and is_usable_dossier(answer) and not is_error_summary(answer):
+        llm_used = True
+    else:
+        llm_used = False
+        llm_provider = None
+        passport_json = None
+        answer = ensure_nonempty_summary(
+            "", company=company, hits=deduped, today=today
+        )
 
     brief = agent_brief_from_summary(answer)
 
@@ -254,16 +289,22 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
     if not company:
         raise ValueError("lead.company обязателен")
 
-    enrich_coro = enrich_lead(lead=lead, force=force)
-    narrative_coro = _narrative_web_research(company, lead)
+    enrich_timeout = _env_float("RESEARCH_ENRICH_TIMEOUT", 45.0)
+    narr_timeout = _env_float("RESEARCH_NARRATIVE_TIMEOUT", 120.0)
     enrich_res, narr_res = await asyncio.gather(
-        enrich_coro, narrative_coro, return_exceptions=True
+        _deadline(enrich_lead(lead=lead, force=force), enrich_timeout, "research_lead enrich"),
+        _deadline(
+            _narrative_web_research(company, lead), narr_timeout, "research_lead narrative"
+        ),
+        return_exceptions=True,
     )
 
     today = datetime.now(timezone.utc).date().isoformat()
 
     if isinstance(enrich_res, Exception):
-        logger.warning("research_lead enrich: %s", enrich_res)
+        logger.warning(
+            "research_lead enrich: %s", enrich_res or type(enrich_res).__name__
+        )
         enrich_res = {
             "enriched": {},
             "missing_fields": [],
@@ -271,7 +312,9 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
             "providers_used": [],
         }
     if isinstance(narr_res, Exception):
-        logger.warning("research_lead narrative: %s", narr_res)
+        logger.warning(
+            "research_lead narrative: %s", narr_res or type(narr_res).__name__
+        )
         fb = fallback_dossier_from_hits(company, [], today)
         narr_res = {
             "answer": fb,
@@ -303,12 +346,30 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
     )
     raw = list(enrich_res.get("raw_results") or []) + list(narr_res.get("raw_results") or [])
 
-    # Паспорт: regex + LLM из досье/страниц/хитов → merge с Checko enrich
+    # Паспорт: regex (+ LLM только если нужно и не удваиваем локальный синтез)
     page_texts = str(narr_res.get("page_texts") or "")
     # сниппеты сайта из enrich тоже полезны
     for h in enrich_res.get("raw_results") or []:
         if (h.get("source") or "") in ("website_scrape", "page_fetch") and h.get("snippet"):
             page_texts += f"\n\n--- {h.get('url') or ''} ---\n{h.get('snippet')}"
+
+    passport_json = (
+        narr_res.get("passport_json")
+        if isinstance(narr_res.get("passport_json"), dict)
+        else None
+    )
+    wr_meta = narr_res.get("web_research") if isinstance(narr_res.get("web_research"), dict) else {}
+    dossier_provider = wr_meta.get("llm_provider")
+    # auto: второй LLM только после Groq-досье без JSON; never/always — через env
+    second_mode = (os.getenv("RESEARCH_PASSPORT_SECOND_LLM") or "auto").strip().lower()
+    if passport_json:
+        allow_passport_llm = False
+    elif second_mode in ("1", "true", "yes", "always"):
+        allow_passport_llm = True
+    elif second_mode in ("0", "false", "no", "never"):
+        allow_passport_llm = False
+    else:
+        allow_passport_llm = dossier_provider == "groq"
 
     try:
         extract = await extract_passport_from_research_sources(
@@ -316,9 +377,8 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
             summary=str(narr_res.get("answer") or ""),
             hits=list(narr_res.get("raw_results") or [])[:18],
             page_texts=page_texts,
-            llm_json=narr_res.get("passport_json")
-            if isinstance(narr_res.get("passport_json"), dict)
-            else None,
+            llm_json=passport_json,
+            allow_llm=allow_passport_llm,
         )
     except Exception as e:
         logger.warning("research_lead passport extract: %s", e)
