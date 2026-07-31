@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-07-31 — 🔍 Надёжная выжимка (п.1–4) REVIEW
+
+По `go REVIEW` (п.5 Checko — потом). Один LLM-проход: досье + `## 10. JSON-паспорт` (без второго вызова на passport); `readable_fallback_dossier` + `ensure_nonempty_summary`/`ensureSummary`; UI-статус «ищу / синтез / готово без LLM» + секунды. MCP на #97: 58с, fallback без LLM, досье и сырые hits на месте, контакты не стёрты. Тесты: reliability 8, rag 117, leads+analyst 32 PASS.
+
 ## 2026-07-30 — Fix: 🔍 не затирает UF Битрикс и паспорт
 
 При research/enrich `techJson`/`checkoJson` писались целиком → снос `bitrix24.uf` и `company`. Фикс: deep-merge на фронте (`mergeLeadJson.js`) + на PATCH (`core/lead_json_merge.py`). Уже снесённые UF — только resync Битрикс (BACKLOG). Тесты merge + leads API; p1+p6 PASS.
