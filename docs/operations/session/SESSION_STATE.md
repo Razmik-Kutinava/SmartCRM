@@ -6,6 +6,8 @@
 
 **Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-07-31 | Действие: SBR RED — 🔍 надёжность п.1–4: test_research_reliability 5 FAIL / 1 PASS (нет ensure_nonempty_summary, readable_fallback, research_status, UI) | Коммит: `этот` | Статус: in_progress
+
 2026-07-31 | Действие: SBR PHASE 0+1 SPEC — 🔍 надёжная выжимка п.1–4 (LLM/fallback/UI); п.5 Checko и п.6 Resync отложены; стоп до go на RED | Коммит: `этот` | Хвост A: нет | Хвост B: п.5+п.6 | Хвост C: нет | Статус: in_progress
 
 2026-07-30 | Действие: fix 🔍 не затирает UF/паспорт — mergeCheckoJson+mergeTechJson (фронт) + lead_json_merge на PATCH; test_leads 27 PASS; p1+p6 PASS → сброс | Коммит: `этот` | Хвост A: нет | Хвост B: BACKLOG restore UF #97 | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3

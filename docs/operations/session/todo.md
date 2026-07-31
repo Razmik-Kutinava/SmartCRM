@@ -18,10 +18,10 @@
 ### PHASE 1 SPEC
 - [x] Заказ дословно + микро-чеклист
 - [x] Чеклист фазы / спека области уточнены
-- [ ] **СТОП** → ждать `go` на BUILD (RED)
+- [x] `go` на BUILD (RED)
 
 ### PHASE 2 BUILD (после go) — п.1–4
-- [ ] RED: тесты «сводка всегда в web_research», fallback не «пустые разделы»
+- [x] RED: тесты «сводка всегда в web_research», fallback не «пустые разделы» (5 FAIL)
 - [ ] GREEN п.1: поиск+страницы → один LLM-проход (JSON+досье)
 - [ ] GREEN п.2: Groq → Ollama → читаемый fallback из hits
 - [ ] GREEN п.3: сводка всегда в «Исследование (веб)» + блок в description
