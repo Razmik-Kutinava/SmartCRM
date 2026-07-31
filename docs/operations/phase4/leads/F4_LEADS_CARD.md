@@ -40,4 +40,5 @@
 Кнопка на шапке `/leads/[id]`: веб-поиск через **Brave + Tavily + Serper** → заполнение пустых полей лида + выжимка.  
 Сырьё и полный текст → `checkoJson.analyses.web_research` (как «сырой JSON», не в комментарии).  
 **Паспорт:** из сайта/страниц/досье — extract (regex + LLM) → `phones`/`emails`/`contacts`/`industry` (+ сайт, город, ЛПР) в `passport` + CRM-поля; Checko по ИНН не затирается.  
+**Надёжность (батч п.1–4):** один LLM-проход после поиска; Groq→Ollama→читаемый fallback; сводка всегда в свёртке «Исследование (веб)» + description; UI-статус прогресса.  
 Отдельно от ✨ Обогатить (Checko + пустые поля). API: `POST /api/search/research-lead`.
