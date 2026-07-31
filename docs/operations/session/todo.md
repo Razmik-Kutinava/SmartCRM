@@ -22,11 +22,11 @@
 
 ### PHASE 2 BUILD (после go) — п.1–4
 - [x] RED: тесты «сводка всегда в web_research», fallback не «пустые разделы» (5 FAIL)
-- [ ] GREEN п.1: поиск+страницы → один LLM-проход (JSON+досье)
-- [ ] GREEN п.2: Groq → Ollama → читаемый fallback из hits
-- [ ] GREEN п.3: сводка всегда в «Исследование (веб)» + блок в description
-- [ ] GREEN п.4: UI-статус «ищу / синтез / готово без LLM»
-- [ ] Регрессия зоны + commit GREEN/REVIEW
+- [x] GREEN п.1: один LLM-проход — досье + `## 10. JSON-паспорт` → `split_dossier_and_passport_json`, второй вызов LLM на паспорт убран
+- [x] GREEN п.2: Groq → Ollama → `readable_fallback_dossier` (факты сниппетов по разделам)
+- [x] GREEN п.3: `ensure_nonempty_summary` в backend + `ensureSummary` на фронте → блок «--- Исследование (веб) ---» всегда
+- [x] GREEN п.4: UI-статус `lead-card-research-status` (ищу / синтез / сохраняю / готово без LLM) + секунды
+- [x] Регрессия зоны rag 117 PASS + смоук analyst/leads 32 PASS
 
 ### Позже (не в этом go)
 - [ ] п.5 Checko полнее + кэш

@@ -170,6 +170,9 @@
 	let contactsSaving = $state(false);
 	let enrichRunning = $state(false);
 	let researchRunning = $state(false);
+	let researchStatus = $state('');
+	let researchStatusLabelText = $state('');
+	let researchElapsed = $state(0);
 	let enrichMsg = $state('');
 	let exportPdfLoading = $state(false);
 	let bitrixPushLoading = $state(false);
@@ -229,8 +232,20 @@
 		if (!lead || researchRunning || enrichRunning) return;
 		researchRunning = true;
 		enrichMsg = '';
+		researchStatus = 'searching';
+		researchStatusLabelText = 'Ищу в интернете (Serper / Brave / Tavily)…';
+		researchElapsed = 0;
+		const tick = setInterval(() => {
+			researchElapsed += 1;
+		}, 1000);
 		try {
-			const { data, patch, applied } = await researchLeadOnCard(lead, { force });
+			const { data, patch, applied } = await researchLeadOnCard(lead, {
+				force,
+				onProgress: (status, label) => {
+					researchStatus = status;
+					researchStatusLabelText = label;
+				},
+			});
 			await fetchLeadById(lead.id);
 			const fresh = await fetchLeads();
 			writeLeadsCache(fresh);
@@ -238,16 +253,22 @@
 			syncDetailsDraftFromLead();
 			syncContactsDraftFromLead();
 			const providers = (data.providers_used || []).join(', ') || '—';
+			const llmNote = data?.web_research?.llm
+				? `LLM: ${data.web_research.llm_provider || 'да'}`
+				: 'без LLM (выжимка из поиска)';
 			if (applied) {
-				enrichMsg = `Исследование готово (${providers}). Выжимка в карточке и сыром JSON.`;
+				enrichMsg = `Исследование готово за ${researchElapsed}с (${providers}; ${llmNote}). Выжимка в карточке и сыром JSON.`;
 			} else {
-				enrichMsg = `Исследование без новых полей (${providers})`;
+				enrichMsg = `Исследование без новых полей за ${researchElapsed}с (${providers}; ${llmNote})`;
 			}
 			openHubPanel('client');
 			setClientTab('card');
 		} catch (e) {
+			researchStatus = 'error';
+			researchStatusLabelText = 'Исследование не удалось';
 			enrichMsg = e?.message || String(e);
 		} finally {
+			clearInterval(tick);
 			researchRunning = false;
 		}
 	}
@@ -1083,6 +1104,14 @@
 			{/if}
 		</div>
 	</header>
+	{#if researchRunning || (researchStatus && researchStatus !== 'done_llm')}
+		<div
+			class="px-6 py-1.5 text-xs border-b border-gray-800 bg-gray-900/80 {researchStatus === 'error' ? 'text-rose-400' : 'text-amber-300'}"
+			data-testid="lead-card-research-status"
+		>
+			{researchRunning ? '⟳ ' : ''}{researchStatusLabelText}{researchRunning ? ` · ${researchElapsed}с` : ''}
+		</div>
+	{/if}
 	{#if enrichMsg}
 		<div class="px-6 py-1.5 text-xs border-b border-gray-800 bg-gray-900/80 text-gray-400" data-testid="lead-card-enrich-msg">{enrichMsg}</div>
 	{/if}

@@ -267,6 +267,38 @@ def merge_research_passport(
     return enriched, passport
 
 
+def normalize_llm_passport_dict(parsed: Any) -> dict[str, Any]:
+    """JSON от LLM → чистый extract (одинаково для одного и двух проходов)."""
+    if not isinstance(parsed, dict):
+        return {}
+    out: dict[str, Any] = {
+        "phones": filter_phones(_as_str_list(parsed.get("phones"))),
+        "emails": filter_emails(_as_str_list(parsed.get("emails"))),
+    }
+    contacts = []
+    for c in parsed.get("contacts") or []:
+        if isinstance(c, dict) and (
+            _clean_str(c.get("name")) or c.get("phones") or c.get("emails")
+        ):
+            contacts.append(c)
+    out["contacts"] = contacts
+    for key in (
+        "industry",
+        "city",
+        "website",
+        "employees",
+        "revenue",
+        "director",
+        "director_post",
+        "address",
+        "okved_name",
+    ):
+        val = _clean_str(parsed.get(key))
+        if val:
+            out[key] = val
+    return out
+
+
 async def llm_extract_passport_fields(
     *,
     company: str,
@@ -295,30 +327,7 @@ async def llm_extract_passport_fields(
             parsed = json.loads(match.group(0))
             if not isinstance(parsed, dict):
                 continue
-            out: dict[str, Any] = {}
-            out["phones"] = filter_phones(_as_str_list(parsed.get("phones")))
-            out["emails"] = filter_emails(_as_str_list(parsed.get("emails")))
-            contacts = []
-            for c in parsed.get("contacts") or []:
-                if isinstance(c, dict) and (
-                    _clean_str(c.get("name")) or c.get("phones") or c.get("emails")
-                ):
-                    contacts.append(c)
-            out["contacts"] = contacts
-            for key in (
-                "industry",
-                "city",
-                "website",
-                "employees",
-                "revenue",
-                "director",
-                "director_post",
-                "address",
-                "okved_name",
-            ):
-                val = _clean_str(parsed.get(key))
-                if val:
-                    out[key] = val
+            out = normalize_llm_passport_dict(parsed)
             logger.info(
                 "research_passport LLM (%s): phones=%s emails=%s industry=%s",
                 model,
@@ -357,9 +366,17 @@ async def extract_passport_from_research_sources(
     summary: str = "",
     hits: list[dict] | None = None,
     page_texts: str = "",
+    llm_json: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Regex по тексту + LLM JSON → единый extract."""
+    """Regex по тексту + LLM JSON → единый extract.
+
+    `llm_json` — паспорт из раздела 10 досье: тогда второй LLM-вызов не нужен.
+    """
     blob = sources_text_from_research(summary=summary, hits=hits, page_texts=page_texts)
     regex_part = extract_contacts_from_text(blob)
-    llm_part = await llm_extract_passport_fields(company=company, sources_text=blob)
+    llm_part = normalize_llm_passport_dict(llm_json) if llm_json else {}
+    if not llm_part:
+        llm_part = await llm_extract_passport_fields(company=company, sources_text=blob)
+    else:
+        logger.info("research_passport: JSON из досье (без второго LLM-вызова)")
     return _merge_extract_layers(regex_part, llm_part)

@@ -1,10 +1,15 @@
 """Досье веб-исследования: LLM-синтез (Groq→Ollama) + fallback для агентов."""
 from __future__ import annotations
 
+import json
 import logging
+import re
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+# Раздел 10 идёт одним проходом с досье — экономит второй LLM-вызов на паспорт
+PASSPORT_JSON_HEADER = "## 10. JSON-паспорт"
 
 _SECTION_HEADERS = (
     "## 1. Профиль компании",
@@ -68,7 +73,12 @@ def build_synthesis_prompt(
         f"{_SECTION_HEADERS[7]}\n"
         "Что неясно, противоречия, что проверить.\n"
         f"{_SECTION_HEADERS[8]}\n"
-        "Список [N] title + url из источников ниже.\n\n"
+        "Список [N] title + url из источников ниже.\n"
+        f"{PASSPORT_JSON_HEADER}\n"
+        "Последний раздел — ОДИН JSON-объект (без ``` и пояснений) с полями: "
+        "phones[], emails[], contacts[{name, role, position, phones, emails}], "
+        "industry, city, website, employees, revenue, director, director_post, address, okved_name. "
+        "role: lpr | other. Нет данных → null или [].\n\n"
         "Правила: только факты из источников; ссылайся [N]; не выдумывай; на русском; "
         "игнорируй посольства/чужие страны без связи с компанией.\n\n"
         f"Источники поиска:\n{formatted_hits}"
@@ -76,64 +86,137 @@ def build_synthesis_prompt(
     )
 
 
-def fallback_dossier_from_hits(company: str, hits: list[dict], today: str) -> str:
-    """Структурированная выжимка без LLM — чтобы агенты всё равно имели опору."""
+_NO_DATA = "нет данных в источниках."
+
+# Ключевые слова: сниппет → раздел досье (порядок = приоритет раздела)
+_SECTION_KEYWORDS: tuple[tuple[int, tuple[str, ...]], ...] = (
+    (3, ("выручк", "прибыл", "оборот", "млрд", "млн руб", "сотрудник", "численност", "штат")),
+    (1, ("производ", "продук", "услуг", "ассортимент", "бренд", "линейк", "поставля", "выпуска")),
+    (2, ("рынок", "рынке", "клиент", "дистриб", "экспорт", "регион", "город", "росси", "завод", "филиал")),
+    (5, ("сайт", "cms", "битрикс", "1с", "erp", "crm", "цифров", "it-", "ит-", "tadviser")),
+    (6, ("телефон", "e-mail", "email", "почта", "директор", "контакт", "@")),
+)
+
+
+def _clean_snippet(hit: dict, limit: int = 240) -> str:
+    snip = (hit.get("snippet") or hit.get("description") or "").strip().replace("\n", " ")
+    if len(snip) > limit:
+        snip = snip[:limit] + "…"
+    return snip
+
+
+def _classify_hits(hits: list[dict]) -> dict[int, list[str]]:
+    """Раскладывает факты из сниппетов по разделам досье."""
+    buckets: dict[int, list[str]] = {}
+    for i, h in enumerate(hits[:12], 1):
+        title = (h.get("title") or "").strip()
+        snip = _clean_snippet(h)
+        fact = f"• {snip} [{i}]" if snip else (f"• {title} [{i}]" if title else "")
+        if not fact:
+            continue
+        blob = f"{title} {snip}".lower()
+        placed = False
+        for section_idx, words in _SECTION_KEYWORDS:
+            if any(w in blob for w in words):
+                buckets.setdefault(section_idx, []).append(fact)
+                placed = True
+                break
+        if not placed:
+            buckets.setdefault(0, []).append(fact)
+    return buckets
+
+
+def readable_fallback_dossier(company: str, hits: list[dict], today: str) -> str:
+    """Выжимка без LLM: факты из сниппетов разложены по разделам, а не «нет данных» везде."""
     year = today[:4]
-    lines = [
-        f"Досье «{company}» на {today} (собрано из поиска, без LLM).",
+    hits = hits or []
+    buckets = _classify_hits(hits)
+
+    lines: list[str] = [
+        f"Досье «{company}» на {today} — собрано из веб-поиска без LLM (факты по сниппетам).",
         "",
         _SECTION_HEADERS[0],
-        f"Название: {company}. Детали — по сниппетам ниже.",
-        "",
-        _SECTION_HEADERS[1],
-        "нет данных в источниках (нужен LLM/страницы) — см. сниппеты.",
-        "",
-        _SECTION_HEADERS[2],
-        "нет данных в источниках.",
-        "",
-        _SECTION_HEADERS[3],
-        "нет данных в источниках.",
-        "",
-        f"{_SECTION_HEADERS[4]} ({year})",
+        f"Компания: {company}.",
     ]
+    lines.extend(buckets.get(0, []) or ([] if hits else [_NO_DATA]))
+
+    for section_idx in (1, 2, 3):
+        lines.extend(["", _SECTION_HEADERS[section_idx]])
+        lines.extend(buckets.get(section_idx) or [_NO_DATA])
+
+    lines.extend(["", f"{_SECTION_HEADERS[4]} ({year})"])
     if not hits:
-        lines.append("• Веб-результаты пусты. Проверьте ключи Serper/Brave/Tavily.")
+        lines.append("• Веб-результаты пусты — проверьте ключи Serper / Brave / Tavily.")
     else:
         for i, h in enumerate(hits[:12], 1):
             title = (h.get("title") or "без названия").strip()
-            snip = (h.get("snippet") or h.get("description") or "").strip().replace("\n", " ")
-            if len(snip) > 220:
-                snip = snip[:220] + "…"
             date = (h.get("date") or "").strip()
-            bit = f"[{i}] {title}"
-            if date:
-                bit += f" ({date})"
-            lines.append(bit)
+            head = f"[{i}] {title}" + (f" ({date})" if date else "")
+            lines.append(head)
+            snip = _clean_snippet(h)
             if snip:
                 lines.append(f"    {snip}")
+
+    for section_idx in (5, 6):
+        lines.extend(["", _SECTION_HEADERS[section_idx]])
+        lines.extend(buckets.get(section_idx) or [_NO_DATA])
+
     lines.extend(
         [
             "",
-            _SECTION_HEADERS[5],
-            "нет данных в источниках.",
-            "",
-            _SECTION_HEADERS[6],
-            "нет данных в источниках.",
-            "",
             _SECTION_HEADERS[7],
-            "Выжимка без LLM — перезапустите «Исследовать» при живом Groq/Ollama.",
+            "• Текст собран без LLM: факты не сверены между собой, цифры проверить по [N].",
+            "• Для полного досье перезапустите «Исследовать» при живом Groq / Ollama.",
             "",
             _SECTION_HEADERS[8],
         ]
     )
+    if not hits:
+        lines.append("—")
     for i, h in enumerate(hits[:12], 1):
         url = (h.get("url") or h.get("link") or "").strip()
         title = (h.get("title") or "").strip() or url or "—"
-        if url:
-            lines.append(f"[{i}] {title} — {url}")
-        else:
-            lines.append(f"[{i}] {title}")
+        lines.append(f"[{i}] {title} — {url}" if url else f"[{i}] {title}")
     return "\n".join(lines)
+
+
+def fallback_dossier_from_hits(company: str, hits: list[dict], today: str) -> str:
+    """Совместимость: старое имя → читаемый fallback."""
+    return readable_fallback_dossier(company, hits, today)
+
+
+def split_dossier_and_passport_json(answer: str) -> tuple[str, dict[str, Any] | None]:
+    """Делит ответ LLM на текст досье и JSON-паспорт (раздел 10)."""
+    text = (answer or "").strip()
+    if not text:
+        return "", None
+    idx = text.find(PASSPORT_JSON_HEADER)
+    if idx < 0:
+        return text, None
+    head = text[:idx].rstrip()
+    match = re.search(r"\{[\s\S]*\}", text[idx:])
+    parsed: Any = None
+    if match:
+        try:
+            parsed = json.loads(match.group(0))
+        except Exception as e:  # мусорный JSON от LLM — не роняем досье
+            logger.warning("research_dossier JSON-паспорт не распарсен: %s", e)
+            parsed = None
+    return (head or text), parsed if isinstance(parsed, dict) else None
+
+
+def ensure_nonempty_summary(
+    summary: str,
+    *,
+    company: str,
+    hits: list[dict] | None = None,
+    today: str,
+) -> str:
+    """Гарантия: в карточку никогда не уходит пустая или «ошибочная» выжимка."""
+    text = (summary or "").strip()
+    if text and not is_error_summary(text):
+        return text
+    return readable_fallback_dossier(company, hits or [], today)
 
 
 def agent_brief_from_summary(summary: str, *, max_chars: int = 4500) -> str:
@@ -182,7 +265,7 @@ async def synthesize_dossier_llm(
                 messages,
                 model=model,
                 temperature=0.3,
-                max_tokens=2800,
+                max_tokens=3200,
             )
             answer = (answer or "").strip()
             if answer and not is_error_summary(answer):

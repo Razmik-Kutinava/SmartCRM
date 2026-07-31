@@ -15,14 +15,17 @@ from .prospect import enrich_lead
 from .providers import _search_brave, _search_serper, _search_tavily
 from .research_dossier import (
     agent_brief_from_summary,
+    ensure_nonempty_summary,
     fallback_dossier_from_hits,
     is_error_summary,
+    split_dossier_and_passport_json,
     synthesize_dossier_llm,
 )
 from .research_passport import (
     extract_passport_from_research_sources,
     merge_research_passport,
 )
+from .research_status import done_status, research_status_label
 
 logger = logging.getLogger(__name__)
 
@@ -212,9 +215,9 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
         formatted_hits=formatted,
         page_texts=page_texts,
     )
-    llm_used = bool(llm_provider)
-    if not answer:
-        answer = fallback_dossier_from_hits(company, deduped, today)
+    llm_used = bool(llm_provider) and not is_error_summary(answer)
+    answer, passport_json = split_dossier_and_passport_json(answer)
+    answer = ensure_nonempty_summary(answer, company=company, hits=deduped, today=today)
 
     brief = agent_brief_from_summary(answer)
 
@@ -224,6 +227,7 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
         "raw_results": deduped,
         "providers_used": providers_used,
         "page_texts": page_texts,
+        "passport_json": passport_json,
         "web_research": {
             "at": today,
             "summary": answer,
@@ -235,6 +239,8 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
             "llm_provider": llm_provider,
             "fallback": not llm_used,
             "pages_fetched": pages_fetched,
+            "status": done_status(llm_used),
+            "status_label": research_status_label(done_status(llm_used)),
         },
     }
 
@@ -284,6 +290,8 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
                 "llm_provider": None,
                 "fallback": True,
                 "pages_fetched": 0,
+                "status": "done_fallback",
+                "status_label": research_status_label("done_fallback"),
             },
         }
 
@@ -308,6 +316,9 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
             summary=str(narr_res.get("answer") or ""),
             hits=list(narr_res.get("raw_results") or [])[:18],
             page_texts=page_texts,
+            llm_json=narr_res.get("passport_json")
+            if isinstance(narr_res.get("passport_json"), dict)
+            else None,
         )
     except Exception as e:
         logger.warning("research_lead passport extract: %s", e)
@@ -328,6 +339,18 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
     }
     if isinstance(web_research, dict):
         web_research = dict(web_research)
+        web_research["summary"] = ensure_nonempty_summary(
+            str(web_research.get("summary") or ""),
+            company=company,
+            hits=list(narr_res.get("raw_results") or []),
+            today=today,
+        )
+        if not web_research.get("agent_brief"):
+            web_research["agent_brief"] = agent_brief_from_summary(web_research["summary"])
+        web_research.setdefault("status", done_status(bool(web_research.get("llm"))))
+        web_research.setdefault(
+            "status_label", research_status_label(str(web_research.get("status") or ""))
+        )
         web_research["passport_extract"] = {
             "phones": extract.get("phones") or [],
             "emails": extract.get("emails") or [],

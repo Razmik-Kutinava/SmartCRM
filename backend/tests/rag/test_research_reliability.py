@@ -99,6 +99,72 @@ def test_frontend_research_status_wired():
     assert "searching" in on_card or "synthesizing" in page.lower()
 
 
+def test_single_llm_pass_returns_dossier_and_passport_json():
+    """п.1: раздел 10 в промпте + split досье / JSON-паспорт."""
+    from rag.search.research_dossier import (
+        PASSPORT_JSON_HEADER,
+        build_synthesis_prompt,
+        split_dossier_and_passport_json,
+    )
+
+    prompt = build_synthesis_prompt(
+        company="ХОХЛАНД",
+        today="2026-07-31",
+        year="2026",
+        context="ИНН 123",
+        formatted_hits="[1] hochland.ru",
+    )
+    assert PASSPORT_JSON_HEADER in prompt
+
+    answer = (
+        "## 1. Профиль компании\nСыры.\n\n"
+        f"{PASSPORT_JSON_HEADER}\n"
+        '{"phones": ["+7 495 123-45-67"], "emails": ["info@hochland.ru"], '
+        '"industry": "Пищевая промышленность", "contacts": []}'
+    )
+    text, parsed = split_dossier_and_passport_json(answer)
+    assert PASSPORT_JSON_HEADER not in text
+    assert "Сыры" in text
+    assert parsed and parsed.get("industry") == "Пищевая промышленность"
+
+    text2, parsed2 = split_dossier_and_passport_json("## 1. Профиль компании\nБез JSON")
+    assert "Без JSON" in text2 and parsed2 is None
+
+
+@pytest.mark.asyncio
+async def test_passport_extract_skips_second_llm_call_with_json():
+    """п.1 экономия токенов: JSON из досье → второго вызова LLM нет."""
+    import rag.search.research_passport as rp
+
+    called = False
+
+    async def _boom(**kwargs):
+        nonlocal called
+        called = True
+        return {}
+
+    orig = rp.llm_extract_passport_fields
+    rp.llm_extract_passport_fields = _boom
+    try:
+        out = await rp.extract_passport_from_research_sources(
+            company="ХОХЛАНД",
+            summary="Досье",
+            hits=_HITS,
+            page_texts="",
+            llm_json={
+                "phones": ["+7 495 123-45-67"],
+                "emails": ["info@hochland.ru"],
+                "industry": "Пищевая промышленность",
+            },
+        )
+    finally:
+        rp.llm_extract_passport_fields = orig
+
+    assert called is False
+    assert out.get("industry") == "Пищевая промышленность"
+    assert out.get("emails")
+
+
 def test_apply_always_writes_summary_block_when_web_research():
     """п.3: даже fallback-сводка уходит в description."""
     apply = (

@@ -26,6 +26,35 @@ export function mergeWebResearchIntoChecko(existingChecko, webResearch) {
 }
 
 /**
+ * Сводка для карточки: никогда не пустая и без «Ошибка синтеза…».
+ * Если бэкенд не дал текст — собираем читаемый список источников на фронте.
+ * @param {Record<string, any> | null | undefined} web
+ * @param {Record<string, any> | null | undefined} result
+ */
+export function ensureSummary(web, result = null) {
+	const summary = String(web?.summary || result?.answer || '').trim();
+	const bad =
+		!summary ||
+		/^ошибка синтеза/i.test(summary) ||
+		/^ошибка исследования/i.test(summary) ||
+		/connection attempts failed/i.test(summary);
+	if (!bad) return summary;
+
+	const hits = Array.isArray(web?.raw_results) ? web.raw_results : [];
+	if (!hits.length) return '';
+	const lines = hits.slice(0, 12).map((h, i) => {
+		const title = String(h?.title || h?.url || '—').trim();
+		const url = String(h?.url || h?.link || '').trim();
+		const snip = String(h?.snippet || h?.description || '')
+			.replace(/\s+/g, ' ')
+			.trim()
+			.slice(0, 240);
+		return `[${i + 1}] ${title}${url ? ` — ${url}` : ''}${snip ? `\n    ${snip}` : ''}`;
+	});
+	return ['Выжимка без LLM — факты из веб-поиска:', ...lines].join('\n');
+}
+
+/**
  * @param {Record<string, unknown>} result
  * @param {Record<string, unknown> | null} lead
  */
@@ -41,13 +70,8 @@ export function researchResultToLeadPatch(result, lead = null) {
 	);
 	patch.checkoJson = mergeWebResearchIntoChecko(existing, web);
 
-	const summary = String(web.summary || result.answer || '').trim();
-	const bad =
-		!summary ||
-		/^ошибка синтеза/i.test(summary) ||
-		/^ошибка исследования/i.test(summary) ||
-		/connection attempts failed/i.test(summary);
-	if (summary && !bad) {
+	const summary = ensureSummary(web, result);
+	if (summary) {
 		const marker = '--- Исследование (веб) ---';
 		const prev = String(lead?.description || patch.description || '').trim();
 		const short = summary.length > 3500 ? `${summary.slice(0, 3500)}…` : summary;
