@@ -56,7 +56,8 @@ async def test_sources_catalog(client):
     items = {row["name"]: row for row in r.json()["sources"]}
     assert items["база_июль"]["count"] == 2
     assert items["база_июль"]["withEmail"] == 2
-    assert "csv" in items  # дефолтный source импорта без метки
+    assert "other" in items  # метка из имени файла other.csv
+    assert "bases" in (await client.get("/api/leads/sources")).json()
 
 
 @pytest.mark.asyncio

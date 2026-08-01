@@ -187,44 +187,50 @@ def row_to_lead_fields(row: dict[str, str]) -> dict[str, Any]:
     return fields
 
 
-async def _find_existing(db: AsyncSession, fields: dict[str, Any]) -> Lead | None:
+async def _find_existing(
+    db: AsyncSession,
+    fields: dict[str, Any],
+    *,
+    source_scope: str | None = None,
+) -> Lead | None:
+    """Поиск дубля. При source_scope — только внутри этой базы (автономные списки)."""
+    scope = (source_scope or "").strip()
     bx = fields.get("bitrix_lead_id")
-    if bx is not None:
+    if bx is not None and not scope:
         r = await db.execute(select(Lead).where(Lead.bitrix_lead_id == bx).limit(1))
         hit = r.scalar_one_or_none()
         if hit:
             return hit
     inn = _clean(fields.get("inn"))
     if inn:
-        r = await db.execute(select(Lead).where(Lead.inn == inn).limit(1))
+        q = select(Lead).where(Lead.inn == inn)
+        if scope:
+            q = q.where(Lead.source == scope)
+        r = await db.execute(q.limit(1))
         hit = r.scalar_one_or_none()
         if hit:
             return hit
     email = _norm_email(str(fields.get("email") or ""))
     if email:
-        r = await db.execute(
-            select(Lead).where(or_(Lead.email.ilike(email), Lead.email == email)).limit(1)
-        )
+        q = select(Lead).where(or_(Lead.email.ilike(email), Lead.email == email))
+        if scope:
+            q = q.where(Lead.source == scope)
+        r = await db.execute(q.limit(1))
         hit = r.scalar_one_or_none()
         if hit:
             return hit
     return None
 
 
-async def import_leads_from_csv(
+async def import_leads_from_rows(
     db: AsyncSession,
-    csv_text: str,
+    rows: list[dict[str, str]],
     *,
     mode: str = "upsert",
     source: str | None = None,
 ) -> dict[str, Any]:
-    """mode: upsert — обновить при совпадении; skip — пропустить дубликаты.
-
-    source — метка базы: проставляется всем строкам импорта (важнее колонки
-    `source` в файле), чтобы потом слать рассылку строго по этой базе.
-    """
+    """Общий импорт строк (CSV/XLSX). source — метка базы всем строкам."""
     source_label = (source or "").strip()[:100]
-    rows = parse_csv_rows(csv_text)
     imported = 0
     updated = 0
     skipped = 0
@@ -240,7 +246,7 @@ async def import_leads_from_csv(
             continue
         if source_label:
             fields["source"] = source_label
-        existing = await _find_existing(db, fields)
+        existing = await _find_existing(db, fields, source_scope=source_label or None)
         if existing:
             if not upsert:
                 skipped += 1
@@ -270,7 +276,39 @@ async def import_leads_from_csv(
         "errors": errors[:20],
         "error_count": len(errors),
         "mode": "upsert" if upsert else "skip",
+        "source": source_label or None,
     }
+
+
+async def import_leads_from_csv(
+    db: AsyncSession,
+    csv_text: str,
+    *,
+    mode: str = "upsert",
+    source: str | None = None,
+) -> dict[str, Any]:
+    """mode: upsert — обновить при совпадении; skip — пропустить дубликаты.
+
+    source — метка базы: проставляется всем строкам импорта (важнее колонки
+    `source` в файле), чтобы потом слать рассылку строго по этой базе.
+    """
+    return await import_leads_from_rows(
+        db, parse_csv_rows(csv_text), mode=mode, source=source
+    )
+
+
+async def import_leads_from_xlsx(
+    db: AsyncSession,
+    data: bytes,
+    *,
+    mode: str = "upsert",
+    source: str | None = None,
+) -> dict[str, Any]:
+    from integrations.crm_sync.xlsx_adapter import parse_xlsx_rows
+
+    return await import_leads_from_rows(
+        db, parse_xlsx_rows(data), mode=mode, source=source
+    )
 
 
 def leads_to_csv(leads: list[Lead]) -> str:

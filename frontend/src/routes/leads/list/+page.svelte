@@ -14,6 +14,7 @@
 		fetchBitrixImportStats,
 		fetchLeadCoverage,
 		fetchLeadManagers,
+		fetchLeadBases,
 		readLeadsCacheOrNull,
 		demoLeads,
 		writeLeadsCache,
@@ -108,6 +109,7 @@
 	);
 	let filterCoverage = $state(savedListFilters?.filterCoverage ?? LEADS_LIST_FILTER_DEFAULTS.filterCoverage);
 	let filterManager = $state(savedListFilters?.filterManager ?? LEADS_LIST_FILTER_DEFAULTS.filterManager);
+	let filterBase = $state(savedListFilters?.filterBase ?? LEADS_LIST_FILTER_DEFAULTS.filterBase);
 	let filterMinScore = $state(savedListFilters?.filterMinScore ?? LEADS_LIST_FILTER_DEFAULTS.filterMinScore);
 	let groupBy = $state(savedListFilters?.groupBy ?? LEADS_LIST_FILTER_DEFAULTS.groupBy);
 	/** @type {string[]} */
@@ -124,7 +126,9 @@
 	let csvImporting = $state(false);
 	let csvExporting = $state(false);
 	let csvInput = $state(null);
-	let csvSourceLabel = $state(''); // метка базы (source) для всех строк CSV-импорта
+	let csvSourceLabel = $state(''); // метка базы (source) для всех строк CSV/XLS-импорта
+	/** @type {Array<{ id: string, label: string, count: number, kind?: string }>} */
+	let baseOptions = $state([]);
 	/** @type {{ bitrix_total: number | null, local_bitrix_leads_count: number, date_from?: string } | null} */
 	let bitrixStats = $state(null);
 	/** @type {{ total?: number, bitrixTotal?: number, segments?: Record<string, number>, resync?: { status?: string, processed?: number, totalB24?: number } } | null} */
@@ -159,6 +163,7 @@
 			filterDeliveryType,
 			filterCoverage,
 			filterManager,
+			filterBase,
 			filterMinScore,
 			groupBy,
 			sortBy,
@@ -201,6 +206,11 @@
 			}
 		} catch {
 			managerOptions = [];
+		}
+		try {
+			baseOptions = await fetchLeadBases();
+		} catch {
+			baseOptions = [];
 		}
 
 		registerLeadIntentHandler(handleVoiceResult);
@@ -257,6 +267,7 @@
 				filterDeliveryType,
 				filterCoverage,
 				filterManager,
+				filterBase,
 				sortBy,
 				minScore: filterMinScore,
 			},
@@ -365,6 +376,7 @@
 		filterDeliveryType = LEADS_LIST_FILTER_DEFAULTS.filterDeliveryType;
 		filterCoverage = LEADS_LIST_FILTER_DEFAULTS.filterCoverage;
 		filterManager = LEADS_LIST_FILTER_DEFAULTS.filterManager;
+		filterBase = LEADS_LIST_FILTER_DEFAULTS.filterBase;
 		filterMinScore = LEADS_LIST_FILTER_DEFAULTS.filterMinScore;
 		groupBy = LEADS_LIST_FILTER_DEFAULTS.groupBy;
 		collapsedGroupKeys = [...LEADS_LIST_FILTER_DEFAULTS.collapsedGroupKeys];
@@ -448,13 +460,25 @@
 			const fresh = await fetchLeads();
 			leads = fresh;
 			writeLeadsCache(leads);
-			const srcNote = csvSourceLabel.trim() ? ` · база «${csvSourceLabel.trim()}»` : '';
+			const usedSource =
+				(res.source || csvSourceLabel || '').trim() ||
+				(file.name || '').replace(/\.[^.]+$/, '');
+			try {
+				baseOptions = await fetchLeadBases();
+			} catch {
+				/* ignore */
+			}
+			if (usedSource) {
+				filterBase = usedSource;
+			}
+			const srcNote = usedSource ? ` · база «${usedSource}»` : '';
+			const kind = /\.xlsx?$/i.test(file.name || '') ? 'Excel' : 'CSV';
 			notify(
-				`CSV: +${res.imported} новых, обновлено ${res.updated}, пропущено ${res.skipped}${srcNote}`,
+				`${kind}: +${res.imported} новых, обновлено ${res.updated}, пропущено ${res.skipped}${srcNote}`,
 				'success',
 			);
 		} catch (e) {
-			notify(`CSV импорт: ${e?.message || e}`, 'error');
+			notify(`Импорт файла: ${e?.message || e}`, 'error');
 		} finally {
 			csvImporting = false;
 			if (csvInput) csvInput.value = '';
@@ -914,7 +938,7 @@
 						<input
 							bind:this={csvInput}
 							type="file"
-							accept=".csv,text/csv"
+							accept=".csv,.xlsx,.xlsm,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 							class="hidden"
 							data-testid="leads-csv-input"
 							onchange={onCsvFileChange}
@@ -922,8 +946,8 @@
 						<input
 							bind:value={csvSourceLabel}
 							class="mx-2 my-1 w-[calc(100%-1rem)] rounded-lg bg-gray-900 border border-gray-800 px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600"
-							placeholder="Метка базы (source), напр. «база_июль»"
-							title="Проставится всем строкам CSV — потом рассылка строго по этой базе"
+							placeholder="Имя базы (пусто = из файла)"
+							title="Метка базы для всех строк — потом переключатель «База» в списке"
 							data-testid="leads-csv-source"
 						/>
 						<button
@@ -932,7 +956,7 @@
 							onclick={() => { closeListMenu(); csvInput?.click(); }}
 							class="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
 							data-testid="leads-csv-import"
-						>{csvImporting ? '⏳ CSV…' : '📥 Импорт CSV'}</button>
+						>{csvImporting ? '⏳ Импорт…' : '📥 Импорт CSV / Excel'}</button>
 						<div class="my-1 border-t border-gray-800"></div>
 						<button
 							type="button"
@@ -1014,6 +1038,20 @@
 				onclick={resetListFilters}
 				title="Сбросить все фильтры и сортировку"
 			>Сбросить</button>
+			<label class="min-w-[11rem]">
+				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">База</span>
+				<select
+					bind:value={filterBase}
+					class="w-full bg-gray-800 border border-indigo-700/60 text-gray-200 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-indigo-500"
+					data-testid="leads-list-base"
+					title="Переключение списков клиентов: Все / Битрикс / импортированные базы"
+				>
+					<option value="all">Все базы ({leads.length})</option>
+					{#each baseOptions as b (b.id)}
+						<option value={b.id}>{b.label} ({b.count})</option>
+					{/each}
+				</select>
+			</label>
 			<label class="min-w-[10rem]">
 				<span class="block text-[10px] uppercase tracking-wider text-gray-600 mb-1">Менеджер</span>
 				<select

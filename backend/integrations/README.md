@@ -13,7 +13,8 @@
 | `bitrix24_upsert.py` | upsert лида + таймлайн (общий для import/webhook/poll) |
 | `bitrix24_sync.py` | Один лид (upsert), фоновый опрос, состояние синка |
 | `telegram/` | Бот: уведомления lead hunt, команды /status /queue, polling |
-| `crm_sync/csv_adapter.py` | CSV импорт/экспорт лидов, dedup по email/ИНН/bitrix_lead_id |
+| `crm_sync/csv_adapter.py` | CSV импорт/экспорт лидов, scoped dedup по метке базы, `import_leads_from_rows` |
+| `crm_sync/xlsx_adapter.py` | Разбор .xlsx → строки для импорта лидов |
 | `crm_sync/bitrix_adapter.py` | Push лида SmartCRM → Битрикс24 (`crm.lead.add/update`) |
 | `crm_sync/amo_adapter.py` | Импорт/экспорт лидов AmoCRM |
 | `crm_sync/hubspot_adapter.py` | Импорт/экспорт сделок HubSpot |

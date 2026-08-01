@@ -10,11 +10,11 @@
 
 ## Чеклист фазы
 
-- [ ] **Базы лидов:** переключатель + импорт CSV/XLS → отдельный список · [`CHECKLIST_F4.md`](../phase4/CHECKLIST_F4.md) · «Ф4 · Лиды · направление» / умный импорт
+- [ ] **Базы лидов:** переключатель Все/Битрикс/метка в `/leads/list` + импорт CSV/XLS → отдельный список · [`CHECKLIST_F4.md`](../phase4/CHECKLIST_F4.md) · (пункт `[x]` — после «ок»)
 
 ## Чеклист микро
 
-- [x] RED: xlsx import + bases API + filterBase + scoped dedup · 4 FAIL
-- [ ] GREEN: backend xlsx/scoped + UI переключатель + импорт CSV/XLS
-- [ ] Регрессия зоны crm_leads / rag-adjacent tests
-- [ ] REVIEW: ops + отчёт
+- [x] RED: xlsx import + bases API + filterBase + scoped dedup · 4 FAIL · `6405ca4`
+- [x] GREEN: backend xlsx/scoped + UI переключатель + импорт CSV/XLS
+- [x] Регрессия: test_lead_bases 4 PASS; crm_leads 111 PASS + 1 известный FAIL; p1+p6
+- [x] REVIEW: ops + отчёт

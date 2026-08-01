@@ -21,6 +21,7 @@ LEADS_LIST_FILTER_DEFAULTS = {
     "filterDeliveryType": "all",
     "filterCoverage": "all",
     "filterManager": "all",
+    "filterBase": "all",
     "filterMinScore": None,
     "groupBy": "none",
     "sortBy": "my_day",
@@ -43,6 +44,7 @@ STRING_KEYS = [
     "filterDeliveryType",
     "filterCoverage",
     "filterManager",
+    "filterBase",
     "groupBy",
     "sortBy",
 ]
@@ -91,6 +93,7 @@ def serialize_leads_list_filters(state: dict) -> dict:
         "filterDeliveryType": state.get("filterDeliveryType", d["filterDeliveryType"]),
         "filterCoverage": state.get("filterCoverage", d["filterCoverage"]),
         "filterManager": state.get("filterManager", d["filterManager"]),
+        "filterBase": state.get("filterBase", d["filterBase"]),
         "filterMinScore": state.get("filterMinScore", d["filterMinScore"]),
         "groupBy": state.get("groupBy", d["groupBy"]),
         "sortBy": state.get("sortBy", d["sortBy"]),

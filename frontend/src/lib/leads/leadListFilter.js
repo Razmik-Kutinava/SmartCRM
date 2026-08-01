@@ -2,6 +2,7 @@
 import { leadPriorityTier } from '$lib/crmStages.js';
 import { leadMatchesCoverageFilter } from '$lib/leads/leadCoverage.js';
 import { leadMatchesManagerFilter } from '$lib/leads/leadManager.js';
+import { leadMatchesBaseFilter } from '$lib/leads/leadBaseFilter.js';
 import {
 	deliveryTypeFromLead,
 	subscriptionStatus,
@@ -365,12 +366,14 @@ export function filterLeads(
 		filterDeliveryType = 'all',
 		filterCoverage = 'all',
 		filterManager = 'all',
+		filterBase = 'all',
 		minScore = null,
 	},
 	config = null,
 	now = new Date(),
 ) {
 	return leads.filter((l) => {
+		if (!leadMatchesBaseFilter(l, filterBase)) return false;
 		if (filterStage !== 'all' && l.stage !== filterStage) return false;
 		if (filterPriority !== 'all') {
 			const tier = leadPriorityTier(l.score, config);

@@ -354,7 +354,7 @@ export async function apiImportHubspot() {
 	return body;
 }
 
-/** Импорт лидов из CSV (mode: upsert | skip; source — метка базы всем строкам). */
+/** Импорт лидов из CSV/XLSX (mode: upsert | skip; source — метка базы всем строкам). */
 export async function apiImportLeadsCsv(file, mode = 'upsert', source = '') {
 	let url = `${API()}/import-csv?mode=${encodeURIComponent(mode)}`;
 	if ((source || '').trim()) url += `&source=${encodeURIComponent(source.trim())}`;
@@ -383,12 +383,28 @@ export async function apiImportLeadsCsv(file, mode = 'upsert', source = '') {
 	return body;
 }
 
-/** Справочник источников (баз) лидов: [{ name, count, withEmail }]. */
+/** Справочник источников (баз) лидов: [{ name, count, withEmail }] + bases. */
 export async function fetchLeadSources() {
 	const r = await fetch(`${API()}/sources`);
 	if (!r.ok) throw new Error(`Источники лидов: HTTP ${r.status}`);
 	const body = await r.json().catch(() => ({}));
 	return body.sources || [];
+}
+
+/** Базы для переключателя списка: Битрикс + именованные [{ id, label, count, kind }]. */
+export async function fetchLeadBases() {
+	const r = await fetch(`${API()}/sources`);
+	if (!r.ok) throw new Error(`Базы лидов: HTTP ${r.status}`);
+	const body = await r.json().catch(() => ({}));
+	if (Array.isArray(body.bases) && body.bases.length) return body.bases;
+	return (body.sources || []).map((s) => ({
+		id: s.name,
+		label: s.name,
+		name: s.name,
+		count: s.count,
+		withEmail: s.withEmail,
+		kind: 'named',
+	}));
 }
 
 /** Скачать все лиды CSV. */

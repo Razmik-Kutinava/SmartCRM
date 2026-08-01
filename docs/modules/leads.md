@@ -25,7 +25,7 @@
 | URL | Назначение |
 |-----|------------|
 | `/leads` | Редирект на `/leads/list` |
-| `/leads/list` | Таблица лидов, фильтры по этапам из конфига, Bitrix-импорт |
+| `/leads/list` | Таблица лидов, фильтры, переключатель **База** (Все/Битрикс/метки), Bitrix/CSV/XLSX-импорт |
 | `/leads/funnel` | Канбан по этапам |
 | `/leads/calendar`, `/leads/tasks`, `/leads/focus`, `/leads/analytics` | Остальные экраны CRM |
 | `/leads/{id}` | Карточка сделки |
@@ -67,7 +67,8 @@
 ### Портрет лида (ОКВЭД, размер, полнота)
 
 - **`core/lead_profile.py`**: `normalize_okved_code` (62.01, 6201 → единый формат), `okved_section` (первые 2 цифры), `employees_band` (1-50 … 1000+), `portrait_score` (0–100 по заполненности карточки).
-- Колонки в **`Lead`**: `okved_main`, `okved_name`, `okved_section`, `employees_band`, `portrait_score` — синхронизируются при create/update, enrich (Checko), CSV import, Bitrix upsert (`sync_lead_profile`).
+- Колонки в **`Lead`**: `okved_main`, `okved_name`, `okved_section`, `employees_band`, `portrait_score` — синхронизируются при create/update, enrich (Checko), CSV/XLSX import, Bitrix upsert (`sync_lead_profile`).
+- **Базы лидов:** поле `source` = метка базы; `GET /api/leads/sources` → `sources` (рассылка) + `bases` (Битрикс `__bitrix__` + именованные). Импорт `POST /import-csv` принимает `.csv`/`.xlsx`; без `source` — имя файла. Дедуп email/ИНН **внутри** метки базы. UI: фильтр «База» на `/leads/list`.
 - **Битрикс24:** ИНН/ОГРН из реквизитов; **ОКВЭД и число сотрудников** из UF (`UF_CRM_OKVED`, `UF_CRM_OKVED_CODE`, hint `оквэд` / `сотруд`) на лиде и связанной компании — без Checko.
 - **UF лицензия/подписка:** `core/lead_bitrix_extra.py` + `bitrix24_uf.extract_bitrix_extra_from_row` → колонка **`bitrix_extra`** (JSON): подписка до, тип поставки, срок лицензии, резерв до, licensing email, сублицензиат, плательщик, менеджер, участник, страна, повторный лид. API: `bitrixExtra` в `Lead.to_dict()`. Синк при upsert/poll; offline backfill из `tech_json.bitrix24.uf`.
 - **Мультиконтакты Битрикс:** `crm.lead.contact.items.get` → все связанные контакты в **`contacts` JSON** (телефоны/email по каждому); основной (`IS_PRIMARY`) → роль `lpr` и плоские `contact`/`email`/`phone`; `merge_bitrix_contacts` при upsert — ручные контакты CRM не затираются.

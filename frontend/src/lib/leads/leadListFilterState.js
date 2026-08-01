@@ -18,6 +18,7 @@ export const LEADS_LIST_FILTER_DEFAULTS = {
 	filterDeliveryType: 'all',
 	filterCoverage: 'all',
 	filterManager: 'all',
+	filterBase: 'all',
 	filterMinScore: null,
 	groupBy: 'none',
 	sortBy: 'my_day',
@@ -40,6 +41,7 @@ const STRING_KEYS = [
 	'filterDeliveryType',
 	'filterCoverage',
 	'filterManager',
+	'filterBase',
 	'groupBy',
 	'sortBy',
 ];
@@ -90,6 +92,7 @@ export function serializeLeadsListFilters(state) {
 		filterDeliveryType: state.filterDeliveryType ?? 'all',
 		filterCoverage: state.filterCoverage ?? 'all',
 		filterManager: state.filterManager ?? 'all',
+		filterBase: state.filterBase ?? 'all',
 		filterMinScore: state.filterMinScore ?? null,
 		groupBy: state.groupBy ?? 'none',
 		sortBy: state.sortBy ?? 'my_day',

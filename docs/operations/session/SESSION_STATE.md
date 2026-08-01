@@ -4,9 +4,11 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
-**Регрессия_счёт:** `2/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+**Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
-2026-08-01 | Действие: SBR RED — базы лидов: xlsx import + scoped dedup + bases/Битрикс + filterBase; test_lead_bases 4 FAIL | Коммит: `этот` | Статус: in_progress
+2026-08-01 | Действие: SBR GREEN+REVIEW — базы лидов: xlsx/csv import + scoped dedup + GET sources.bases (__bitrix__) + filterBase UI; test_lead_bases 4 PASS; crm_leads 111 PASS + 1 известный FAIL; p1+p6 | Коммит: `этот` | Хвост A: нет | Хвост B: умный маппинг произвольных заголовков XLS + рабочий пул 360 — BACKLOG | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (3/3→p1+p6, сброс)
+
+2026-08-01 | Действие: SBR RED — базы лидов: xlsx import + scoped dedup + bases/Битрикс + filterBase; test_lead_bases 4 FAIL | Коммит: `6405ca4` | Статус: in_progress
 
 2026-08-01 | Действие: SBR GREEN+REVIEW — 3 дырки почты: (1) `emails_from_bitrix_blobs` + `merge_uf_emails_into_checko` в `Lead.to_dict` — UF/tech → company.emails без сети; (2) `mergePassportContacts(..., lead)` дописывает lead.email/company/UF в ЛПР если emails пусто; (3) 🔍 через тот же enrich apply. test_email_passport_holes 7 PASS, rag 134 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (rag PASS; crm_leads 111 PASS + 1 известный FAIL)
 
