@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env", override=True)
 load_dotenv(ROOT / "backend" / ".env", override=True)
 
-API = os.getenv("SMARTCRM_API_BASE", "http://127.0.0.1:8010")
+API = os.getenv("SMARTCRM_API_BASE", "http://127.0.0.1:8000")
 KEY = os.getenv("SMARTCRM_API_KEY") or ""
 
 
@@ -54,6 +54,15 @@ def main() -> None:
         )
         print("summary_len", len(str(wr.get("summary") or "")))
         print("head", str(wr.get("summary") or "")[:180].replace("\n", " | "))
+        passport = data.get("passport") or {}
+        filled = {
+            k: v
+            for k, v in passport.items()
+            if k in ("phone", "email", "website", "city", "industry", "director", "employees", "revenue")
+            and v
+        }
+        print("passport_filled", json.dumps(filled, ensure_ascii=False)[:300])
+        print("passport_contacts", len(passport.get("contacts") or []))
         out = ROOT / "backend" / "data" / "artifacts" / "search" / "research97_direct.json"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(

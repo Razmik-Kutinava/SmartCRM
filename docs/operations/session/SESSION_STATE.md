@@ -6,6 +6,8 @@
 
 **Регрессия_счёт:** `2/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-08-01 | Действие: SBR RED — Groq TPM-бюджет досье (413 `Limit 6000, Requested 6150`): test_research_groq_budget 5 FAIL (нет estimate_tokens / fit_prompt_to_token_budget / groq_tpm_budget / retry на 413) | Коммит: `этот` | Статус: in_progress
+
 2026-07-31 | Действие: fix 🔍 hang — жёсткий deadline enrich/narrative (не ждём отмену Ollama), без 2-го LLM на паспорт после Ollama, quality-gate досье, env-лимиты; прямой прогон #97 99.7с fallback; Groq key expired | Коммит: `этот` | Хвост A: живой Groq (нужен новый ключ) | Хвост B: п.5 Checko | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (rag)
 
 2026-07-31 | Действие: SBR PHASE 3 REVIEW — 🔍 надёжная выжимка п.1–4; MCP /leads/97: статус+fallback 58с без LLM, досье видно, контакты живы; п.5 Checko → BACKLOG; reliability 8 + leads/analyst 32 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: п.5 Checko + п.6 Resync UF | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3 (rag)
