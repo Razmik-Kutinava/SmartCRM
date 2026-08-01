@@ -122,13 +122,17 @@
 
 	onMount(() => {
 		let lastFetchedOkId = '';
+		let inFlightId = '';
 		async function pullLead() {
-			await loadCrmConfig();
 			const id = String(get(page).params.id ?? '');
 			// page.subscribe срабатывает и на смену ?panel=/?tab= — на том же лиде
 			// перезагружать нечего, а пересборка черновиков стирала незаполненный
 			// контакт из формы и следующий ввод уходил в предыдущую карточку.
-			if (id && id === lastFetchedOkId) return;
+			// Отметку ставим до await: openHubPanel меняет URL сразу после подписки,
+			// и оба вызова успевали пройти проверку — карточка грузилась дважды.
+			if (id && (id === lastFetchedOkId || id === inFlightId)) return;
+			inFlightId = id;
+			await loadCrmConfig();
 			if (id) {
 				try {
 					// Источник правды — ответ API; кэш только ускоряет повторный заход.
@@ -141,6 +145,7 @@
 					syncApprovalsDraft();
 				} catch {
 					/* офлайн / демо — остаётся кэш; id не фиксируем, чтобы повторить fetch при следующем заходе */
+					inFlightId = '';
 					sync();
 				}
 			} else {

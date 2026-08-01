@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.bitrix_error_detail import bitrix_unavailable_detail
 from db.models import Lead
 from db.session import get_db
 
@@ -29,7 +30,10 @@ async def bitrix_import_stats(
     try:
         bitrix_total = await fetch_bitrix_lead_total(date_from.strip())
     except BitrixWebhookError as e:
-        raise HTTPException(403, detail=str(e)) from e
+        # 403 читался как «нет прав» и уводил оператора искать проблему у себя,
+        # а в detail уходил стектрейс Битрикса с путями их сервера.
+        logger.warning("Битрикс недоступен для bitrix-import-stats: %s", e)
+        raise HTTPException(502, detail=bitrix_unavailable_detail(e)) from e
     n_local = await db.execute(
         select(func.count()).select_from(Lead).where(Lead.bitrix_lead_id.isnot(None))
     )
@@ -59,7 +63,8 @@ async def import_leads_bitrix(
             max_items=body.max_items,
         )
     except BitrixWebhookError as e:
-        raise HTTPException(403, detail=str(e)) from e
+        logger.warning("Битрикс недоступен для import-bitrix: %s", e)
+        raise HTTPException(502, detail=bitrix_unavailable_detail(e)) from e
     except RuntimeError as e:
         raise HTTPException(503, detail=str(e)) from e
     except Exception as e:
@@ -113,7 +118,8 @@ async def push_lead_bitrix(lead_id: int, db: AsyncSession = Depends(get_db)):
         await db.commit()
         await db.refresh(lead)
     except BitrixWebhookError as e:
-        raise HTTPException(403, detail=str(e)) from e
+        logger.warning("Битрикс недоступен для push-bitrix lead_id=%s: %s", lead_id, e)
+        raise HTTPException(502, detail=bitrix_unavailable_detail(e)) from e
     except Exception as e:
         logger.exception("push-bitrix lead_id=%s", lead_id)
         raise HTTPException(502, detail="Ошибка выгрузки в Битрикс24. Подробности в логах.") from e

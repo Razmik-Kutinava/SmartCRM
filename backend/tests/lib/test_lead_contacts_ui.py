@@ -28,7 +28,7 @@ def test_pull_lead_skips_drafts_for_same_lead():
     """Смена URL на том же лиде не должна пересобирать черновики форм."""
     body = _pull_lead_body()
     assert "lastFetchedOkId" in body
-    guard = re.search(r"if \([^)]*id === lastFetchedOkId[^)]*\)\s*(?:\{[^}]*)?return", body)
+    guard = re.search(r"if \(.*id === lastFetchedOkId.*\)\s*(?:\{[^}]*)?return", body)
     assert guard, (
         "нет раннего выхода при том же лиде — syncContactsDraftFromLead() "
         "затрёт несохранённый контакт при переключении вкладки"

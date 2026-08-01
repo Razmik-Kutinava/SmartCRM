@@ -31,13 +31,38 @@ const API = () => `${apiBase()}/api/leads`;
 /** In-memory зеркало: при переполнении localStorage (~5MB) запись молчит, память остаётся. */
 let memoryCache = null;
 
+/**
+ * Досье исследования, сырые UF и история нужны только карточке, а она
+ * читает лид из детального API. В кэше списка они съедали всю квоту
+ * localStorage: 3231 лид давал 4.7 МБ, запись падала молча и кэш застывал.
+ *
+ * На базе от ~2500 лидов даже облегчённый список не влезает в квоту — тогда
+ * кэш отключается сам (ключ удаляется), список ждёт ответ API. Настоящее
+ * лечение — пагинация `/api/leads`, см. BACKLOG.
+ */
+const HEAVY_FIELDS = ['checko', 'tech', 'techJson', 'checkoJson', 'bitrixExtra', 'history', 'approvals'];
+
+function cacheSlim(leads) {
+	return leads.map((lead) => {
+		const slim = { ...lead };
+		for (const field of HEAVY_FIELDS) delete slim[field];
+		return slim;
+	});
+}
+
 function cacheWrite(leads) {
 	if (!browser || !Array.isArray(leads)) return;
 	memoryCache = leads;
 	try {
-		localStorage.setItem(CACHE_KEY, JSON.stringify(leads));
+		localStorage.setItem(CACHE_KEY, JSON.stringify(cacheSlim(leads)));
 	} catch {
-		/* квота — карточка всё равно видит memoryCache */
+		// Переполнение: старый кэш держит квоту занятой и мешает писать
+		// остальные ключи (настройки, порядок плиток) — убираем его.
+		try {
+			localStorage.removeItem(CACHE_KEY);
+		} catch {
+			/* приватный режим — остаётся memoryCache */
+		}
 	}
 }
 
@@ -385,6 +410,16 @@ export async function downloadLeadsCsvExport() {
 /** Вернуть список из кэша или демо-данные — вызов синхронный, данные могут быть устаревшими */
 export function readLeadsCache() {
 	return cacheRead() ?? structuredClone(DEFAULT_LEADS);
+}
+
+/** Кэш без подмены демо: `null` честно значит «данных ещё нет». */
+export function readLeadsCacheOrNull() {
+	return cacheRead();
+}
+
+/** Демо-витрина: показываем, только когда API недоступен. */
+export function demoLeads() {
+	return structuredClone(DEFAULT_LEADS);
 }
 
 /** Сохранить список в кэш */

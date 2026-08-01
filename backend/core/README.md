@@ -103,6 +103,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `bitrix_resync_guard.py` | Пауза auto-sync пока `resync_bitrix_lead_fields` status=running |
 | `lead_deal_amount.py` | OPPORTUNITY + CURRENCY_ID → `deal_amount` / `deal_currency`, API `amount`/`currency` |
 | `bitrix_webhook_scopes.py` | Scope вебхука (crm/user/task); activity-синк без task; `resolve_include_tasks_module` |
+| `bitrix_error_detail.py` | Detail для ответа, когда Битрикс недоступен: 502 + короткая причина, без стектрейса PHP |
 | `lead_priority_tier.py` | Приоритет лида по порогам CRM (зеркало `crmStages.js`) |
 | `lead_profile.py` | Нормализация ОКВЭД, размер компании (`employees_band`), `portrait_score`, sync полей портрета |
 | `lead_field_audit_util.py` | Аудит изменений полей лида |

@@ -15,7 +15,14 @@
 	const VISIBLE_LIMIT = 4;
 	let expanded = $state(false);
 	const hiddenCount = $derived(Math.max(0, contacts.length - VISIBLE_LIMIT));
-	const visible = $derived(expanded ? contacts : contacts.slice(0, VISIBLE_LIMIT));
+	// Смена вкладки перемонтирует панель и сбрасывает expanded. Контакт без
+	// имени — это незаконченный ввод: спрятать его = «мой контакт пропал».
+	const hasUnfinishedBeyondLimit = $derived(
+		contacts.slice(VISIBLE_LIMIT).some((c) => !String(c?.name || '').trim()),
+	);
+	const visible = $derived(
+		expanded || hasUnfinishedBeyondLimit ? contacts : contacts.slice(0, VISIBLE_LIMIT),
+	);
 
 	function updateRow(idx, field, value) {
 		const next = contacts.map((c, i) => (i === idx ? { ...c, [field]: value } : c));

@@ -14,7 +14,8 @@
 		fetchBitrixImportStats,
 		fetchLeadCoverage,
 		fetchLeadManagers,
-		readLeadsCache,
+		readLeadsCacheOrNull,
+		demoLeads,
 		writeLeadsCache,
 	} from '$lib/leadsStorage.js';
 	import { getApiUrl, onMessage } from '$lib/websocket.js';
@@ -134,8 +135,11 @@
 	/** Воронка с сервера (Ops → CRM / crm_settings.json), иначе дефолт */
 	let stages = $state(/** @type {string[]} */ (['all', ...DEFAULT_CRM_STAGES]));
 
-	// Сразу показываем кэш, потом перезаписываем данными из БД
-	let leads = $state(readLeadsCache());
+	// Сразу показываем кэш, потом перезаписываем данными из БД.
+	// Демо-лидов тут быть не должно: на большой базе ответ идёт ~13 с, и всё
+	// это время оператор видел бы «АО МашПром» с ссылками на чужие id.
+	let leads = $state(readLeadsCacheOrNull() ?? []);
+	let leadsLoading = $state(true);
 
 	$effect(() => {
 		if (!browser) return;
@@ -173,6 +177,11 @@
 		} catch (e) {
 			console.error('[leads] fetchLeads ошибка:', e);
 			apiError = true;
+			// API недоступен — витрина с демо-лидами лучше пустого экрана,
+			// но только здесь: при живом API реальные данные не подменяем.
+			if (!leads.length) leads = demoLeads();
+		} finally {
+			leadsLoading = false;
 		}
 		try {
 			bitrixStats = await fetchBitrixImportStats('2023-01-01');
@@ -1413,7 +1422,11 @@
 			{#if filtered.length === 0}
 				<tr>
 					<td colspan="11" class="px-6 py-12 text-center text-gray-600 text-sm">
-						Лидов не найдено. Скажи "создай лид компания ..." 🎙
+						{#if leadsLoading}
+							Загружаю лиды из базы…
+						{:else}
+							Лидов не найдено. Скажи "создай лид компания ..." 🎙
+						{/if}
 					</td>
 				</tr>
 			{/if}

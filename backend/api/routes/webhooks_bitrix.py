@@ -78,7 +78,10 @@ async def bitrix_outbound_events(request: Request):
         async with get_db_session() as db:
             result = await sync_bitrix_lead_by_id(db, lead_id)
     except BitrixWebhookError as e:
-        raise HTTPException(403, detail=str(e)) from e
+        from core.bitrix_error_detail import bitrix_unavailable_detail
+
+        logger.warning("Битрикс недоступен для webhook lead %s: %s", lead_id, e)
+        raise HTTPException(502, detail=bitrix_unavailable_detail(e)) from e
     except Exception as e:
         logger.exception("bitrix webhook lead %s", lead_id)
         raise HTTPException(502, detail="Ошибка синхронизации лида") from e
