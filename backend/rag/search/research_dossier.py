@@ -140,9 +140,104 @@ def build_synthesis_prompt(
         "industry, city, website, employees, revenue, director, director_post, address, okved_name. "
         "role: lpr | other. Нет данных → null или [].\n\n"
         "Правила: только факты из источников; ссылайся [N]; не выдумывай; на русском; "
-        "игнорируй посольства/чужие страны без связи с компанией.\n\n"
+        "игнорируй посольства/чужие страны без связи с компанией.\n"
+        "Формат: заголовки разделов — ровно как выше, с «## » и номером. "
+        f"Раздел «{PASSPORT_JSON_HEADER}» обязателен и идёт последним.\n\n"
         f"Источники поиска:\n{formatted_hits}"
         f"{pages_block}"
+    )
+
+
+def estimate_tokens(text: str) -> int:
+    """Грубая оценка токенов. Кириллица дороже латиницы — считаем консервативно.
+
+    Точный токенайзер Groq недоступен локально; занижать нельзя (иначе 413),
+    поэтому берём меньшее число символов на токен через env.
+    """
+    if not text:
+        return 0
+    chars_per_token = _env_float("LLM_CHARS_PER_TOKEN", 2.2)
+    if chars_per_token <= 0:
+        chars_per_token = 2.2
+    return int(len(text) / chars_per_token) + 1
+
+
+def groq_tpm_budget() -> int:
+    """Сколько токенов за минуту можно потратить на один вызов досье.
+
+    Free tier Groq для llama-3.1-8b-instant — 6000 TPM на организацию,
+    поэтому держим запас под параллельные вызовы (генерация запросов и т.п.).
+    """
+    return _env_int("RESEARCH_GROQ_TPM_BUDGET", 5200)
+
+
+def fit_prompt_to_token_budget(
+    *,
+    company: str,
+    today: str,
+    year: str,
+    context: str,
+    formatted_hits: str,
+    page_texts: str = "",
+    tpm_budget: int,
+    max_tokens: int,
+) -> str:
+    """Собирает промпт досье, урезая источники под лимит `tpm_budget - max_tokens`."""
+    allowed = max(tpm_budget - max_tokens, 400)
+    hits = formatted_hits or ""
+    pages = page_texts or ""
+
+    def build(h: str, p: str) -> str:
+        return build_synthesis_prompt(
+            company=company,
+            today=today,
+            year=year,
+            context=context,
+            formatted_hits=h,
+            page_texts=p,
+            pages_limit=len(p) or None,
+        )
+
+    prompt = build(hits, pages)
+    if estimate_tokens(prompt) <= allowed:
+        return prompt
+
+    # Сначала жертвуем текстами страниц, потом сниппетами — заголовок разделов нужен целым
+    overhead = estimate_tokens(build("", ""))
+    room_chars = int(max(allowed - overhead, 200) * _env_float("LLM_CHARS_PER_TOKEN", 2.2))
+
+    hits_share = _env_float("RESEARCH_HITS_SHARE", 0.6)
+    hits_chars = int(room_chars * hits_share)
+    hits = hits[:hits_chars]
+    pages = pages[: max(room_chars - len(hits), 0)]
+
+    prompt = build(hits, pages)
+    # Страховка от промаха оценки: дожимаем короткими шагами
+    while estimate_tokens(prompt) > allowed and (hits or pages):
+        if pages:
+            pages = pages[: int(len(pages) * 0.8)]
+        else:
+            hits = hits[: int(len(hits) * 0.8)]
+        prompt = build(hits, pages)
+    return prompt
+
+
+_RATE_LIMIT_MARKERS = ("rate_limit_exceeded", "413", "too large", "tokens per minute")
+
+
+def is_rate_limit_error(err: BaseException) -> bool:
+    text = f"{type(err).__name__}: {err}".lower()
+    return any(m in text for m in _RATE_LIMIT_MARKERS)
+
+
+def parse_requested_limit(err: BaseException) -> tuple[int | None, int | None]:
+    """Достаёт `Limit N, Requested M` из ошибки Groq — чтобы урезать точно, а не наугад."""
+    text = str(err)
+    limit = re.search(r"Limit\s+(\d+)", text, re.IGNORECASE)
+    requested = re.search(r"Requested\s+(\d+)", text, re.IGNORECASE)
+    return (
+        int(limit.group(1)) if limit else None,
+        int(requested.group(1)) if requested else None,
     )
 
 
@@ -252,6 +347,10 @@ def split_dossier_and_passport_json(answer: str) -> tuple[str, dict[str, Any] | 
         return "", None
     idx = text.find(PASSPORT_JSON_HEADER)
     if idx < 0:
+        # Модели часто теряют «## » и пишут «**10. JSON-паспорт**» или «10. JSON-паспорт»
+        soft = re.search(r"[#*\s]*10\.\s*JSON-паспорт", text, re.IGNORECASE)
+        idx = soft.start() if soft else -1
+    if idx < 0:
         return text, None
     head = text[:idx].rstrip()
     match = re.search(r"\{[\s\S]*\}", text[idx:])
@@ -315,56 +414,99 @@ async def synthesize_dossier_llm(
 
     from core.llm import chat
 
-    groq_tokens = _env_int("RESEARCH_GROQ_MAX_TOKENS", 2800)
+    groq_tokens = _env_int("RESEARCH_GROQ_MAX_TOKENS", 2000)
     ollama_tokens = _env_int("RESEARCH_OLLAMA_MAX_TOKENS", 1600)
     ollama_hits_chars = _env_int("RESEARCH_OLLAMA_HITS_CHARS", 5000)
     pages_chars = _env_int("RESEARCH_PAGES_CHARS", 4000)
     ollama_timeout = _env_float("OLLAMA_CHAT_TIMEOUT", 180.0)
+    retries = _env_int("RESEARCH_GROQ_RATE_RETRIES", 2)
 
     for model in ("groq", "ollama"):
         if model == "ollama":
-            hits = (formatted_hits or "")[:ollama_hits_chars]
-            pages = (page_texts or "")[:pages_chars]
+            prompt = build_synthesis_prompt(
+                company=company,
+                today=today,
+                year=year,
+                context=context,
+                formatted_hits=(formatted_hits or "")[:ollama_hits_chars],
+                page_texts=(page_texts or "")[:pages_chars],
+                pages_limit=pages_chars,
+            )
             tokens = ollama_tokens
-            pages_limit = pages_chars
         else:
-            hits = formatted_hits or ""
-            pages = page_texts or ""
             tokens = groq_tokens
-            pages_limit = _env_int("RESEARCH_PAGES_CHARS", 6000)
-
-        prompt = build_synthesis_prompt(
-            company=company,
-            today=today,
-            year=year,
-            context=context,
-            formatted_hits=hits,
-            page_texts=pages,
-            pages_limit=pages_limit,
-        )
-        messages = [{"role": "user", "content": prompt}]
-        try:
-            coro = chat(
-                messages,
-                model=model,
-                temperature=0.3,
+            budget = groq_tpm_budget()
+            prompt = fit_prompt_to_token_budget(
+                company=company,
+                today=today,
+                year=year,
+                context=context,
+                formatted_hits=formatted_hits,
+                page_texts=page_texts,
+                tpm_budget=budget,
                 max_tokens=tokens,
             )
-            if model == "ollama":
-                answer = await asyncio.wait_for(coro, timeout=ollama_timeout)
-            else:
-                answer = await coro
-            answer = (answer or "").strip()
-            if answer and is_usable_dossier(answer):
-                logger.info("research_dossier синтез через %s (%s симв.)", model, len(answer))
-                return answer, model
-            logger.warning(
-                "research_dossier %s: ответ не похож на досье (%s симв.)",
-                model,
-                len(answer or ""),
-            )
-        except Exception as e:
-            logger.warning("research_dossier %s недоступен: %s: %s", model, type(e).__name__, e)
+
+        attempt = 0
+        while True:
+            try:
+                coro = chat(
+                    [{"role": "user", "content": prompt}],
+                    model=model,
+                    temperature=0.3,
+                    max_tokens=tokens,
+                )
+                if model == "ollama":
+                    answer = await asyncio.wait_for(coro, timeout=ollama_timeout)
+                else:
+                    answer = await coro
+                answer = (answer or "").strip()
+                if answer and is_usable_dossier(answer):
+                    logger.info("research_dossier синтез через %s (%s симв.)", model, len(answer))
+                    return answer, model
+                logger.warning(
+                    "research_dossier %s: ответ не похож на досье (%s симв.)",
+                    model,
+                    len(answer or ""),
+                )
+                break
+            except Exception as e:
+                rate_limited = model == "groq" and is_rate_limit_error(e) and attempt < retries
+                if not rate_limited:
+                    logger.warning(
+                        "research_dossier %s недоступен: %s: %s", model, type(e).__name__, e
+                    )
+                    break
+                attempt += 1
+                limit, requested = parse_requested_limit(e)
+                # Groq сам сказал limit/requested — ужимаемся по этому отношению,
+                # но каждая попытка обязана быть строго короче предыдущей
+                if limit and requested and requested > limit:
+                    ratio = min(limit / requested * 0.9, 0.85)
+                else:
+                    ratio = 0.7
+                prev_allowed = max(budget - tokens, 400)
+                tokens = max(int(tokens * 0.8), 700)
+                budget = max(int(prev_allowed * ratio), 400) + tokens
+                prompt = fit_prompt_to_token_budget(
+                    company=company,
+                    today=today,
+                    year=year,
+                    context=context,
+                    formatted_hits=formatted_hits,
+                    page_texts=page_texts,
+                    tpm_budget=budget,
+                    max_tokens=tokens,
+                )
+                logger.warning(
+                    "research_dossier groq лимит TPM (limit=%s requested=%s) — попытка %s, "
+                    "промпт %s симв., max_tokens=%s",
+                    limit,
+                    requested,
+                    attempt,
+                    len(prompt),
+                    tokens,
+                )
 
     return "", None
 

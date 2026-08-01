@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 from typing import Any
 
@@ -15,6 +16,27 @@ from .checko_passport import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int((os.getenv(name) or "").strip() or default)
+    except ValueError:
+        return default
+
+
+def _env_float(name: str, default: float) -> float:
+    try:
+        return float((os.getenv(name) or "").strip() or default)
+    except ValueError:
+        return default
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = (os.getenv(name) or "").strip().lower()
+    if not raw:
+        return default
+    return raw in ("1", "true", "yes", "on")
 
 _EMAIL_RE = re.compile(r"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}")
 _PHONE_RE = re.compile(
@@ -304,23 +326,38 @@ async def llm_extract_passport_fields(
     company: str,
     sources_text: str,
 ) -> dict[str, Any]:
-    """LLM JSON: phones/emails/contacts/industry… Groq → Ollama."""
+    """LLM JSON: phones/emails/contacts/industry… Groq (в TPM-бюджете) → Ollama.
+
+    Ollama здесь опциональна (`RESEARCH_PASSPORT_OLLAMA`): локальная 8B на этом
+    шаге стоит десятки секунд, а regex-слой уже даёт телефоны и почты.
+    """
     from core.llm import chat
 
-    prompt = (
+    from rag.search.research_dossier import estimate_tokens, groq_tpm_budget
+
+    max_tokens = _env_int("RESEARCH_PASSPORT_MAX_TOKENS", 900)
+    head = (
         f"Из открытых источников извлеки данные о компании «{company}» для CRM-паспорта.\n"
         "Верни СТРОГО один JSON-объект (без markdown) с полями:\n"
         "phones (массив строк), emails (массив), "
         "contacts (массив объектов {{name, role, position, phones, emails}}), "
         "industry, city, website, employees, revenue, director, director_post, address, okved_name.\n"
         "role контакта: lpr | other. Только факты из текста; не выдумывай; нет данных — null или [].\n\n"
-        f"Источники:\n{(sources_text or '')[:14000]}"
+        "Источники:\n"
     )
+    # Вписываемся в минутный лимит Groq: иначе 413 и потерянный вызов
+    allowed_tokens = max(groq_tpm_budget() - max_tokens - estimate_tokens(head), 200)
+    chars_per_token = _env_float("LLM_CHARS_PER_TOKEN", 2.2)
+    prompt = head + (sources_text or "")[: int(allowed_tokens * chars_per_token)]
     messages = [{"role": "user", "content": prompt}]
 
-    for model in ("groq", "ollama"):
+    models = ["groq"]
+    if _env_flag("RESEARCH_PASSPORT_OLLAMA", False):
+        models.append("ollama")
+
+    for model in models:
         try:
-            raw = await chat(messages, model=model, temperature=0.1, max_tokens=900)
+            raw = await chat(messages, model=model, temperature=0.1, max_tokens=max_tokens)
             match = re.search(r"\{[\s\S]*\}", raw or "")
             if not match:
                 continue

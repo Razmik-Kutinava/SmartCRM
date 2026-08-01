@@ -4,7 +4,9 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
-**Регрессия_счёт:** `2/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+**Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+
+2026-08-01 | Действие: SBR GREEN+REVIEW — Groq TPM-бюджет: fit_prompt_to_token_budget + retry по Limit/Requested, JSON-паспорт без `## `, паспортный LLM в бюджете, Ollama на паспорте off, enrich 45→25с, query LLM 8→15с; Ollama serve поднята; прогон #97: llm=True provider=groq 52.9с (было 136с), паспорт industry/city/website; rag 127 PASS, p1 PASS, p6 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: п.5 Checko (/finances, /legal-cases падают → enrich в deadline) | Хвост C: порядок в карточке клиента — ждём от пользователя, что чинить | Статус: done | Регрессия_счёт: 0/3 (rag+p1+p6)
 
 2026-08-01 | Действие: SBR RED — Groq TPM-бюджет досье (413 `Limit 6000, Requested 6150`): test_research_groq_budget 5 FAIL (нет estimate_tokens / fit_prompt_to_token_budget / groq_tpm_budget / retry на 413) | Коммит: `этот` | Статус: in_progress
 

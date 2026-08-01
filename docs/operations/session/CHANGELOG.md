@@ -2,6 +2,10 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-08-01 — Fix: 🔍 Groq вписан в TPM-лимит (досье через LLM, а не fallback)
+
+По `go` («работает ли у нас грок… сколько лимит… не всю тратить»). Ключ Groq живой (`scripts/check_groq.py`: 14400 запросов/сутки, 6000 токенов/минуту), но досье падало в `413 rate_limit_exceeded` (`Limit 6000, Requested 6150`) → каждый раз fallback без LLM. Фикс: `estimate_tokens` / `groq_tpm_budget` / `fit_prompt_to_token_budget` — промпт урезается под минутный бюджет; retry считает новый размер по `Limit`/`Requested` из ответа Groq. JSON-паспорт теперь находится и когда модель теряет `## `. Паспортный LLM-вызов тоже в бюджете, Ollama на нём отключена (`RESEARCH_PASSPORT_OLLAMA=0`, экономит ~45с). `RESEARCH_ENRICH_TIMEOUT` 45→25с, `RESEARCH_QUERY_LLM_TIMEOUT` 8→15с. Поднята `ollama serve` как второй fallback. Прогон #97: `llm=True provider=groq`, 52.9с против 136с, паспорт — отрасль/город/сайт + контакт, один LLM-проход. Тесты: `test_research_groq_budget` 7, rag 127, p1 + p6 PASS.
+
 ## 2026-07-31 — Fix: 🔍 не зависает на Ollama/enrich
 
 По `go` («подвисало… продолжи»). Причины: протухший Groq 401; Ollama 0.5b давала мусор; второй LLM на паспорт удваивал время; `asyncio.wait_for` ждал отмену httpx и тянул дольше таймаута; несколько uvicorn на :8000. Фикс: quality-gate досье, `RESEARCH_*` env-лимиты, жёсткий `_deadline` (enrich 45с / narrative 120с), второй passport-LLM только после Groq (auto), модель `llama3.2:latest`. Прогон #97: ответ за ~100с с читаемым fallback. Живой Groq — после смены ключа в `.env`.

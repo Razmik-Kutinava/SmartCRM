@@ -68,6 +68,39 @@ def test_groq_budget_from_env(monkeypatch):
     assert rd.groq_tpm_budget() > 0
 
 
+def test_split_passport_json_without_hash_header():
+    """Модель потеряла «## » — JSON-паспорт всё равно должен найтись."""
+    answer = (
+        "**1. Профиль компании**\nСыры.\n\n"
+        "**10. JSON-паспорт**\n"
+        '{"phones": ["+74951234567"], "emails": ["info@example.ru"], "industry": "Сыры"}'
+    )
+    text, passport = rd.split_dossier_and_passport_json(answer)
+    assert passport is not None
+    assert passport["phones"] == ["+74951234567"]
+    assert "JSON-паспорт" not in text
+
+
+@pytest.mark.asyncio
+async def test_passport_llm_fits_budget_and_skips_ollama(monkeypatch):
+    """Паспортный вызов вписан в TPM и не тянет медленную Ollama по умолчанию."""
+    from rag.search import research_passport as rp
+
+    monkeypatch.delenv("RESEARCH_PASSPORT_OLLAMA", raising=False)
+    used: list[tuple[str, int]] = []
+
+    async def fake_chat(messages, model="auto", temperature=0.1, max_tokens=900, **kw):
+        used.append((model, len(messages[0]["content"])))
+        return '{"phones": [], "emails": [], "industry": null}'
+
+    monkeypatch.setattr("core.llm.chat", fake_chat)
+    await rp.llm_extract_passport_fields(company="Тест", sources_text="я" * 60000)
+
+    assert [m for m, _ in used] == ["groq"], "Ollama не должна вызываться по умолчанию"
+    prompt_len = used[0][1]
+    assert rd.estimate_tokens("x" * prompt_len) + 900 <= rd.groq_tpm_budget()
+
+
 @pytest.mark.asyncio
 async def test_synthesize_retries_smaller_on_413(monkeypatch):
     """413 rate_limit → повтор с урезанным промптом, а не сразу fallback."""

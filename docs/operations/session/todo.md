@@ -21,16 +21,19 @@
 - [x] `scripts/check_groq.py` — проверка ключа и остатка лимитов
 
 ### PHASE 2 BUILD
-- [ ] RED: тест «промпт досье вписан в TPM-бюджет Groq»
-- [ ] GREEN: `fit_prompt_to_token_budget()` + retry при 413/429 с урезанием
-- [ ] GREEN: env `RESEARCH_GROQ_TPM_BUDGET`, скорректированный `RESEARCH_GROQ_MAX_TOKENS`
-- [ ] Ollama поднят как второй fallback
+- [x] RED: `test_research_groq_budget` 5 FAIL
+- [x] GREEN: `estimate_tokens` / `groq_tpm_budget` / `fit_prompt_to_token_budget` + retry по `Limit/Requested` из ответа Groq
+- [x] GREEN: env `RESEARCH_GROQ_TPM_BUDGET=5200`, `RESEARCH_GROQ_MAX_TOKENS=2000`, `LLM_CHARS_PER_TOKEN`
+- [x] GREEN: JSON-паспорт находится и без `## ` (модель теряет разметку)
+- [x] GREEN: паспортный LLM в том же бюджете; Ollama на паспорте выключена (`RESEARCH_PASSPORT_OLLAMA=0`)
+- [x] Ollama поднята как второй fallback досье
 
 ### PHASE 3 REVIEW
-- [ ] Прогон #97: `llm=True`, `provider=groq`, паспорт заполнен
-- [ ] Регрессия зоны rag + ops + commit
+- [x] Прогон #97: `llm=True provider=groq fallback=False`, 52.9с (было 136с), паспорт: industry/city/website + 1 контакт
+- [x] Логи: `research_passport: JSON из досье (без второго LLM-вызова)`, 413 нет
+- [x] Регрессия `tests/rag/` 127 PASS
 
 ### Позже (BACKLOG)
-- [ ] п.5 Checko полнее + кэш
+- [ ] п.5 Checko полнее + кэш (сейчас `/finances`, `/legal-cases`, `/contracts` падают → enrich уходит в deadline 25с)
 - [ ] п.6 Resync UF (Хохланд #97 и битые)
 - [ ] Порядок в карточке клиента — уточнить у пользователя, что именно чинить
