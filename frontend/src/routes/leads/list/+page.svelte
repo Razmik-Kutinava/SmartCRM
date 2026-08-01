@@ -455,6 +455,7 @@
 	async function runCsvImport(file) {
 		if (!file || csvImporting) return;
 		csvImporting = true;
+		notify(`Загружаю «${file.name}» — это может занять до минуты…`, 'info');
 		try {
 			const res = await apiImportLeadsCsv(file, 'upsert', csvSourceLabel);
 			const fresh = await fetchLeads();
@@ -486,7 +487,8 @@
 	}
 
 	function onCsvFileChange(e) {
-		const file = e.currentTarget?.files?.[0];
+		const input = e.target ?? e.currentTarget ?? csvInput;
+		const file = input?.files?.[0] ?? csvInput?.files?.[0];
 		if (file) runCsvImport(file);
 	}
 
@@ -936,14 +938,6 @@
 							data-testid="leads-hubspot-import"
 						>{hubspotImporting ? '⏳ HubSpot…' : '📤 HubSpot'}</button>
 						<input
-							bind:this={csvInput}
-							type="file"
-							accept=".csv,.xlsx,.xlsm,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-							class="hidden"
-							data-testid="leads-csv-input"
-							onchange={onCsvFileChange}
-						/>
-						<input
 							bind:value={csvSourceLabel}
 							class="mx-2 my-1 w-[calc(100%-1rem)] rounded-lg bg-gray-900 border border-gray-800 px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600"
 							placeholder="Имя базы (пусто = из файла)"
@@ -953,7 +947,7 @@
 						<button
 							type="button"
 							disabled={csvImporting}
-							onclick={() => { closeListMenu(); csvInput?.click(); }}
+							onclick={() => { csvInput?.click(); closeListMenu(); }}
 							class="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
 							data-testid="leads-csv-import"
 						>{csvImporting ? '⏳ Импорт…' : '📥 Импорт CSV / Excel'}</button>
@@ -1471,3 +1465,13 @@
 		</tbody>
 	</table>
 </div>
+
+<!-- Вне меню импорта: при закрытии меню элемент удалялся бы из DOM раньше выбора файла -->
+<input
+	bind:this={csvInput}
+	type="file"
+	accept=".csv,.txt,.xlsx,.xlsm,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+	class="hidden"
+	data-testid="leads-csv-input"
+	onchange={onCsvFileChange}
+/>
