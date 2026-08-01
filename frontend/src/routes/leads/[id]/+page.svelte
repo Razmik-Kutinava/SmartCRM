@@ -92,6 +92,34 @@
 		syncApprovalsDraft();
 	}
 
+	/**
+	 * Перечитать лид из детального API и применить к карточке.
+	 * Кэш списка (`sync()`) для этого не годится: на 3k+ лидах `fetchLeads()`
+	 * идёт больше 10 секунд, и до его конца карточка показывает старые данные.
+	 */
+	async function refreshLeadFromApi() {
+		const id = lead?.id ?? get(page).params.id;
+		if (!id) return false;
+		try {
+			lead = enrichLeadForCard(await fetchLeadById(id));
+			notFound = false;
+			syncApprovalsDraft();
+			return true;
+		} catch {
+			sync();
+			return false;
+		}
+	}
+
+	/** Обновить кэш списка в фоне — карточка его не ждёт. */
+	function refreshLeadsCacheInBackground() {
+		fetchLeads()
+			.then((fresh) => writeLeadsCache(fresh))
+			.catch(() => {
+				/* список обновится при следующем заходе */
+			});
+	}
+
 	onMount(() => {
 		let lastFetchedOkId = '';
 		async function pullLead() {
@@ -144,8 +172,8 @@
 		slaMsg = '';
 		try {
 			const updated = await assignLeadSlaProtocol(lead.id, protocolId || null);
-			lead = updated;
-			writeLeadsCache(await fetchLeads().catch(() => [lead]));
+			lead = enrichLeadForCard(updated);
+			refreshLeadsCacheInBackground();
 			slaMsg = protocolId ? 'SLA-протокол назначен' : 'Протокол снят';
 			await loadLeadTasks();
 		} catch (e) {
@@ -193,11 +221,11 @@
 	function openIndustryModal() {
 		if (!lead) return;
 		openLeadIndustryModal(lead, {
-			onSaved: (saved) => {
-				sync();
+			onSaved: async () => {
+				await refreshLeadFromApi();
+				refreshLeadsCacheInBackground();
 				syncDetailsDraftFromLead();
 				syncContactsDraftFromLead();
-			syncContactsDraftFromLead();
 			},
 		});
 	}
@@ -208,10 +236,8 @@
 		enrichMsg = '';
 		try {
 			const { data, patch, applied } = await enrichLeadOnCard(lead, { force });
-			await fetchLeadById(lead.id);
-			const fresh = await fetchLeads();
-			writeLeadsCache(fresh);
-			sync();
+			await refreshLeadFromApi();
+			refreshLeadsCacheInBackground();
 			syncDetailsDraftFromLead();
 			syncContactsDraftFromLead();
 			if (data.cached) {
@@ -246,10 +272,8 @@
 					researchStatusLabelText = label;
 				},
 			});
-			await fetchLeadById(lead.id);
-			const fresh = await fetchLeads();
-			writeLeadsCache(fresh);
-			sync();
+			await refreshLeadFromApi();
+			refreshLeadsCacheInBackground();
 			syncDetailsDraftFromLead();
 			syncContactsDraftFromLead();
 			const providers = (data.providers_used || []).join(', ') || '—';
@@ -308,7 +332,7 @@
 				body.action === 'updated'
 					? `Обновлён в Битрикс #${body.bitrix_lead_id}`
 					: `Создан в Битрикс #${body.bitrix_lead_id}`;
-			await sync();
+			await refreshLeadFromApi();
 		} catch (e) {
 			bitrixPushMsg = e?.message || String(e);
 		} finally {
@@ -325,7 +349,7 @@
 			const body = await r.json().catch(() => ({}));
 			if (!r.ok) throw new Error(body?.detail || `HTTP ${r.status}`);
 			crmPushMsg = `Amo #${body.amo_lead_id}`;
-			await sync();
+			await refreshLeadFromApi();
 		} catch (e) {
 			crmPushMsg = e?.message || String(e);
 		} finally {
@@ -342,7 +366,7 @@
 			const body = await r.json().catch(() => ({}));
 			if (!r.ok) throw new Error(body?.detail || `HTTP ${r.status}`);
 			crmPushMsg = `HubSpot ${body.hubspot_deal_id}`;
-			await sync();
+			await refreshLeadFromApi();
 		} catch (e) {
 			crmPushMsg = e?.message || String(e);
 		} finally {
@@ -364,12 +388,9 @@
 		try {
 			const contacts = contactsPatchFromDraft(contactsDraft);
 			await apiUpdateLead(lead.id, { contacts });
-			await fetchLeadById(lead.id);
-			const fresh = await fetchLeads();
-			writeLeadsCache(fresh);
-			sync();
+			await refreshLeadFromApi();
+			refreshLeadsCacheInBackground();
 			syncDetailsDraftFromLead();
-			syncContactsDraftFromLead();
 			syncContactsDraftFromLead();
 			syncApprovalsDraft();
 			await loadLeadActivity();
@@ -393,10 +414,8 @@
 		detailsSaving = true;
 		try {
 			await apiUpdateLead(lead.id, patch);
-			await fetchLeadById(lead.id);
-			const fresh = await fetchLeads();
-			writeLeadsCache(fresh);
-			sync();
+			await refreshLeadFromApi();
+			refreshLeadsCacheInBackground();
 			syncDetailsDraftFromLead();
 			syncContactsDraftFromLead();
 			syncMoneyInputsFromLead();
@@ -489,8 +508,8 @@
 		approvalsSaving = true;
 		try {
 			await apiUpdateLead(lead.id, { approvals: approvalsDraft });
-			await fetchLeadById(lead.id);
-			sync();
+			await refreshLeadFromApi();
+			refreshLeadsCacheInBackground();
 			syncMoneyInputsFromLead();
 			await loadLeadActivity();
 		} catch (e) {
@@ -519,8 +538,8 @@
 		moneySaving = true;
 		try {
 			await apiUpdateLead(lead.id, patch);
-			await fetchLeadById(lead.id);
-			sync();
+			await refreshLeadFromApi();
+			refreshLeadsCacheInBackground();
 			syncMoneyInputsFromLead();
 			await loadLeadActivity();
 		} catch (e) {
@@ -536,14 +555,8 @@
 		stageSaving = true;
 		try {
 			await apiUpdateLead(lead.id, { stage: newStage });
-			const fresh = await fetchLeads();
-			writeLeadsCache(fresh);
-			try {
-				await fetchLeadById(lead.id);
-			} catch {
-				/* список уже обновлён */
-			}
-			sync();
+			await refreshLeadFromApi();
+			refreshLeadsCacheInBackground();
 			await loadLeadActivity();
 		} catch (e) {
 			console.error(e);
