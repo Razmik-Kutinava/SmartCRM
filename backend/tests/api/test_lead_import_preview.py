@@ -50,6 +50,15 @@ async def test_preview_returns_headers_sample_and_guess(client):
 
 
 @pytest.mark.asyncio
+async def test_preview_guesses_common_russian_headers(client):
+    data = _xlsx(["Наименование", "ФИО", "Тел", "Контрагент"], [["Ко", "Иванов", "+7", "дубль"]])
+    body = (await client.post("/api/leads/import-preview", files=_upload(data))).json()
+    assert body["mapping"]["company"] == "Наименование"
+    assert body["mapping"]["contact"] == "ФИО"
+    assert body["mapping"]["phone"] == "Тел"
+
+
+@pytest.mark.asyncio
 async def test_preview_limits_sample_rows(client):
     data = _xlsx(["Компания"], [[f"Ко {i}"] for i in range(30)])
     r = await client.post("/api/leads/import-preview", files=_upload(data))

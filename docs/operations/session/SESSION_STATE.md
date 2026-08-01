@@ -4,7 +4,9 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
-**Регрессия_счёт:** `1/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+**Регрессия_счёт:** `2/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+
+2026-08-01 | Действие: SBR GREEN+REVIEW — экран импорта базы: `import_table.py` (read_table/guess_mapping/rows_to_dicts/IMPORT_FIELDS) + `import_routes.py` (`POST /import-preview`, `/import-csv` с form `mapping`, лог импорта) + `source_fallback` в `import_leads_from_rows` (имя файла не перебивает колонку «Источник») + алиасы «наименование/организация/ФИО/тел» + `bases.kind=bitrix_source` + `LeadsImportModal.svelte` (3 шага: drag&drop → сопоставление колонок и имя базы → отчёт) + кнопка «Импорт базы» в шапке и optgroup баз. test_lead_import_preview 6 PASS, test_leads_import_modal 4 PASS, test_leads_list_import_input 3 PASS; UI-прогон в браузере: превью→маппинг→отчёт (+2 лида, база в списке), тестовые лиды удалены | Коммит: `этот` | Хвост A: нет | Хвост B: шаблоны сопоставления и старый `.xls` — BACKLOG | Хвост C: два фронт-смоука красные на чистом HEAD → ISSUES | Статус: done | Регрессия_счёт: 2/3 (crm_leads 111 PASS + 1 известный FAIL)
 
 2026-08-01 | Действие: SBR RED — экран импорта базы: `/import-preview`, импорт по явному mapping колонок, kind `bitrix_source` vs `named`, модалка LeadsImportModal; test_lead_import_preview + test_leads_import_modal 8 FAIL / 1 PASS | Коммит: `этот` | Статус: in_progress
 

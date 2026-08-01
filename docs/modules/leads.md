@@ -25,7 +25,7 @@
 | URL | Назначение |
 |-----|------------|
 | `/leads` | Редирект на `/leads/list` |
-| `/leads/list` | Таблица лидов, фильтры, переключатель **База** (Все/Битрикс/метки), Bitrix/CSV/XLSX-импорт |
+| `/leads/list` | Таблица лидов, фильтры, переключатель **База** (Все / импортированные / Битрикс), кнопка **«Импорт базы»** (Excel/CSV с сопоставлением колонок) |
 | `/leads/funnel` | Канбан по этапам |
 | `/leads/calendar`, `/leads/tasks`, `/leads/focus`, `/leads/analytics` | Остальные экраны CRM |
 | `/leads/{id}` | Карточка сделки |
@@ -68,7 +68,8 @@
 
 - **`core/lead_profile.py`**: `normalize_okved_code` (62.01, 6201 → единый формат), `okved_section` (первые 2 цифры), `employees_band` (1-50 … 1000+), `portrait_score` (0–100 по заполненности карточки).
 - Колонки в **`Lead`**: `okved_main`, `okved_name`, `okved_section`, `employees_band`, `portrait_score` — синхронизируются при create/update, enrich (Checko), CSV/XLSX import, Bitrix upsert (`sync_lead_profile`).
-- **Базы лидов:** поле `source` = метка базы; `GET /api/leads/sources` → `sources` (рассылка) + `bases` (Битрикс `__bitrix__` + именованные). Импорт `POST /import-csv` принимает `.csv`/`.xlsx`; без `source` — имя файла. Дедуп email/ИНН **внутри** метки базы. UI: фильтр «База» на `/leads/list`.
+- **Базы лидов:** поле `source` = метка базы; `GET /api/leads/sources` → `sources` (рассылка) + `bases` с `kind`: `bitrix` (`__bitrix__`), `bitrix_source` (метка, где все лиды из Битрикса), `named` (импортированная база). UI: фильтр «База» на `/leads/list` двумя группами.
+- **Экран импорта** (кнопка «Импорт базы» в шапке списка, `components/LeadsImportModal.svelte`): шаг 1 — drag&drop файла; шаг 2 — `POST /import-preview` (заголовки, 5 строк, авто-сопоставление колонок), правка сопоставления, имя базы, режим дублей; шаг 3 — отчёт добавлено/обновлено/пропущено + построчные ошибки. Импорт: `POST /import-csv` (`.csv`/`.xlsx`, form `mapping`). Дедуп email/ИНН **внутри** метки базы.
 - **Битрикс24:** ИНН/ОГРН из реквизитов; **ОКВЭД и число сотрудников** из UF (`UF_CRM_OKVED`, `UF_CRM_OKVED_CODE`, hint `оквэд` / `сотруд`) на лиде и связанной компании — без Checko.
 - **UF лицензия/подписка:** `core/lead_bitrix_extra.py` + `bitrix24_uf.extract_bitrix_extra_from_row` → колонка **`bitrix_extra`** (JSON): подписка до, тип поставки, срок лицензии, резерв до, licensing email, сублицензиат, плательщик, менеджер, участник, страна, повторный лид. API: `bitrixExtra` в `Lead.to_dict()`. Синк при upsert/poll; offline backfill из `tech_json.bitrix24.uf`.
 - **Мультиконтакты Битрикс:** `crm.lead.contact.items.get` → все связанные контакты в **`contacts` JSON** (телефоны/email по каждому); основной (`IS_PRIMARY`) → роль `lpr` и плоские `contact`/`email`/`phone`; `merge_bitrix_contacts` при upsert — ручные контакты CRM не затираются.

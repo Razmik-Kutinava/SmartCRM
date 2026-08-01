@@ -41,11 +41,4 @@ def parse_xlsx_rows(data: bytes) -> list[dict[str, str]]:
         wb.close()
 
 
-def source_label_from_filename(filename: str | None) -> str:
-    """Метка базы из имени файла без расширения."""
-    if not filename:
-        return ""
-    name = filename.replace("\\", "/").rsplit("/", 1)[-1]
-    if "." in name:
-        name = name.rsplit(".", 1)[0]
-    return name.strip()[:100]
+from integrations.crm_sync.import_table import source_label_from_filename  # noqa: E402,F401

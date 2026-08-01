@@ -9,7 +9,6 @@
 		apiImportBitrix,
 		apiImportAmo,
 		apiImportHubspot,
-		apiImportLeadsCsv,
 		downloadLeadsCsvExport,
 		fetchBitrixImportStats,
 		fetchLeadCoverage,
@@ -19,6 +18,7 @@
 		demoLeads,
 		writeLeadsCache,
 	} from '$lib/leadsStorage.js';
+	import LeadsImportModal from '../../../components/LeadsImportModal.svelte';
 	import { getApiUrl, onMessage } from '$lib/websocket.js';
 	import { goto } from '$app/navigation';
 	import {
@@ -123,10 +123,8 @@
 	let bitrixImporting = $state(false);
 	let amoImporting = $state(false);
 	let hubspotImporting = $state(false);
-	let csvImporting = $state(false);
 	let csvExporting = $state(false);
-	let csvInput = $state(null);
-	let csvSourceLabel = $state(''); // метка базы (source) для всех строк CSV/XLS-импорта
+	let showImportModal = $state(false);
 	/** @type {Array<{ id: string, label: string, count: number, kind?: string }>} */
 	let baseOptions = $state([]);
 	/** @type {{ bitrix_total: number | null, local_bitrix_leads_count: number, date_from?: string } | null} */
@@ -276,6 +274,12 @@
 	);
 
 	let showListMenu = $state(false);
+
+	// Импортированные базы (свои списки клиентов) отдельно от меток внутри Битрикса.
+	const importedBaseOptions = $derived(baseOptions.filter((b) => b.kind === 'named'));
+	const bitrixBaseOptions = $derived(
+		baseOptions.filter((b) => b.kind === 'bitrix' || b.kind === 'bitrix_source'),
+	);
 
 	const okvedSectionOptions = $derived(distinctOkvedSections(leads));
 	const industryBucketOptions = $derived(distinctIndustryBuckets(leads));
@@ -452,44 +456,26 @@
 		}
 	}
 
-	async function runCsvImport(file) {
-		if (!file || csvImporting) return;
-		csvImporting = true;
-		notify(`Загружаю «${file.name}» — это может занять до минуты…`, 'info');
+	/** Импорт прошёл в модалке — обновляем список, справочник баз и переключаемся на новую базу. */
+	async function onImportDone(res) {
 		try {
-			const res = await apiImportLeadsCsv(file, 'upsert', csvSourceLabel);
-			const fresh = await fetchLeads();
-			leads = fresh;
+			leads = await fetchLeads();
 			writeLeadsCache(leads);
-			const usedSource =
-				(res.source || csvSourceLabel || '').trim() ||
-				(file.name || '').replace(/\.[^.]+$/, '');
-			try {
-				baseOptions = await fetchLeadBases();
-			} catch {
-				/* ignore */
-			}
-			if (usedSource) {
-				filterBase = usedSource;
-			}
-			const srcNote = usedSource ? ` · база «${usedSource}»` : '';
-			const kind = /\.xlsx?$/i.test(file.name || '') ? 'Excel' : 'CSV';
-			notify(
-				`${kind}: +${res.imported} новых, обновлено ${res.updated}, пропущено ${res.skipped}${srcNote}`,
-				'success',
-			);
 		} catch (e) {
-			notify(`Импорт файла: ${e?.message || e}`, 'error');
-		} finally {
-			csvImporting = false;
-			if (csvInput) csvInput.value = '';
+			notify(`Список не обновился: ${e?.message || e}`, 'error');
 		}
-	}
-
-	function onCsvFileChange(e) {
-		const input = e.target ?? e.currentTarget ?? csvInput;
-		const file = input?.files?.[0] ?? csvInput?.files?.[0];
-		if (file) runCsvImport(file);
+		try {
+			baseOptions = await fetchLeadBases();
+		} catch {
+			/* справочник баз не критичен */
+		}
+		const usedSource = String(res?.source || '').trim();
+		if (usedSource) filterBase = usedSource;
+		notify(
+			`Импорт: +${res?.imported ?? 0} новых, обновлено ${res?.updated ?? 0}` +
+				(usedSource ? ` · база «${usedSource}»` : ''),
+			'success',
+		);
 	}
 
 	async function runCsvExport() {
@@ -884,6 +870,13 @@
 		<div class="flex items-center gap-2 shrink-0 pt-0.5">
 			<button
 				type="button"
+				class="px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-sm font-medium text-gray-200 rounded-xl border border-gray-700 transition-colors"
+				data-testid="leads-import-open"
+				title="Excel или CSV: превью, сопоставление колонок, отдельная база"
+				onclick={() => { showImportModal = true; }}
+			>📥 Импорт базы</button>
+			<button
+				type="button"
 				onclick={() => openLeadCreateModal({
 					source: 'Список лидов',
 					onCreated: (created) => {
@@ -937,20 +930,6 @@
 							class="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
 							data-testid="leads-hubspot-import"
 						>{hubspotImporting ? '⏳ HubSpot…' : '📤 HubSpot'}</button>
-						<input
-							bind:value={csvSourceLabel}
-							class="mx-2 my-1 w-[calc(100%-1rem)] rounded-lg bg-gray-900 border border-gray-800 px-2 py-1.5 text-xs text-gray-200 placeholder-gray-600"
-							placeholder="Имя базы (пусто = из файла)"
-							title="Метка базы для всех строк — потом переключатель «База» в списке"
-							data-testid="leads-csv-source"
-						/>
-						<button
-							type="button"
-							disabled={csvImporting}
-							onclick={() => { csvInput?.click(); closeListMenu(); }}
-							class="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
-							data-testid="leads-csv-import"
-						>{csvImporting ? '⏳ Импорт…' : '📥 Импорт CSV / Excel'}</button>
 						<div class="my-1 border-t border-gray-800"></div>
 						<button
 							type="button"
@@ -1041,9 +1020,20 @@
 					title="Переключение списков клиентов: Все / Битрикс / импортированные базы"
 				>
 					<option value="all">Все базы ({leads.length})</option>
-					{#each baseOptions as b (b.id)}
-						<option value={b.id}>{b.label} ({b.count})</option>
-					{/each}
+					{#if importedBaseOptions.length}
+						<optgroup label="Импортированные базы">
+							{#each importedBaseOptions as b (b.id)}
+								<option value={b.id}>{b.label} ({b.count})</option>
+							{/each}
+						</optgroup>
+					{/if}
+					{#if bitrixBaseOptions.length}
+						<optgroup label="Битрикс">
+							{#each bitrixBaseOptions as b (b.id)}
+								<option value={b.id}>{b.label} ({b.count})</option>
+							{/each}
+						</optgroup>
+					{/if}
 				</select>
 			</label>
 			<label class="min-w-[10rem]">
@@ -1466,12 +1456,4 @@
 	</table>
 </div>
 
-<!-- Вне меню импорта: при закрытии меню элемент удалялся бы из DOM раньше выбора файла -->
-<input
-	bind:this={csvInput}
-	type="file"
-	accept=".csv,.txt,.xlsx,.xlsm,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-	class="hidden"
-	data-testid="leads-csv-input"
-	onchange={onCsvFileChange}
-/>
+<LeadsImportModal bind:open={showImportModal} onImported={onImportDone} />

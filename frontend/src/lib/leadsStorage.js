@@ -355,11 +355,12 @@ export async function apiImportHubspot() {
 }
 
 /** Импорт лидов из CSV/XLSX (mode: upsert | skip; source — метка базы всем строкам). */
-export async function apiImportLeadsCsv(file, mode = 'upsert', source = '') {
+export async function apiImportLeadsCsv(file, mode = 'upsert', source = '', mapping = null) {
 	let url = `${API()}/import-csv?mode=${encodeURIComponent(mode)}`;
 	if ((source || '').trim()) url += `&source=${encodeURIComponent(source.trim())}`;
 	const fd = new FormData();
 	fd.append('file', file);
+	if (mapping && Object.keys(mapping).length) fd.append('mapping', JSON.stringify(mapping));
 	const r = await fetch(url, { method: 'POST', body: fd });
 	const text = await r.text().catch(() => '');
 	let body;
@@ -379,6 +380,30 @@ export async function apiImportLeadsCsv(file, mode = 'upsert', source = '') {
 						? JSON.stringify(d)
 						: text || `HTTP ${r.status}`;
 		throw new Error(msg);
+	}
+	return body;
+}
+
+/**
+ * Превью файла перед импортом: заголовки, первые строки, предложенное сопоставление.
+ * @returns {Promise<{ headers: string[], rows: string[][], totalRows: number,
+ *   mapping: Record<string, string>, fields: Array<{ id: string, label: string, required: boolean }>,
+ *   suggestedSource: string }>}
+ */
+export async function apiImportPreview(file) {
+	const fd = new FormData();
+	fd.append('file', file);
+	const r = await fetch(`${API()}/import-preview`, { method: 'POST', body: fd });
+	const text = await r.text().catch(() => '');
+	let body;
+	try {
+		body = text ? JSON.parse(text) : {};
+	} catch {
+		body = { detail: text };
+	}
+	if (!r.ok) {
+		const d = body?.detail;
+		throw new Error(typeof d === 'string' ? d : text || `HTTP ${r.status}`);
 	}
 	return body;
 }

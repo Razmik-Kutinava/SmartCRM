@@ -10,7 +10,7 @@
 
 **Как понял:** видимый экран импорта вместо скрытого input в меню ⋮. Шаги: файл (drag&drop) → превью + сопоставление колонок + имя базы → отчёт (добавлено/обновлено/ошибки построчно). Плюс в переключателе баз отделить импортированные базы от источников Битрикса.
 
-**Факт диагностики:** в логе uvicorn за сессию нет ни одного `POST /api/leads/import-csv` — файл до сервера не доходил, поэтому база и не появлялась.
+**Факт диагностики:** в логе uvicorn за сессию не было ни одного `POST /api/leads/import-csv` — файл до сервера не доходил, поэтому база и не появлялась.
 
 ## Чеклист фазы
 
@@ -18,8 +18,10 @@
 
 ## Чеклист микро
 
-- [ ] RED: `import-preview`, импорт по mapping, kind баз, модалка
-- [ ] GREEN backend: `import_table.py` (read_table/guess_mapping/rows_to_dicts) + `import_routes.py` (`/import-preview`, `/import-csv` с mapping) + лог импорта
-- [ ] GREEN frontend: `LeadsImportModal.svelte` 3 шага + кнопка «Импорт базы» в шапке + optgroup баз
-- [ ] Регрессия зоны crm_leads
-- [ ] REVIEW: ops + отчёт
+- [x] RED: `import-preview`, импорт по mapping, kind баз, модалка
+- [x] GREEN backend: `import_table.py` + `import_routes.py` (`/import-preview`, `/import-csv` с mapping) + лог импорта + `source_fallback`
+- [x] GREEN frontend: `LeadsImportModal.svelte` 3 шага + кнопка «Импорт базы» в шапке + optgroup баз
+- [x] Регрессия зоны crm_leads + прогон UI в браузере
+- [x] REVIEW: ops + отчёт
+
+Отложено (BACKLOG): шаблоны сопоставления колонок, старый формат `.xls`.

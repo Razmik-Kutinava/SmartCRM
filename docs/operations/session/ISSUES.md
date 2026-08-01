@@ -16,6 +16,10 @@
 `Приоритет: 🟢 | Статус: открыта`  
 `Описание: tests/smoke/test_leads_list_page.py::test_leads_list_filters_labeled — assert "tasks_urgent" in text; в /leads/list опция сортировки берётся из SORT_OPTIONS (leadListFilter.js), в самой странице строки нет. Падает и на чистом HEAD (git show HEAD:… — совпадений нет) | Влияние: ложный FAIL при точечном прогоне smoke списка; в зону crm_leads этот файл не входит | Решение: проверять SORT_OPTIONS в leadListFilter.js, а не текст страницы | Агент: найден при фиксе импорта CSV/Excel 2026-08-01`
 
+`[2026-08-01] — два фронт-смоука красные на чистом HEAD`  
+`Приоритет: 🟢 | Статус: открыта`  
+`Описание: tests/frontend/test_lead_card_cache_resilience.py::test_leads_storage_has_memory_cache_on_quota — ищет слово «квота» в leadsStorage.js, в файле другое написание; tests/frontend/test_lead_mailing_ui.py::test_lead_mailing_ui_smoke — node:internal/modules/esm/resolve (нет зависимости для node-прогона). Оба падают после git stash всех правок | Влияние: шум при прогоне tests/frontend; в зону crm_leads не входят | Решение: поправить строку в assert и node-окружение смоука | Агент: найден при экране импорта базы 2026-08-01`
+
 `[2026-08-01] — удалённый последний контакт «воскресает» из плоских полей`  
 `Приоритет: 🟡 | Статус: открыта`  
 `Описание: PATCH с contacts:[] чистит JSON, но contacts_for_api при пустом списке отдаёт legacy_to_contacts() из lead.contact/phone/email, которые flat_fields_from_lpr записал от прошлого ЛПР → в карточке снова один контакт. Проверено на лиде 846: отправили [], получили 1 | Влияние: пользователь удаляет контакт, после F5 он возвращается | Решение: различать None (никогда не сохраняли) и [] (явно очищено) в contacts_for_api + чистить плоские поля при пустом списке | Агент: найден при фиксе «третий контакт заменяет второй» 2026-08-01`

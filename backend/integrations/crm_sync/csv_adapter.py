@@ -47,12 +47,24 @@ _COLUMN_ALIASES: dict[str, str] = {
     "id": "id",
     "company": "company",
     "компания": "company",
+    "наименование": "company",
+    "название": "company",
+    "организация": "company",
+    "клиент": "company",
+    "контрагент": "company",
+    "юрлицо": "company",
     "contact": "contact",
     "контакт": "contact",
+    "контактное_лицо": "contact",
+    "фио": "contact",
     "email": "email",
     "почта": "email",
+    "e-mail": "email",
+    "эл_почта": "email",
     "phone": "phone",
     "телефон": "phone",
+    "тел": "phone",
+    "мобильный": "phone",
     "stage": "stage",
     "стадия": "stage",
     "статус": "stage",
@@ -228,9 +240,15 @@ async def import_leads_from_rows(
     *,
     mode: str = "upsert",
     source: str | None = None,
+    source_fallback: str | None = None,
 ) -> dict[str, Any]:
-    """Общий импорт строк (CSV/XLSX). source — метка базы всем строкам."""
+    """Общий импорт строк (CSV/XLSX).
+
+    source — жёсткая метка базы всем строкам (важнее колонки `source` в файле).
+    source_fallback — мягкая метка (имя файла): только строкам без своего источника.
+    """
     source_label = (source or "").strip()[:100]
+    fallback_label = (source_fallback or "").strip()[:100]
     imported = 0
     updated = 0
     skipped = 0
@@ -246,7 +264,14 @@ async def import_leads_from_rows(
             continue
         if source_label:
             fields["source"] = source_label
-        existing = await _find_existing(db, fields, source_scope=source_label or None)
+            scope = source_label
+        elif fallback_label:
+            if not _clean(row.get("source")):
+                fields["source"] = fallback_label
+            scope = str(fields["source"])
+        else:
+            scope = ""
+        existing = await _find_existing(db, fields, source_scope=scope or None)
         if existing:
             if not upsert:
                 skipped += 1
@@ -276,7 +301,7 @@ async def import_leads_from_rows(
         "errors": errors[:20],
         "error_count": len(errors),
         "mode": "upsert" if upsert else "skip",
-        "source": source_label or None,
+        "source": source_label or fallback_label or None,
     }
 
 
