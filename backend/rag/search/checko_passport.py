@@ -66,6 +66,71 @@ def pick_first_email(emails: list[Any] | None) -> str | None:
     return filtered[0] if filtered else None
 
 
+_EMAIL_FIND_RE = re.compile(r"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}")
+
+
+def _walk_strings(obj: Any, *, depth: int = 0) -> list[str]:
+    """Рекурсивно собирает строки из dict/list (лимит глубины — UF-blob, не весь мир)."""
+    if depth > 6:
+        return []
+    if isinstance(obj, str):
+        return [obj]
+    if isinstance(obj, dict):
+        out: list[str] = []
+        for v in obj.values():
+            out.extend(_walk_strings(v, depth=depth + 1))
+        return out
+    if isinstance(obj, (list, tuple)):
+        out = []
+        for v in obj:
+            out.extend(_walk_strings(v, depth=depth + 1))
+        return out
+    return []
+
+
+def emails_from_bitrix_blobs(
+    *,
+    bitrix_extra: dict[str, Any] | None = None,
+    tech: dict[str, Any] | None = None,
+) -> list[str]:
+    """Regex по bitrix_extra и сырому tech.UF — без сети, для уже импортированных лидов."""
+    chunks: list[str] = []
+    if isinstance(bitrix_extra, dict):
+        chunks.extend(_walk_strings(bitrix_extra))
+    if isinstance(tech, dict):
+        # сырые UF Битрикс часто лежат в tech.bitrix24.uf
+        uf = None
+        b24 = tech.get("bitrix24")
+        if isinstance(b24, dict):
+            uf = b24.get("uf")
+        if isinstance(uf, dict):
+            chunks.extend(_walk_strings(uf))
+        else:
+            chunks.extend(_walk_strings(tech))
+    found: list[str] = []
+    for chunk in chunks:
+        found.extend(_EMAIL_FIND_RE.findall(chunk))
+    return filter_emails(found)
+
+
+def merge_uf_emails_into_checko(
+    checko: dict[str, Any] | None,
+    *,
+    bitrix_extra: dict[str, Any] | None = None,
+    tech: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Дописывает UF-почту в company.emails, не затирая остальные поля company."""
+    base = dict(checko) if isinstance(checko, dict) else {}
+    company = dict(base.get("company") or {}) if isinstance(base.get("company"), dict) else {}
+    existing = list(company.get("emails") or [])
+    uf = emails_from_bitrix_blobs(bitrix_extra=bitrix_extra, tech=tech)
+    merged = filter_emails([*existing, *uf])
+    if merged:
+        company["emails"] = merged
+        base["company"] = company
+    return base
+
+
 def parse_checko_json(raw: Any) -> dict[str, Any]:
     if isinstance(raw, dict):
         return dict(raw)

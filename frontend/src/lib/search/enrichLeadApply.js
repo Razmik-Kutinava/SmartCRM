@@ -11,8 +11,79 @@ export function isValidPhone(phone) {
 export function isValidEmail(email) {
 	const s = String(email || '').trim();
 	if (!s || !s.includes('@')) return false;
-	const [, domain] = s.split('@');
-	return Boolean(domain && domain.includes('.'));
+	const [local, domain] = s.split('@');
+	return Boolean(local && domain && domain.includes('.'));
+}
+
+const EMAIL_FIND_RE = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+
+/** @param {unknown} obj @param {number} [depth] */
+function walkStrings(obj, depth = 0) {
+	if (depth > 6) return [];
+	if (typeof obj === 'string') return [obj];
+	if (Array.isArray(obj)) return obj.flatMap((v) => walkStrings(v, depth + 1));
+	if (obj && typeof obj === 'object') {
+		return Object.values(obj).flatMap((v) => walkStrings(v, depth + 1));
+	}
+	return [];
+}
+
+/**
+ * Regex по bitrixExtra / tech.UF — то же, что бэкенд emails_from_bitrix_blobs.
+ * @param {{ bitrixExtra?: Record<string, unknown>, tech?: Record<string, unknown> } | null | undefined} lead
+ */
+export function emailsFromBitrixBlobs(lead) {
+	const chunks = [];
+	if (lead?.bitrixExtra && typeof lead.bitrixExtra === 'object') {
+		chunks.push(...walkStrings(lead.bitrixExtra));
+	}
+	// camelCase licenseRegistration тоже
+	const lic = lead?.bitrixExtra?.licenseRegistration || lead?.bitrixExtra?.license_registration;
+	if (lic) chunks.push(String(lic));
+	const tech = lead?.tech;
+	if (tech && typeof tech === 'object') {
+		const uf = tech.bitrix24?.uf;
+		chunks.push(...walkStrings(uf && typeof uf === 'object' ? uf : tech));
+	}
+	const found = [];
+	for (const chunk of chunks) {
+		const m = String(chunk).match(EMAIL_FIND_RE);
+		if (m) found.push(...m);
+	}
+	return filterEmailList(found);
+}
+
+function filterEmailList(emails) {
+	const out = [];
+	const seen = new Set();
+	for (const e of emails || []) {
+		const s = String(e || '').trim();
+		if (!isValidEmail(s)) continue;
+		const key = s.toLowerCase();
+		if (seen.has(key)) continue;
+		seen.add(key);
+		out.push(s);
+	}
+	return out;
+}
+
+/**
+ * @param {Record<string, unknown> | null | undefined} checko
+ * @param {unknown} lead
+ */
+export function mergeUfEmailsIntoChecko(checko, lead) {
+	const base =
+		checko && typeof checko === 'object' && !Array.isArray(checko) ? { ...checko } : {};
+	const company =
+		base.company && typeof base.company === 'object' && !Array.isArray(base.company)
+			? { ...base.company }
+			: {};
+	const merged = filterEmailList([...(company.emails || []), ...emailsFromBitrixBlobs(lead)]);
+	if (merged.length) {
+		company.emails = merged;
+		base.company = company;
+	}
+	return base;
 }
 
 /** CRM-поля из блока enriched. */
@@ -35,7 +106,12 @@ export function enrichedToLeadPatch(enriched) {
 	return patch;
 }
 
-function mergePassportContacts(existingContacts, passport) {
+/**
+ * @param {Array<Record<string, unknown>> | null | undefined} existingContacts
+ * @param {Record<string, unknown> | null | undefined} passport
+ * @param {Record<string, unknown> | null | undefined} lead
+ */
+function mergePassportContacts(existingContacts, passport, lead = null) {
 	const list = Array.isArray(existingContacts) ? [...existingContacts] : [];
 
 	const hasPhone = (phones, p) => {
@@ -97,6 +173,24 @@ function mergePassportContacts(existingContacts, passport) {
 		}
 	}
 
+	// 3) lead.email / company.emails / UF → в ЛПР, если у него emails пусто
+	// (иначе 🔍 и enrich находят почту, а в карточке контакта она не появляется)
+	const spareEmails = filterEmailList([
+		...(co.emails || []),
+		...emailsFromBitrixBlobs(lead),
+		lead?.email && lead.email !== '—' ? lead.email : '',
+	]);
+	if (spareEmails.length && list.length) {
+		const lprIdx = list.findIndex((c) => c?.role === 'lpr');
+		const idx = lprIdx >= 0 ? lprIdx : 0;
+		const row = list[idx];
+		const existing = filterEmailList(row.emails || []);
+		// Только если у ЛПР почта пуста — не раздуваем уже заполненный контакт
+		if (!existing.length) {
+			list[idx] = { ...row, emails: spareEmails };
+		}
+	}
+
 	return list.length ? list : existingContacts;
 }
 
@@ -104,12 +198,31 @@ function mergePassportContacts(existingContacts, passport) {
 export function enrichResultToLeadPatch(result, lead = null) {
 	const patch = enrichedToLeadPatch(result?.enriched || {});
 	const passport = result?.passport;
-	if (!passport) return patch;
+	if (!passport) {
+		// Даже без нового passport — UF-почта может дописать company.emails на старом checko
+		const ufChecko = mergeUfEmailsIntoChecko(lead?.checko, lead);
+		if (ufChecko?.company?.emails?.length) {
+			patch.checkoJson = mergeCheckoJson(lead?.checko, ufChecko);
+			const spare = ufChecko.company.emails;
+			if (spare[0] && (!lead?.email || lead.email === '—') && !patch.email) {
+				patch.email = spare[0];
+			}
+			const mergedContacts = mergePassportContacts(lead?.contacts, { checko: ufChecko }, lead);
+			if (mergedContacts?.length) patch.contacts = mergedContacts;
+		}
+		return patch;
+	}
 
 	if (passport.inn) patch.inn = passport.inn;
 	if (passport.ogrn) patch.ogrn = passport.ogrn;
 	if (passport.checko) {
-		patch.checkoJson = mergeCheckoJson(lead?.checko, passport.checko);
+		const withUf = mergeUfEmailsIntoChecko(passport.checko, lead);
+		patch.checkoJson = mergeCheckoJson(lead?.checko, withUf);
+	} else {
+		const ufOnly = mergeUfEmailsIntoChecko(lead?.checko, lead);
+		if (ufOnly?.company?.emails?.length) {
+			patch.checkoJson = mergeCheckoJson(lead?.checko, ufOnly);
+		}
 	}
 	if (passport.financials) patch.financialsJson = passport.financials;
 	if (passport.tech && Object.keys(passport.tech).length) {
@@ -122,8 +235,9 @@ export function enrichResultToLeadPatch(result, lead = null) {
 	if (passport.industry && industryEmpty) patch.industry = passport.industry;
 
 	// CRM phone/email из checko.company, если enriched пуст
-	const coPhones = (passport.checko?.company?.phones || []).filter(isValidPhone);
-	const coEmails = (passport.checko?.company?.emails || []).filter(isValidEmail);
+	const checkoForCo = patch.checkoJson || passport.checko || {};
+	const coPhones = (checkoForCo?.company?.phones || []).filter(isValidPhone);
+	const coEmails = (checkoForCo?.company?.emails || []).filter(isValidEmail);
 	if (coPhones[0] && !patch.phone && (!lead?.phone || lead.phone === '—')) patch.phone = coPhones[0];
 	if (coEmails[0] && !patch.email && (!lead?.email || lead.email === '—')) patch.email = coEmails[0];
 
@@ -139,7 +253,7 @@ export function enrichResultToLeadPatch(result, lead = null) {
 		if (passport[camel] != null && passport[camel] !== '') patch[camel] = passport[camel];
 	}
 
-	const co = passport.checko?.company || {};
+	const co = checkoForCo?.company || {};
 	if (co.employees_count != null && (!lead?.employees || lead.employees === '—')) {
 		patch.employees = String(co.employees_count);
 	}
@@ -150,7 +264,11 @@ export function enrichResultToLeadPatch(result, lead = null) {
 		patch.position = co.director_post;
 	}
 
-	const mergedContacts = mergePassportContacts(lead?.contacts, passport);
+	const passportForMerge = {
+		...passport,
+		checko: patch.checkoJson || passport.checko,
+	};
+	const mergedContacts = mergePassportContacts(lead?.contacts, passportForMerge, lead);
 	if (mergedContacts?.length) patch.contacts = mergedContacts;
 
 	return patch;

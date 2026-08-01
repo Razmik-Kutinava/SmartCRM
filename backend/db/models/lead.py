@@ -114,6 +114,18 @@ class Lead(Base):
 
         approvals_out = merge_approvals_payload(getattr(self, "approvals", None), {})
 
+        # UF-почта (licenseRegistration / сырые UF) → company.emails без сети
+        try:
+            from rag.search.checko_passport import merge_uf_emails_into_checko
+
+            checko = merge_uf_emails_into_checko(
+                checko if isinstance(checko, dict) else {},
+                bitrix_extra=getattr(self, "bitrix_extra", None),
+                tech=tech if isinstance(tech, dict) else None,
+            )
+        except Exception:
+            pass
+
         return {
             "id": self.id,
             "company": self.company,

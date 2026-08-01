@@ -64,11 +64,12 @@ def test_enrich_js_fills_lpr_from_lead_email():
     """mergePassportContacts должен принимать lead и дописывать email в ЛПР."""
     text = ENRICH_JS.read_text(encoding="utf-8")
     assert "function mergePassportContacts" in text
-    # вызов с lead — иначе lead.email некуда взять
-    assert "mergePassportContacts(lead?.contacts, passport, lead)" in text, (
+    assert "mergePassportContacts(lead?.contacts," in text and ", lead)" in text, (
         "merge вызывается без lead — lead.email в ЛПР не попадёт"
     )
     assert "lead?.email" in text or "lead.email" in text
+    # шаг 3: spareEmails → ЛПР при пустых emails
+    assert "spareEmails" in text
 
 
 def test_enrich_js_merges_uf_emails_into_company():
