@@ -6,6 +6,8 @@
 
 **Регрессия_счёт:** `1/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-08-01 | Действие: SBR RED — экран импорта базы: `/import-preview`, импорт по явному mapping колонок, kind `bitrix_source` vs `named`, модалка LeadsImportModal; test_lead_import_preview + test_leads_import_modal 8 FAIL / 1 PASS | Коммит: `этот` | Статус: in_progress
+
 2026-08-01 | Действие: fix «импорт Excel не реагирует» — `<input type=file>` жил внутри `{#if showListMenu}`, кнопка сначала звала `closeListMenu()` → элемент с onchange удалялся из DOM раньше, чем оператор выбирал файл, и событие change терялось; input вынесен из меню в конец разметки, порядок в кнопке `csvInput?.click()` → `closeListMenu()`, `onCsvFileChange` читает `e.target ?? csvInput`, добавлен тост «Загружаю …» (импорт + перечитывание 3258 лидов идут секунды и выглядели как «ничего не происходит»); accept дополнен `.txt`. test_leads_list_import_input 3 PASS; crm_leads 111 PASS + 1 известный FAIL | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: pre-existing FAIL `test_leads_list_filters_labeled` (ищет `tasks_urgent` в +page.svelte, нет и на HEAD) → ISSUES | Статус: done | Регрессия_счёт: 1/3 (crm_leads)
 
 2026-08-01 | Действие: SBR GREEN+REVIEW — базы лидов: xlsx/csv import + scoped dedup + GET sources.bases (__bitrix__) + filterBase UI; test_lead_bases 4 PASS; crm_leads 111 PASS + 1 известный FAIL; p1+p6 | Коммит: `этот` | Хвост A: нет | Хвост B: умный маппинг произвольных заголовков XLS + рабочий пул 360 — BACKLOG | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (3/3→p1+p6, сброс)
