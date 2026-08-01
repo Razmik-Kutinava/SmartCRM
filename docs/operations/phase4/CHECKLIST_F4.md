@@ -56,6 +56,7 @@
 - [ ] **Редизайн хаба карточки:** 5 плиток (Клиент / Работа / Письма / Продукты / Агенты); этап+путь сделки в шапке; без ✉️/🔗 в тулбаре · [`F4_LEADS_ACCEPTANCE.md`](../phase4/leads/F4_LEADS_ACCEPTANCE.md)
 - [ ] **Тех. спец на карточке** — кнопка в плитке «Агенты» + `POST /api/agents/email/run` для `tech_specialist` · [`F4_LEADS_ACCEPTANCE.md`](../phase4/leads/F4_LEADS_ACCEPTANCE.md)
 - [ ] **Направление Лиды (бриф):** автоскор, Мой день = дело сегодня + близость к деньгам, шапка (отрасль, без этапа в мете), путь сделки не 0/0, 🔍 · [`F4_LEADS_DIRECTION.md`](../phase4/leads/F4_LEADS_DIRECTION.md)
+- [ ] **Базы лидов:** переключатель Все/Битрикс/метка в `/leads/list` + импорт CSV/XLS → отдельный список · [`F4_LEADS_DIRECTION.md`](../phase4/leads/F4_LEADS_DIRECTION.md)
 - [ ] **Карточка клиента (вкладка Карточка):** порядок блоков + контакты/сайт/отрасль/обороты/агенты; Паспорт без изменений · [`F4_LEADS_CARD.md`](../phase4/leads/F4_LEADS_CARD.md)
 - [ ] **Путь сделки:** не показывать «всё пройдено» при пустом `dealPath` (0/0) · [`F4_LEADS_DIRECTION.md`](../phase4/leads/F4_LEADS_DIRECTION.md)
 - [ ] **Шапка карточки:** убрать этап из меты; ИНН→отрасль · [`F4_LEADS_DIRECTION.md`](../phase4/leads/F4_LEADS_DIRECTION.md)

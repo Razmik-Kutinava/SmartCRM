@@ -2,21 +2,19 @@
 
 ## Заказ (дословно)
 
-> «итак у нас есть ли какие проблемы тут?
-> … Три независимые дырки…
-> будем делать ? …
-> ебашь как задачу сбр все сделай»
+> «теперь сделай так чтоб я мог переключать базы между собой в лидах
+> и например мог бы загрузить эксель или другой формат чтобы появмилисась список и все такое в лидах
+> ебашь»
 
-**Как понял:** закрыть три дырки почты через SBR целиком — UF→passport, lead.email→ЛПР, research emails в контакты.
+**Как понял:** переключатель «баз» в `/leads/list` (Все / Битрикс / именованные) + импорт CSV/Excel с меткой базы → лиды в списке, фильтр по базе; базы автономны (дедуп внутри метки).
 
 ## Чеклист фазы
 
-- [ ] **🔍 Исследовать / паспорт:** почта из UF + lead.email + веб → company.emails / ЛПР · [`CHECKLIST_F4.md`](../phase4/CHECKLIST_F4.md) · «🔍 Исследовать» (пункт чеклиста `[x]` — после «ок»)
+- [ ] **Базы лидов:** переключатель + импорт CSV/XLS → отдельный список · [`CHECKLIST_F4.md`](../phase4/CHECKLIST_F4.md) · «Ф4 · Лиды · направление» / умный импорт
 
 ## Чеклист микро
 
-- [x] RED: `test_email_passport_holes` 6 FAIL / 1 PASS · коммит `d0cc4fa`
-- [x] GREEN п.1: `emails_from_bitrix_blobs` + `merge_uf_emails_into_checko` + `Lead.to_dict`
-- [x] GREEN п.2: `mergePassportContacts(..., lead)` — spareEmails → ЛПР при пустых emails
-- [x] GREEN п.3: research apply через `enrichResultToLeadPatch` (тот же merge)
-- [x] Регрессия: rag 134 PASS; crm_leads 111 PASS + 1 известный FAIL
+- [x] RED: xlsx import + bases API + filterBase + scoped dedup · 4 FAIL
+- [ ] GREEN: backend xlsx/scoped + UI переключатель + импорт CSV/XLS
+- [ ] Регрессия зоны crm_leads / rag-adjacent tests
+- [ ] REVIEW: ops + отчёт
