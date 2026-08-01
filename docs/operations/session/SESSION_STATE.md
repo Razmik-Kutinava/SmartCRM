@@ -4,7 +4,9 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
-**Регрессия_счёт:** `2/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+**Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+
+2026-08-01 | Действие: SBR GREEN+REVIEW — агенты с карточки лида: `strategist._analyze(intent, slots)` поверх `_synthesize` (роут звал несуществующую функцию → ImportError → «Ошибка загрузки агента») + `core/agent_email_context.py` (`build_agent_slots` с `lead_id` и профилем employees/website/position/score/next_call — без `lead_id` аналитик выходил на «Не указан лид»; `build_email_digest` 3 треда × 6 писем × 200 симв. вместо 5 × 10 × 400 — контекст ужат ~в 5 раз, берутся последние письма) + `_last_agent_output` подмешивает стратегу последний вывод аналитика + `_fmt` не тащит `lead_id`/`*_output` + `lib/leads/AgentResultView.svelte` (карточка рендерила только письмо маркетолога, ответ стратега/экономиста выглядел пустым). test_agent_email_run 8 PASS, test_lead_card_agent_result 3 PASS, tests/agents PASS, `npm run build` OK | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: протухший `test_tasks_filter_done_and_combined` («сегодня» = 24.06.2026) починен → долг ISSUES от 2026-07-21 закрыт | Статус: done | Регрессия_счёт: 0/3 (3/3 → `run_zone_regression.py all`: все зоны PASS, crm_leads 112 PASS, сброс)
 
 2026-08-01 | Действие: SBR RED — агенты с карточки лида: `strategist._analyze` (сейчас ImportError → 500 «Ошибка загрузки агента»), `lead_id` в слотах (аналитик отдавал заглушку «Не указан лид»), урезанный дайджест переписки (экономия токенов); test_agent_email_run 8 FAIL | Коммит: `этот` | Статус: in_progress
 

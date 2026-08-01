@@ -31,6 +31,7 @@
 	import { buildMoneyPatch, formatDealAmountLabel, moneyStringsFromLead } from '$lib/leads/leadCardMoney.js';
 	import { isRepeatLead } from '$lib/leads/leadBitrixExtra.js';
 	import { leadManagerLabel } from '$lib/leads/leadManager.js';
+	import AgentResultView from '$lib/leads/AgentResultView.svelte';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { TASK_INTENT_OPTIONS } from '$lib/tasks/taskIntentCatalog.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
@@ -1484,44 +1485,11 @@
 									</div>
 								</div>
 
-								<!-- письмо -->
-								{#if agentResult.result?.first_email}
-									<div class="bg-gray-950 border border-gray-800 rounded-xl p-4">
-										<div class="text-xs text-gray-500 mb-1">Тема:</div>
-										<div class="text-sm font-semibold text-white mb-3">{agentResult.result.first_email.subject}</div>
-										<div class="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">{agentResult.result.first_email.body}</div>
-										<button
-											onclick={() => openCompose(lead.email, agentResult.result.first_email.subject, agentResult.result.first_email.body)}
-											class="mt-3 px-4 py-1.5 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-500 transition-colors"
-										>↗ Открыть в compose</button>
-									</div>
-								{/if}
-
-								{#if agentResult.result?.value_hook}
-									<div class="text-sm text-gray-300 border-l-2 border-indigo-600 pl-3">
-										<span class="text-xs text-gray-500 block mb-0.5">Крючок внимания</span>
-										{agentResult.result.value_hook}
-									</div>
-								{/if}
-
-								{#if agentResult.result?.summary}
-									<p class="text-xs text-gray-500 italic">{agentResult.result.summary}</p>
-								{/if}
-
-								{#if agentResult.result?.touch_sequence?.length}
-									<div>
-										<div class="text-xs text-gray-500 mb-2">📅 План касаний</div>
-										<div class="space-y-1">
-											{#each agentResult.result.touch_sequence as t}
-												<div class="text-xs text-gray-300">
-													<span class="text-indigo-400 w-12 inline-block">День {t.day}</span>
-													<span class="text-gray-600 mr-2">{t.channel}</span>
-													{t.action}
-												</div>
-											{/each}
-										</div>
-									</div>
-								{/if}
+								<AgentResultView
+									result={agentResult.result || {}}
+									leadEmail={lead.email}
+									onCompose={openCompose}
+								/>
 
 								<!-- 👍/👎 обратная связь -->
 								<div class="border-t border-gray-800 pt-3 flex items-center gap-3 flex-wrap">

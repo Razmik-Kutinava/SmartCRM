@@ -14,6 +14,12 @@ from pydantic import BaseModel
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.agent_email_context import (
+    EMAIL_DIGEST_MAX_MESSAGES,
+    EMAIL_DIGEST_MAX_THREADS,
+    build_agent_slots,
+    build_email_digest,
+)
 from db.session import get_db
 from db.models.agent_email_intent import AgentEmailIntent
 from db.models.agent_run_log import AgentRunLog
@@ -247,6 +253,30 @@ async def _load_few_shots(agent_name: str, db: AsyncSession) -> str:
     return "\n".join(lines)
 
 
+async def _last_agent_output(lead_id: int, agent_name: str, db: AsyncSession) -> dict:
+    """Последний результат агента по лиду — только ключевые поля, чтобы не раздувать промпт."""
+    result = await db.execute(
+        select(AgentRunLog)
+        .where(AgentRunLog.lead_id == lead_id, AgentRunLog.agent_name == agent_name)
+        .order_by(AgentRunLog.created_at.desc())
+        .limit(1)
+    )
+    log = result.scalars().first()
+    payload = (log.result_json or {}) if log else {}
+    if not isinstance(payload, dict) or not payload:
+        return {}
+    return {
+        k: v
+        for k, v in {
+            "score": payload.get("score"),
+            "summary": str(payload.get("summary") or "")[:400],
+            "bant": payload.get("bant"),
+            "next_steps": (payload.get("next_steps") or [])[:2],
+        }.items()
+        if v
+    }
+
+
 @router.post("/email/run")
 async def run_agent_on_lead(body: RunAgentBody, db: AsyncSession = Depends(get_db)):
     # 1. Лид
@@ -254,32 +284,38 @@ async def run_agent_on_lead(body: RunAgentBody, db: AsyncSession = Depends(get_d
     if not lead:
         raise HTTPException(404, "Лид не найден")
 
-    # 2. Треды лида (последние 5)
+    # 2. Треды лида (свежие первыми)
     threads_result = await db.execute(
         select(EmailThread)
         .where(EmailThread.lead_id == body.lead_id)
         .order_by(EmailThread.last_message_at.desc().nulls_last())
-        .limit(5)
+        .limit(EMAIL_DIGEST_MAX_THREADS)
     )
     threads = threads_result.scalars().all()
 
-    # 3. Последние сообщения из тредов
-    email_lines = []
+    # 3. Последние сообщения из тредов → дайджест с лимитами (экономия токенов)
+    digest_threads = []
     for thread in threads:
         msgs_result = await db.execute(
             select(EmailMessage)
             .where(EmailMessage.thread_id == thread.id)
-            .order_by(EmailMessage.sent_at.asc().nulls_last())
-            .limit(10)
+            .order_by(EmailMessage.sent_at.desc().nulls_last())
+            .limit(EMAIL_DIGEST_MAX_MESSAGES)
         )
-        msgs = msgs_result.scalars().all()
-        if msgs:
-            email_lines.append(f"\n--- {thread.subject} ---")
-            for m in msgs:
-                who  = "Мы:" if m.direction == "outbound" else "Клиент:"
-                ts   = m.sent_at.strftime("%d.%m.%Y %H:%M") if m.sent_at else "—"
-                text = (m.body or m.snippet or "").strip()[:400]
-                email_lines.append(f"[{ts}] {who} {text}")
+        msgs = list(reversed(msgs_result.scalars().all()))
+        if not msgs:
+            continue
+        digest_threads.append({
+            "subject": thread.subject,
+            "messages": [
+                {
+                    "direction": m.direction,
+                    "sent_at": m.sent_at.strftime("%d.%m.%Y %H:%M") if m.sent_at else "—",
+                    "text": m.body or m.snippet or "",
+                }
+                for m in msgs
+            ],
+        })
 
     # 4. Активные email-интенты из БД
     intents_result = await db.execute(
@@ -298,25 +334,20 @@ async def run_agent_on_lead(body: RunAgentBody, db: AsyncSession = Depends(get_d
     # 5. Few-shot примеры (одобренные оператором)
     few_shots_block = await _load_few_shots(body.agent, db)
 
-    # 6. Сборка слотов для агента
-    email_block = "\n".join(email_lines) if email_lines else "Переписки с клиентом пока нет."
-    task_block  = f"\n\nЗАДАЧА ОПЕРАТОРА: {body.task}" if body.task.strip() else ""
+    # 6. Сборка слотов для агента (с lead_id — без него аналитик не работает)
+    slots = build_agent_slots(
+        lead,
+        email_block=build_email_digest(digest_threads),
+        intents_block=intents_block,
+        few_shots_block=few_shots_block,
+        task=body.task,
+    )
 
-    slots = {
-        "company":     getattr(lead, "company",     ""),
-        "contact":     getattr(lead, "contact",     ""),
-        "industry":    getattr(lead, "industry",    ""),
-        "city":        getattr(lead, "city",         ""),
-        "budget":      getattr(lead, "budget",      ""),
-        "stage":       getattr(lead, "stage",       ""),
-        "description": getattr(lead, "description", ""),
-        "instruction": (
-            f"ПЕРЕПИСКА С КЛИЕНТОМ:\n{email_block}"
-            f"{intents_block}"
-            f"{few_shots_block}"
-            f"{task_block}"
-        ),
-    }
+    # Стратегу даём последний вывод аналитика по лиду — синтез без него слепой
+    if body.agent == "strategist":
+        prev = await _last_agent_output(body.lead_id, "analyst", db)
+        if prev:
+            slots["analyst_output"] = prev
 
     # 7. Запуск агента
     try:

@@ -23,9 +23,14 @@
 
 ## Чеклист микро
 
-- [ ] RED: `strategist._analyze` существует; в слотах есть `lead_id`; дайджест переписки урезан
-- [ ] GREEN: `agents/strategist.py` — `_analyze(intent, slots)` поверх `_synthesize`
-- [ ] GREEN: `core/agent_email_context.py` — `build_email_digest` (3 треда × 6 писем × 200 симв.) + `build_agent_slots` (с `lead_id`, employees, website, score, next_call)
-- [ ] GREEN: `api/routes/agent_email.py` переведён на них
-- [ ] Регрессия: agents + email; счётчик 3/3 → полный прогон
-- [ ] REVIEW: ops + отчёт
+- [x] RED: `strategist._analyze` существует; в слотах есть `lead_id`; дайджест переписки урезан — 8 FAIL, коммит `8d1461f`
+- [x] GREEN: `agents/strategist.py` — `_analyze(intent, slots)` поверх `_synthesize`
+- [x] GREEN: `core/agent_email_context.py` — `build_email_digest` (3 треда × 6 писем × 200 симв.) + `build_agent_slots` (с `lead_id`, employees, website, score, next_call)
+- [x] GREEN: `api/routes/agent_email.py` переведён на них + `_last_agent_output` для стратега
+- [x] GREEN: `lib/leads/AgentResultView.svelte` — карточка показывает ответ любого агента, не только письмо
+- [x] Регрессия: `run_zone_regression.py all` — все зоны PASS (crm_leads 112), счётчик 3/3 → 0/3
+- [x] REVIEW: ops + отчёт
+
+## Не вошло (следующий шаг, по `go`)
+
+Тюнинг самих промптов агентов (качество формулировок) — сейчас чинилась только проводка. Максимальное вытаскивание колонок Excel (алиасы «Контакт / ЛПР», «Ответственный», «Название сделки» + JSON-поле для несопоставленных колонок) — в BACKLOG.

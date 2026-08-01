@@ -1,5 +1,9 @@
 """REST API задач: CRUD, lead_id, SLA-фильтры."""
+import datetime as dt
+
 import pytest
+
+TODAY = dt.date.today().strftime("%d.%m.%Y")
 
 
 @pytest.mark.asyncio
@@ -52,10 +56,10 @@ async def test_tasks_filter_overdue(client):
 
 @pytest.mark.asyncio
 async def test_tasks_filter_done_and_combined(client):
-    await client.post("/api/tasks", json={"title": "Готово", "status": "done", "due": "24.06.2026"})
+    await client.post("/api/tasks", json={"title": "Готово", "status": "done", "due": TODAY})
     await client.post(
         "/api/tasks",
-        json={"title": "Сегодня открыта", "status": "open", "due": "24.06.2026"},
+        json={"title": "Сегодня открыта", "status": "open", "due": TODAY},
     )
 
     done_r = await client.get("/api/tasks?task_status=done")

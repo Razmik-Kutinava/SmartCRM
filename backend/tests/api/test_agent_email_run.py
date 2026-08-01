@@ -49,7 +49,7 @@ def test_email_digest_limits_volume():
 
     threads = [
         {
-            "subject": f"Тема {t}",
+            "subject": f"Сделка {t}",
             "messages": [
                 {"direction": "inbound", "sent_at": "01.08.2026 10:00", "text": "я" * 4000}
                 for _ in range(20)
@@ -59,7 +59,7 @@ def test_email_digest_limits_volume():
     ]
     digest = build_email_digest(threads)
 
-    assert digest.count("Тема ") <= EMAIL_DIGEST_MAX_THREADS
+    assert digest.count("Сделка ") <= EMAIL_DIGEST_MAX_THREADS
     assert len(digest) <= EMAIL_DIGEST_MAX_THREADS * EMAIL_DIGEST_MAX_MESSAGES * (
         EMAIL_DIGEST_MAX_CHARS + 120
     )

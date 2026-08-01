@@ -81,6 +81,23 @@ async def run(state: AgentState) -> AgentState:
     }
 
 
+async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
+    """Одиночный запуск стратега (карточка лида, `POST /api/agents/email/run`).
+
+    Остальные агенты экспортируют `_analyze(intent, slots)`; у стратега контекст живёт
+    в `AgentState`, поэтому здесь состояние собирается на лету. Выводы других агентов,
+    если оператор уже их гонял, приходят в `slots["analyst_output"]` и т.п.
+    """
+    from agents.base import make_initial_state
+
+    state = make_initial_state(intent, slots)
+    for key in ("analyst_output", "economist_output", "marketer_output", "tech_output"):
+        value = slots.get(key)
+        if isinstance(value, dict) and value:
+            state[key] = value
+    return await _synthesize(state)
+
+
 async def _synthesize(state: AgentState) -> dict[str, Any]:
     intent = state.get("intent", "")
     slots = state.get("slots", {})
@@ -181,12 +198,15 @@ async def _synthesize(state: AgentState) -> dict[str, Any]:
 
 
 def _fmt(d: dict) -> str:
-    skip_root = frozenset({"_base_reply", "_rag_context"})
+    skip_root = frozenset({"_base_reply", "_rag_context", "lead_id"})
     parts: list[str] = []
     for k, v in d.items():
         if not v:
             continue
         if k in skip_root or k.startswith("_rag_"):
+            continue
+        # выводы агентов уже развёрнуты в контексте отдельными блоками
+        if k.endswith("_output"):
             continue
         parts.append(f"{k}={v}")
     return ", ".join(parts)
