@@ -1,4 +1,5 @@
 <script>
+	import { tick } from 'svelte';
 	import { CONTACT_ROLE_OPTIONS, isLprContactComplete } from '$lib/leads/leadContacts.js';
 
 	/**
@@ -14,6 +15,8 @@
 	/** Длинный список форм сворачиваем — иначе до кнопки сохранения не долистать. */
 	const VISIBLE_LIMIT = 4;
 	let expanded = $state(false);
+	/** @type {HTMLElement | undefined} */
+	let panelEl = $state();
 	const hiddenCount = $derived(Math.max(0, contacts.length - VISIBLE_LIMIT));
 	// Смена вкладки перемонтирует панель и сбрасывает expanded. Контакт без
 	// имени — это незаконченный ввод: спрятать его = «мой контакт пропал».
@@ -38,13 +41,34 @@
 		);
 	}
 
+	/**
+	 * Кнопка «+ контакт» стоит в шапке, а форма встаёт в конец списка — на лиде
+	 * с несколькими контактами это больше экрана вниз. Оператор новой формы не
+	 * видел, считал что кнопка не сработала, и печатал в последнюю видимую —
+	 * то есть переписывал предыдущий контакт вместо создания нового.
+	 * @param {string} id
+	 */
+	async function focusRow(id) {
+		// Проп contacts возвращается от родителя через bind — DOM обновляется
+		// не первым тиком, поэтому ждём появления строки, а не гадаем.
+		for (let attempt = 0; attempt < 4; attempt++) {
+			await tick();
+			const field = panelEl?.querySelector(`[data-contact-row="${id}"] input`);
+			if (!(field instanceof HTMLInputElement)) continue;
+			field.scrollIntoView({ block: 'center', behavior: 'smooth' });
+			field.focus({ preventScroll: true });
+			return;
+		}
+	}
+
 	function addContact(role = 'other') {
 		// Новая форма всегда в конце — если список свёрнут, раскрываем, иначе её не видно.
 		expanded = true;
+		const id = newContactId();
 		onChange([
 			...contacts,
 			{
-				id: newContactId(),
+				id,
 				name: '',
 				role,
 				position: '',
@@ -53,6 +77,7 @@
 				messengersText: '',
 			},
 		]);
+		focusRow(id);
 	}
 
 	function removeContact(idx) {
@@ -68,7 +93,7 @@
 	}
 </script>
 
-<div class="space-y-3" data-testid="lead-contacts-panel">
+<div class="space-y-3" data-testid="lead-contacts-panel" bind:this={panelEl}>
 	<div class="flex items-center justify-between gap-2">
 		<div>
 			<div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Контакты</div>
@@ -90,6 +115,7 @@
 		{#each visible as row, idx (row.id)}
 			{@const lprDone = isLprContactComplete(row)}
 			<div
+				data-contact-row={row.id}
 				class="rounded-lg border p-3 space-y-2 text-sm
 					{row.role === 'lpr' && lprDone ? 'border-emerald-800/80 bg-emerald-950/20' : 'border-gray-800 bg-gray-950/40'}"
 			>
@@ -168,6 +194,13 @@
 				{expanded ? 'Свернуть' : `Показать все (${contacts.length})`}
 			</button>
 		{/if}
+		<!-- Дубль кнопки в конце списка: до шапки панели с длинным списком не долистать. -->
+		<button
+			type="button"
+			class="w-full text-[11px] py-1.5 rounded border border-dashed border-gray-700 text-gray-400 hover:text-gray-200 hover:border-gray-600"
+			onclick={() => addContact('other')}
+			data-testid="lead-contacts-add-bottom"
+		>+ контакт</button>
 	{/if}
 
 	<button

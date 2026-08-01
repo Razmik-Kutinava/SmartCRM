@@ -1,0 +1,16 @@
+{
+  "ollama": {
+    "calls_today": 2,
+    "calls_month": 2,
+    "calls_total": 2,
+    "tokens_prompt_today": 0,
+    "tokens_completion_today": 845,
+    "tokens_prompt_month": 0,
+    "tokens_completion_month": 845,
+    "tokens_total": 845,
+    "errors_today": 0,
+    "last_used": "2026-07-31T17:11:54.446602+00:00",
+    "_day": "2026-07-31",
+    "_month": "2026-07"
+  }
+}
