@@ -4,6 +4,12 @@
 	/** @type {{ contacts: Array<Record<string, unknown>> }} */
 	let { contacts = [] } = $props();
 
+	/** Длинный список сворачиваем — иначе карточка уезжает вниз на 10 контактах. */
+	const VISIBLE_LIMIT = 4;
+	let expanded = $state(false);
+	const hiddenCount = $derived(Math.max(0, contacts.length - VISIBLE_LIMIT));
+	const visible = $derived(expanded ? contacts : contacts.slice(0, VISIBLE_LIMIT));
+
 	function roleLabel(role) {
 		return CONTACT_ROLE_OPTIONS.find((o) => o.value === role)?.label || role || 'Другое';
 	}
@@ -30,7 +36,7 @@
 		</p>
 	{:else}
 		<ul class="space-y-2">
-			{#each contacts as c, idx (c.id || idx)}
+			{#each visible as c, idx (c.id || idx)}
 				{@const phones = channelList(c.phones)}
 				{@const emails = channelList(c.emails)}
 				<li
@@ -59,5 +65,15 @@
 				</li>
 			{/each}
 		</ul>
+		{#if hiddenCount > 0 || expanded}
+			<button
+				type="button"
+				class="w-full text-[11px] py-1 rounded border border-gray-800 text-gray-400 hover:text-gray-200 hover:border-gray-700"
+				onclick={() => (expanded = !expanded)}
+				data-testid="lead-contacts-readonly-toggle"
+			>
+				{expanded ? 'Свернуть' : `Показать все (${contacts.length})`}
+			</button>
+		{/if}
 	{/if}
 </div>

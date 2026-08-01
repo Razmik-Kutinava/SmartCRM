@@ -11,16 +11,33 @@
 	 */
 	let { contacts, onChange, onSave, saving = false } = $props();
 
+	/** Длинный список форм сворачиваем — иначе до кнопки сохранения не долистать. */
+	const VISIBLE_LIMIT = 4;
+	let expanded = $state(false);
+	const hiddenCount = $derived(Math.max(0, contacts.length - VISIBLE_LIMIT));
+	const visible = $derived(expanded ? contacts : contacts.slice(0, VISIBLE_LIMIT));
+
 	function updateRow(idx, field, value) {
 		const next = contacts.map((c, i) => (i === idx ? { ...c, [field]: value } : c));
 		onChange(next);
 	}
 
+	function newContactId() {
+		// crypto.randomUUID есть только в secure context (https / localhost);
+		// по сети через IP остаётся фолбэк, поэтому к времени добавляем случайный хвост.
+		return (
+			globalThis.crypto?.randomUUID?.() ||
+			`c${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+		);
+	}
+
 	function addContact(role = 'other') {
+		// Новая форма всегда в конце — если список свёрнут, раскрываем, иначе её не видно.
+		expanded = true;
 		onChange([
 			...contacts,
 			{
-				id: crypto.randomUUID?.() || `c${Date.now()}`,
+				id: newContactId(),
 				name: '',
 				role,
 				position: '',
@@ -63,7 +80,7 @@
 			<button type="button" class="text-indigo-400 hover:underline ml-1" onclick={() => addContact('lpr')}>Добавить ЛПР</button>
 		</div>
 	{:else}
-		{#each contacts as row, idx (row.id)}
+		{#each visible as row, idx (row.id)}
 			{@const lprDone = isLprContactComplete(row)}
 			<div
 				class="rounded-lg border p-3 space-y-2 text-sm
@@ -134,6 +151,16 @@
 				</label>
 			</div>
 		{/each}
+		{#if hiddenCount > 0 || expanded}
+			<button
+				type="button"
+				class="w-full text-[11px] py-1 rounded border border-gray-800 text-gray-400 hover:text-gray-200 hover:border-gray-700"
+				onclick={() => (expanded = !expanded)}
+				data-testid="lead-contacts-panel-toggle"
+			>
+				{expanded ? 'Свернуть' : `Показать все (${contacts.length})`}
+			</button>
+		{/if}
 	{/if}
 
 	<button

@@ -125,7 +125,11 @@
 		async function pullLead() {
 			await loadCrmConfig();
 			const id = String(get(page).params.id ?? '');
-			if (id && id !== lastFetchedOkId) {
+			// page.subscribe срабатывает и на смену ?panel=/?tab= — на том же лиде
+			// перезагружать нечего, а пересборка черновиков стирала незаполненный
+			// контакт из формы и следующий ввод уходил в предыдущую карточку.
+			if (id && id === lastFetchedOkId) return;
+			if (id) {
 				try {
 					// Источник правды — ответ API; кэш только ускоряет повторный заход.
 					// При квоте localStorage (~5MB на большой базе) запись молчит —
