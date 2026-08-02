@@ -2,6 +2,16 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-08-02 — Техспец: сайт/домен + BuiltWith/WhoIs
+
+По `go` («ебашь»): тех не видел сайт/парсеры.
+
+**Контекст.** `tech_domain_context`: сайт из карточки; домен также из email после `@` (не free-mail); если стек/DNS пусты — live `enrich_domain_signals` (BuiltWith+WhoIs). Явные строки в промпте техспеца.
+
+**Отчёт.** Поля `observed_website` / `observed_domain` / `stack_evidence` / `dns_evidence` в JSON + блок в `AgentResultView` перед gaps.
+
+Тесты: `test_tech_domain_context` 9 PASS; p1+p6 PASS.
+
 ## 2026-08-02 — Агенты: разбор сначала, пробелы потом
 
 По запросу: без полного суфлёра агент давал плохой разбор / сводил к «нужны данные».

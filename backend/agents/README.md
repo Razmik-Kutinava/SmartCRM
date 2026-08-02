@@ -38,7 +38,8 @@ LangGraph-агенты для анализа лидов, стратегии, п�
 | `marketer_gate_enrich.py` | Дополнение marketer_output для eval gate |
 | `analyst_gate_enrich.py` | Дополнение analyst_output для eval gate |
 | `strategist.py` | Агент-стратег |
-| `tech_specialist.py` | Агент по IT/технологиям |
+| `tech_specialist.py` | Агент по IT: сайт/домен (+ email после @), BuiltWith+WhoIs |
+| `tech_domain_context.py` | Резолв домена, live enrich BuiltWith/WhoIs, поля отчёта |
 | `tech_gate_enrich.py` | Дополнение tech_output для eval gate (ключевые слова) |
 | `economist_gate_enrich.py` | Дополнение economist_output для eval gate |
 | `strategist_gate_enrich.py` | Дополнение strategist_output по скору аналитика |

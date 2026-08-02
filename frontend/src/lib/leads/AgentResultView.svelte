@@ -31,6 +31,7 @@
 		'recommended_stack', 'likely_stack', 'integrations', 'technical_risks', 'implementation_complexity',
 		'portfolio_fit', 'sales_directions', 'presale_questions', 'blockers',
 		'missing_data', 'missing_from_agents', 'context_gaps',
+		'observed_website', 'observed_domain', 'domain_sources', 'stack_evidence', 'dns_evidence',
 		'product_to_offer', 'approach', 'campaign_type', 'buyer_profile', 'industry_insight',
 	]);
 	let missingRows = $derived([
@@ -209,6 +210,29 @@
 				</div>
 			{/each}
 		</div>
+	</div>
+{/if}
+
+{#if result?.observed_website || result?.observed_domain || result?.stack_evidence || result?.dns_evidence}
+	<div class="bg-slate-950/50 border border-slate-700/60 rounded-xl p-3 space-y-1" data-testid="tech-observed-domain">
+		<div class="text-xs font-semibold text-slate-300">Сайт / домен (для стека)</div>
+		{#if result.observed_website}
+			<div class="text-xs text-gray-300">Сайт: {result.observed_website}</div>
+		{/if}
+		{#if result.observed_domain}
+			<div class="text-xs text-gray-300">
+				Домен: {result.observed_domain}
+				{#if result.domain_sources?.length}
+					<span class="text-gray-600"> · {result.domain_sources.join(', ')}</span>
+				{/if}
+			</div>
+		{/if}
+		{#if result.stack_evidence}
+			<div class="text-xs text-indigo-300/90">BuiltWith/стек: {result.stack_evidence}</div>
+		{/if}
+		{#if result.dns_evidence}
+			<div class="text-xs text-gray-400">DNS/WhoIs: {result.dns_evidence}</div>
+		{/if}
 	</div>
 {/if}
 
