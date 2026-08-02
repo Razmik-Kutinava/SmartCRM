@@ -120,6 +120,49 @@ async def _search_tavily(query: str, max_results: int) -> list[dict]:
         return []
 
 
+async def _search_duckduckgo(query: str, max_results: int) -> list[dict]:
+    """SearchApi.io DuckDuckGo — опциональный 4-й веб-провайдер."""
+    key = (os.getenv("SEARCHAPI_API_KEY") or os.getenv("SEARCH_API_KEY") or "").strip()
+    if not key:
+        return []
+    try:
+        async with httpx.AsyncClient(timeout=12.0) as c:
+            r = await c.get(
+                "https://www.searchapi.io/api/v1/search",
+                params={
+                    "engine": "duckduckgo",
+                    "q": query,
+                    "api_key": key,
+                    "locale": "ru-ru",
+                },
+            )
+            r.raise_for_status()
+            data = r.json()
+        results = []
+        for item in (data.get("organic_results") or [])[:max_results]:
+            results.append({
+                "title": item.get("title") or "",
+                "snippet": item.get("snippet") or "",
+                "url": item.get("link") or "",
+                "date": "",
+                "source": "duckduckgo",
+            })
+        try:
+            from core.stats import track_api
+            track_api("duckduckgo")
+        except Exception:
+            pass
+        return results
+    except Exception as e:
+        logger.warning("DuckDuckGo/SearchAPI ошибка: %s", e)
+        try:
+            from core.stats import track_api
+            track_api("duckduckgo", error=True)
+        except Exception:
+            pass
+        return []
+
+
 async def _search_datanewton(query: str, max_results: int) -> list[dict]:
     """
     Поиск компаний через DataNewton /v1/suggestions.

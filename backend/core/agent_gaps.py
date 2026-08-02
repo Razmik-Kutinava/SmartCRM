@@ -22,12 +22,28 @@ _FIELD_HINTS: dict[str, str] = {
     "description": "заметки / описание",
     "next_call": "дата следующего контакта",
     "inn": "ИНН",
+    "okved": "ОКВЭД / вид деятельности",
     "web_research": "веб-исследование (кнопка 🔍 Исследовать)",
     "financials": "фин. показатели (выручка / обороты в паспорте)",
     "products": "история продуктов / покупок",
     "tech_stack": "технологии клиента (сайт / раздел ИТ в исследовании)",
     "prior_agents": "запуски других агентов (аналитик / экономист / маркетолог / тех)",
 }
+
+# Поля карточки для общего суфлёра (порядок = приоритет добора)
+_CARD_PRIORITY: list[str] = [
+    "inn",
+    "okved",
+    "industry",
+    "contact",
+    "email",
+    "phone",
+    "financials",
+    "website",
+    "employees",
+    "tech_stack",
+    "web_research",
+]
 
 # Что критично каждому агенту
 _AGENT_NEEDS: dict[str, list[str]] = {
@@ -83,6 +99,7 @@ def _lead_presence(lead_like: dict[str, Any]) -> dict[str, bool]:
         or (analyses.get("products") if isinstance(analyses, dict) else None)
     )
     inn = lead_like.get("inn") or company.get("inn") or company.get("ИНН")
+    okved = company.get("okved") or company.get("okved_name") or lead_like.get("okved")
     tech_filled = bool(
         (
             isinstance(tech, dict)
@@ -103,15 +120,16 @@ def _lead_presence(lead_like: dict[str, Any]) -> dict[str, bool]:
         "contact": _filled(lead_like.get("contact")),
         "email": _filled(lead_like.get("email")),
         "phone": _filled(lead_like.get("phone")),
-        "industry": _filled(lead_like.get("industry")),
+        "industry": _filled(lead_like.get("industry")) or _filled(company.get("industry")) or _filled(company.get("okved_name")),
         "city": _filled(lead_like.get("city")),
         "budget": _filled(lead_like.get("budget")) or _filled(lead_like.get("amount_rub")),
         "stage": _filled(lead_like.get("stage")),
-        "employees": _filled(lead_like.get("employees")) or _filled(company.get("employees")),
+        "employees": _filled(lead_like.get("employees")) or _filled(company.get("employees")) or _filled(company.get("employees_count")),
         "website": _filled(lead_like.get("website")) or _filled(company.get("website")),
         "description": _filled(lead_like.get("description")),
         "next_call": _filled(lead_like.get("next_call")),
         "inn": _filled(inn),
+        "okved": _filled(okved),
         "web_research": bool(brief) and "ошибка" not in brief.lower()[:40],
         "financials": _filled(fin),
         "products": _filled(products),
@@ -160,3 +178,30 @@ def merge_missing(llm_missing: Any, deterministic: list[str]) -> list[str]:
         seen.add(key)
         out.append(text)
     return out[:12]
+
+
+def card_suffler(lead_like: dict[str, Any]) -> dict[str, Any]:
+    """Общий суфлёр карточки: чего не хватает для полноты работы с клиентом.
+
+    Не зависит от запуска агента — считается по полям лида / паспорта / 🔍.
+    """
+    presence = _lead_presence(lead_like or {})
+    gaps: list[str] = []
+    missing_keys: list[str] = []
+    for key in _CARD_PRIORITY:
+        if not presence.get(key):
+            missing_keys.append(key)
+            gaps.append(_FIELD_HINTS.get(key, key))
+    by_agent = gaps_all_agents(lead_like or {})
+    # Дополняем общим списком то, что нужно агентам, но не в card priority
+    for agent_gaps in by_agent.values():
+        for g in agent_gaps:
+            if g not in gaps:
+                gaps.append(g)
+    gaps = gaps[:16]
+    return {
+        "ok": len(missing_keys) == 0,
+        "gaps": gaps,
+        "missing_keys": missing_keys,
+        "by_agent": by_agent,
+    }

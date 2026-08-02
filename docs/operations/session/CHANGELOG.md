@@ -2,6 +2,18 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-08-02 — SBR: 🔍 gaps-driven (суфлёр карточки + ИНН→Checko→веб)
+
+По `go` («ебашь» план: суфлёр на карточке, ИНН если пусто, Checko, сайт, веб по дырам, ~2.5 мин, второй круг, опц. DDG).
+
+**Карточка.** `LeadCardSuffler` + `cardSuffler.js` / `core.agent_gaps.card_suffler` — общий список пробелов (ИНН, ОКВЭД, контакты, фин, стек…) до запуска агентов.
+
+**Research.** `resolve_inn` (ЕГРЮЛ/Checko по имени+домену) → enrich Checko → narrative веб → BuiltWith/DNS → `second_pass` по remaining gaps. Таймауты enrich/narrative по умолчанию 70/90с. В ответе `research_stages`, `card_suffler`, `resolved_inn`. ИНН пишется в PATCH.
+
+**DDG.** `_search_duckduckgo` через SearchApi.io при `SEARCHAPI_API_KEY`.
+
+Тесты: `test_research_gaps_pipeline` 5 PASS; rag 144 PASS.
+
 ## 2026-08-02 — SBR: 🔍 BuiltWith + WhoIs/DNS в исследование
 
 По `go` («добавь эти две возможности» — BuiltWith для теха, WhoIs/DNS в 🔍; не тулзы у агентов).

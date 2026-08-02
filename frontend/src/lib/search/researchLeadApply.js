@@ -74,6 +74,10 @@ export function ensureSummary(web, result = null) {
 export function researchResultToLeadPatch(result, lead = null) {
 	const patch = enrichResultToLeadPatch(result, lead);
 	const web = result?.web_research;
+	const resolvedInn = result?.resolved_inn?.inn || result?.passport?.inn || result?.enriched?.inn;
+	if (resolvedInn && (!lead?.inn || lead.inn === '—')) {
+		patch.inn = String(resolvedInn).replace(/\D/g, '') || resolvedInn;
+	}
 	if (!web) return patch;
 
 	// lead.checko + passport.checko из patch — не терять company/financials

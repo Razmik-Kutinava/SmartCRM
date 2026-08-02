@@ -32,6 +32,7 @@
 	import { isRepeatLead } from '$lib/leads/leadBitrixExtra.js';
 	import { leadManagerLabel } from '$lib/leads/leadManager.js';
 	import AgentResultView from '$lib/leads/AgentResultView.svelte';
+	import LeadCardSuffler from '$lib/leads/LeadCardSuffler.svelte';
 	import { createTask, fetchTasks, patchTask } from '$lib/tasks/taskApi.js';
 	import { TASK_INTENT_OPTIONS } from '$lib/tasks/taskIntentCatalog.js';
 	import { slaStatus } from '$lib/tasks/taskSla.js';
@@ -211,6 +212,7 @@
 	let researchStatus = $state('');
 	let researchStatusLabelText = $state('');
 	let researchElapsed = $state(0);
+	let researchGaps = $state(/** @type {string[] | null} */ (null));
 	let enrichMsg = $state('');
 	let exportPdfLoading = $state(false);
 	let bitrixPushLoading = $state(false);
@@ -290,8 +292,19 @@
 			const llmNote = data?.web_research?.llm
 				? `LLM: ${data.web_research.llm_provider || 'да'}`
 				: 'без LLM (выжимка из поиска)';
+			const gaps =
+				data?.card_suffler?.gaps ||
+				data?.web_research?.remaining_gaps ||
+				data?.remaining_gaps ||
+				[];
+			researchGaps = Array.isArray(gaps) ? gaps : [];
+			const innNote = data?.resolved_inn?.inn
+				? `ИНН ${data.resolved_inn.inn}`
+				: data?.passport?.inn
+					? `ИНН ${data.passport.inn}`
+					: '';
 			if (applied) {
-				enrichMsg = `Исследование готово за ${researchElapsed}с (${providers}; ${llmNote}). Выжимка в карточке и сыром JSON.`;
+				enrichMsg = `Исследование готово за ${researchElapsed}с (${providers}; ${llmNote}${innNote ? `; ${innNote}` : ''}). Выжимка в карточке.`;
 			} else {
 				enrichMsg = `Исследование без новых полей за ${researchElapsed}с (${providers}; ${llmNote})`;
 			}
@@ -1016,7 +1029,7 @@
 			>{enrichRunning ? '⟳' : '✨'}</button>			<button
 				type="button"
 				data-testid="lead-card-research"
-				title={researchRunning ? 'Исследование…' : 'Исследовать в интернете (Brave / Tavily / Serper)'}
+				title={researchRunning ? 'Исследование…' : 'Исследовать: ИНН → Checko → сайт → веб'}
 				aria-label="Исследовать"
 				class="w-9 h-9 flex items-center justify-center bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm text-gray-300 rounded-lg transition-colors"
 				disabled={researchRunning || enrichRunning || !lead?.company}
@@ -1144,6 +1157,8 @@
 	{#if enrichMsg}
 		<div class="px-6 py-1.5 text-xs border-b border-gray-800 bg-gray-900/80 text-gray-400" data-testid="lead-card-enrich-msg">{enrichMsg}</div>
 	{/if}
+
+	<LeadCardSuffler lead={lead} researchGaps={researchGaps} />
 
 	<div class="flex flex-col" data-testid="lead-card-main">
 		<div class="p-4 sm:p-6" data-testid="lead-card-hub">

@@ -26,6 +26,7 @@ _DEFAULT_CONFIG: dict[str, Any] = {
         "serper": {"enabled": True, "weight": 1.0, "max_results": 10},
         "brave":  {"enabled": True, "weight": 0.8, "max_results": 8},
         "tavily": {"enabled": True, "weight": 1.2, "max_results": 5},
+        "duckduckgo": {"enabled": True, "weight": 0.7, "max_results": 6},
         "datanewton": {"enabled": True, "weight": 1.1, "max_results": 10},
         "moy_zakupki": {"enabled": True, "weight": 0.85, "max_results": 8},
     },

@@ -7,7 +7,7 @@ import {
 } from '$lib/search/researchLeadApply.js';
 
 export const RESEARCH_STATUS_LABELS = {
-	searching: 'Ищу в интернете (Serper / Brave / Tavily)…',
+	searching: 'ИНН / Checko / веб (Serper · Brave · Tavily · DDG)…',
 	synthesizing: 'Синтез выжимки (Groq → Ollama)…',
 	saving: 'Сохраняю в карточку…',
 	done_llm: 'Готово · выжимка от LLM',

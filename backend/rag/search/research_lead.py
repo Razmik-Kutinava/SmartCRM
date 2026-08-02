@@ -13,7 +13,7 @@ from .config import load_config
 from .enrich_sources import fetch_urls_from_hits
 from .merge import _deduplicate, _format_results
 from .prospect import enrich_lead
-from .providers import _search_brave, _search_serper, _search_tavily
+from .providers import _search_brave, _search_duckduckgo, _search_serper, _search_tavily
 from .research_dossier import (
     agent_brief_from_summary,
     ensure_nonempty_summary,
@@ -28,10 +28,11 @@ from .research_passport import (
     merge_research_passport,
 )
 from .research_status import done_status, research_status_label
+from .resolve_inn import resolve_inn
 
 logger = logging.getLogger(__name__)
 
-_WEB_PROVIDERS = frozenset({"serper", "brave", "tavily"})
+_WEB_PROVIDERS = frozenset({"serper", "brave", "tavily", "duckduckgo"})
 
 
 def _env_float(name: str, default: float) -> float:
@@ -207,6 +208,8 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
                 search_tasks.append(asyncio.create_task(_search_brave(q, mr)))
             elif provider == "tavily":
                 search_tasks.append(asyncio.create_task(_search_tavily(q, mr)))
+            elif provider == "duckduckgo":
+                search_tasks.append(asyncio.create_task(_search_duckduckgo(q, mr)))
             else:
                 continue
             task_meta.append(provider)
@@ -285,15 +288,45 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
 
 async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[str, Any]:
     """
-    Исследование компании: параллельно enrich (поля) + narrative (досье 3 провайдеров).
-    web_research — сырой снимок для checkoJson.analyses.web_research.
+    Исследование: ИНН (если пусто) → Checko enrich → веб-досье → BuiltWith/DNS.
+    Таймаут ~2.5 мин суммарно; этапы пишем в research_stages; gaps → card_suffler.
     """
+    lead = dict(lead or {})
     company = (lead.get("company") or lead.get("name") or "").strip()
     if not company:
         raise ValueError("lead.company обязателен")
 
-    enrich_timeout = _env_float("RESEARCH_ENRICH_TIMEOUT", 45.0)
-    narr_timeout = _env_float("RESEARCH_NARRATIVE_TIMEOUT", 120.0)
+    stages: list[str] = []
+    resolved_inn_meta: dict[str, Any] = {}
+
+    # 1) ИНН, если пусто
+    inn = re.sub(r"\D", "", str(lead.get("inn") or lead.get("INN") or ""))
+    if len(inn) not in (10, 12):
+        stages.append("resolve_inn")
+        try:
+            resolved_inn_meta = await resolve_inn(
+                company=company,
+                website=str(lead.get("website") or ""),
+            )
+        except Exception as e:
+            logger.warning("research_lead resolve_inn: %s", e)
+            resolved_inn_meta = {}
+        found = re.sub(r"\D", "", str((resolved_inn_meta or {}).get("inn") or ""))
+        if len(found) in (10, 12):
+            lead["inn"] = found
+            inn = found
+            stages.append(f"inn:{found}")
+        else:
+            stages.append("inn:not_found")
+    else:
+        lead["inn"] = inn
+        stages.append(f"inn:existing:{inn}")
+
+    # 2) Checko/enrich + narrative (после ИНН Checko даёт ОКВЭД/фин/контакты)
+    # Дефолты под ~2.5 мин суммарно (enrich + narrative + domain)
+    enrich_timeout = _env_float("RESEARCH_ENRICH_TIMEOUT", 70.0)
+    narr_timeout = _env_float("RESEARCH_NARRATIVE_TIMEOUT", 90.0)
+    stages.append("enrich+narrative")
     enrich_res, narr_res = await asyncio.gather(
         _deadline(enrich_lead(lead=lead, force=force), enrich_timeout, "research_lead enrich"),
         _deadline(
@@ -475,6 +508,69 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
                     providers.append(p)
             raw = list(raw) + list(domain_pack.get("raw_results") or [])
 
+    stages.append("domain_signals")
+
+    # ИНН в passport/enriched, если нашли
+    if inn and len(inn) in (10, 12):
+        if not isinstance(passport, dict):
+            passport = {}
+        else:
+            passport = dict(passport)
+        passport["inn"] = passport.get("inn") or inn
+        checko_p = passport.get("checko") if isinstance(passport.get("checko"), dict) else {}
+        checko_p = dict(checko_p)
+        co_p = checko_p.get("company") if isinstance(checko_p.get("company"), dict) else {}
+        co_p = dict(co_p)
+        co_p.setdefault("inn", inn)
+        checko_p["company"] = co_p
+        passport["checko"] = checko_p
+        if isinstance(enriched, dict):
+            enriched = dict(enriched)
+            enriched.setdefault("inn", inn)
+
+    from core.agent_gaps import card_suffler
+
+    lead_like = _lead_like_after_research(lead, enriched, passport, web_research, tech)
+    suffler = card_suffler(lead_like)
+    remaining = list(suffler.get("missing_keys") or [])
+    if remaining and _env_float("RESEARCH_SECOND_PASS", 1.0) >= 1:
+        stages.append("second_pass")
+        try:
+            second_hits = await _second_pass_for_gaps(company, remaining, max_queries=3)
+            if second_hits:
+                raw = list(raw) + second_hits
+                if isinstance(web_research, dict):
+                    web_research = dict(web_research)
+                    extra = "\n".join(
+                        f"- {h.get('title')}: {(h.get('snippet') or '')[:180]}"
+                        for h in second_hits[:6]
+                    )
+                    if extra:
+                        brief0 = str(web_research.get("agent_brief") or "")
+                        web_research["agent_brief"] = (
+                            brief0 + "\n\n## Добор по пробелам\n" + extra
+                        ).strip()[:4500]
+                lead_like = _lead_like_after_research(
+                    lead, enriched, passport, web_research, tech
+                )
+                suffler = card_suffler(lead_like)
+                remaining = list(suffler.get("missing_keys") or [])
+        except Exception as e:
+            logger.warning("research_lead second_pass: %s", e)
+            stages.append("second_pass:error")
+
+    if isinstance(web_research, dict):
+        web_research = dict(web_research)
+        web_research["research_stages"] = list(stages)
+        web_research["remaining_gaps"] = suffler.get("gaps") or []
+        if resolved_inn_meta:
+            web_research["inn_resolve"] = {
+                "inn": resolved_inn_meta.get("inn"),
+                "source": resolved_inn_meta.get("source"),
+                "candidates": (resolved_inn_meta.get("candidates") or [])[:3],
+            }
+
+    stages.append("done")
     return {
         "enriched": enriched,
         "missing_fields": enrich_res.get("missing_fields") or [],
@@ -485,7 +581,96 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
         "answer": narr_res.get("answer") or "",
         "queries_used": narr_res.get("queries_used") or [],
         "web_research": web_research,
+        "research_stages": stages,
+        "card_suffler": suffler,
+        "remaining_gaps": remaining,
+        "resolved_inn": resolved_inn_meta or None,
     }
+
+
+def _lead_like_after_research(
+    lead: dict[str, Any],
+    enriched: dict[str, Any] | None,
+    passport: dict[str, Any] | None,
+    web_research: dict[str, Any] | None,
+    tech: dict[str, Any] | None,
+) -> dict[str, Any]:
+    enriched = enriched or {}
+    passport = passport if isinstance(passport, dict) else {}
+    checko = passport.get("checko") if isinstance(passport.get("checko"), dict) else {}
+    checko = dict(checko)
+    if isinstance(web_research, dict):
+        analyses = checko.get("analyses") if isinstance(checko.get("analyses"), dict) else {}
+        analyses = dict(analyses)
+        analyses["web_research"] = web_research
+        checko["analyses"] = analyses
+    if tech:
+        checko["tech"] = {**(checko.get("tech") or {}), **tech}
+    return {
+        "company": lead.get("company") or enriched.get("company"),
+        "contact": lead.get("contact") or enriched.get("decision_maker"),
+        "email": lead.get("email") or enriched.get("email"),
+        "phone": lead.get("phone") or enriched.get("phone"),
+        "industry": lead.get("industry") or passport.get("industry"),
+        "budget": lead.get("budget") or enriched.get("revenue"),
+        "stage": lead.get("stage"),
+        "employees": lead.get("employees") or enriched.get("employees"),
+        "website": lead.get("website") or enriched.get("website"),
+        "inn": lead.get("inn") or passport.get("inn"),
+        "checko": checko,
+        "tech": tech or passport.get("tech") or checko.get("tech"),
+        "financials": checko.get("financials") or passport.get("financials"),
+    }
+
+
+async def _second_pass_for_gaps(
+    company: str, missing_keys: list[str], *, max_queries: int = 3
+) -> list[dict]:
+    """Короткие целевые запросы только по оставшимся дырам."""
+    qmap = {
+        "email": f'"{company}" email OR почта контакт',
+        "phone": f'"{company}" телефон OR +7 контакты',
+        "contact": f'"{company}" генеральный директор OR руководитель',
+        "industry": f'"{company}" отрасль ОКВЭД чем занимается',
+        "okved": f'"{company}" ОКВЭД вид деятельности',
+        "financials": f'"{company}" выручка финансы отчетность',
+        "website": f'"{company}" официальный сайт',
+        "employees": f'"{company}" численность сотрудников',
+    }
+    queries: list[str] = []
+    for key in missing_keys:
+        if key in qmap and qmap[key] not in queries:
+            queries.append(qmap[key])
+        if len(queries) >= max_queries:
+            break
+    if not queries:
+        return []
+
+    cfg = load_config()
+    providers_cfg = cfg.get("providers", {})
+    tasks: list[asyncio.Task] = []
+    for q in queries:
+        for provider, pcfg in providers_cfg.items():
+            if provider not in _WEB_PROVIDERS or not pcfg.get("enabled", True):
+                continue
+            mr = min(int(pcfg.get("max_results", 4) or 4), 4)
+            if provider == "serper":
+                tasks.append(asyncio.create_task(_search_serper(q, mr)))
+            elif provider == "brave":
+                tasks.append(asyncio.create_task(_search_brave(q, mr)))
+            elif provider == "tavily":
+                tasks.append(asyncio.create_task(_search_tavily(q, mr)))
+            elif provider == "duckduckgo":
+                tasks.append(asyncio.create_task(_search_duckduckgo(q, mr)))
+    if not tasks:
+        return []
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    out: list[dict] = []
+    for res in results:
+        if isinstance(res, Exception) or not res:
+            continue
+        out.extend(res)
+    return _deduplicate(out)[:12]
 
 
 def _merge_domain_into_passport(
