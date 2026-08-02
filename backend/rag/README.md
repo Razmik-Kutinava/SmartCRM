@@ -17,14 +17,14 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `research_passport.py` | Extract паспорта из веб (regex+LLM или JSON из досье); `allow_llm=False` — без второго вызова |
 | `research_status.py` | Фазы 🔍 для UI/логов: `searching / synthesizing / done_llm / done_fallback` |
 | `research_lead.py` | Оркестрация 🔍: ИНН→Checko→веб→BuiltWith/DNS; stages; second_pass по gaps; ~2.5 мин |
-| `resolve_inn.py` | ИНН: EN→RU варианты → ЕГРЮЛ → веб-regex |
+| `resolve_inn.py` | ИНН: EN→RU варианты → ЕГРЮЛ → веб-regex; скоринг distinctive (Development≠Investment) |
 | `company_name_ru.py` | Алиасы брендов и очистка имени для ЕГРЮЛ |
 | `research_queries.py` | Запросы 🔍: каталоги по ИНН → свежие новости → профиль |
 | `card_sync.py` | После 🔍: телефон/email/бюджет из паспорта → enriched (карточка) |
-| `field_fill.py` | Добор gaps: целевые запросы → extract → passport + Checko |
+| `field_fill.py` | Добор gaps: целевые запросы → extract → passport + Checko; при смене ИНН — свежий Checko |
 | `domain_enrich.py` | Параллельно BuiltWith + WhoIs/DNS для 🔍 (без ключа на DNS) |
 | `enrich_sources.py` | Checko/ИНН, таргет-запросы, парсинг сайта, fetch URL из поиска |
-| `checko_passport.py` | Сборка и merge `checko_json` для enrich; UF-почта → `company.emails` (`emails_from_bitrix_blobs`) |
+| `checko_passport.py` | Сборка и merge `checko_json`; строгий `is_valid_phone`; `passport_facts_for_brief` |
 | `brave_limit.py` | Кэш и semaphore Brave (429) |
 | `rag_queries.py` | Запросы к Chroma |
 | `relevance.py` | Score релевантности для авто-чанков |

@@ -584,10 +584,36 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
                 lead["inn"] = fill_meta["inn"]
                 inn = str(fill_meta["inn"])
                 stages.append(f"inn:fill:{inn}")
+                if fill_meta.get("inn_changed"):
+                    stages.append(
+                        f"inn:changed:{fill_meta.get('inn_before')}→{inn}"
+                    )
                 if "checko" not in providers and fill_meta.get("checko"):
                     providers.append("checko")
             if fill_meta.get("filled_keys"):
                 stages.append("filled:" + ",".join(fill_meta["filled_keys"]))
+            # Факты Checko в brief — чтобы не оставалось «нет данных» из LLM-досье
+            try:
+                from .checko_passport import passport_facts_for_brief
+
+                facts = passport_facts_for_brief(
+                    passport if isinstance(passport, dict) else {}
+                )
+                if facts and isinstance(web_research, dict):
+                    web_research = dict(web_research)
+                    brief0 = str(web_research.get("agent_brief") or "")
+                    if "## Паспорт (Checko" not in brief0:
+                        web_research["agent_brief"] = (brief0 + "\n\n" + facts).strip()[
+                            :4500
+                        ]
+                    # summary тоже подправим хвостом, если LLM врал про контакты
+                    summ0 = str(web_research.get("summary") or "")
+                    if facts and "## Паспорт (Checko" not in summ0:
+                        web_research["summary"] = (summ0 + "\n\n" + facts).strip()[
+                            :8000
+                        ]
+            except Exception as e:
+                logger.warning("research_lead passport facts brief: %s", e)
             if isinstance(web_research, dict) and fill_hits:
                 web_research = dict(web_research)
                 extra = "\n".join(

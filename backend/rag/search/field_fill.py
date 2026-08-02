@@ -181,11 +181,17 @@ def _merge_extract_into(
                 prev.append(e)
         company["emails"] = prev
     if extracted.get("phones"):
-        prev = list(company.get("phones") or [])
-        for p in extracted["phones"]:
-            if p not in prev:
-                prev.append(p)
-        company["phones"] = prev
+        from .checko_passport import filter_phones
+
+        cleaned = filter_phones(extracted["phones"])
+        if cleaned:
+            prev = list(company.get("phones") or [])
+            for p in cleaned:
+                if p not in prev:
+                    prev.append(p)
+            company["phones"] = prev
+            if not enriched.get("phone"):
+                enriched["phone"] = cleaned[0]
     if extracted.get("director"):
         company.setdefault("director", extracted["director"])
     checko["company"] = company
@@ -214,37 +220,83 @@ async def fill_gaps_from_web(
     extracted = extract_fields_from_hits(hits)
     enriched, passport = _merge_extract_into(enriched, passport, extracted)
 
+    inn_before = re.sub(
+        r"\D",
+        "",
+        str(
+            (passport.get("inn") if isinstance(passport, dict) else "")
+            or ((passport.get("checko") or {}).get("company") or {}).get("inn")
+            or ""
+        ),
+    )
     inn = str(extracted.get("inn") or enriched.get("inn") or passport.get("inn") or "")
     inn = re.sub(r"\D", "", inn)
+    inn_changed = bool(
+        len(inn) in (10, 12)
+        and inn_before
+        and len(inn_before) in (10, 12)
+        and inn != inn_before
+    )
     need_checko = len(inn) in (10, 12) and (
-        "financials" in keys
+        inn_changed
+        or "financials" in keys
         or "okved" in keys
         or not (passport.get("checko") or {}).get("financials")
+        or (passport.get("checko") or {}).get("meta", {}).get("source") == "web_research"
     )
     if need_checko:
         try:
-            existing = passport.get("checko") if isinstance(passport.get("checko"), dict) else None
+            # при смене ИНН не тащим старый паспорт чужой фирмы
+            existing = None
+            if not inn_changed:
+                existing = (
+                    passport.get("checko") if isinstance(passport.get("checko"), dict) else None
+                )
             fields, pp = await checko_after_inn(
-                inn, website=website or enriched.get("website") or "", existing_checko=existing
+                inn,
+                website=website or enriched.get("website") or "",
+                existing_checko=existing,
             )
             if fields:
                 for k, v in fields.items():
-                    if v and not enriched.get(k):
+                    if v and (inn_changed or not enriched.get(k)):
                         enriched[k] = v
             if pp:
                 from .checko_passport import merge_checko_passport
 
-                base = passport.get("checko") if isinstance(passport.get("checko"), dict) else {}
                 new_c = pp.get("checko") if isinstance(pp.get("checko"), dict) else {}
-                if new_c:
+                if inn_changed and new_c:
+                    # заменяем company/financials целевого ИНН, analyses оставляем
+                    base = (
+                        passport.get("checko")
+                        if isinstance(passport.get("checko"), dict)
+                        else {}
+                    )
+                    analyses = base.get("analyses") if isinstance(base.get("analyses"), dict) else {}
+                    passport["checko"] = dict(new_c)
+                    if analyses:
+                        passport["checko"]["analyses"] = analyses
+                    if new_c.get("meta") is None:
+                        passport["checko"]["meta"] = {"source": "checko", "inn": inn}
+                elif new_c:
+                    base = (
+                        passport.get("checko")
+                        if isinstance(passport.get("checko"), dict)
+                        else {}
+                    )
                     passport["checko"] = merge_checko_passport(base, new_c)
                 for pk in ("inn", "ogrn", "industry", "city"):
-                    if pp.get(pk) and not passport.get(pk):
+                    if pp.get(pk) and (inn_changed or not passport.get(pk)):
                         passport[pk] = pp[pk]
-                passport["inn"] = passport.get("inn") or inn
+                if pp.get("financials") and (inn_changed or not passport.get("financials")):
+                    passport["financials"] = pp["financials"]
+                passport["inn"] = inn
                 meta["checko"] = True
             meta["inn"] = inn
-            enriched["inn"] = enriched.get("inn") or inn
+            if inn_changed:
+                meta["inn_changed"] = True
+                meta["inn_before"] = inn_before
+            enriched["inn"] = inn
         except Exception as e:
             logger.warning("fill_gaps checko_after_inn: %s", e)
             meta["inn"] = inn

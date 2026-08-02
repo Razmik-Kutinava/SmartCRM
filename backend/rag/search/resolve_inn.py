@@ -31,9 +31,28 @@ def _clean_domain(website: str) -> str:
 def _norm_name(name: str) -> str:
     s = (name or "").lower().replace("ё", "е")
     s = re.sub(r"[\"«»']", "", s)
-    for junk in ("ооо", "ао", "зао", "пао", "оао", "ип", "llc", "ltd", "inc", "банк", "bank"):
+    for junk in ("ооо", "ао", "зао", "пао", "оао", "ип", "llc", "ltd", "inc", "банк", "bank", "company"):
         s = re.sub(rf"\b{junk}\b", " ", s)
+    # EN↔RU токены одного смысла
+    for en, ru in (
+        ("development", "девелопмент"),
+        ("developer", "девелопер"),
+        ("investment", "инвестмент"),
+        ("invest", "инвест"),
+        ("holding", "холдинг"),
+        ("management", "менеджмент"),
+        ("group", "групп"),
+        ("construction", "строительств"),
+    ):
+        s = re.sub(rf"\b{en}\b", ru, s)
     return re.sub(r"\s+", " ", s).strip()
+
+
+# Дистинктивные слова: совпадение сильно поднимает, конфликт — штрафует
+_DISTINCTIVE = (
+    "девелопмент", "девелопер", "инвестмент", "инвест", "холдинг",
+    "менеджмент", "строительств", "групп", "сервис", "торг",
+)
 
 
 def _score_candidate(company: str, domain: str, cand: dict[str, Any]) -> int:
@@ -49,6 +68,24 @@ def _score_candidate(company: str, domain: str, cand: dict[str, Any]) -> int:
             ta, tb = set(cn.split()), set(nm.split())
             if ta and tb:
                 score += 10 * len(ta & tb)
+        # Дистинктивные токены: «DEVELOPMENT» ≠ «ИНВЕСТМЕНТ»
+        ca = {t for t in cn.split() if any(d in t for d in _DISTINCTIVE) or t in _DISTINCTIVE}
+        cb = {t for t in nm.split() if any(d in t for d in _DISTINCTIVE) or t in _DISTINCTIVE}
+        # также точное вхождение distinctive в строке
+        for d in _DISTINCTIVE:
+            if d in cn:
+                ca.add(d)
+            if d in nm:
+                cb.add(d)
+        if ca and cb:
+            inter = ca & cb
+            if inter:
+                score += 35 * len(inter)
+            else:
+                # бренд общий, профиль разный — штраф (Астерус Инвестмент vs Девелопмент)
+                score -= 25
+        elif ca and not cb:
+            score -= 10
     site = _clean_domain(str(cand.get("website") or ""))
     if domain and site and (domain == site or domain.endswith("." + site) or site.endswith("." + domain)):
         score += 40

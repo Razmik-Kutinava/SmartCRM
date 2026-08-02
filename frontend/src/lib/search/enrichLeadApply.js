@@ -4,8 +4,16 @@ import { mergeCheckoJson, mergeTechJson } from '$lib/search/mergeLeadJson.js';
 export function isValidPhone(phone) {
 	const s = String(phone || '').trim();
 	if (!s) return false;
+	if (/[a-zA-Zа-яА-ЯёЁ_]/.test(s) && !/\d{3}/.test(s)) return false;
 	const digits = s.replace(/\D/g, '');
-	return digits.length >= 10;
+	if (digits.length < 10 || digits.length > 15) return false;
+	if (new Set(digits).size <= 2) return false;
+	if (digits.length === 11) {
+		if (digits[0] !== '7' && digits[0] !== '8') return false;
+		if (/^8[3-7]/.test(digits) && !digits.startsWith('849')) return false;
+	}
+	if (digits.length === 10 && /^[012]/.test(digits)) return false;
+	return true;
 }
 
 export function isValidEmail(email) {

@@ -135,6 +135,24 @@ async def test_research_lead_resolves_inn_and_returns_stages(monkeypatch):
             }
         ),
     )
+    # не ходим в сеть на second pass
+    monkeypatch.setattr(
+        "rag.search.field_fill.fill_gaps_from_web",
+        AsyncMock(
+            return_value=(
+                {"website": "https://acme.ru", "inn": "7707083893"},
+                {
+                    "inn": "7707083893",
+                    "checko": {
+                        "company": {"inn": "7707083893", "website": "https://acme.ru"},
+                        "financials": {"revenue": 1},
+                    },
+                },
+                [],
+                {"filled_keys": [], "inn": None, "checko": False},
+            )
+        ),
+    )
 
     out = await rl.research_lead(
         lead={"company": "ООО АКМЕ", "website": "https://acme.ru"}  # без inn

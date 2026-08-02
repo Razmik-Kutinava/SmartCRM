@@ -2,20 +2,21 @@
 
 ## Заказ (дословно)
 
-> да сделай чтобы так было и важно чтобы новостные тоже были желантельно свежие новости и тот запрос веб ебашь задачу
+> давай сделай
 
-**Как понял:** веб-запросы 🔍: сначала каталоги по ИНН, потом свежие новости года; порядок ИНН→Checko→веб сохранить.
+**Как понял:** починить выбор ИНН (Development≠Investment), Checko заново при смене ИНН, фильтр мусорных телефонов, факты паспорта в brief.
 
 ## Чеклист фазы
 
-- [ ] **🔍 запросы: каталоги по ИНН + свежие новости** · (пункт `[x]` — после «ок»)
+- [ ] **ИНН/Checko match + phones + passport brief** · (пункт `[x]` — после «ок»)
 
 ## Чеклист микро
 
-- [x] research_queries: catalog / news / profile
-- [x] narrative + LLM prompt + boost каталогов в hits
+- [x] resolve_inn scoring distinctive tokens
+- [x] field_fill: inn_changed → fresh Checko
+- [x] is_valid_phone stricter + passport_facts in brief
 - [x] Тесты + регрессия + ops
 
 ## Не вошло
 
-MCP-браузер. Прямой HTML-скрап Checko UI.
+Полный re-LLM досье после Checko.

@@ -12,11 +12,30 @@ _PHONE_RE = re.compile(r"\D")
 
 
 def is_valid_phone(value: Any) -> bool:
+    """Российский/международный телефон: 10–11 цифр, не мусор из HTML."""
     s = str(value or "").strip()
     if not s:
         return False
+    # соцхендлы / слова
+    if re.search(r"[a-zA-Zа-яА-ЯёЁ_]", s) and not re.search(r"\d{3}", s):
+        return False
     digits = _PHONE_RE.sub("", s)
-    return len(digits) >= 10
+    if len(digits) < 10 or len(digits) > 15:
+        return False
+    # отсев «красивых» мусорных последовательностей
+    if len(set(digits)) <= 2:
+        return False
+    # РФ: 11 цифр → 7… или 8…; 10 цифр → городской без кода страны
+    if len(digits) == 11:
+        if digits[0] not in ("7", "8"):
+            return False
+        # 89… / 79… мобильные; 7495… Москва и т.п. — ок
+        # отсев 83/84/85/86/87 кроме редких — чаще HTML-мусор
+        if digits.startswith(("83", "84", "85", "86", "87")) and not digits.startswith("849"):
+            return False
+    if len(digits) == 10 and digits[0] in ("0", "1", "2"):
+        return False
+    return True
 
 
 def is_valid_email(value: Any) -> bool:
@@ -265,6 +284,49 @@ def merge_checko_passport(existing: dict[str, Any] | None, new: dict[str, Any]) 
         else:
             out[key] = new[key]
     return out
+
+
+def passport_facts_for_brief(passport: dict[str, Any] | None, *, max_chars: int = 900) -> str:
+    """Факты Checko/паспорта для вставки в agent_brief (чтобы LLM-досье не врало «нет данных»)."""
+    if not isinstance(passport, dict) or not passport:
+        return ""
+    checko = passport.get("checko") if isinstance(passport.get("checko"), dict) else {}
+    co = checko.get("company") if isinstance(checko.get("company"), dict) else {}
+    fin = checko.get("financials") or passport.get("financials") or {}
+    lines: list[str] = ["## Паспорт (Checko / реестр)"]
+    inn = passport.get("inn") or co.get("inn")
+    if inn:
+        lines.append(f"- **ИНН:** {inn}")
+    name = co.get("name") or co.get("name_short")
+    if name:
+        lines.append(f"- **Юрлицо:** {name}")
+    if co.get("director"):
+        post = co.get("director_post") or "руководитель"
+        lines.append(f"- **ЛПР:** {co['director']} ({post})")
+    phones = filter_phones(co.get("phones") or [])
+    if phones:
+        lines.append(f"- **Телефоны:** {', '.join(phones[:5])}")
+    emails = filter_emails(co.get("emails") or [])
+    if emails:
+        lines.append(f"- **Email:** {', '.join(emails[:5])}")
+    if co.get("okved_name") or co.get("okved"):
+        lines.append(f"- **ОКВЭД:** {co.get('okved_name') or co.get('okved')}")
+    if co.get("address") or passport.get("city"):
+        lines.append(f"- **Адрес/город:** {co.get('address') or passport.get('city')}")
+    if co.get("website"):
+        lines.append(f"- **Сайт:** {co['website']}")
+    if isinstance(fin, dict) and fin:
+        bits = []
+        for k in ("revenue", "revenue_year", "profit", "employees", "employees_count"):
+            if fin.get(k) not in (None, "", "—"):
+                bits.append(f"{k}={fin[k]}")
+        if bits:
+            lines.append(f"- **Финансы:** {'; '.join(bits[:6])}")
+        elif fin:
+            lines.append(f"- **Финансы:** есть блок ({len(fin)} полей)")
+    if len(lines) <= 1:
+        return ""
+    return "\n".join(lines)[:max_chars]
 
 
 def passport_patch_from_checko(
