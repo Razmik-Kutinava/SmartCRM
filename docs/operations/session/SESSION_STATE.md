@@ -6,6 +6,8 @@
 
 **Регрессия_счёт:** `1/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-08-02 | Действие: SBR RED — 🔍 BuiltWith+WhoIs/DNS: test_domain_signals_research 4 FAIL (нет whois_dns, domain_enrich, tech в slots/research) | Коммит: `этот` | Статус: in_progress
+
 2026-08-02 | Действие: SBR GREEN+REVIEW — синтез агентов в код: промпты 5 агентов (без MBA/MIT), `agent_gaps`+суфлёр missing на карточке, слоты с checko/🔍/паспортом, RAG одного агента ≤800, стратегу выжимки 4 агентов, задача из next_action, research `agent_requirements`; тендеры не трогали. test_agent_synthesis_context + email_run + analyst 29 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: runtime agent_prompt_*.txt и A/B на 10 лидах — позже | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3 (analyst PASS)
 
 2026-08-02 | Действие: docs — синтез канона агентов: `backend/agents/СИНТЕЗ_АГЕНТЫ_ВОРКФЛОУ_И_ПРОМПТЫ.md` (воркфлоу из ТЕХРАЗБОРА + сжатие/анти-примеры из правок Claude + замечания Cursor: контекст/Apply/без MCP); код не трогал | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done
