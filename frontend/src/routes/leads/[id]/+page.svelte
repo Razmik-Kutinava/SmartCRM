@@ -686,6 +686,12 @@
 			});
 			if (!r.ok) throw new Error(await r.text());
 			agentResult = await r.json();
+			if (agentResult.score_updated || agentResult.task_created) {
+				try {
+					await refreshLeadFromApi();
+					if (agentResult.task_created) await loadLeadTasks();
+				} catch (_) { /* F5 подхватит */ }
+			}
 		} catch (e) { agentError = '❌ ' + e.message; }
 		finally { agentRunning = ''; }
 	}

@@ -28,10 +28,13 @@ def test_agent_result_view_covers_all_agents():
     assert "bant" in text
     assert "next_steps" in text
     # экономист / тех. спец
-    assert "roi" in text.lower()
-    assert "recommended_stack" in text or "tech" in text.lower()
+    assert "roi" in text.lower() or "ltv" in text.lower() or "budget_estimate" in text
+    assert "portfolio_fit" in text or "likely_stack" in text
     # маркетолог остаётся
     assert "first_email" in text
+    # суфлёр
+    assert "missing_data" in text
+    assert "agent-suffler-gaps" in text
 
 
 def test_lead_card_uses_agent_result_view():

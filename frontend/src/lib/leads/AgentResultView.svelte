@@ -25,16 +25,32 @@
 	const SHOWN = new Set([
 		'first_email', 'value_hook', 'summary', 'touch_sequence',
 		'decision', 'priority', 'urgency', 'next_action', 'rationale', 'coach_tip', 'final_reply',
-		'score', 'score_rationale', 'bant', 'next_steps', 'risks',
+		'score', 'score_rationale', 'stage_view', 'bant', 'next_steps', 'risks', 'opportunities',
 		'roi', 'roi_months', 'payback', 'price_recommendation', 'budget_justification',
-		'recommended_stack', 'integrations', 'technical_risks', 'implementation_complexity',
+		'budget_estimate', 'ltv_estimate', 'deal_segment', 'deal_probability_pct', 'pricing_strategy',
+		'recommended_stack', 'likely_stack', 'integrations', 'technical_risks', 'implementation_complexity',
+		'portfolio_fit', 'sales_directions', 'presale_questions', 'blockers',
+		'missing_data', 'missing_from_agents', 'context_gaps',
+		'product_to_offer', 'approach', 'campaign_type', 'buyer_profile', 'industry_insight',
 	]);
-	let extras = $derived(
-		Object.entries(result || {})
-			.filter(([k, v]) => !SHOWN.has(k) && !k.startsWith('_') && v && typeof v !== 'object')
-			.slice(0, 6)
-	);
+	let missingRows = $derived([
+		...(result?.missing_data || []),
+		...(result?.missing_from_agents || []),
+		...(result?.context_gaps || []),
+	].filter((v, i, a) => v && a.indexOf(v) === i).slice(0, 12));
 </script>
+
+{#if missingRows.length}
+	<div class="bg-amber-950/40 border border-amber-800/60 rounded-xl p-3 space-y-1" data-testid="agent-suffler-gaps">
+		<div class="text-xs font-semibold text-amber-300">Суфлёр — чего не хватает для полного анализа</div>
+		<ul class="space-y-0.5">
+			{#each missingRows as gap}
+				<li class="text-xs text-amber-100/90">• {gap}</li>
+			{/each}
+		</ul>
+		<p class="text-[11px] text-amber-600/90 mt-1">Заполни поля / нажми 🔍 Исследовать — и запусти агента снова.</p>
+	</div>
+{/if}
 
 <!-- маркетолог: письмо -->
 {#if result?.first_email}
@@ -86,6 +102,13 @@
 	</div>
 {/if}
 
+{#if result?.stage_view}
+	<div class="text-sm text-gray-200 border-l-2 border-emerald-600 pl-3">
+		<span class="text-xs text-gray-500 block mb-0.5">Стадия</span>
+		{result.stage_view}
+	</div>
+{/if}
+
 {#if bantRows.length}
 	<div class="grid grid-cols-2 gap-2">
 		{#each bantRows as [key, value]}
@@ -130,12 +153,25 @@
 	</div>
 {/if}
 
-<!-- тех. спец: стек и интеграции -->
-{#if result?.recommended_stack?.length || result?.integrations?.length || result?.technical_risks?.length}
+<!-- тех. спец: стек, портфель, интеграции -->
+{#if result?.portfolio_fit?.length}
+	<div class="bg-gray-950 border border-gray-800 rounded-xl p-4 space-y-2">
+		<div class="text-xs text-gray-500">Портфель — что предложить</div>
+		{#each result.portfolio_fit as fit}
+			<div class="text-xs text-gray-300">
+				<span class="text-indigo-400">{fit.product || fit.name || 'продукт'}</span>
+				{#if fit.fit}<span class="text-gray-600"> · {fit.fit}</span>{/if}
+				{#if fit.why}<div class="text-gray-500">{fit.why}</div>{/if}
+			</div>
+		{/each}
+	</div>
+{/if}
+
+{#if result?.recommended_stack?.length || result?.likely_stack?.length || result?.integrations?.length || result?.technical_risks?.length}
 	<div class="bg-gray-950 border border-gray-800 rounded-xl p-4 space-y-2">
 		<div class="text-xs text-gray-500">⚙️ Техническая часть</div>
-		{#if result.recommended_stack?.length}
-			<div class="text-xs text-gray-300">Стек: {result.recommended_stack.join(', ')}</div>
+		{#if (result.likely_stack || result.recommended_stack)?.length}
+			<div class="text-xs text-gray-300">Стек: {(result.likely_stack || result.recommended_stack).join(', ')}</div>
 		{/if}
 		{#if result.integrations?.length}
 			<div class="text-xs text-gray-300">Интеграции: {result.integrations.join(', ')}</div>
@@ -147,6 +183,13 @@
 			<ul class="space-y-1">
 				{#each result.technical_risks as risk}
 					<li class="text-xs text-red-300">• {risk}</li>
+				{/each}
+			</ul>
+		{/if}
+		{#if result.presale_questions?.length}
+			<ul class="space-y-1 mt-1">
+				{#each result.presale_questions as q}
+					<li class="text-xs text-gray-400">? {q}</li>
 				{/each}
 			</ul>
 		{/if}
@@ -178,13 +221,5 @@
 				</div>
 			{/each}
 		</div>
-	</div>
-{/if}
-
-{#if extras.length}
-	<div class="border-t border-gray-800 pt-2 space-y-0.5">
-		{#each extras as [key, value]}
-			<div class="text-[11px] text-gray-500"><span class="text-gray-600">{key}:</span> {value}</div>
-		{/each}
 	</div>
 {/if}

@@ -5,6 +5,15 @@ import {
 } from '$lib/search/enrichLeadApply.js';
 import { mergeCheckoJson } from '$lib/search/mergeLeadJson.js';
 
+/** Что агентам нужно из исследования — пишем в web_research, чтобы не терялось. */
+export const AGENT_RESEARCH_REQUIREMENTS = {
+	analyst: ['отрасль', 'продукты/услуги', 'контакты/ЛПР', 'сигналы покупки'],
+	economist: ['численность', 'фин.сигналы/выручка', 'сегмент', 'география'],
+	marketer: ['отрасль и боли', 'контакты', 'язык/позиционирование'],
+	tech_specialist: ['технологии/ИТ', 'сайт/домен', 'масштаб'],
+	strategist: ['сводка профиля', 'пробелы (раздел риски)'],
+};
+
 /**
  * @param {unknown} existingChecko
  * @param {Record<string, unknown> | null | undefined} webResearch
@@ -21,7 +30,11 @@ export function mergeWebResearchIntoChecko(existingChecko, webResearch) {
 		base.analyses && typeof base.analyses === 'object' && !Array.isArray(base.analyses)
 			? { ...base.analyses }
 			: {};
-	analyses.web_research = webResearch;
+	const enriched = {
+		...webResearch,
+		agent_requirements: webResearch.agent_requirements || AGENT_RESEARCH_REQUIREMENTS,
+	};
+	analyses.web_research = enriched;
 	return { ...base, analyses };
 }
 

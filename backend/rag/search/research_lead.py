@@ -256,6 +256,8 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
 
     brief = agent_brief_from_summary(answer)
 
+    from core.agent_gaps import research_agent_checklist
+
     return {
         "answer": answer,
         "queries_used": queries,
@@ -267,6 +269,7 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
             "at": today,
             "summary": answer,
             "agent_brief": brief,
+            "agent_requirements": research_agent_checklist(),
             "queries": queries,
             "raw_results": _compact_hits(deduped),
             "providers_used": providers_used,
@@ -407,6 +410,10 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
         )
         if not web_research.get("agent_brief"):
             web_research["agent_brief"] = agent_brief_from_summary(web_research["summary"])
+        if not web_research.get("agent_requirements"):
+            from core.agent_gaps import research_agent_checklist
+
+            web_research["agent_requirements"] = research_agent_checklist()
         web_research.setdefault("status", done_status(bool(web_research.get("llm"))))
         web_research.setdefault(
             "status_label", research_status_label(str(web_research.get("status") or ""))

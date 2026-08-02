@@ -84,7 +84,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `leads/` | `/api/leads` | См. пакет выше |
 | `tasks.py` | `/api/tasks` | Задачи: CRUD, `task_intent`, `GET /intent-catalog`, фильтры |
 | `email.py` | `/api/email` | IMAP/SMTP; аккаунты: `GET /accounts`, `POST /accounts/connect`, `DELETE /accounts/{id}?purge=` (отключить ящик + очистка); sync/backfill: `GET /sync/status`, `POST /sync`, `GET /backfill/status`, `POST /backfill/start`, `POST /backfill/pause`, `POST /backfill/run-once`; nurture: `/nurture/preview-llm`, `/start-llm` (`chain_type`: new/cross/upsell), `/start`, `/start-segment`, `/process-due`, `GET /nurture/chains`; кампании: `/campaign/preview-llm`, `/test-send`, `send_now` (фильтр `industries[]`) |
-| `agent_email.py` | `/api/agents/email` | AI по лиду: marketer/analyst/strategist/economist/**tech_specialist**; intents, history, feedback. `POST /run` собирает слоты через `core/agent_email_context.py` (с `lead_id` — иначе аналитик отдаёт заглушку) и урезает переписку до 3 тредов × 6 писем × 200 символов; стратегу подмешивается последний вывод аналитика по лиду |
+| `agent_email.py` | `/api/agents/email` | AI по лиду: marketer/analyst/strategist/economist/**tech_specialist**; intents, history, feedback. `POST /run`: слоты через `agent_email_context` (lead_id, checko/🔍, gaps), RAG только текущего агента ≤800 симв., стратегу — выжимки всех 4, `missing_data` мержится с суфлёром; из `next_action` стратега создаётся задача |
 | `search.py` | `/api/search` | Поиск; `enrich-lead`; `research-lead` (🔍 3 провайдера + выжимка); `auto-ingest-rag` |
 | `rag.py` | `/api/rag` | Загрузка документов, `ingest-dialogue`, **`/vendor-crawl`** (краулинг вендоров → tec) |
 | `news.py` | `/api/news` | Новости по компании |

@@ -55,6 +55,7 @@
 - [ ] **DnD порядка плиток хаба** на `/leads/[id]` — хватаешь плитку, ставишь раньше/позже; порядок в `localStorage` · [`F4_LEADS_ACCEPTANCE.md`](../phase4/leads/F4_LEADS_ACCEPTANCE.md)
 - [ ] **Редизайн хаба карточки:** 5 плиток (Клиент / Работа / Письма / Продукты / Агенты); этап+путь сделки в шапке; без ✉️/🔗 в тулбаре · [`F4_LEADS_ACCEPTANCE.md`](../phase4/leads/F4_LEADS_ACCEPTANCE.md)
 - [ ] **Тех. спец на карточке** — кнопка в плитке «Агенты» + `POST /api/agents/email/run` для `tech_specialist` · [`F4_LEADS_ACCEPTANCE.md`](../phase4/leads/F4_LEADS_ACCEPTANCE.md)
+- [ ] **Агенты по синтезу (контекст+промпты+суфлёр):** 🔍/паспорт в слотах, missing_data на карточке, задача из next_action · [`СИНТЕЗ_АГЕНТЫ_ВОРКФЛОУ_И_ПРОМПТЫ.md`](../../../backend/agents/СИНТЕЗ_АГЕНТЫ_ВОРКФЛОУ_И_ПРОМПТЫ.md) · (пункт `[x]` — после «ок»)
 - [ ] **Агенты на карточке работают:** `POST /api/agents/email/run` — стратег без `ImportError`, аналитик с `lead_id` (не заглушка), дайджест переписки урезан (экономия токенов) · [`F4_LEADS_ACCEPTANCE.md`](../phase4/leads/F4_LEADS_ACCEPTANCE.md)
 - [ ] **Направление Лиды (бриф):** автоскор, Мой день = дело сегодня + близость к деньгам, шапка (отрасль, без этапа в мете), путь сделки не 0/0, 🔍 · [`F4_LEADS_DIRECTION.md`](../phase4/leads/F4_LEADS_DIRECTION.md)
 - [ ] **Базы лидов:** переключатель Все/Битрикс/метка в `/leads/list` + импорт CSV/XLS → отдельный список · [`F4_LEADS_DIRECTION.md`](../phase4/leads/F4_LEADS_DIRECTION.md)

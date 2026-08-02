@@ -70,6 +70,7 @@ async def analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
             "description": slots.get("description", "") or slots.get("note", ""),
             "next_call": slots.get("next_call", "—"),
             "score": slots.get("score"),
+            "checko": slots.get("checko") if isinstance(slots.get("checko"), dict) else {},
         }
         if not lead["company"]:
             return {"summary": "В слотах нет данных лида (company).", "score": None}
@@ -96,11 +97,11 @@ async def analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
                 f"Данные лида:\n{lead_ctx}{score_trend}\n"
                 f"{tasks_block}"
                 f"{inst_block}\n\n"
-                f"Рассуждай пошагово: сначала оцени каждый BANT-критерий, "
-                f"потом учти историю задач, потом выведи итоговый скор. Ответ на русском."
+                f"Ответ строго JSON по схеме system. Учти задачи и тренд скора. "
+                f"В missing_data перечисли пробелы для полного анализа."
             ) + rag_block(slots, "analyst")},
         ]
-        raw = await chat(messages, temperature=0.3, max_tokens=1400, json_mode=True)
+        raw = await chat(messages, temperature=0.3, max_tokens=900, json_mode=True)
         result = parse_json_safe(raw)
         new_score = result.get("score", score)
         if new_score and lead.get("id"):

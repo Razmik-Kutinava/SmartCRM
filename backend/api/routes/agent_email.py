@@ -20,6 +20,7 @@ from core.agent_email_context import (
     build_agent_slots,
     build_email_digest,
 )
+from core.agent_gaps import merge_missing
 from db.session import get_db
 from db.models.agent_email_intent import AgentEmailIntent
 from db.models.agent_run_log import AgentRunLog
@@ -265,16 +266,62 @@ async def _last_agent_output(lead_id: int, agent_name: str, db: AsyncSession) ->
     payload = (log.result_json or {}) if log else {}
     if not isinstance(payload, dict) or not payload:
         return {}
-    return {
-        k: v
-        for k, v in {
+
+    if agent_name == "analyst":
+        keys = {
             "score": payload.get("score"),
             "summary": str(payload.get("summary") or "")[:400],
+            "stage_view": str(payload.get("stage_view") or "")[:200],
             "bant": payload.get("bant"),
             "next_steps": (payload.get("next_steps") or [])[:2],
-        }.items()
-        if v
-    }
+            "missing_data": (payload.get("missing_data") or [])[:5],
+        }
+    elif agent_name == "economist":
+        keys = {
+            "summary": str(payload.get("summary") or "")[:300],
+            "deal_segment": payload.get("deal_segment"),
+            "ltv_estimate": str(payload.get("ltv_estimate") or "")[:200],
+            "deal_probability_pct": payload.get("deal_probability_pct"),
+            "missing_data": (payload.get("missing_data") or [])[:5],
+        }
+    elif agent_name == "marketer":
+        keys = {
+            "summary": str(payload.get("summary") or "")[:300],
+            "value_hook": str(payload.get("value_hook") or "")[:200],
+            "product_to_offer": str(payload.get("product_to_offer") or "")[:120],
+            "missing_data": (payload.get("missing_data") or [])[:5],
+        }
+    elif agent_name == "tech_specialist":
+        keys = {
+            "summary": str(payload.get("summary") or "")[:300],
+            "likely_stack": (payload.get("likely_stack") or [])[:4],
+            "portfolio_fit": (payload.get("portfolio_fit") or [])[:3],
+            "missing_data": (payload.get("missing_data") or [])[:5],
+        }
+    else:
+        keys = {"summary": str(payload.get("summary") or payload.get("decision") or "")[:300]}
+
+    return {k: v for k, v in keys.items() if v}
+
+
+async def _attach_card_rag(slots: dict, agent: str, task: str) -> dict:
+    """RAG только для одного агента, без live web (🔍 уже в слотах). Cap ~800 символов."""
+    import os
+    from rag.retrieve import build_rag_query, retrieve_context_sync
+
+    if os.getenv("RAG_ENABLED", "1").lower() in ("0", "false", "no"):
+        return slots
+    q = build_rag_query(task or slots.get("company", ""), slots)
+    if not q:
+        return slots
+    try:
+        import asyncio
+        ctx = await asyncio.to_thread(retrieve_context_sync, q, 3, agent)
+        if ctx and ctx.strip():
+            slots = {**slots, f"_rag_{agent}": ctx.strip()[:800]}
+    except Exception as e:
+        logger.warning("RAG на карточке (%s): %s", agent, e)
+    return slots
 
 
 @router.post("/email/run")
@@ -334,20 +381,37 @@ async def run_agent_on_lead(body: RunAgentBody, db: AsyncSession = Depends(get_d
     # 5. Few-shot примеры (одобренные оператором)
     few_shots_block = await _load_few_shots(body.agent, db)
 
-    # 6. Сборка слотов для агента (с lead_id — без него аналитик не работает)
+    # Предварительные выводы других агентов (для стратега и флага prior_agents)
+    peer_names = ("analyst", "economist", "marketer", "tech_specialist")
+    peer_outputs = {}
+    for name in peer_names:
+        out = await _last_agent_output(body.lead_id, name, db)
+        if out:
+            peer_outputs[name] = out
+
+    # 6. Сборка слотов (checko/brief/gaps)
     slots = build_agent_slots(
         lead,
         email_block=build_email_digest(digest_threads),
         intents_block=intents_block,
         few_shots_block=few_shots_block,
         task=body.task,
+        agent=body.agent,
+        prior_agents=bool(peer_outputs),
     )
+    context_gaps = list(slots.get("context_gaps") or [])
 
-    # Стратегу даём последний вывод аналитика по лиду — синтез без него слепой
     if body.agent == "strategist":
-        prev = await _last_agent_output(body.lead_id, "analyst", db)
-        if prev:
-            slots["analyst_output"] = prev
+        if peer_outputs.get("analyst"):
+            slots["analyst_output"] = peer_outputs["analyst"]
+        if peer_outputs.get("economist"):
+            slots["economist_output"] = peer_outputs["economist"]
+        if peer_outputs.get("marketer"):
+            slots["marketer_output"] = peer_outputs["marketer"]
+        if peer_outputs.get("tech_specialist"):
+            slots["tech_output"] = peer_outputs["tech_specialist"]
+
+    slots = await _attach_card_rag(slots, body.agent, body.task)
 
     # 7. Запуск агента
     try:
@@ -375,6 +439,41 @@ async def run_agent_on_lead(body: RunAgentBody, db: AsyncSession = Depends(get_d
         logger.exception("Agent run error: %s", e)
         raise HTTPException(500, "Внутренняя ошибка агента. Подробности в логах.")
 
+    if not isinstance(result, dict):
+        result = {"summary": str(result)}
+
+    result["missing_data"] = merge_missing(result.get("missing_data"), context_gaps)
+    if body.agent == "strategist" and not peer_outputs:
+        result["missing_from_agents"] = merge_missing(
+            result.get("missing_from_agents"),
+            ["запустите аналитика (и по возможности экономиста/маркетолога/теха) до стратега"],
+        )
+    result["context_gaps"] = context_gaps
+
+    # Apply: задача из next_action стратега (если ещё нет такой открытой)
+    task_created = None
+    next_action = (result.get("next_action") or "").strip()
+    if body.agent == "strategist" and next_action:
+        from db.models.task import Task
+
+        existing = await db.execute(
+            select(Task).where(
+                Task.lead_id == body.lead_id,
+                Task.title == next_action[:200],
+                Task.status != "done",
+            ).limit(1)
+        )
+        if not existing.scalars().first():
+            t = Task(
+                title=next_action[:200],
+                lead_id=body.lead_id,
+                status="open",
+                related_lead=getattr(lead, "company", "") or "",
+            )
+            db.add(t)
+            await db.flush()
+            task_created = {"id": t.id, "title": t.title}
+
     # 8. Сохранить в лог
     log = AgentRunLog(
         lead_id=body.lead_id,
@@ -393,7 +492,10 @@ async def run_agent_on_lead(body: RunAgentBody, db: AsyncSession = Depends(get_d
         "agent":            body.agent,
         "lead_id":          body.lead_id,
         "result":           result,
+        "context_gaps":     context_gaps,
+        "task_created":     task_created,
         "threads_analyzed": len(threads),
         "intents_applied":  len(intents),
         "few_shots_used":   1 if few_shots_block else 0,
+        "score_updated":    bool(result.get("_score_applied_to_db")),
     }
