@@ -27,6 +27,11 @@ from .research_passport import (
     extract_passport_from_research_sources,
     merge_research_passport,
 )
+from .research_queries import (
+    build_research_web_queries,
+    llm_query_prompt,
+    merge_with_llm_queries,
+)
 from .research_status import done_status, research_status_label
 from .resolve_inn import resolve_inn
 
@@ -62,6 +67,17 @@ _JUNK_HOST_PARTS = (
     "wikipedia.org/wiki/netherlands",
     "embassy",
     "consulate",
+)
+
+# Каталоги юрлиц — поднимаем в выдаче 🔍
+_CATALOG_HOST_PARTS = (
+    "checko.ru",
+    "list-org.com",
+    "rusprofile.ru",
+    "sbis.ru",
+    "spark-interfax",
+    "egrul.nalog",
+    "bo.nalog",
 )
 
 
@@ -113,9 +129,17 @@ def filter_relevant_hits(company: str, hits: list[dict], *, limit: int = 18) -> 
         for t in tokens:
             if t in text:
                 score += 3
+        if any(c in host or c in url for c in _CATALOG_HOST_PARTS):
+            score += 6
+        if re.search(r"\b\d{10}(\d{2})?\b", text):
+            score += 2  # ИНН в сниппете/URL
         if any(x in host for x in ("official", "company", ".ru", ".com")):
             score += 1
         if h.get("date"):
+            score += 1
+        # свежие новости в title/snippet
+        yr = datetime.now(timezone.utc).year
+        if any(w in text for w in ("новост", "пресс-релиз", str(yr), str(yr - 1))):
             score += 1
         scored.append((score, h))
     scored.sort(key=lambda x: x[0], reverse=True)
@@ -131,18 +155,22 @@ def fallback_summary_from_hits(company: str, hits: list[dict], today: str) -> st
 
 
 async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[str, Any]:
-    """Поиск через Serper/Brave/Tavily + досье (LLM Groq→Ollama или fallback)."""
+    """Поиск через Serper/Brave/Tavily + досье (LLM Groq→Ollama или fallback).
+
+    Запросы: каталоги по ИНН → свежие новости года → профиль компании.
+    """
     from core.llm import chat
 
     today = datetime.now(timezone.utc).date().isoformat()
     year = today[:4]
     industry = (lead.get("industry") or "").strip()
-    inn = (lead.get("inn") or "").strip()
+    inn = re.sub(r"\D", "", str(lead.get("inn") or ""))
+    has_inn = len(inn) in (10, 12)
     website = (lead.get("website") or "").strip()
     ctx_bits = [f"компания: {company}", f"дата исследования: {today}"]
     if industry and industry != "—":
         ctx_bits.append(f"отрасль: {industry}")
-    if inn:
+    if has_inn:
         ctx_bits.append(f"ИНН: {inn}")
     if website and website != "—":
         ctx_bits.append(f"сайт: {website}")
@@ -150,12 +178,14 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
 
     task = (
         f"Исследуй компанию «{company}» на актуальную дату {today}. "
-        f"Найди свежие факты ({year}): чем занимаются, новости, продукты, рынок, риски."
+        f"Сначала каталоги юрлиц по ИНН (Checko, list-org, rusprofile), "
+        f"затем свежие новости {year}, продукты, рынок, риски."
     )
 
-    queries: list[str] = []
-    # Запросы: только быстрый Groq (короткий timeout). Ollama здесь не зовём —
-    # иначе до поиска уже минуты на локальной 8B.
+    # База всегда: ИНН-каталоги + свежие новости (даже если LLM молчит)
+    base_queries = build_research_web_queries(company, lead, year=year, max_queries=7)
+
+    llm_queries: list[str] = []
     query_mode = (os.getenv("RESEARCH_LLM_QUERIES") or "auto").strip().lower()
     if query_mode not in ("0", "false", "no", "never", "off"):
         try:
@@ -164,12 +194,11 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
                     [
                         {
                             "role": "user",
-                            "content": (
-                                f"Ты — B2B-аналитик. Задача:\n{task}\nКонтекст: {context}\n\n"
-                                f"Сгенерируй 3–5 поисковых запросов (Google). "
-                                f"Хотя бы один запрос с годом {year} или словами «новости {year}». "
-                                f"Запросы должны содержать название компании, не общие слова вроде Netherlands.\n"
-                                'Ответь строго JSON-массивом: ["запрос 1", ...]'
+                            "content": llm_query_prompt(
+                                task=task,
+                                context=context,
+                                year=year,
+                                has_inn=has_inn,
                             ),
                         }
                     ],
@@ -179,16 +208,13 @@ async def _narrative_web_research(company: str, lead: dict[str, Any]) -> dict[st
                 ),
                 timeout=_env_float("RESEARCH_QUERY_LLM_TIMEOUT", 8.0),
             )
-            queries = [q for q in re.findall(r'"([^"]{5,})"', raw_queries or "")][:5]
+            llm_queries = [q for q in re.findall(r'"([^"]{5,})"', raw_queries or "")][:6]
         except Exception as e:
             logger.warning("research_lead генерация запросов (groq): %s", e)
 
-    if not queries:
-        queries = [
-            f'"{company}" официальный сайт',
-            f'"{company}" новости {year}',
-            f'"{company}" чем занимается производство',
-        ]
+    queries = merge_with_llm_queries(
+        base_queries, llm_queries, year=year, company=company, max_queries=8
+    )
 
     cfg = load_config()
     providers_cfg = cfg.get("providers", {})

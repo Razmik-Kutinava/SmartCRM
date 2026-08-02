@@ -19,6 +19,7 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `research_lead.py` | Оркестрация 🔍: ИНН→Checko→веб→BuiltWith/DNS; stages; second_pass по gaps; ~2.5 мин |
 | `resolve_inn.py` | ИНН: EN→RU варианты → ЕГРЮЛ → веб-regex |
 | `company_name_ru.py` | Алиасы брендов и очистка имени для ЕГРЮЛ |
+| `research_queries.py` | Запросы 🔍: каталоги по ИНН → свежие новости → профиль |
 | `card_sync.py` | После 🔍: телефон/email/бюджет из паспорта → enriched (карточка) |
 | `field_fill.py` | Добор gaps: целевые запросы → extract → passport + Checko |
 | `domain_enrich.py` | Параллельно BuiltWith + WhoIs/DNS для 🔍 (без ключа на DNS) |
