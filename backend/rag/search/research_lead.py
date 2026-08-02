@@ -534,30 +534,53 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
     suffler = card_suffler(lead_like)
     remaining = list(suffler.get("missing_keys") or [])
     if remaining and _env_float("RESEARCH_SECOND_PASS", 1.0) >= 1:
-        stages.append("second_pass")
+        stages.append("field_fill")
         try:
-            second_hits = await _second_pass_for_gaps(company, remaining, max_queries=3)
-            if second_hits:
-                raw = list(raw) + second_hits
-                if isinstance(web_research, dict):
-                    web_research = dict(web_research)
-                    extra = "\n".join(
-                        f"- {h.get('title')}: {(h.get('snippet') or '')[:180]}"
-                        for h in second_hits[:6]
-                    )
-                    if extra:
-                        brief0 = str(web_research.get("agent_brief") or "")
-                        web_research["agent_brief"] = (
-                            brief0 + "\n\n## Добор по пробелам\n" + extra
-                        ).strip()[:4500]
-                lead_like = _lead_like_after_research(
-                    lead, enriched, passport, web_research, tech
+            from .company_name_ru import company_search_variants
+            from .field_fill import fill_gaps_from_web
+
+            fill_company = company_search_variants(company)[0] if company else company
+            # предпочесть RU-вариант для добора
+            for v in company_search_variants(company):
+                if re.search(r"[а-яА-ЯёЁ]", v):
+                    fill_company = v
+                    break
+            enriched, passport, fill_hits, fill_meta = await fill_gaps_from_web(
+                company=fill_company,
+                missing_keys=remaining,
+                enriched=enriched if isinstance(enriched, dict) else {},
+                passport=passport if isinstance(passport, dict) else {},
+                website=website or str(lead.get("website") or ""),
+            )
+            if fill_hits:
+                raw = list(raw) + list(fill_hits)
+            if fill_meta.get("inn"):
+                lead["inn"] = fill_meta["inn"]
+                inn = str(fill_meta["inn"])
+                stages.append(f"inn:fill:{inn}")
+                if "checko" not in providers and fill_meta.get("checko"):
+                    providers.append("checko")
+            if fill_meta.get("filled_keys"):
+                stages.append("filled:" + ",".join(fill_meta["filled_keys"]))
+            if isinstance(web_research, dict) and fill_hits:
+                web_research = dict(web_research)
+                extra = "\n".join(
+                    f"- {h.get('title')}: {(h.get('snippet') or '')[:180]}"
+                    for h in fill_hits[:6]
                 )
-                suffler = card_suffler(lead_like)
-                remaining = list(suffler.get("missing_keys") or [])
+                if extra:
+                    brief0 = str(web_research.get("agent_brief") or "")
+                    web_research["agent_brief"] = (
+                        brief0 + "\n\n## Добор полей\n" + extra
+                    ).strip()[:4500]
+            lead_like = _lead_like_after_research(
+                lead, enriched, passport, web_research, tech
+            )
+            suffler = card_suffler(lead_like)
+            remaining = list(suffler.get("missing_keys") or [])
         except Exception as e:
-            logger.warning("research_lead second_pass: %s", e)
-            stages.append("second_pass:error")
+            logger.warning("research_lead field_fill: %s", e)
+            stages.append("field_fill:error")
 
     if isinstance(web_research, dict):
         web_research = dict(web_research)

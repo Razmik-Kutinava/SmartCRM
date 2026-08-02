@@ -4,7 +4,9 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
-**Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+**Регрессия_счёт:** `1/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+
+2026-08-02 | Действие: SBR GREEN+REVIEW — 🔍 field-fill: company_name_ru (OTP→ОТП), resolve_inn веб-ИНН, field_fill → passport+Checko; test_field_fill 4 + gaps 5 PASS; rag zone | Коммит: `этот` | Хвост A: нет | Хвост B: суфлёр split 🔍 vs CRM — позже | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3 (rag PASS)
 
 2026-08-02 | Действие: SBR RED — 🔍 field-fill: EN→RU имя, веб-ИНН, fill_gaps в passport; test_field_fill_research 4 FAIL | Коммит: `этот` | Статус: in_progress
 
