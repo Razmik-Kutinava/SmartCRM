@@ -42,8 +42,9 @@ LangGraph-агенты для анализа лидов, стратегии, п�
 | `tech_domain_context.py` | Резолв домена, live enrich BuiltWith/WhoIs, поля отчёта |
 | `tech_gate_enrich.py` | Дополнение tech_output для eval gate (ключевые слова) |
 | `economist_gate_enrich.py` | Дополнение economist_output для eval gate |
+| `economist_context.py` | Контекст экономиста: ФИНАНСЫ/ПАСПОРТ/🔍 |
 | `strategist_gate_enrich.py` | Дополнение strategist_output по скору аналитика |
-| `economist.py` | Агент-экономист (скор, ROI) |
+| `economist.py` | Агент-экономист: читает финпаспорт, не только budget |
 
 ## Типичный поток
 

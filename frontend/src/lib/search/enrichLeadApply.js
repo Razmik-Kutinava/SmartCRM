@@ -263,6 +263,12 @@ export function enrichResultToLeadPatch(result, lead = null) {
 	if (co.director_post && co.director_post !== '—' && (!lead?.position || lead.position === '—')) {
 		patch.position = co.director_post;
 	}
+	if (co.website && (!lead?.website || lead.website === '—') && !patch.website) {
+		patch.website = String(co.website);
+	}
+	if (co.industry && (!lead?.industry || lead.industry === '—') && !patch.industry) {
+		patch.industry = String(co.industry);
+	}
 
 	const passportForMerge = {
 		...passport,
@@ -270,6 +276,27 @@ export function enrichResultToLeadPatch(result, lead = null) {
 	};
 	const mergedContacts = mergePassportContacts(lead?.contacts, passportForMerge, lead);
 	if (mergedContacts?.length) patch.contacts = mergedContacts;
+
+	// Телефон из contacts / passport, если плоское поле пусто
+	if (!patch.phone && (!lead?.phone || lead.phone === '—')) {
+		const fromContacts = (patch.contacts || lead?.contacts || [])
+			.flatMap((c) => c?.phones || [])
+			.find(isValidPhone);
+		if (fromContacts) patch.phone = fromContacts;
+	}
+	// Бюджет из financials, если пусто
+	if (!patch.budget && (!lead?.budget || lead.budget === '—')) {
+		const fin =
+			patch.financialsJson ||
+			passport.financials ||
+			checkoForCo?.financials ||
+			{};
+		const rev =
+			fin.revenue ?? fin.revenue_year ?? fin.turnover ?? fin['выручка'] ?? fin['оборот'];
+		if (rev != null && String(rev).trim() && String(rev).trim() !== '—') {
+			patch.budget = String(rev);
+		}
+	}
 
 	return patch;
 }

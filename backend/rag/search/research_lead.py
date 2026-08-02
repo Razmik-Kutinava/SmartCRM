@@ -593,6 +593,32 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
                 "candidates": (resolved_inn_meta.get("candidates") or [])[:3],
             }
 
+    # Sync: паспорт/🔍 → плоские поля enriched (телефон, email, бюджет…)
+    try:
+        from .card_sync import sync_enriched_from_research
+
+        enriched, passport, sync_keys = sync_enriched_from_research(
+            lead=lead,
+            enriched=enriched if isinstance(enriched, dict) else {},
+            passport=passport if isinstance(passport, dict) else {},
+            web_research=web_research if isinstance(web_research, dict) else {},
+        )
+        if sync_keys:
+            stages.append("card_sync:" + ",".join(sync_keys))
+            lead_like = _lead_like_after_research(
+                lead, enriched, passport, web_research, tech
+            )
+            from core.agent_gaps import card_suffler as _card_suffler
+
+            suffler = _card_suffler(lead_like)
+            remaining = list(suffler.get("missing_keys") or [])
+            if isinstance(web_research, dict):
+                web_research["remaining_gaps"] = suffler.get("gaps") or []
+                web_research["card_sync_keys"] = sync_keys
+    except Exception as e:
+        logger.warning("research_lead card_sync: %s", e)
+        stages.append("card_sync:error")
+
     stages.append("done")
     return {
         "enriched": enriched,

@@ -2,6 +2,18 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-08-02 — Карточка←🔍 sync + gaps + экономист
+
+По `go` («ебашь всё»): фин/телефоны в исследовании, карточка и суфлёр пустые; экономист «нет финданных».
+
+**Sync.** `card_sync` после research → phone/email/website/budget/contact в `enriched`; Apply пишет в CRM. FE: `enrichLeadApply` + `researchLeadApply` добирают из contacts/financials/passport_extract.
+
+**Gaps.** Суфлёр (BE+FE): телефон/email/фин = есть, если в паспорте, contacts или выжимке (выручка/оборот).
+
+**Экономист.** `economist_context`: явный блок ФИНАНСЫ/ПАСПОРТ/🔍, не «пожелание оператора».
+
+Тесты: `test_card_sync_and_gaps` 10 PASS; rag zone PASS.
+
 ## 2026-08-02 — Техспец: сайт/домен + BuiltWith/WhoIs
 
 По `go` («ебашь»): тех не видел сайт/парсеры.

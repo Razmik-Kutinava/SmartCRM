@@ -14,14 +14,16 @@ from agents.base import AgentState
 from agents.tools import read_leads, read_tasks, read_lead_by_company
 from agents.scenarios.tender_context import tender_context_lines
 from agents.economist_gate_enrich import enrich_economist_output
+from agents.economist_context import build_economist_context_lines
 from rag.retrieve import rag_block
 
 logger = logging.getLogger(__name__)
 
 ECONOMIST_SYSTEM_PROMPT = """Ты — экономист сделки SmartCRM.
-Вход: бюджет/суммы лида, численность, отрасль, стадия, паспорт/фин.поля, веб-саммари.
+Вход: бюджет карточки, численность, отрасль, стадия, блок ФИНАНСЫ/ПАСПОРТ, веб-исследование.
+Факты из «ФИНАНСЫ / ПАСПОРТ» и веб-исследования — приоритетнее пустых полей карточки.
 Считай прозрачно: покажи формулу в ltv_estimate. Нет цифр → budget_confidence=low, но всё равно дай оценку-эвристику.
-Не выдумывай точные обороты вне входа.
+Не выдумывай точные обороты вне входа. Не пиши «нет финданных», если в блоке ФИНАНСЫ/ПАСПОРТ или веб есть выручка/оборот.
 
 Порядок: сначала бюджет/LTV/сегмент/риски/summary на имеющемся.
 Потом missing_data. Не своди ответ к «нужны финансы».
@@ -91,75 +93,46 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
         )
 
     company = slots.get("company", "")
-    budget_raw = slots.get("budget", "—")
-    industry = slots.get("industry", "")
-    city = slots.get("city", "")
 
-    budget_num = _parse_budget(budget_raw)
-
-    context_lines = []
-    if company:
-        context_lines.append(f"Компания: {company}")
-    if industry and industry != "—":
-        context_lines.append(f"Отрасль: {industry}")
-    if city and city != "—":
-        context_lines.append(f"Город: {city}")
-    stage = slots.get("stage", "")
-    if stage and stage != "—":
-        context_lines.append(f"Этап воронки: {stage}")
-    emp = slots.get("employees", "")
-    if emp and emp != "—":
-        context_lines.append(f"Сотрудников: {emp}")
-    if budget_raw and budget_raw != "—":
-        context_lines.append(f"Заявленный бюджет: {budget_raw} (≈{budget_num:,} ₽)" if budget_num else f"Заявленный бюджет: {budget_raw}")
-    else:
-        context_lines.append("Бюджет: не указан — требуется оценка")
-    desc = (slots.get("description") or slots.get("note") or "").strip()
-    if desc:
-        context_lines.append(f"Заметки: {desc[:600]}")
-
-    inst = (slots.get("instruction") or "").strip()
-    if inst:
-        context_lines.append(f"Пожелание оператора: {inst}")
-
-    # Для update_lead и analyze_lead — обогащаем из БД
+    # Для update_lead / analyze_lead — подтянуть пустые поля из БД в slots
     if intent in ("update_lead", "analyze_lead") and company:
         db_lead = await read_lead_by_company(company)
         if db_lead:
-            if not (industry and industry != "—"):
-                industry = db_lead.get("industry", "")
-            if not (emp and emp != "—"):
-                emp = db_lead.get("employees", "")
-            if not desc:
-                desc = (db_lead.get("description") or db_lead.get("note") or "").strip()
-            # Пересобираем контекст с обогащёнными данными
-            context_lines = []
-            if company:
-                context_lines.append(f"Компания: {company}")
-            if industry and industry != "—":
-                context_lines.append(f"Отрасль: {industry}")
-            if city and city != "—":
-                context_lines.append(f"Город: {city}")
-            if stage and stage != "—":
-                context_lines.append(f"Этап воронки: {stage}")
-            if emp and emp != "—":
-                context_lines.append(f"Сотрудников: {emp}")
-            if budget_raw and budget_raw != "—":
-                context_lines.append(f"Заявленный бюджет: {budget_raw} (≈{budget_num:,} ₽)" if budget_num else f"Заявленный бюджет: {budget_raw}")
-            else:
-                context_lines.append("Бюджет: не указан — требуется оценка")
-            if desc:
-                context_lines.append(f"Заметки: {desc[:600]}")
-            if inst:
-                context_lines.append(f"Пожелание оператора: {inst}")
+            slots = dict(slots)
+            for key in ("industry", "employees", "budget", "city", "stage", "description"):
+                cur = slots.get(key)
+                if not cur or str(cur).strip() in ("", "—"):
+                    val = db_lead.get(key) or db_lead.get("note" if key == "description" else key)
+                    if val and str(val).strip() not in ("", "—"):
+                        slots[key] = val
+            if not slots.get("checko") and db_lead.get("checko"):
+                slots["checko"] = db_lead["checko"]
+            if not slots.get("financials") and db_lead.get("financials"):
+                slots["financials"] = db_lead["financials"]
+
+    context_lines = build_economist_context_lines(slots)
+    # задача оператора — только короткий хвост, не весь instruction с gaps
+    inst = (slots.get("instruction") or "").strip()
+    if "ЗАДАЧА ОПЕРАТОРА:" in inst:
+        task = inst.split("ЗАДАЧА ОПЕРАТОРА:", 1)[-1].strip()[:400]
+        if task:
+            context_lines.append(f"Задача оператора: {task}")
+
+    if not context_lines:
+        return enrich_economist_output(
+            {"summary": "Недостаточно данных для финансового анализа.", "budget_estimate": None},
+            slots,
+            intent,
+        )
 
     context = "\n".join(context_lines)
     messages = [
         {"role": "system", "content": ECONOMIST_SYSTEM_PROMPT},
         {"role": "user", "content": (
             f"Данные лида:\n{context}\n\n"
-            f"Сначала оценка на имеющемся (сегмент → бюджет → LTV → цена), "
-            f"потом в missing_data — что нужно для точного расчёта. Ответ в JSON на русском."
+            f"Сначала оценка на имеющемся (сегмент → бюджет/финпаспорт → LTV → цена). "
+            f"Используй блок ФИНАНСЫ/ПАСПОРТ и веб, если карточка пуста. "
+            f"Потом missing_data. Ответ в JSON на русском."
         ) + rag_block(slots, "economist")},
     ]
     raw = await chat(messages, temperature=0.2, max_tokens=900, json_mode=True)

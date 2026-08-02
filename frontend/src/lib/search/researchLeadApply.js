@@ -87,6 +87,20 @@ export function researchResultToLeadPatch(result, lead = null) {
 	);
 	patch.checkoJson = mergeWebResearchIntoChecko(existing, web);
 
+	// Добор телефона/почты из passport_extract веб-исследования
+	const extract =
+		web.passport_extract && typeof web.passport_extract === 'object' ? web.passport_extract : {};
+	const extractPhones = Array.isArray(extract.phones) ? extract.phones : [];
+	const extractEmails = Array.isArray(extract.emails) ? extract.emails : [];
+	if (!patch.phone && (!lead?.phone || lead.phone === '—')) {
+		const p = extractPhones.find((x) => String(x || '').replace(/\D/g, '').length >= 10);
+		if (p) patch.phone = p;
+	}
+	if (!patch.email && (!lead?.email || lead.email === '—')) {
+		const e = extractEmails.find((x) => String(x || '').includes('@'));
+		if (e) patch.email = e;
+	}
+
 	const summary = ensureSummary(web, result);
 	if (summary) {
 		const marker = '--- Исследование (веб) ---';

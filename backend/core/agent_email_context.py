@@ -197,6 +197,8 @@ def build_agent_slots(
         "inn": inn,
         "checko": checko,
         "tech": tech,
+        "contacts": field("contacts") or [],
+        "financials": field("financials") or checko.get("financials"),
         "prior_agents": prior_agents,
     }
     context_gaps = gaps_for_agent(agent, lead_like)
@@ -239,6 +241,7 @@ def build_agent_slots(
         "tech": tech,
         "tech_stack_brief": tech_brief_text,
         "web_research_brief": brief,
+        "financials": field("financials") or checko.get("financials"),
         "context_gaps": context_gaps,
         "instruction": (
             f"ПЕРЕПИСКА С КЛИЕНТОМ:\n{email_block or _EMPTY_DIGEST}"

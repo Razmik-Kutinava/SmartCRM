@@ -28,6 +28,19 @@ const CARD_PRIORITY = [
 	'web_research',
 ];
 
+const FIN_BRIEF_MARKERS = [
+	'выручка',
+	'оборот',
+	'млн руб',
+	'млрд',
+	'revenue',
+	'фин.',
+	'финанс',
+	'прибыль',
+	'убыток',
+	'баланс',
+];
+
 function filled(value) {
 	if (value == null) return false;
 	if (Array.isArray(value) || (typeof value === 'object' && value)) {
@@ -35,6 +48,50 @@ function filled(value) {
 	}
 	const text = String(value).trim();
 	return Boolean(text) && !['—', '-', 'нет', 'n/a', 'None'].includes(text);
+}
+
+function phoneOk(p) {
+	return filled(p) && String(p).replace(/\D/g, '').length >= 10;
+}
+
+function phonesAnywhere(lead, company, wr) {
+	if (phoneOk(lead?.phone)) return true;
+	for (const p of company.phones || []) if (phoneOk(p)) return true;
+	for (const c of lead?.contacts || []) {
+		for (const p of c?.phones || []) if (phoneOk(p)) return true;
+	}
+	const extract = wr.passport_extract && typeof wr.passport_extract === 'object' ? wr.passport_extract : {};
+	for (const p of extract.phones || []) if (phoneOk(p)) return true;
+	return false;
+}
+
+function emailsAnywhere(lead, company, wr) {
+	if (filled(lead?.email) && String(lead.email).includes('@')) return true;
+	for (const e of company.emails || []) if (filled(e) && String(e).includes('@')) return true;
+	for (const c of lead?.contacts || []) {
+		for (const e of c?.emails || []) if (filled(e) && String(e).includes('@')) return true;
+	}
+	const extract = wr.passport_extract && typeof wr.passport_extract === 'object' ? wr.passport_extract : {};
+	for (const e of extract.emails || []) if (filled(e) && String(e).includes('@')) return true;
+	return false;
+}
+
+function contactAnywhere(lead, company) {
+	if (filled(lead?.contact)) return true;
+	if (filled(company.director) && company.director !== '—') return true;
+	for (const c of lead?.contacts || []) if (filled(c?.name)) return true;
+	return false;
+}
+
+function financialsAnywhere(lead, company, fin, brief) {
+	if (filled(fin)) return true;
+	if (filled(lead?.financials)) return true;
+	if (filled(lead?.budget) || filled(lead?.amount_rub)) return true;
+	for (const key of ['revenue', 'turnover', 'выручка', 'оборот', 'income']) {
+		if (filled(company[key])) return true;
+	}
+	const low = String(brief || '').toLowerCase();
+	return FIN_BRIEF_MARKERS.some((m) => low.includes(m));
 }
 
 function presenceFromLead(lead) {
@@ -77,10 +134,10 @@ function presenceFromLead(lead) {
 		inn: filled(inn),
 		okved: filled(okved),
 		industry: filled(lead?.industry) || filled(company.industry) || filled(company.okved_name),
-		contact: filled(lead?.contact),
-		email: filled(lead?.email),
-		phone: filled(lead?.phone),
-		financials: filled(fin),
+		contact: contactAnywhere(lead, company),
+		email: emailsAnywhere(lead, company, wr),
+		phone: phonesAnywhere(lead, company, wr),
+		financials: financialsAnywhere(lead, company, fin, brief),
 		website: filled(lead?.website) || filled(company.website),
 		employees: filled(lead?.employees) || filled(company.employees) || filled(company.employees_count),
 		tech_stack: techFilled,

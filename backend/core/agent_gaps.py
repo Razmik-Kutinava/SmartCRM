@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import re
 from typing import Any
 
 # Поле → человекочитаемая подсказка «что добрать»
@@ -75,6 +76,88 @@ def _filled(value: Any) -> bool:
     return bool(text) and text not in ("—", "-", "нет", "n/a", "None")
 
 
+def _phones_anywhere(
+    lead_like: dict[str, Any],
+    company: dict[str, Any],
+    wr: dict[str, Any],
+) -> bool:
+    if _filled(lead_like.get("phone")):
+        return True
+    for p in company.get("phones") or []:
+        if _filled(p) and len(re.sub(r"\D", "", str(p))) >= 10:
+            return True
+    for c in lead_like.get("contacts") or []:
+        if not isinstance(c, dict):
+            continue
+        for p in c.get("phones") or []:
+            if _filled(p) and len(re.sub(r"\D", "", str(p))) >= 10:
+                return True
+    extract = wr.get("passport_extract") if isinstance(wr.get("passport_extract"), dict) else {}
+    for p in extract.get("phones") or []:
+        if _filled(p) and len(re.sub(r"\D", "", str(p))) >= 10:
+            return True
+    return False
+
+
+def _emails_anywhere(
+    lead_like: dict[str, Any],
+    company: dict[str, Any],
+    wr: dict[str, Any],
+) -> bool:
+    if _filled(lead_like.get("email")):
+        return True
+    for e in company.get("emails") or []:
+        if _filled(e) and "@" in str(e):
+            return True
+    for c in lead_like.get("contacts") or []:
+        if not isinstance(c, dict):
+            continue
+        for e in c.get("emails") or []:
+            if _filled(e) and "@" in str(e):
+                return True
+    extract = wr.get("passport_extract") if isinstance(wr.get("passport_extract"), dict) else {}
+    for e in extract.get("emails") or []:
+        if _filled(e) and "@" in str(e):
+            return True
+    return False
+
+
+def _contact_anywhere(lead_like: dict[str, Any], company: dict[str, Any]) -> bool:
+    if _filled(lead_like.get("contact")):
+        return True
+    if _filled(company.get("director")) and str(company.get("director")).strip() not in ("—", "-"):
+        return True
+    for c in lead_like.get("contacts") or []:
+        if isinstance(c, dict) and _filled(c.get("name")):
+            return True
+    return False
+
+
+_FIN_BRIEF_MARKERS = (
+    "выручка", "оборот", "млн руб", "млрд", "revenue", "фин.", "финанс",
+    "прибыль", "убыток", "баланс",
+)
+
+
+def _financials_anywhere(
+    lead_like: dict[str, Any],
+    company: dict[str, Any],
+    fin: Any,
+    brief: str,
+) -> bool:
+    if _filled(fin):
+        return True
+    if _filled(lead_like.get("financials")):
+        return True
+    if _filled(lead_like.get("budget")) or _filled(lead_like.get("amount_rub")):
+        return True
+    for key in ("revenue", "turnover", "выручка", "оборот", "income"):
+        if _filled(company.get(key)):
+            return True
+    low = (brief or "").lower()
+    return any(m in low for m in _FIN_BRIEF_MARKERS)
+
+
 def _lead_presence(lead_like: dict[str, Any]) -> dict[str, bool]:
     checko = lead_like.get("checko") if isinstance(lead_like.get("checko"), dict) else {}
     company = checko.get("company") if isinstance(checko.get("company"), dict) else {}
@@ -117,12 +200,12 @@ def _lead_presence(lead_like: dict[str, Any]) -> dict[str, bool]:
 
     return {
         "company": _filled(lead_like.get("company")),
-        "contact": _filled(lead_like.get("contact")),
-        "email": _filled(lead_like.get("email")),
-        "phone": _filled(lead_like.get("phone")),
+        "contact": _contact_anywhere(lead_like, company),
+        "email": _emails_anywhere(lead_like, company, wr),
+        "phone": _phones_anywhere(lead_like, company, wr),
         "industry": _filled(lead_like.get("industry")) or _filled(company.get("industry")) or _filled(company.get("okved_name")),
         "city": _filled(lead_like.get("city")),
-        "budget": _filled(lead_like.get("budget")) or _filled(lead_like.get("amount_rub")),
+        "budget": _filled(lead_like.get("budget")) or _filled(lead_like.get("amount_rub")) or _financials_anywhere(lead_like, company, fin, brief),
         "stage": _filled(lead_like.get("stage")),
         "employees": _filled(lead_like.get("employees")) or _filled(company.get("employees")) or _filled(company.get("employees_count")),
         "website": _filled(lead_like.get("website")) or _filled(company.get("website")),
@@ -131,7 +214,7 @@ def _lead_presence(lead_like: dict[str, Any]) -> dict[str, bool]:
         "inn": _filled(inn),
         "okved": _filled(okved),
         "web_research": bool(brief) and "ошибка" not in brief.lower()[:40],
-        "financials": _filled(fin),
+        "financials": _financials_anywhere(lead_like, company, fin, brief),
         "products": _filled(products),
         "tech_stack": tech_filled,
         "prior_agents": _filled(lead_like.get("prior_agents")),
