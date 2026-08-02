@@ -11,7 +11,7 @@ LangGraph-агенты для анализа лидов, стратегии, п�
 | `analyze.py` | Главный анализ профиля |
 | `runner.py` | Запуск с контекстом |
 | `formatters.py` | Форматирование ответа |
-| `prompts_data.py` | Тексты промптов |
+| `prompts_data.py` | Тексты промптов (сначала разбор на имеющемся, `missing_data` после) |
 
 Импорт: `from agents.analyst import ...`
 

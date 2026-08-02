@@ -64,12 +64,17 @@ def test_slots_include_checko_brief_and_gaps():
     assert "сыр" in slots["web_research_brief"] or "сыр" in slots["instruction"]
     assert slots["checko"]
     assert "context_gaps" in slots
-    assert "СУФЛЁР" in slots["instruction"] or slots["context_gaps"]
+    # пробелы — после разбора, не «СУФЛЁР» как отказ от анализа
+    assert "ПОСЛЕ разбора" in slots["instruction"]
+    assert "СУФЛЁР" not in slots["instruction"]
 
 
-def test_analyst_prompt_has_stage_and_missing_no_harvard():
+def test_analyst_prompt_analyze_first_then_missing():
     from agents.analyst.prompts_data import ANALYST_SYSTEM_PROMPT
 
+    assert "Порядок обязательно" in ANALYST_SYSTEM_PROMPT
+    assert "на том, что ЕСТЬ" in ANALYST_SYSTEM_PROMPT
+    assert "Не отказывайся от разбора" in ANALYST_SYSTEM_PROMPT
     assert "BANT" in ANALYST_SYSTEM_PROMPT or "bant" in ANALYST_SYSTEM_PROMPT.lower()
     assert "missing_data" in ANALYST_SYSTEM_PROMPT
     assert "Harvard" not in ANALYST_SYSTEM_PROMPT
@@ -82,6 +87,7 @@ def test_strategist_prompt_no_challenger_sale():
     assert "Challenger" not in STRATEGIST_SYSTEM_PROMPT
     assert "next_action" in STRATEGIST_SYSTEM_PROMPT
     assert "missing_data" in STRATEGIST_SYSTEM_PROMPT
+    assert "Не отказывайся от решения" in STRATEGIST_SYSTEM_PROMPT
 
 
 def test_marketer_prompt_has_anti_examples():
@@ -89,6 +95,7 @@ def test_marketer_prompt_has_anti_examples():
 
     assert "синерг" in MARKETER_SYSTEM_PROMPT.lower() or "синергию" in MARKETER_SYSTEM_PROMPT
     assert "missing_data" in MARKETER_SYSTEM_PROMPT
+    assert "на имеющемся" in MARKETER_SYSTEM_PROMPT
 
 
 def test_tech_prompt_has_portfolio_fit():
@@ -96,15 +103,29 @@ def test_tech_prompt_has_portfolio_fit():
 
     assert "portfolio_fit" in TECH_SPECIALIST_SYSTEM_PROMPT
     assert "MIT" not in TECH_SPECIALIST_SYSTEM_PROMPT
+    assert "Не отказывайся от техразбора" in TECH_SPECIALIST_SYSTEM_PROMPT
 
 
-def test_agent_result_view_shows_suffler():
+def test_economist_prompt_analyze_first():
+    from agents.economist import ECONOMIST_SYSTEM_PROMPT
+
+    assert "на имеющемся" in ECONOMIST_SYSTEM_PROMPT
+    assert "Не своди ответ к" in ECONOMIST_SYSTEM_PROMPT
+    assert "missing_data" in ECONOMIST_SYSTEM_PROMPT
+
+
+def test_agent_result_view_shows_suffler_after_analysis():
     root = Path(__file__).resolve().parents[3]
     text = (root / "frontend" / "src" / "lib" / "leads" / "AgentResultView.svelte").read_text(
         encoding="utf-8"
     )
     assert "agent-suffler-gaps" in text
     assert "missing_data" in text
+    assert "Для более полного анализа ещё нужно" in text
+    # блок пробелов после разбора (touch_sequence / summary), не в шапке
+    gaps_pos = text.index('data-testid="agent-suffler-gaps"')
+    analysis_pos = text.index("result?.summary")
+    assert gaps_pos > analysis_pos
 
 
 def test_research_apply_has_agent_requirements():

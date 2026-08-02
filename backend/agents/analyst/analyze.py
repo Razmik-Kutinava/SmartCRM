@@ -97,8 +97,8 @@ async def analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
                 f"Данные лида:\n{lead_ctx}{score_trend}\n"
                 f"{tasks_block}"
                 f"{inst_block}\n\n"
-                f"Ответ строго JSON по схеме system. Учти задачи и тренд скора. "
-                f"В missing_data перечисли пробелы для полного анализа."
+                f"Ответ строго JSON по схеме system. Сначала полный разбор на имеющихся данных; "
+                f"в missing_data — только после разбора, что усилит анализ."
             ) + rag_block(slots, "analyst")},
         ]
         raw = await chat(messages, temperature=0.3, max_tokens=900, json_mode=True)

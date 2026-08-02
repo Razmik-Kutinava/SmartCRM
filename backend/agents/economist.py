@@ -20,8 +20,11 @@ logger = logging.getLogger(__name__)
 
 ECONOMIST_SYSTEM_PROMPT = """Ты — экономист сделки SmartCRM.
 Вход: бюджет/суммы лида, численность, отрасль, стадия, паспорт/фин.поля, веб-саммари.
-Считай прозрачно: покажи формулу в ltv_estimate. Нет цифр → budget_confidence=low и missing_data.
+Считай прозрачно: покажи формулу в ltv_estimate. Нет цифр → budget_confidence=low, но всё равно дай оценку-эвристику.
 Не выдумывай точные обороты вне входа.
+
+Порядок: сначала бюджет/LTV/сегмент/риски/summary на имеющемся.
+Потом missing_data. Не своди ответ к «нужны финансы».
 
 Сегмент: smb | mid_market | enterprise (эвристика по численности/бюджету, пометь если оценка).
 LTV ≈ годовой контракт × годы × вероятность продления.
@@ -39,8 +42,8 @@ JSON:
   "pricing_strategy": "<разовый|рассрочка|подписка + почему>",
   "discount_ceiling": "<%>",
   "deal_probability_pct": <0-100>,
-  "missing_data": ["<чего не хватает>"],
-  "summary": "<1-2 предложения>"
+  "summary": "<1-2 предложения>",
+  "missing_data": ["<чего не хватает для точного расчёта — после оценки>"]
 }"""
 
 
@@ -155,9 +158,8 @@ async def _analyze(intent: str, slots: dict[str, Any]) -> dict[str, Any]:
         {"role": "system", "content": ECONOMIST_SYSTEM_PROMPT},
         {"role": "user", "content": (
             f"Данные лида:\n{context}\n\n"
-            f"Рассуждай пошагово: сначала оцени сегмент и бюджет, "
-            f"потом рассчитай LTV и вероятность, потом дай стратегию ценообразования. "
-            f"Ответ в JSON на русском."
+            f"Сначала оценка на имеющемся (сегмент → бюджет → LTV → цена), "
+            f"потом в missing_data — что нужно для точного расчёта. Ответ в JSON на русском."
         ) + rag_block(slots, "economist")},
     ]
     raw = await chat(messages, temperature=0.2, max_tokens=900, json_mode=True)

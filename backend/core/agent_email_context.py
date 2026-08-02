@@ -204,8 +204,9 @@ def build_agent_slots(
     gaps_block = ""
     if context_gaps:
         gaps_block = (
-            "\n\nСУФЛЁР — чего не хватает для полного анализа "
-            f"({agent}):\n- " + "\n- ".join(context_gaps)
+            "\n\nПОСЛЕ разбора (не вместо него) перечисли в missing_data пробелы "
+            f"для более полного анализа ({agent}):\n- "
+            + "\n- ".join(context_gaps)
         )
 
     note_parts = [

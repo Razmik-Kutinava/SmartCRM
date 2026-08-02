@@ -40,18 +40,6 @@
 	].filter((v, i, a) => v && a.indexOf(v) === i).slice(0, 12));
 </script>
 
-{#if missingRows.length}
-	<div class="bg-amber-950/40 border border-amber-800/60 rounded-xl p-3 space-y-1" data-testid="agent-suffler-gaps">
-		<div class="text-xs font-semibold text-amber-300">Суфлёр — чего не хватает для полного анализа</div>
-		<ul class="space-y-0.5">
-			{#each missingRows as gap}
-				<li class="text-xs text-amber-100/90">• {gap}</li>
-			{/each}
-		</ul>
-		<p class="text-[11px] text-amber-600/90 mt-1">Заполни поля / нажми 🔍 Исследовать — и запусти агента снова.</p>
-	</div>
-{/if}
-
 <!-- маркетолог: письмо -->
 {#if result?.first_email}
 	<div class="bg-gray-950 border border-gray-800 rounded-xl p-4">
@@ -221,5 +209,17 @@
 				</div>
 			{/each}
 		</div>
+	</div>
+{/if}
+
+{#if missingRows.length}
+	<div class="bg-amber-950/40 border border-amber-800/60 rounded-xl p-3 space-y-1" data-testid="agent-suffler-gaps">
+		<div class="text-xs font-semibold text-amber-300">Для более полного анализа ещё нужно</div>
+		<ul class="space-y-0.5">
+			{#each missingRows as gap}
+				<li class="text-xs text-amber-100/90">• {gap}</li>
+			{/each}
+		</ul>
+		<p class="text-[11px] text-amber-600/90 mt-1">Заполни поля / нажми 🔍 Исследовать — и запусти агента снова.</p>
 	</div>
 {/if}
