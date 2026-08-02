@@ -55,7 +55,7 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `analytics_metrics.py` | KPI воронки, когорты, воронка по источнику, CSV |
 | `export_reports.py` | Excel/PDF: воронка, карточка лида, тендеры, баллы+воронка |
 | `llm.py` | Общий чат с LLM (Groq/Ollama), json_mode |
-| `agent_email_context.py` | Слоты и дайджест переписки для агентов на карточке (`build_agent_slots` с `lead_id`, checko/🔍 brief, паспорт, `context_gaps`; `build_email_digest` — 3 треда × 6 писем × 200 симв.) |
+| `agent_email_context.py` | Слоты и дайджест переписки для агентов (`build_agent_slots`: checko/🔍/паспорт/tech BuiltWith+DNS, `context_gaps`; дайджест 3×6×200) |
 | `agent_gaps.py` | Суфлёр: детерминированные пробелы полей по агенту + `research_agent_checklist` для веб-исследования |
 | `auth.py` | API-ключ, `require_api_key` |
 | `crypto.py` | Шифрование секретов (почта и т.п.) |

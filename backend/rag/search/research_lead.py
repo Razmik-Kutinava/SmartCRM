@@ -426,6 +426,55 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
             "director": extract.get("director"),
         }
 
+    # BuiltWith + WhoIs/DNS по сайту (даже без ИНН / Checko)
+    website = (
+        (enriched or {}).get("website")
+        or (lead.get("website") or "")
+        or ""
+    ).strip()
+    if (not website or website in ("—", "-")) and isinstance(passport, dict):
+        co = (passport.get("checko") or {}).get("company") or {}
+        if isinstance(co, dict):
+            website = str(co.get("website") or "").strip()
+
+    domain_pack: dict[str, Any] = {}
+    if website and website not in ("—", "-"):
+        try:
+            from .domain_enrich import enrich_domain_signals
+
+            domain_pack = await enrich_domain_signals(website)
+        except Exception as e:
+            logger.warning("research_lead domain enrich: %s", e)
+            domain_pack = {}
+
+    tech = domain_pack.get("tech") if isinstance(domain_pack.get("tech"), dict) else {}
+    dns = (
+        domain_pack.get("domain_signals")
+        if isinstance(domain_pack.get("domain_signals"), dict)
+        else {}
+    )
+    if tech or dns:
+        passport = _merge_domain_into_passport(passport, tech, dns)
+        if isinstance(web_research, dict):
+            web_research = dict(web_research)
+            if dns:
+                web_research["domain_signals"] = dns
+            if tech:
+                from .domain_enrich import tech_brief
+
+                brief_extra = tech_brief(tech)
+                if brief_extra:
+                    prev = str(web_research.get("agent_brief") or "")
+                    addon = f"\n\n## Технологии (BuiltWith)\n{brief_extra}"
+                    if dns.get("summary"):
+                        addon += f"\nDNS/WhoIs: {dns['summary']}"
+                    if "## Технологии (BuiltWith)" not in prev:
+                        web_research["agent_brief"] = (prev + addon).strip()[:4500]
+            for p in domain_pack.get("providers_used") or []:
+                if p not in providers:
+                    providers.append(p)
+            raw = list(raw) + list(domain_pack.get("raw_results") or [])
+
     return {
         "enriched": enriched,
         "missing_fields": enrich_res.get("missing_fields") or [],
@@ -437,3 +486,34 @@ async def research_lead(*, lead: dict[str, Any], force: bool = False) -> dict[st
         "queries_used": narr_res.get("queries_used") or [],
         "web_research": web_research,
     }
+
+
+def _merge_domain_into_passport(
+    passport: dict[str, Any] | None,
+    tech: dict[str, Any],
+    dns: dict[str, Any],
+) -> dict[str, Any]:
+    """Кладёт BuiltWith/DNS в passport.tech и checko.tech."""
+    base: dict[str, Any] = dict(passport) if isinstance(passport, dict) else {}
+    merged_tech = dict(tech) if tech else dict(base.get("tech") or {})
+    if dns:
+        merged_tech["domain_signals"] = dns
+    if merged_tech:
+        base["tech"] = merged_tech
+    checko = base.get("checko") if isinstance(base.get("checko"), dict) else {}
+    checko = dict(checko)
+    if merged_tech:
+        # Не затираем bitrix/UF внутрии в checko.tech — только доменный стек
+        prev = checko.get("tech") if isinstance(checko.get("tech"), dict) else {}
+        checko["tech"] = {**prev, **merged_tech}
+    if dns:
+        analyses = checko.get("analyses") if isinstance(checko.get("analyses"), dict) else {}
+        analyses = dict(analyses)
+        wr = analyses.get("web_research") if isinstance(analyses.get("web_research"), dict) else {}
+        wr = dict(wr)
+        wr["domain_signals"] = dns
+        analyses["web_research"] = wr
+        checko["analyses"] = analyses
+    if checko:
+        base["checko"] = checko
+    return base

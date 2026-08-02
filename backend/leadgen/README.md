@@ -51,6 +51,7 @@
 | `apollo.py` | Apollo.io: люди и компании |
 | `buster.py` | Hunter/Buster: email по домену |
 | `builtwith.py` | Технологии на сайте |
+| `whois_dns.py` | DNS/WhoIs: MX, SPF, RDAP (без ключа) |
 | `newsapi.py` | Новости компании |
 | `dadata.py` | DaData (если подключён) |
 

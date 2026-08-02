@@ -13,11 +13,11 @@
 
 ## Чеклист микро
 
-- [ ] WhoIs/DNS модуль (DoH + RDAP, без ключа)
-- [ ] BuiltWith при наличии сайта даже без ИНН (не только через Checko)
-- [ ] Merge tech + domain_signals в passport / web_research / techJson
-- [ ] Слоты/gaps теха видят стек и DNS-сигналы
-- [ ] Тесты + регрессия rag/agents + ops
+- [x] WhoIs/DNS модуль (DoH + RDAP, без ключа)
+- [x] BuiltWith при наличии сайта даже без ИНН (через domain_enrich в research)
+- [x] Merge tech + domain_signals в passport / web_research / techJson
+- [x] Слоты/gaps теха видят стек и DNS-сигналы
+- [x] Тесты + регрессия rag/agents + ops
 
 ## Не вошло
 

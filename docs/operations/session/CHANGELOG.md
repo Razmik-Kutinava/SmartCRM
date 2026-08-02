@@ -2,6 +2,16 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-08-02 — SBR: 🔍 BuiltWith + WhoIs/DNS в исследование
+
+По `go` («добавь эти две возможности» — BuiltWith для теха, WhoIs/DNS в 🔍; не тулзы у агентов).
+
+**Что.** `leadgen/modules/whois_dns.py` — MX/SPF/DMARC/A через Cloudflare DoH + RDAP (без ключа). `rag/search/domain_enrich.py` — параллельно BuiltWith + DNS по сайту. `research_lead` всегда зовёт domain enrich при наличии website (даже без ИНН), пишет `passport.tech` / `checko.tech`, `web_research.domain_signals`, дописывает BuiltWith в `agent_brief`. Слоты теха (`agent_email_context`) видят `tech_stack_brief`; gaps учитывают `tech`/`tech_json`/DNS.
+
+**Не вошло:** Hunter, DDG, вызовы из агентов.
+
+Тесты: `test_domain_signals_research` 5 PASS; `tests/rag/` 139 PASS; synthesis+email_run 19 PASS.
+
 ## 2026-08-02 — SBR: агенты по синтезу (контекст + промпты + суфлёр)
 
 По `go` («делаем все правки из синтеза… суфлёр чего не хватает… веб-исследование… тендеры не трогай… ебашь»).

@@ -16,7 +16,8 @@ ChromaDB, загрузка документов, гибридный поиск (
 | `research_dossier.py` | Синтез досье Groq→Ollama (досье + JSON-паспорт одним проходом), читаемый fallback, `ensure_nonempty_summary` / `is_usable_dossier`, env-лимиты токенов/контекста |
 | `research_passport.py` | Extract паспорта из веб (regex+LLM или JSON из досье); `allow_llm=False` — без второго вызова |
 | `research_status.py` | Фазы 🔍 для UI/логов: `searching / synthesizing / done_llm / done_fallback` |
-| `research_lead.py` | Оркестрация 🔍: жёсткий `_deadline` enrich/narrative, запросы только через быстрый Groq |
+| `research_lead.py` | Оркестрация 🔍: жёсткий `_deadline` enrich/narrative, BuiltWith+WhoIs/DNS по сайту → passport.tech / domain_signals |
+| `domain_enrich.py` | Параллельно BuiltWith + WhoIs/DNS для 🔍 (без ключа на DNS) |
 | `enrich_sources.py` | Checko/ИНН, таргет-запросы, парсинг сайта, fetch URL из поиска |
 | `checko_passport.py` | Сборка и merge `checko_json` для enrich; UF-почта → `company.emails` (`emails_from_bitrix_blobs`) |
 | `brave_limit.py` | Кэш и semaphore Brave (429) |

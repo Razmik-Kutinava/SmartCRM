@@ -66,13 +66,37 @@ def _lead_presence(lead_like: dict[str, Any]) -> dict[str, bool]:
     wr = analyses.get("web_research") if isinstance(analyses.get("web_research"), dict) else {}
     brief = (wr.get("agent_brief") or wr.get("summary") or "").strip()
     fin = checko.get("financials") or lead_like.get("financials")
-    tech = checko.get("tech") or company.get("tech")
+    tech = lead_like.get("tech") or checko.get("tech") or company.get("tech")
+    if isinstance(tech, str):
+        try:
+            import json
+
+            tech = json.loads(tech)
+        except Exception:
+            tech = {}
+    dns = wr.get("domain_signals") if isinstance(wr.get("domain_signals"), dict) else {}
+    if isinstance(tech, dict) and isinstance(tech.get("domain_signals"), dict):
+        dns = dns or tech.get("domain_signals") or {}
     products = (
         lead_like.get("products")
         or company.get("products")
         or (analyses.get("products") if isinstance(analyses, dict) else None)
     )
     inn = lead_like.get("inn") or company.get("inn") or company.get("ИНН")
+    tech_filled = bool(
+        (
+            isinstance(tech, dict)
+            and (
+                tech.get("all_technologies")
+                or tech.get("cms")
+                or tech.get("by_category")
+                or tech.get("maturity_level")
+            )
+        )
+        or ("## 6" in brief)
+        or ("BuiltWith" in brief)
+        or bool(dns.get("has_mx") or dns.get("summary"))
+    )
 
     return {
         "company": _filled(lead_like.get("company")),
@@ -91,7 +115,7 @@ def _lead_presence(lead_like: dict[str, Any]) -> dict[str, bool]:
         "web_research": bool(brief) and "ошибка" not in brief.lower()[:40],
         "financials": _filled(fin),
         "products": _filled(products),
-        "tech_stack": _filled(tech) or ("## 6" in brief),
+        "tech_stack": tech_filled,
         "prior_agents": _filled(lead_like.get("prior_agents")),
     }
 
@@ -117,7 +141,7 @@ def research_agent_checklist() -> dict[str, list[str]]:
         "analyst": ["отрасль", "продукты/услуги", "контакты/ЛПР", "стадия/сигналы покупки"],
         "economist": ["численность", "фин.сигналы/выручка", "сегмент", "география"],
         "marketer": ["отрасль и боли", "контакты", "язык/позиционирование"],
-        "tech_specialist": ["технологии/ИТ", "сайт/домен", "масштаб"],
+        "tech_specialist": ["технологии/ИТ (BuiltWith)", "сайт/домен", "DNS/MX", "масштаб"],
         "strategist": ["сводка профиля + пробелы раздела 8"],
     }
 
