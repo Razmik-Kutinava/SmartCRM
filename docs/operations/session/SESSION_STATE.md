@@ -6,6 +6,8 @@
 
 **Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-08-03 | Действие: fix — сырьё denser: LLM+regex, контакты по людям, паспорт company/fin, brief до 40 строк/4к, RAG 12к; test_raw_inbox 9 + crm_leads | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (crm_leads PASS)
+
 2026-08-03 | Действие: SBR GREEN+REVIEW — сырьё inbox: POST raw-inbox, merge полей/контактов/паспорта, brief+RAG, UI Клиент; test_raw_inbox 8 + crm_leads 112 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: DDL inbox / LLM extract / retrieve по lead_id — позже | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3 (crm_leads PASS)
 
 2026-08-03 | Действие: SBR RED — сырьё inbox: test_raw_inbox + test_leads_raw_inbox FAIL (нет core.raw_inbox) | Коммит: `этот` | Статус: in_progress | Регрессия_счёт: 0/3

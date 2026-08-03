@@ -23,11 +23,16 @@ router = APIRouter()
 class RawInboxBody(BaseModel):
     text: str = Field(..., min_length=1)
     ingest_rag: bool = True
+    use_llm: bool = True
+
+
+def _empty_val(val: Any) -> bool:
+    text = str(val or "").strip()
+    return not text or text in ("—", "-", "n/a", "None", "null")
 
 
 def _lead_as_dict(lead: Lead) -> dict[str, Any]:
     d = lead.to_dict()
-    # process ждёт checko_json dict или строку
     d["checko_json"] = d.get("checko") or {}
     return d
 
@@ -46,7 +51,9 @@ async def post_raw_inbox(
         raise HTTPException(400, detail="Текст сырья пуст")
 
     try:
-        result = process_raw_inbox_chunk(_lead_as_dict(lead), text, use_llm=False)
+        result = await process_raw_inbox_chunk(
+            _lead_as_dict(lead), text, use_llm=body.use_llm
+        )
     except ValueError as exc:
         raise HTTPException(400, detail=str(exc)) from exc
 
@@ -57,8 +64,13 @@ async def post_raw_inbox(
         for k, v in sync.items():
             if k in ("contacts", "approvals"):
                 continue
-            if k not in patch or not patch.get(k):
-                patch[k] = v
+            if k in patch and not _empty_val(patch.get(k)):
+                continue
+            if k in ("phone", "email", "contact", "position") and not _empty_val(
+                getattr(lead, k, None)
+            ):
+                continue
+            patch[k] = v
         if sync.get("approvals"):
             from core.lead_approvals import merge_approvals_payload
 
@@ -67,7 +79,6 @@ async def post_raw_inbox(
             )
 
     if "checko_json" in patch and isinstance(patch["checko_json"], dict):
-        # полная замена analyses.raw_inbox уже собрана — пишем целиком
         lead.checko_json = json.dumps(patch["checko_json"], ensure_ascii=False, default=str)
         del patch["checko_json"]
 
@@ -82,7 +93,8 @@ async def post_raw_inbox(
     if body.ingest_rag:
         company = (lead.company or "lead").strip() or "lead"
         summary = result.get("summary") or ""
-        rag_text = f"{summary}\n\n---\nИсходный фрагмент:\n{text[:2000]}"
+        excerpt = result.get("rag_excerpt") or text[:12_000]
+        rag_text = f"{summary}\n\n---\nИсходный текст:\n{excerpt}"
         try:
             rag_info = ingest_manual_text(
                 rag_text,
@@ -96,7 +108,7 @@ async def post_raw_inbox(
                     "source_type": "raw_inbox",
                 },
             )
-        except Exception as exc:  # noqa: BLE001 — не валим сохранение лида
+        except Exception as exc:  # noqa: BLE001
             logger.warning("raw_inbox RAG ingest failed lead=%s: %s", lead_id, exc)
             rag_info = {"chunks": 0, "error": str(exc)[:200]}
 

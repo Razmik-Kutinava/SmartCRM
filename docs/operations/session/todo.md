@@ -22,4 +22,5 @@
 
 ## Не вошло
 
-DDL отдельной таблицы; фильтр retrieve по lead_id; auto-Checko после ИНН из сырья.
+DDL отдельной таблицы; retrieve по lead_id; авто-Checko после ИНН из сырья.
+

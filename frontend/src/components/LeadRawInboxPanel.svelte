@@ -74,9 +74,9 @@
 			{/if}
 		</div>
 		{#if lastSummary}
-			<pre class="text-[11px] text-emerald-300/90 whitespace-pre-wrap bg-gray-900/80 rounded-lg p-2 border border-emerald-900/40" data-testid="lead-raw-inbox-summary">{lastSummary}</pre>
+			<pre class="text-[11px] text-emerald-300/90 whitespace-pre-wrap bg-gray-900/80 rounded-lg p-2 max-h-56 overflow-y-auto border border-emerald-900/40" data-testid="lead-raw-inbox-summary">{lastSummary}</pre>
 		{:else if inbox.brief}
-			<pre class="text-[11px] text-gray-400 whitespace-pre-wrap bg-gray-900/50 rounded-lg p-2 max-h-28 overflow-y-auto" data-testid="lead-raw-inbox-brief">{inbox.brief}</pre>
+			<pre class="text-[11px] text-gray-400 whitespace-pre-wrap bg-gray-900/50 rounded-lg p-2 max-h-40 overflow-y-auto" data-testid="lead-raw-inbox-brief">{inbox.brief}</pre>
 		{/if}
 		{#if chunkCount}
 			<details class="text-[10px] text-gray-500">

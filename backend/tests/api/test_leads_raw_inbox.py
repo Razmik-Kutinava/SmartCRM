@@ -19,6 +19,7 @@ async def test_raw_inbox_endpoint_fills_lead(client, monkeypatch):
         json={
             "text": "ИНН 7707083893\nтел +7 495 123-45-67\nemail sales@syrye.ru\nсайт https://syrye.ru",
             "ingest_rag": True,
+            "use_llm": False,
         },
     )
     assert r.status_code == 200, r.text
