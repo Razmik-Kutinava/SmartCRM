@@ -8,7 +8,7 @@ import pytest
 async def test_raw_inbox_endpoint_fills_lead(client, monkeypatch):
     monkeypatch.setattr(
         "api.routes.leads.raw_inbox_routes.ingest_manual_text",
-        lambda **kwargs: {"chunks": 1, "dry_run": False},
+        lambda *args, **kwargs: {"chunks": 1, "dry_run": False},
     )
     cr = await client.post("/api/leads", json={"company": "Сырьё Тест", "stage": "Новый"})
     assert cr.status_code == 201

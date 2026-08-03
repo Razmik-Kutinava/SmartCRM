@@ -14,11 +14,11 @@
 
 ## Чеклист микро
 
-- [ ] RED: test_raw_inbox + API
-- [ ] GREEN: core/raw_inbox + route + merge + RAG ingest
-- [ ] brief агентов видит сырьё
-- [ ] UI LeadRawInboxPanel на вкладке Клиент
-- [ ] регрессия + ops
+- [x] RED: test_raw_inbox + API
+- [x] GREEN: core/raw_inbox + route + merge + RAG ingest
+- [x] brief агентов видит сырьё
+- [x] UI LeadRawInboxPanel на вкладке Клиент
+- [x] регрессия + ops
 
 ## Не вошло
 

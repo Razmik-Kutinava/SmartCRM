@@ -47,10 +47,17 @@ def _parse_checko(lead: Any) -> dict[str, Any]:
 def extract_brief_from_checko(checko: dict[str, Any], max_chars: int = WEB_BRIEF_MAX_CHARS) -> str:
     analyses = checko.get("analyses") if isinstance(checko.get("analyses"), dict) else {}
     wr = analyses.get("web_research") if isinstance(analyses.get("web_research"), dict) else {}
-    brief = (wr.get("agent_brief") or wr.get("summary") or "").strip()
-    if not brief or brief.lower().startswith("ошибка"):
+    parts: list[str] = []
+    web_brief = (wr.get("agent_brief") or wr.get("summary") or "").strip()
+    if web_brief and not web_brief.lower().startswith("ошибка"):
+        parts.append(web_brief)
+    raw = analyses.get("raw_inbox") if isinstance(analyses.get("raw_inbox"), dict) else {}
+    raw_brief = str(raw.get("brief") or "").strip()
+    if raw_brief:
+        parts.append(raw_brief)
+    if not parts:
         return ""
-    return brief[:max_chars]
+    return "\n\n".join(parts)[:max_chars]
 
 
 def passport_snippet(checko: dict[str, Any], max_chars: int = PASSPORT_SNIPPET_MAX) -> str:

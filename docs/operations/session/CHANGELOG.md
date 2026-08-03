@@ -2,6 +2,16 @@
 
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.
 
+## 2026-08-03 — Сырьё → поля / паспорт / RAG
+
+По `go` («ебашь»): inbox сырья на карточке.
+
+**Пайплайн.** `POST /api/leads/{id}/raw-inbox` → extract (телефон/email/ИНН/сайт/директор) → merge пустых полей + контакты без дублей → `checko.analyses.raw_inbox` (chunks + brief) → выжимка в brief агентов + `ingest_manual_text` (meta `lead_id`).
+
+**UI.** Клиент → свёртка «Сырьё → поля».
+
+Тесты: `test_raw_inbox` + API 8 PASS; crm_leads 112 PASS.
+
 ## 2026-08-02 — ИНН/Checko: правильное юрлицо + телефоны + brief
 
 По `go` (Астерус: взяли Investment вместо Development).

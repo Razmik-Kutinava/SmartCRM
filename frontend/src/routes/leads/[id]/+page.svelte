@@ -48,6 +48,7 @@
 	import LeadStageHints from '../../../components/LeadStageHints.svelte';
 	import LeadDealPathPanel from '../../../components/LeadDealPathPanel.svelte';
 	import LeadClientCardForm from '../../../components/LeadClientCardForm.svelte';
+	import LeadRawInboxPanel from '../../../components/LeadRawInboxPanel.svelte';
 	import LeadActivityPanel from '../../../components/LeadActivityPanel.svelte';
 	import LeadPassportPanel from '../../../components/LeadPassportPanel.svelte';
 	import LeadSlideOver from '../../../components/LeadSlideOver.svelte';
@@ -1209,6 +1210,18 @@
 					<button type="button" class="px-3 py-1.5 text-xs rounded-lg {clientTab === 'passport' ? 'bg-indigo-700 text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}" onclick={() => setClientTab('passport')} data-testid="lead-client-tab-passport">Паспорт</button>
 				</div>
 				{#if clientTab === 'card'}
+				<LeadRawInboxPanel
+					{lead}
+					onApplied={async (updated) => {
+						lead = enrichLeadForCard(updated);
+						syncApprovalsDraft();
+						syncMoneyInputsFromLead();
+						syncDetailsDraftFromLead();
+						syncContactsDraftFromLead();
+						refreshLeadsCacheInBackground();
+					}}
+				/>
+				<div class="h-2"></div>
 				<LeadClientCardForm
 					{lead}
 					bind:detailsDraft

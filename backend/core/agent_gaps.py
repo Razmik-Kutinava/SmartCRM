@@ -164,6 +164,10 @@ def _lead_presence(lead_like: dict[str, Any]) -> dict[str, bool]:
     analyses = checko.get("analyses") if isinstance(checko.get("analyses"), dict) else {}
     wr = analyses.get("web_research") if isinstance(analyses.get("web_research"), dict) else {}
     brief = (wr.get("agent_brief") or wr.get("summary") or "").strip()
+    raw_inbox = analyses.get("raw_inbox") if isinstance(analyses.get("raw_inbox"), dict) else {}
+    raw_brief = str(raw_inbox.get("brief") or "").strip()
+    if raw_brief:
+        brief = f"{brief}\n\n{raw_brief}".strip() if brief else raw_brief
     fin = checko.get("financials") or lead_like.get("financials")
     tech = lead_like.get("tech") or checko.get("tech") or company.get("tech")
     if isinstance(tech, str):
