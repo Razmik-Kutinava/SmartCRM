@@ -2,21 +2,24 @@
 
 ## Заказ (дословно)
 
-> давай сделай
+> ебашь
 
-**Как понял:** починить выбор ИНН (Development≠Investment), Checko заново при смене ИНН, фильтр мусорных телефонов, факты паспорта в brief.
+(ранее согласовано: сырьё на лид → раскидать по полям/паспорт/контакты → выжимка 5–15 строк в brief+RAG → сырьё оставить лёгким inbox на карточке)
+
+**Как понял:** inbox сырья на карточке лида: paste → extract+merge → краткая выжимка в checko/brief и RAG; сырые куски хранить свёрнуто.
 
 ## Чеклист фазы
 
-- [ ] **ИНН/Checko match + phones + passport brief** · (пункт `[x]` — после «ок»)
+- [ ] **Сырьё→поля/паспорт/RAG** · (пункт `[x]` — после «ок»)
 
 ## Чеклист микро
 
-- [x] resolve_inn scoring distinctive tokens
-- [x] field_fill: inn_changed → fresh Checko
-- [x] is_valid_phone stricter + passport_facts in brief
-- [x] Тесты + регрессия + ops
+- [ ] RED: test_raw_inbox + API
+- [ ] GREEN: core/raw_inbox + route + merge + RAG ingest
+- [ ] brief агентов видит сырьё
+- [ ] UI LeadRawInboxPanel на вкладке Клиент
+- [ ] регрессия + ops
 
 ## Не вошло
 
-Полный re-LLM досье после Checko.
+DDL отдельной таблицы; фильтр retrieve по lead_id; auto-Checko после ИНН из сырья.

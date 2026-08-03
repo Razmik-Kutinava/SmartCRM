@@ -6,6 +6,8 @@
 
 **Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-08-03 | Действие: SBR RED — сырьё inbox: test_raw_inbox + test_leads_raw_inbox FAIL (нет core.raw_inbox) | Коммит: `этот` | Статус: in_progress | Регрессия_счёт: 0/3
+
 2026-08-02 | Действие: GREEN+REVIEW — ИНН: Development≠Investment; Checko при смене ИНН; фильтр телефонов; passport facts в brief; test_inn_checko_match + mock second_pass; rag+p1+p6 | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (3/3→rag+p1+p6, сброс)
 
 2026-08-02 | Действие: GREEN+REVIEW — 🔍 запросы: каталоги по ИНН (checko/list-org/rusprofile) → свежие новости года; boost каталогов в hits; test_research_queries 7 PASS; rag | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (rag PASS)
