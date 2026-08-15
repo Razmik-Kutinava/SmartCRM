@@ -11,8 +11,8 @@ import {
 } from './hubTileOrder.js';
 
 const def = DEFAULT_HUB_TILE_ORDER;
-if (!Array.isArray(def) || def.length !== 5) throw new Error('default order must be 5');
-if (def[0] !== 'client' || !def.includes('agents')) throw new Error('default ids');
+if (!Array.isArray(def) || def.length !== 6) throw new Error('default order must be 6');
+if (def[0] !== 'client' || !def.includes('agents') || !def.includes('tenders')) throw new Error('default ids');
 if (def.includes('stages') || def.includes('card')) throw new Error('legacy ids in default');
 
 if (migrateHubTileId('stages') !== null) throw new Error('stages migrates to null');

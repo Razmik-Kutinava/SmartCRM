@@ -1,4 +1,4 @@
-"""Контракт карточки лида /leads/[id] — хаб 5 плиток, slide-over, industryOptions."""
+"""Контракт карточки лида /leads/[id] — хаб 6 плиток, slide-over, industryOptions."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -51,7 +51,9 @@ def test_lead_card_hub_layout():
     assert 'data-testid="lead-card-coach-banner"' in _COACH_BANNER.read_text(encoding="utf-8")
     assert "LeadHubTile" in text
     assert "LeadProductsPanel" in text
+    assert "LeadTendersPanel" in text
     assert "openPanel === 'products'" in text
+    assert "openPanel === 'tenders'" in text
     assert "LeadSlideOver" in text
     assert "buildHubTilePreviews" in text
     assert "grid-cols-2 lg:grid-cols-3" in text
@@ -145,17 +147,19 @@ def test_lead_card_bitrix_extra_ui_markers():
 
 
 def test_lead_hub_preview_module():
-    """Превью плиток: 5 панелей Клиент/Работа/Письма/Продукты/Агенты."""
+    """Превью плиток: Клиент/Работа/Письма/Продукты/Тендеры/Агенты."""
     text = _HUB_PREVIEW.read_text(encoding="utf-8")
     assert "export const HUB_PANELS" in text
     assert "buildHubTilePreviews" in text
     assert "id: 'client'" in text
     assert "id: 'work'" in text
     assert "id: 'emails'" in text
+    assert "id: 'tenders'" in text
     assert "hubProductsPreview" in text
+    assert "leadTendersHubPreview" in text
     assert "passportHasData" in text
     ids = [line for line in text.splitlines() if "id:" in line and "icon:" in line]
-    assert len(ids) == 5
+    assert len(ids) == 6
 
 
 def test_lead_hub_tile_and_slide_over_components():

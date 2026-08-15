@@ -1,15 +1,17 @@
 /** Превью для плиток хаба карточки лида. */
 import { passportHasData } from '$lib/leads/leadPassport.js';
 import { hubProductsPreview } from '$lib/leads/leadProducts.js';
+import { leadTendersHubPreview } from '$lib/leads/leadTenders.js';
 import { licensePreviewText } from '$lib/leads/leadBitrixExtra.js';
 import { slaStatus } from '$lib/tasks/taskSla.js';
 
-/** 5 плиток: Клиент · Работа · Письма · Продукты · Агенты */
+/** 6 плиток: Клиент · Работа · Письма · Продукты · Тендеры · Агенты */
 export const HUB_PANELS = [
 	{ id: 'client', icon: '👤', title: 'Клиент', accent: 'emerald' },
 	{ id: 'work', icon: '⚡', title: 'Работа', accent: 'violet' },
 	{ id: 'emails', icon: '✉️', title: 'Письма', accent: 'indigo' },
 	{ id: 'products', icon: '📦', title: 'Продукты', accent: 'emerald' },
+	{ id: 'tenders', icon: '◇', title: 'Тендеры', accent: 'amber' },
 	{ id: 'agents', icon: '🤖', title: 'Агенты', accent: 'rose' },
 ];
 
@@ -57,6 +59,7 @@ export function buildHubTilePreviews(ctx) {
 				.join(' · '),
 		},
 		products: productsHub,
+		tenders: leadTendersHubPreview(lead),
 		emails: {
 			preview: threads[0]?.subject || (lead.email !== '—' ? lead.email : 'Переписка и рассылка'),
 			meta: threads.length ? `${threads.length} тредов` : 'Написать / цепочки',

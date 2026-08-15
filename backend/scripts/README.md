@@ -27,6 +27,7 @@
 | `tender_sources_tests.py` | Тесты источников (CLI) |
 | `moy_zakupki_smoke.py` | Смоук «Мои закупки» |
 | `smoke_tender_pdf_extract.py` | Live POST `/api/tenders/documents/extract` (ключ из корневого `.env`) |
+| `probe_lead_tenders.py` | Живой поиск тендеров по ИНН/имени + usage поисковика |
 
 ## Данные
 

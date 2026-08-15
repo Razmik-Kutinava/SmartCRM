@@ -6,7 +6,7 @@ export const HUB_TILE_ORDER_KEY = 'smartcrm-lead-hub-tile-order';
 export const HUB_TILE_DRAG_MIME = 'application/x-smartcrm-hub-tile-id';
 
 /** Канон порядка = HUB_PANELS в leadHubPreview.js */
-export const DEFAULT_HUB_TILE_ORDER = ['client', 'work', 'emails', 'products', 'agents'];
+export const DEFAULT_HUB_TILE_ORDER = ['client', 'work', 'emails', 'products', 'tenders', 'agents'];
 
 /** Старые id плиток → новые (редизайн хаба). stages убираем из хаба. */
 export function migrateHubTileId(id) {

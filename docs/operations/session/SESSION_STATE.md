@@ -4,7 +4,9 @@
 
 **В строке журнала:** `Коммит: \`этот\`` — запись едет в том же коммите, что и код; реальный хеш агент называет в ответе пользователю. Хеши в старых записях — история, не переписывать. «Прочерк» / «потом» — запрещены.
 
-**Регрессия_счёт:** `2/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+**Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
+
+2026-08-15 | Действие: SBR GREEN+REVIEW — плитка Тендеры на лиде: GET/POST /api/leads/{id}/tenders, Brave/Serper/Tavily+TG/DN/Checko, llm_tokens=0; probe Сбербанк 8 веб; crm_leads 118 + p6 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: win rate / Контур | Хвост C: Tavily 432 | Статус: done | Регрессия_счёт: 0/3 (3/3→crm_leads+p6, сброс)
 
 2026-08-15 | Действие: SBR RED — тендеры на лиде: test_lead_tenders + test_leads_tenders_api FAIL (нет core.lead_tenders) | Коммит: `этот` | Статус: in_progress | Регрессия_счёт: 2/3
 

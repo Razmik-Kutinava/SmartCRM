@@ -1,8 +1,6 @@
 """GET/POST /api/leads/{id}/tenders — тендеры на карточке лида."""
 from __future__ import annotations
 
-import json
-
 import pytest
 
 

@@ -58,6 +58,8 @@ Shim: `qa_agent.py` — re-export для старых импортов.
 | `agent_email_context.py` | Слоты и дайджест переписки для агентов (`build_agent_slots`: checko/🔍/паспорт/tech BuiltWith+DNS, `context_gaps`; дайджест 3×6×200); brief += сырьё |
 | `agent_gaps.py` | Суфлёр: gaps по агенту + `card_suffler` (общий список пробелов карточки) + checklist для 🔍 |
 | `raw_inbox.py` | Сырьё → extract/merge полей/контактов/паспорта + краткая выжимка |
+| `lead_tenders.py` | Тендеры на лиде: снимок current/past/web + usage без LLM |
+| `lead_tenders_providers.py` | Живые источники: Brave/Serper/Tavily, TenderGuru, DataNewton, Checko |
 | `auth.py` | API-ключ, `require_api_key` |
 | `crypto.py` | Шифрование секретов (почта и т.п.) |
 | `email_config.py` | IMAP/SMTP аккаунты из env (`EMAIL_APP_PASSWORD`, `EMAIL_ACCOUNT_*`) |

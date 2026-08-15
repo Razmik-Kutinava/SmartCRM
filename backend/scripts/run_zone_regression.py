@@ -21,6 +21,8 @@ ZONES: dict[str, list[str]] = {
         "tests/lib/test_lead_card_money.py",
         "tests/lib/test_stage_transition_lib.py",
         "tests/api/test_leads_api.py",
+        "tests/api/test_leads_tenders_api.py",
+        "tests/core/test_lead_tenders.py",
         "tests/api/test_lead_engagement.py",
         "tests/api/test_lead_comments_api.py",
         "tests/api/test_lead_communications_api.py",

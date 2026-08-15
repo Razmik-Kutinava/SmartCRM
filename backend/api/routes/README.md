@@ -21,6 +21,7 @@ CRUD лидов, вовлечённость, Битрикс.
 | `csv_routes.py` | `GET /export?format=csv`, `GET /sources` — `sources` (рассылка) + `bases` для переключателя списка: Битрикс `__bitrix__`, `bitrix_source` (метки внутри Битрикса), `named` (импортированные базы) |
 | `engagement.py` | Комментарии, логи связи, аудит полей, стадии |
 | `raw_inbox_routes.py` | `POST /{lead_id}/raw-inbox` — сырьё → поля/паспорт/выжимка + RAG |
+| `tenders_routes.py` | `GET /{lead_id}/tenders` (кэш), `POST /{lead_id}/tenders/search` — плитка тендеров + usage поисковика |
 | `bitrix_routes.py` | Импорт лидов из Битрикс24, статус синка |
 | `sla_routes.py` | `GET /sla-protocols`, `PUT /{id}/sla-protocol` — назначение SLA-протокола |
 | `scoring_export_routes.py` | `GET /scoring/export` — экспорт отчёта по баллам и воронке |

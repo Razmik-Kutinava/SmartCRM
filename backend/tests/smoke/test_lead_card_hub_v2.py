@@ -1,4 +1,4 @@
-"""SBR: редизайн хаба карточки лида — 5 плиток + этап/путь в шапке."""
+"""SBR: хаб карточки лида — плитки + этап/путь в шапке."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -18,8 +18,9 @@ def test_hub_panels_are_five_new_ids():
     assert "title: 'Работа'" in text
     # плитки только 5; passport/stages не id плитки
     ids = [ln for ln in text.splitlines() if "id:" in ln and "icon:" in ln]
-    assert len(ids) == 5, f"ожидалось 5 плиток, сейчас {len(ids)}: {ids}"
+    assert len(ids) == 6, f"ожидалось 6 плиток, сейчас {len(ids)}: {ids}"
     joined = "\n".join(ids)
+    assert "tenders" in joined
     assert "passport" not in joined
     assert "stages" not in joined
 
@@ -47,6 +48,7 @@ def test_no_stages_tile_panel_in_slide_hub():
     assert "openPanel === 'stages'" not in text
     assert "openPanel === 'client'" in text
     assert "openPanel === 'work'" in text
+    assert "openPanel === 'tenders'" in text
 
 
 def test_coach_maps_to_client_work_header():

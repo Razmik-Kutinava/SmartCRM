@@ -54,6 +54,7 @@
 	import LeadSlideOver from '../../../components/LeadSlideOver.svelte';
 	import LeadHubTile from '../../../components/LeadHubTile.svelte';
 	import LeadProductsPanel from '../../../components/LeadProductsPanel.svelte';
+	import LeadTendersPanel from '../../../components/LeadTendersPanel.svelte';
 	import { passportHasData } from '$lib/leads/leadPassport.js';
 	import { buildHubTilePreviews, PANEL_TITLES } from '$lib/leads/leadHubPreview.js';
 	import {
@@ -1204,6 +1205,14 @@
 	>
 			{#if openPanel === 'products'}
 				<LeadProductsPanel {lead} />
+			{:else if openPanel === 'tenders'}
+				<LeadTendersPanel
+					{lead}
+					onApplied={(updated) => {
+						lead = enrichLeadForCard(updated);
+						refreshLeadsCacheInBackground();
+					}}
+				/>
 			{:else if openPanel === 'client'}
 				<div class="flex gap-2 mb-3" data-testid="lead-client-tabs">
 					<button type="button" class="px-3 py-1.5 text-xs rounded-lg {clientTab === 'card' ? 'bg-indigo-700 text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}" onclick={() => setClientTab('card')} data-testid="lead-client-tab-card">Карточка</button>

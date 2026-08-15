@@ -102,12 +102,15 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `core/test_lead_priority_tier.py` | Приоритет лида (зеркало crmStages.js) |
 | `core/test_crm_stage_badge.py` | Цвета бейджей этапов воронки (stageBadgeClass) |
 | `smoke/test_scoring_funnel_smoke.py` | Смоук балльной воронки (API + формула) |
-| `smoke/test_lead_card_page.py` | Контракт карточки: industryOptions, breakdown, хаб 5 плиток, этап в шапке |
+| `smoke/test_lead_card_page.py` | Контракт карточки: industryOptions, breakdown, хаб 6 плиток, этап в шапке |
 | `smoke/test_lead_card_hub_v2.py` | Редизайн хаба: client/work, шапка без ✉️/рассылки |
 | `smoke/test_lead_card_tech_agent.py` | Тех. спец на карточке: AGENT_LIST + email/run |
 | `frontend/test_lead_create_ui.py` | Модалка «Новый лид»: store smoke + разметка дашборд/list |
 | `frontend/test_app_sidebar_ui.py` | Сворачиваемый сайдбар layout + иконки тулбара карточки лида |
 | `frontend/test_hub_tile_order.py` | DnD порядка плиток хаба `/leads/[id]` + `hubTileOrder.js` smoke |
+| `lib/test_lead_tenders_ui.py` | Плитка тендеров на карточке + `leadTenders.js` |
+| `core/test_lead_tenders.py` | Снимок тендеров лида, usage без LLM |
+| `api/test_leads_tenders_api.py` | `GET/POST /api/leads/{id}/tenders` |
 | `frontend/test_lead_delete_ui.py` | Удаление лида: apiDelete, кнопки list/карточка, purge в crud |
 | `voice/test_whisper_stt.py` | Groq Whisper STT, preprocess, pipeline audio |
 | `smoke/test_whisper_stt_smoke.py` | HTTP transcribe + ops whisper settings + WS |
