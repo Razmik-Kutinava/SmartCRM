@@ -62,6 +62,7 @@
 - [ ] **🔍 запросы: каталоги по ИНН + свежие новости:** site:checko/list-org… по ИНН, затем новости года · (пункт `[x]` — после «ок»)
 - [ ] **ИНН/Checko match:** Development≠Investment; Checko при смене ИНН; фильтр телефонов; паспорт в brief · (пункт `[x]` — после «ок»)
 - [ ] **Сырьё→поля/паспорт/RAG:** inbox на карточке; merge контактов/полей; выжимка в brief+RAG · (пункт `[x]` — после «ок»)
+- [ ] **Тендеры на лиде (плитка + поисковик):** GET/POST `/api/leads/{id}/tenders`, хаб-плитка, usage поисковика (без LLM) · [`F4_LEAD_TENDERS.md`](../phase4/leads/F4_LEAD_TENDERS.md)
 - [ ] **Агенты на карточке работают:** `POST /api/agents/email/run` — стратег без `ImportError`, аналитик с `lead_id` (не заглушка), дайджест переписки урезан (экономия токенов) · [`F4_LEADS_ACCEPTANCE.md`](../phase4/leads/F4_LEADS_ACCEPTANCE.md)
 - [ ] **Направление Лиды (бриф):** автоскор, Мой день = дело сегодня + близость к деньгам, шапка (отрасль, без этапа в мете), путь сделки не 0/0, 🔍 · [`F4_LEADS_DIRECTION.md`](../phase4/leads/F4_LEADS_DIRECTION.md)
 - [ ] **Базы лидов:** переключатель Все/Битрикс/метка в `/leads/list` + импорт CSV/XLS → отдельный список · [`F4_LEADS_DIRECTION.md`](../phase4/leads/F4_LEADS_DIRECTION.md)
