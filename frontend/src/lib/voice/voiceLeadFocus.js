@@ -1,12 +1,15 @@
-/** Память последнего голосового поиска лидов — для «открой её». */
+/** Память последнего голосового поиска лидов + overlay «открой её». */
 import { get, writable } from 'svelte/store';
 import { readLeadsCache } from '$lib/leadsStorage.js';
 
 /** @type {import('svelte/store').Writable<{ query: string, leads: Array<{ id: number, company: string }> }>} */
 export const voiceLeadFocus = writable({ query: '', leads: [] });
 
+/** @type {import('svelte/store').Writable<{ id: number, company: string } | null>} */
+export const voiceLeadOverlay = writable(null);
+
 /** @param {string} s */
-function companyNorm(s) {
+export function companyNorm(s) {
 	return String(s || '')
 		.toLowerCase()
 		.replace(/[«»"'`]/g, '')
@@ -35,6 +38,43 @@ export function rememberVoiceLeads(leads, query = '') {
 }
 
 /**
+ * Запомнить матчи из кэша списка по строке поиска (не ждём монтирования /leads/list).
+ * @param {string} query
+ */
+export function rememberVoiceLeadsFromCache(query) {
+	const q = companyNorm(query);
+	if (q.length < 2) return;
+	const all = readLeadsCache() || [];
+	const matched = all.filter((l) => {
+		const name = companyNorm(l?.company);
+		return name.includes(q) || q.includes(name);
+	});
+	if (matched.length) {
+		rememberVoiceLeads(matched, query);
+		return;
+	}
+	const token = q.split(/\s+/).find((t) => t.length >= 4) || q;
+	rememberVoiceLeads(
+		all.filter((l) => companyNorm(l?.company).includes(token)),
+		query,
+	);
+}
+
+/**
+ * @param {number} id
+ * @param {string} [company]
+ */
+export function openVoiceLeadOverlay(id, company = '') {
+	const n = Number(id);
+	if (Number.isNaN(n) || n <= 0) return;
+	voiceLeadOverlay.set({ id: n, company: String(company || '') });
+}
+
+export function closeVoiceLeadOverlay() {
+	voiceLeadOverlay.set(null);
+}
+
+/**
  * @param {Record<string, unknown>} slots
  * @param {Record<string, unknown>} [payload]
  * @returns {number | null}
@@ -60,8 +100,15 @@ export function resolveVoiceOpenLeadId(slots = {}, payload = {}) {
 		for (const pool of pools) {
 			const exact = pool.find((l) => companyNorm(l.company) === company);
 			if (exact?.id) return Number(exact.id);
-			const partial = pool.filter((l) => companyNorm(l.company).includes(company));
+			const partial = pool.filter((l) => {
+				const name = companyNorm(l.company);
+				return name.includes(company) || company.includes(name);
+			});
 			if (partial.length === 1 && partial[0]?.id) return Number(partial[0].id);
+			if (partial.length > 1) {
+				const best = partial.find((l) => companyNorm(l.company).startsWith(company)) || partial[0];
+				if (best?.id) return Number(best.id);
+			}
 		}
 	}
 

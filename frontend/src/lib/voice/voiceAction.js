@@ -1,6 +1,11 @@
 /** voice_action: store + диспетчер UI-реакций (ARCHITECTURE.md). */
 import { get, writable } from 'svelte/store';
-import { resolveVoiceOpenLeadId, rememberVoiceLeads } from './voiceLeadFocus.js';
+import {
+	resolveVoiceOpenLeadId,
+	rememberVoiceLeads,
+	rememberVoiceLeadsFromCache,
+	openVoiceLeadOverlay,
+} from './voiceLeadFocus.js';
 
 /** @type {import('svelte/store').Writable<Record<string, unknown> | null>} */
 export const voiceModal = writable(null);
@@ -142,10 +147,14 @@ export function handleVoiceAction(action, { goto }) {
 	if (intent === 'open_lead') {
 		const slots = /** @type {Record<string, unknown>} */ (action.slots || {});
 		const payload = /** @type {Record<string, unknown>} */ (action.payload || {});
+		const companyHint = String(slots.company || payload.company || '');
+		if (companyHint) rememberVoiceLeadsFromCache(companyHint);
 		const id = resolveVoiceOpenLeadId(slots, payload);
 		if (id) {
-			rememberVoiceLeads([{ id, company: String(slots.company || payload.company || '') }]);
-			goto(`/leads/${id}`);
+			const company = companyHint || String(slots.company || '');
+			rememberVoiceLeads([{ id, company }]);
+			openVoiceLeadOverlay(id, company);
+			voiceToast.set(company ? `Открываю: ${company}` : `Открываю лид #${id}`);
 			flashHighlight(action.title || 'Открываю лид');
 			return;
 		}
@@ -231,6 +240,8 @@ export function handleVoiceAction(action, { goto }) {
 		const filt = action.payload?.filter || action.payload;
 		if (filt && typeof filt === 'object') {
 			voiceLeadFilter.set(/** @type {Record<string, string>} */ (filt));
+			const q = String(filt.search || action.slots?.query || '').trim();
+			if (q) rememberVoiceLeadsFromCache(q);
 		}
 		if (action.route) goto(String(action.route));
 		const minSc = filt?.minScore;

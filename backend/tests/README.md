@@ -61,6 +61,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `voice/test_lead_context.py` | Загрузка истории лида |
 | `voice/test_open_lead.py` | `open_lead` + rescue «открой её» / «найди лид» |
 | `frontend/test_voice_lead_focus.py` | Smoke модулей voiceLeadFocus / open_lead в voiceAction |
+| `frontend/test_voice_lead_overlay.py` | Overlay лида: store, blur, mount в layout |
 | `smoke/test_campaign_mass_ui.py` | UI smoke B: testid-контракт + live Playwright (`SMOKE_UI=1`) |
 | `smoke/test_leadgen_voice_ws.py` | WS generate_lead → navigate `/leadgen?autorun=1` (Ф2 §8) |
 | `test_tender_sources.py` | Источники тендеров |

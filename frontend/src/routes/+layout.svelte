@@ -8,6 +8,7 @@
 	import { handleSendEmailApprove, handleSaveToRagApprove } from '$lib/voice/voiceApproveHandlers.js';
 	import { tryHandleVoiceFollowup, hasVoiceFollowupContext, parseVoiceFollowup } from '$lib/voice/voiceFollowup.js';
 	import VoiceActionHost from '../components/VoiceActionHost.svelte';
+	import LeadVoiceOverlay from '../components/LeadVoiceOverlay.svelte';
 	import LeadMailingHost from '../components/LeadMailingHost.svelte';
 	import LeadIndustryHost from '../components/LeadIndustryHost.svelte';
 	import LeadCreateHost from '../components/LeadCreateHost.svelte';
@@ -19,6 +20,9 @@
 	} from '$lib/ui/appSidebar.js';
 
 	let { children } = $props();
+
+	/** Карточка внутри голосовой модалки — без сайдбара/шапки голоса. */
+	const isEmbed = $derived($page.url.searchParams.get('embed') === '1');
 
 	const API = getApiUrl();
 
@@ -321,6 +325,11 @@
 	}
 </script>
 
+{#if isEmbed}
+	<div class="h-screen bg-gray-950 text-gray-100 overflow-auto" data-testid="lead-embed-shell">
+		{@render children()}
+	</div>
+{:else}
 <div class="flex h-screen bg-gray-950 text-gray-100 overflow-hidden">
 
 	<!-- Sidebar -->
@@ -536,7 +545,9 @@
 	{/if}
 
 	<VoiceActionHost />
+	<LeadVoiceOverlay />
 	<LeadMailingHost />
 	<LeadIndustryHost />
 	<LeadCreateHost />
 </div>
+{/if}

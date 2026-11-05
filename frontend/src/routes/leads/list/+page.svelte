@@ -63,7 +63,11 @@
 		voiceLeadFilter,
 		registerLeadIntentHandler,
 	} from '$lib/voice/voiceAction.js';
-	import { rememberVoiceLeads, resolveVoiceOpenLeadId } from '$lib/voice/voiceLeadFocus.js';
+	import {
+		rememberVoiceLeads,
+		resolveVoiceOpenLeadId,
+		openVoiceLeadOverlay,
+	} from '$lib/voice/voiceLeadFocus.js';
 	import { createLeadComment } from '$lib/leads/leadComments.js';
 	import { createLeadCommunication } from '$lib/leads/leadCommunications.js';
 	import { openLeadCreateModal } from '$lib/leads/leadCreateUi.js';
@@ -758,12 +762,12 @@
 		}
 
 		case 'open_lead': {
-			// Запасной путь: обычно open_lead уже обработан в handleVoiceAction
+			// Запасной путь: обычно open_lead уже открыл overlay в handleVoiceAction
 			const id = resolveVoiceOpenLeadId(slots || {});
 			const lead = id ? leads.find((l) => l.id === id) : findLead(slots);
 			if (lead) {
 				rememberVoiceLeads([lead], lead.company);
-				goto(`/leads/${lead.id}`);
+				openVoiceLeadOverlay(lead.id, lead.company);
 				notify(`Открываю: ${lead.company}`);
 			} else {
 				notify('Лид не найден — уточни название или сначала найди', 'error');

@@ -13,10 +13,10 @@
 
 ## Чеклист микро
 
-- [ ] RED: overlay store + open_lead не только goto
-- [ ] GREEN: LeadVoiceOverlay (blur) + remember при filter + embed карточки
-- [ ] фикс: память last после «найди» надёжнее
-- [ ] регрессия voice + ops
+- [x] RED: overlay store + open_lead не только goto
+- [x] GREEN: LeadVoiceOverlay (blur) + remember при filter + embed карточки
+- [x] фикс: память last после «найди» надёжнее
+- [x] регрессия voice + ops
 
 ## Не вошло
 
