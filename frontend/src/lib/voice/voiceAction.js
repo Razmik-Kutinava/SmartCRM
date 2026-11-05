@@ -1,5 +1,6 @@
 /** voice_action: store + диспетчер UI-реакций (ARCHITECTURE.md). */
 import { get, writable } from 'svelte/store';
+import { resolveVoiceOpenLeadId, rememberVoiceLeads } from './voiceLeadFocus.js';
 
 /** @type {import('svelte/store').Writable<Record<string, unknown> | null>} */
 export const voiceModal = writable(null);
@@ -137,6 +138,22 @@ export function handleVoiceAction(action, { goto }) {
 
 	const ui = String(action.ui || '');
 	const intent = String(action.intent || '');
+
+	if (intent === 'open_lead') {
+		const slots = /** @type {Record<string, unknown>} */ (action.slots || {});
+		const payload = /** @type {Record<string, unknown>} */ (action.payload || {});
+		const id = resolveVoiceOpenLeadId(slots, payload);
+		if (id) {
+			rememberVoiceLeads([{ id, company: String(slots.company || payload.company || '') }]);
+			goto(`/leads/${id}`);
+			flashHighlight(action.title || 'Открываю лид');
+			return;
+		}
+		voiceToast.set('Сначала найди лид («найди лид …»), потом скажи «открой её»');
+		if (action.route) goto(String(action.route));
+		else goto('/leads/list');
+		return;
+	}
 
 	if (ui === 'navigate' && action.route) {
 		applyAnalyticsPayload(action);

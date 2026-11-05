@@ -14,9 +14,9 @@
 ## Чеклист микро
 
 - [x] RED: voice_action open_lead + rescue «открой её» / «найди лид …»
-- [ ] GREEN: Hermes + voice_action + voiceLeadFocus + goto карточки
-- [ ] docs phrases + acceptance
-- [ ] регрессия voice + ops
+- [x] GREEN: Hermes + voice_action + voiceLeadFocus + goto карточки
+- [x] docs phrases + acceptance
+- [x] регрессия voice + ops
 
 ## Не вошло
 

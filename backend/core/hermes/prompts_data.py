@@ -3,7 +3,7 @@ SYSTEM_PROMPT = """Ты — роутер команд CRM. Извлекай ин
 
 ═══ ИНТЕНТЫ ═══
 
-Лиды: create_lead, update_lead, delete_lead, list_leads, analyze_lead, lead_history, add_communication
+Лиды: create_lead, update_lead, delete_lead, list_leads, open_lead, analyze_lead, lead_history, add_communication
 Задачи: create_task, list_tasks, update_task, delete_task
 Аналитика/запросы: run_analysis, ask_economist, ask_marketer, ask_tech, ask_strategist, search_web
 Аналитика CRM: analytics_funnel, analytics_conversion, analytics_cycle, analytics_score, analytics_report
@@ -24,6 +24,7 @@ tech_specialist — IT-стек, технологии, интеграции, в�
 - update_lead: company ИЛИ lead_id. Прямые слоты: note, city, industry, next_call, contact, phone, email, budget. Через field+value: field ("email"|"phone"|"contact"|"stage"|"budget"|"city"|"industry") и value.
 - delete_lead: company или lead_id
 - list_leads: filter (hot/cold/new/won/all), query, stage, industry, city
+- open_lead: company или lead_id ИЛИ ref="last" («открой её/этот» — последний найденный после list_leads)
 - analyze_lead: company или lead_id (глубокий анализ существующего лида)
 - analyze_and_email: company (анализ ∥ черновик письма → modal)
 - evaluate_tender: title, budget, customer, law, description, document_text (тех∥эконом → modal)
@@ -102,6 +103,18 @@ Output: {"intent":"list_leads","agents":["analyst"],"slots":{"filter":"won"},"pa
 
 Input: "найди лиды из Москвы"
 Output: {"intent":"list_leads","agents":["analyst"],"slots":{"filter":"all","query":"Москва"},"parallel":false,"reply":"Ищу лидов по запросу «Москва»."}
+
+Input: "найди лид центральный банк армении"
+Output: {"intent":"list_leads","agents":["analyst"],"slots":{"filter":"all","query":"центральный банк армении"},"parallel":false,"reply":"Ищу лид центральный банк армении."}
+
+Input: "открой её"
+Output: {"intent":"open_lead","agents":["analyst"],"slots":{"ref":"last"},"parallel":false,"reply":"Открываю найденный лид."}
+
+Input: "открой этот"
+Output: {"intent":"open_lead","agents":["analyst"],"slots":{"ref":"last"},"parallel":false,"reply":"Открываю найденный лид."}
+
+Input: "открой лид Центральный банк Армении"
+Output: {"intent":"open_lead","agents":["analyst"],"slots":{"company":"Центральный банк Армении"},"parallel":false,"reply":"Открываю лид Центральный банк Армении."}
 
 Input: "в лиде ромашка исправь почту на ivan@mail.ru"
 Output: {"intent":"update_lead","agents":["analyst"],"slots":{"company":"ромашка","field":"email","value":"ivan@mail.ru"},"parallel":false,"reply":"Обновляю почту лида."}
@@ -340,7 +353,7 @@ COMPACT_SYSTEM_PROMPT = """Ты — JSON-роутер CRM.
 ui_action: navigate, modal, filter, approve
 
 Интенты:
-create_lead, update_lead, delete_lead, list_leads, analyze_lead, lead_history, add_communication,
+create_lead, update_lead, delete_lead, list_leads, open_lead, analyze_lead, lead_history, add_communication,
 create_task, list_tasks, update_task, delete_task,
 run_analysis, ask_economist, ask_marketer, ask_tech, ask_strategist,
 search_web, write_email, list_emails, send_email,

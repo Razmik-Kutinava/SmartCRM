@@ -338,6 +338,54 @@ def rescue_route(text: str) -> dict | None:
             slots_task["related_lead"] = comp
         return out("create_task", ["analyst"], "Создаю задачу.", slots_task)
 
+    # «открой её / этот» — без имени → прошлый найденный лид
+    if re.search(r"\b(открой|открыть)\b", t) and "почт" not in t and "email" not in t:
+        if re.search(
+            r"\b(её|ее|его|этот|эту|эту карточку|найденн\w*|последн\w*)\b",
+            t,
+        ) and not re.search(r"лид\w*\s+[a-zа-яё0-9]", t):
+            return out("open_lead", ["analyst"], "Открываю найденный лид.", {"ref": "last"})
+        if "лид" in t or "карточк" in t or "клиент" in t:
+            from .slot_normalize import _extract_company
+
+            comp = _extract_company(text)
+            if not comp:
+                m_ol = re.search(
+                    r"(?:открой|открыть)\s+(?:лид(?:а|у)?|карточку|клиента)?\s*(.+)$",
+                    t,
+                    re.I,
+                )
+                if m_ol:
+                    comp = m_ol.group(1).strip()[:80]
+            if comp and comp not in ("её", "ее", "его", "этот", "эту"):
+                return out(
+                    "open_lead",
+                    ["analyst"],
+                    f"Открываю лид {comp}.",
+                    {"company": comp},
+                )
+            return out("open_lead", ["analyst"], "Открываю найденный лид.", {"ref": "last"})
+
+    # «найди лид …» → фильтр списка (не веб и не тендеры)
+    if ("найди" in t or "найти" in t or "поищи" in t) and (
+        "лид" in t or "клиент" in t
+    ) and "интернет" not in t and "тендер" not in t and "закуп" not in t:
+        from .slot_normalize import _extract_company
+
+        comp = _extract_company(text)
+        if not comp:
+            m_fl = re.search(
+                r"(?:найди|найти|поищи)\s+(?:лид(?:а|у)?|клиента)?\s*(.+)$",
+                t,
+                re.I,
+            )
+            if m_fl:
+                comp = m_fl.group(1).strip()[:80]
+        slots_find: dict = {"filter": "all"}
+        if comp:
+            slots_find["query"] = comp
+        return out("list_leads", ["analyst"], f"Ищу лид {comp or ''}.".strip(), slots_find)
+
     if ("покажи" in t or "pokazi" in t or "список" in t or "дай список" in t) and (
         "лид" in t or "сделк" in t or "lidy" in t or "lid" in t
     ) and "задач" not in t:

@@ -63,6 +63,7 @@
 		voiceLeadFilter,
 		registerLeadIntentHandler,
 	} from '$lib/voice/voiceAction.js';
+	import { rememberVoiceLeads, resolveVoiceOpenLeadId } from '$lib/voice/voiceLeadFocus.js';
 	import { createLeadComment } from '$lib/leads/leadComments.js';
 	import { createLeadCommunication } from '$lib/leads/leadCommunications.js';
 	import { openLeadCreateModal } from '$lib/leads/leadCreateUi.js';
@@ -232,6 +233,16 @@
 			filterIndustry = v.filterIndustry;
 			filterCity = v.filterCity;
 			filterMinScore = v.minScore;
+			const matched = applyLeadListView(leads, {
+				search: v.search,
+				filterStage: v.filterStage,
+				filterPriority: v.filterPriority,
+				filterIndustry: v.filterIndustry,
+				filterCity: v.filterCity,
+				filterMinScore: v.minScore,
+				sortBy: v.sortBy,
+			});
+			rememberVoiceLeads(matched, v.search || '');
 			notify(
 				v.minScore != null ? `Фильтр: скор ≥ ${v.minScore}` : 'Фильтр применён голосом',
 				'info',
@@ -726,7 +737,37 @@
 			search = view.search || search;
 			filterIndustry = view.filterIndustry;
 			filterCity = view.filterCity;
-			notify('Фильтр списка обновлён', 'info');
+			const matched = applyLeadListView(leads, {
+				search,
+				filterStage,
+				filterPriority,
+				filterIndustry,
+				filterCity,
+				sortBy,
+			});
+			rememberVoiceLeads(matched, search || '');
+			notify(
+				matched.length === 1
+					? `Нашёл: ${matched[0].company} — скажи «открой её»`
+					: matched.length
+						? `Найдено: ${matched.length}. Скажи «открой её» для первого`
+						: 'Фильтр списка обновлён',
+				'info',
+			);
+			break;
+		}
+
+		case 'open_lead': {
+			// Запасной путь: обычно open_lead уже обработан в handleVoiceAction
+			const id = resolveVoiceOpenLeadId(slots || {});
+			const lead = id ? leads.find((l) => l.id === id) : findLead(slots);
+			if (lead) {
+				rememberVoiceLeads([lead], lead.company);
+				goto(`/leads/${lead.id}`);
+				notify(`Открываю: ${lead.company}`);
+			} else {
+				notify('Лид не найден — уточни название или сначала найди', 'error');
+			}
 			break;
 		}
 

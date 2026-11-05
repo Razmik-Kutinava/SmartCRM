@@ -8,7 +8,7 @@ from .module_contract import enrich_module_ui
 from .text_utils import normalize_text_for_cache
 
 _LEAD_INTENTS = frozenset({
-    "create_lead", "update_lead", "delete_lead", "list_leads", "create_task", "list_tasks",
+    "create_lead", "update_lead", "delete_lead", "list_leads", "open_lead", "create_task", "list_tasks",
     "analyze_lead", "lead_history", "add_communication",
 })
 
@@ -17,6 +17,7 @@ _INTENT_AGENTS: dict[str, list[str]] = {
     "update_lead": ["analyst"],
     "delete_lead": ["analyst"],
     "list_leads": ["analyst"],
+    "open_lead": ["analyst"],
     "create_task": ["analyst"],
     "list_tasks": ["analyst"],
     "analyze_lead": ["analyst", "economist", "marketer", "tech_specialist"],
@@ -158,8 +159,8 @@ def normalize_parsed_intent(text: str, parsed: dict[str, Any]) -> dict[str, Any]
                     slots.setdefault("value", val)
 
     if intent in (
-        "create_lead", "update_lead", "delete_lead", "analyze_lead", "lead_history", "add_communication",
-    ) and not slots.get("company"):
+        "create_lead", "update_lead", "delete_lead", "open_lead", "analyze_lead", "lead_history", "add_communication",
+    ) and not slots.get("company") and slots.get("ref") != "last":
         comp = _extract_company(text)
         if comp:
             slots["company"] = comp

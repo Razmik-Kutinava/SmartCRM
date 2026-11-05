@@ -6,6 +6,8 @@
 
 **Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-11-05 | Действие: SBR GREEN+REVIEW — open_lead + «открой её»: rescue/Hermes, voiceLeadFocus, goto /leads/{id}; test_open_lead 5 + focus 2 PASS; voice zone 10 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3 (voice PASS)
+
 2026-11-05 | Действие: SBR RED — open_lead + «открой её»: test_open_lead 5 FAIL (нет intent/rescue/voice_action) | Коммит: `этот` | Статус: in_progress | Регрессия_счёт: 0/3
 
 2026-08-15 | Действие: SBR GREEN+REVIEW — плитка Тендеры на лиде: GET/POST /api/leads/{id}/tenders, Brave/Serper/Tavily+TG/DN/Checko, llm_tokens=0; probe Сбербанк 8 веб; crm_leads 118 + p6 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: win rate / Контур | Хвост C: Tavily 432 | Статус: done | Регрессия_счёт: 0/3 (3/3→crm_leads+p6, сброс)

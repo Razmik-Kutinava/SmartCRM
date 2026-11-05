@@ -22,6 +22,7 @@ _UI_MODAL_INTENTS = frozenset({
 
 _ROUTE_BY_INTENT: dict[str, str] = {
     "list_leads": "/leads/list",
+    "open_lead": "/leads/list",
     "create_lead": "/leads/list",
     "update_lead": "/leads/list",
     "delete_lead": "/leads/list",
@@ -108,7 +109,11 @@ def build_voice_action(
     }
 
     if ui == "navigate":
-        base["route"] = _route(intent, slots, agent_result)
+        if intent == "open_lead":
+            base["route"] = _open_lead_route(slots, agent_result)
+            base["payload"] = _open_lead_payload(slots)
+        else:
+            base["route"] = _route(intent, slots, agent_result)
         if intent in ANALYTICS_INTENTS:
             base["payload"] = _analytics_payload(slots)
         elif intent in ("search_tenders", "list_tenders"):
@@ -179,6 +184,8 @@ def _infer_ui(intent: str, slots: dict, agent_result: dict) -> str | None:
         return "approve"
     if intent in ("list_leads", "analytics_score"):
         return "filter"
+    if intent == "open_lead":
+        return "navigate"
     if intent == "lead_history" and agent_result.get("history"):
         return "modal"
     if intent == "analyze_lead":
@@ -324,9 +331,30 @@ def _lead_route(slots: dict, agent_result: dict) -> str | None:
         if m:
             return f"/leads/{m.group(1)}"
     lid = slots.get("lead_id") or slots.get("id")
-    if lid is not None:
-        return f"/leads/{lid}"
+    if lid is not None and str(lid).strip().isdigit():
+        return f"/leads/{int(lid)}"
     return None
+
+
+def _open_lead_route(slots: dict, agent_result: dict) -> str:
+    lead_route = _lead_route(slots, agent_result)
+    if lead_route:
+        return lead_route
+    return "/leads/list"
+
+
+def _open_lead_payload(slots: dict) -> dict[str, Any]:
+    payload: dict[str, Any] = {"open_lead": True}
+    ref = slots.get("ref")
+    if ref:
+        payload["ref"] = str(ref)
+    company = slots.get("company")
+    if company:
+        payload["company"] = str(company)
+    lid = slots.get("lead_id") or slots.get("id")
+    if lid is not None:
+        payload["lead_id"] = lid
+    return payload
 
 
 def _filter_payload(intent: str, slots: dict) -> dict[str, str]:

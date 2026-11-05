@@ -5,7 +5,7 @@
 | Файл | За что |
 |------|--------|
 | `pipeline.py` | `process_text` / `process_audio`: связка Whisper + Hermes + orchestrator |
-| `voice_action.py` | Сборка пакета `voice_action` (modal / navigate / filter / approve) для WS |
+| `voice_action.py` | Сборка пакета `voice_action` (modal / navigate / filter / approve) для WS; `open_lead` → `/leads/{id}` или payload `ref=last` |
 | `synthesis.py` | Синтез fanout → блок `payload.synthesis` для modal |
 | `lead_context.py` | История лида (audit/comments/comms) для `lead_history` |
 | `enrich_context.py` | Preview enrich-lead для `enrich_lead` (апрув перед PATCH) |

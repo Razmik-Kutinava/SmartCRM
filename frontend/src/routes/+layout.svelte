@@ -220,7 +220,7 @@
 	function _handleIntentNav(data) {
 		const intent = data.intent;
 		// При создании/показе лидов — переходим на страницу лидов
-		if (['create_lead','list_leads','update_lead','delete_lead'].includes(intent)) {
+		if (['create_lead','list_leads','open_lead','update_lead','delete_lead'].includes(intent)) {
 			if (!$page.url.pathname.startsWith('/leads') && !$page.url.pathname.startsWith('/crm')) {
 				goto('/leads/list');
 			}
