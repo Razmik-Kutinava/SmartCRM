@@ -93,9 +93,10 @@ def _empty_result(slots: dict[str, Any]) -> dict[str, Any]:
 
 def _result_from_state(state: AgentState, slots: dict[str, Any], total_ms: int) -> dict[str, Any]:
     plan = state.get("fanout_plan") or {}
+    analyst_summary = (state.get("analyst_output") or {}).get("summary", "") or ""
     return {
         "agents_ran": True,
-        "final_reply": state.get("final_reply") or slots.get("reply", ""),
+        "final_reply": state.get("final_reply") or analyst_summary or slots.get("reply", ""),
         "recommendation": state.get("recommendation", ""),
         "analyst_output": state.get("analyst_output"),
         "strategist_output": state.get("strategist_output"),
