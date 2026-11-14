@@ -3,6 +3,14 @@
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.  
 **Агент:** на старте чата **не читать весь CHANGELOG** — только шапка + запись текущего шага при нужде. Архив: `docs/archive/ops/`.
 
+## 2026-11-14 — F4: Путь сделки не 0/0 при пустом dealPath (лиды)
+
+По `go` («ебашь грин»): бэкенд возвращает `dealPath: null` когда путь не задан (нет контактов/телефона/email/выполненных approvals); фронт показывает «Путь сделки не задан» вместо «Все шаги пройдены ✓» при `dealPath` пустом/отсутствующем.
+- `backend/api/routes/leads/presenter.py`: `dealPath = None` при пустом dealPath.
+- `frontend/src/lib/leadsStorage.js`: `enrichLeadForCard` дефолт `dealPath: null`.
+- `frontend/src/components/LeadDealPathPanel.svelte`: условие «путь не задан» вместо «всё пройдено» при пустых группах.
+Тест `test_lead_deal_path_empty.py` PASS; регрессия `crm_leads` 118 passed | Коммит: `10edcee`.
+
 ## 2026-11-14 — F4: Автоскор в шапке (лиды) — score = score_manual или scoreAdvisory.suggestedScore
 
 По `go` («ебашь»): автосинхронизация видимого скора с формулой advisory.
