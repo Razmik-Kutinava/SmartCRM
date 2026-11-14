@@ -72,6 +72,7 @@ python scripts/ci_smoke.py             # smoke ops/leads/voice
 | `test_stage_transition.py` | Переходы стадий CRM |
 | `lib/test_funnel_dnd.py` | Воронка Kanban DnD (зеркало funnelDnD.js) |
 | `lib/test_lead_list_filter.py` | Фильтры и сортировка списка лидов |
+| `lib/test_lead_company_fuzzy.py` | Нечёткий поиск компании («втф банг» → ВТБ Банк) |
 | `lib/test_lead_list_profile_filters.py` | Фильтры ОКВЭД-секция и employees_band (segment query) |
 | `lib/test_lead_list_group.py` | Группировка списка лидов (groupLeads) |
 | `lib/test_tasks_page_filters.py` | Фильтры страницы /leads/tasks |

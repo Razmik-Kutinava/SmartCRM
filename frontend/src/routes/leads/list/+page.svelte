@@ -246,9 +246,15 @@
 				filterMinScore: v.minScore,
 				sortBy: v.sortBy,
 			});
-			rememberVoiceLeads(matched, v.search || '');
+			// Fuzzy-кандидаты в списке показываем, но в «открой её» не запоминаем (без silent open).
+			const exactMatched = matched.filter((l) => l._searchMatch !== 'fuzzy');
+			rememberVoiceLeads(exactMatched, v.search || '');
 			notify(
-				v.minScore != null ? `Фильтр: скор ≥ ${v.minScore}` : 'Фильтр применён голосом',
+				v.minScore != null
+					? `Фильтр: скор ≥ ${v.minScore}`
+					: matched[0]?._searchMatch === 'fuzzy'
+						? `Точного нет — похожие: ${matched.length}`
+						: 'Фильтр применён голосом',
 				'info',
 			);
 			voiceLeadFilter.set(null);
@@ -749,13 +755,17 @@
 				filterCity,
 				sortBy,
 			});
-			rememberVoiceLeads(matched, search || '');
+			const fuzzyOnly = matched.length > 0 && matched[0]?._searchMatch === 'fuzzy';
+			const exactMatched = matched.filter((l) => l._searchMatch !== 'fuzzy');
+			rememberVoiceLeads(exactMatched, search || '');
 			notify(
-				matched.length === 1
-					? `Нашёл: ${matched[0].company} — скажи «открой её»`
-					: matched.length
-						? `Найдено: ${matched.length}. Скажи «открой её» для первого`
-						: 'Фильтр списка обновлён',
+				fuzzyOnly
+					? `Точного нет — похожие: ${matched.length}. Выбери в списке`
+					: matched.length === 1
+						? `Нашёл: ${matched[0].company} — скажи «открой её»`
+						: matched.length
+							? `Найдено: ${matched.length}. Скажи «открой её» для первого`
+							: 'Фильтр списка обновлён',
 				'info',
 			);
 			break;
@@ -1343,6 +1353,13 @@
 						<a href="/leads/{lead.id}" class="font-medium text-white hover:text-indigo-400 transition-colors">
 							{lead.company}
 						</a>
+						{#if lead._searchMatch === 'fuzzy'}
+							<span
+								class="ml-1.5 inline-block px-1.5 py-0.5 rounded text-[10px] border text-amber-300/90 bg-amber-950/40 border-amber-900/40"
+								data-testid="leads-list-fuzzy-match"
+								title="Близкое название (нет точного совпадения)"
+							>похоже</span>
+						{/if}
 						{#if coachItems.length}
 							<ul class="mt-1.5 space-y-0.5 max-w-[18rem]" data-testid="leads-list-coach">
 								{#each coachItems as item (item.code)}

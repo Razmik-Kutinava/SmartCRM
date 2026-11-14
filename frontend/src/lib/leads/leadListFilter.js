@@ -4,6 +4,10 @@ import { leadMatchesCoverageFilter } from '$lib/leads/leadCoverage.js';
 import { leadMatchesManagerFilter } from '$lib/leads/leadManager.js';
 import { leadMatchesBaseFilter } from '$lib/leads/leadBaseFilter.js';
 import {
+	filterLeadsSearch,
+	leadMatchesSearchExact,
+} from '$lib/leads/leadCompanyFuzzy.js';
+import {
 	deliveryTypeFromLead,
 	subscriptionStatus,
 } from '$lib/leads/leadBitrixExtra.js';
@@ -325,20 +329,7 @@ export function priorityRank(tierKey) {
 }
 
 export function leadMatchesSearch(lead, query) {
-	const q = String(query || '').trim().toLowerCase();
-	if (!q) return true;
-	const hay = [
-		lead.company,
-		lead.contact,
-		lead.description,
-		lead.city,
-		lead.industry,
-		lead.email,
-		lead.phone,
-	]
-		.map((x) => String(x || '').toLowerCase())
-		.join(' ');
-	return hay.includes(q);
+	return leadMatchesSearchExact(lead, query);
 }
 
 /** @param {Array<Record<string, unknown>>} leads */
@@ -372,7 +363,7 @@ export function filterLeads(
 	config = null,
 	now = new Date(),
 ) {
-	return leads.filter((l) => {
+	const scoped = leads.filter((l) => {
 		if (!leadMatchesBaseFilter(l, filterBase)) return false;
 		if (filterStage !== 'all' && l.stage !== filterStage) return false;
 		if (filterPriority !== 'all') {
@@ -408,8 +399,9 @@ export function filterLeads(
 		if (!leadMatchesDeliveryTypeFilter(l, filterDeliveryType)) return false;
 		if (!leadMatchesCoverageFilter(l, filterCoverage)) return false;
 		if (!leadMatchesManagerFilter(l, filterManager)) return false;
-		return leadMatchesSearch(l, search);
+		return true;
 	});
+	return filterLeadsSearch(scoped, search);
 }
 
 /** @param {Record<string, unknown>} lead */
@@ -480,5 +472,9 @@ export function sortLeads(leads, sortBy = 'score_desc', config = null) {
 
 export function applyLeadListView(leads, opts, config = null) {
 	const filtered = filterLeads(leads, opts, config);
+	// Fuzzy-выдача уже ранжирована по похожести названия — не перебивать score_desc.
+	if (filtered.length && filtered[0]?._searchMatch === 'fuzzy') {
+		return filtered;
+	}
 	return sortLeads(filtered, opts.sortBy || 'score_desc', config);
 }
