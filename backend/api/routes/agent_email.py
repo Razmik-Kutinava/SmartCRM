@@ -21,6 +21,7 @@ from core.agent_email_context import (
     build_email_digest,
 )
 from core.agent_gaps import merge_missing
+from agents.agent_synthesis import run_synthesis_from_slots
 from db.session import get_db
 from db.models.agent_email_intent import AgentEmailIntent
 from db.models.agent_run_log import AgentRunLog
@@ -498,4 +499,148 @@ async def run_agent_on_lead(body: RunAgentBody, db: AsyncSession = Depends(get_d
         "intents_applied":  len(intents),
         "few_shots_used":   1 if few_shots_block else 0,
         "score_updated":    bool(result.get("_score_applied_to_db")),
+    }
+
+
+# ── Синтез 5 агентов ──────────────────────────────────────────────
+
+class SynthesisBody(BaseModel):
+    lead_id: int
+    task: str = ""
+
+
+@router.post("/synthesis")
+async def run_synthesis(body: SynthesisBody, db: AsyncSession = Depends(get_db)):
+    """Запуск синтеза 5 агентов: собирает контекст → прогоняет агентов → единый совет."""
+    lead = await db.get(Lead, body.lead_id)
+    if not lead:
+        raise HTTPException(404, "Лид не найден")
+
+    # Сборка слотов (как в /email/run, но без few_shots/intents — они не нужны для синтеза)
+    threads_result = await db.execute(
+        select(EmailThread)
+        .where(EmailThread.lead_id == body.lead_id)
+        .order_by(EmailThread.last_message_at.desc().nulls_last())
+        .limit(EMAIL_DIGEST_MAX_THREADS)
+    )
+    threads = threads_result.scalars().all()
+
+    digest_threads = []
+    for thread in threads:
+        msgs_result = await db.execute(
+            select(EmailMessage)
+            .where(EmailMessage.thread_id == thread.id)
+            .order_by(EmailMessage.sent_at.desc().nulls_last())
+            .limit(EMAIL_DIGEST_MAX_MESSAGES)
+        )
+        msgs = list(reversed(msgs_result.scalars().all()))
+        if not msgs:
+            continue
+        digest_threads.append({
+            "subject": thread.subject,
+            "messages": [
+                {
+                    "direction": m.direction,
+                    "sent_at": m.sent_at.strftime("%d.%m.%Y %H:%M") if m.sent_at else "—",
+                    "text": m.body or m.snippet or "",
+                }
+                for m in msgs
+            ],
+        })
+
+    intents_result = await db.execute(
+        select(AgentEmailIntent)
+        .where(AgentEmailIntent.is_active == True, AgentEmailIntent.agent_name.in_(["all"]))
+        .order_by(AgentEmailIntent.priority.desc())
+    )
+    intents = intents_result.scalars().all()
+
+    intents_block = ""
+    if intents:
+        intents_block = "\n\nПРАВИЛА ПОВЕДЕНИЯ ПО ПОЧТЕ:\n"
+        for intent in intents:
+            intents_block += f"• [{intent.intent_name}]: {intent.action_template}\n"
+
+    few_shots_block = await _load_few_shots("analyst", db)  # общие примеры
+
+    peer_names = ("analyst", "economist", "marketer", "tech_specialist")
+    peer_outputs = {}
+    for name in peer_names:
+        out = await _last_agent_output(body.lead_id, name, db)
+        if out:
+            peer_outputs[name] = out
+
+    slots = build_agent_slots(
+        lead,
+        email_block=build_email_digest(digest_threads),
+        intents_block=intents_block,
+        few_shots_block=few_shots_block,
+        task=body.task,
+        agent="analyst",
+        prior_agents=bool(peer_outputs),
+    )
+    context_gaps = list(slots.get("context_gaps") or [])
+
+    if peer_outputs.get("analyst"):
+        slots["analyst_output"] = peer_outputs["analyst"]
+    if peer_outputs.get("economist"):
+        slots["economist_output"] = peer_outputs["economist"]
+    if peer_outputs.get("marketer"):
+        slots["marketer_output"] = peer_outputs["marketer"]
+    if peer_outputs.get("tech_specialist"):
+        slots["tech_output"] = peer_outputs["tech_specialist"]
+
+    slots = await _attach_card_rag(slots, "analyst", body.task)
+
+    # Синтез
+    synthesis_result = await run_synthesis_from_slots(slots, db)
+
+    # Apply: задача из next_action
+    task_created = None
+    next_action = (synthesis_result.get("next_action") or "").strip()
+    if next_action:
+        from db.models.task import Task
+
+        existing = await db.execute(
+            select(Task).where(
+                Task.lead_id == body.lead_id,
+                Task.title == next_action[:200],
+                Task.status != "done",
+            ).limit(1)
+        )
+        if not existing.scalars().first():
+            t = Task(
+                title=next_action[:200],
+                lead_id=body.lead_id,
+                status="open",
+                related_lead=getattr(lead, "company", "") or "",
+            )
+            db.add(t)
+            await db.flush()
+            task_created = {"id": t.id, "title": t.title}
+
+    # Лог
+    log = AgentRunLog(
+        lead_id=body.lead_id,
+        agent_name="synthesis",
+        task=body.task,
+        result_json=synthesis_result,
+        threads_analyzed=len(threads),
+        intents_applied=len(intents),
+    )
+    db.add(log)
+    await db.commit()
+    await db.refresh(log)
+
+    return {
+        "run_id":           log.id,
+        "agent":            "synthesis",
+        "lead_id":          body.lead_id,
+        "result":           synthesis_result,
+        "context_gaps":     context_gaps,
+        "task_created":     task_created,
+        "threads_analyzed": len(threads),
+        "intents_applied":  len(intents),
+        "few_shots_used":   1 if few_shots_block else 0,
+        "score_updated":    False,
     }

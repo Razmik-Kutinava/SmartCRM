@@ -83,9 +83,9 @@
 - `cmd /c scripts\check_step.cmd`
 
 ## Чеклист микро
-- [ ] PHASE 0 INTAKE: заказ дословно + пункт чеклиста Ф4 в todo.md
-- [ ] PHASE 1 SPEC: файлы, читать, не ломать
-- [ ] PHASE 2 RED: тест падает (нет синтеза)
-- [ ] PHASE 2 GREEN: код синтеза + зелёный тест
+- [x] PHASE 0 INTAKE: заказ дословно + пункт чеклиста Ф4 в todo.md
+- [x] PHASE 1 SPEC: файлы, читать, не ломать
+- [x] PHASE 2 RED: тест падает (нет синтеза) — commit `65cb401`
+- [x] PHASE 2 GREEN: код синтеза + зелёный тест — `agent_synthesis.py`, endpoint `/api/agents/synthesis`, правки в `agent_email.py`
 - [ ] PHASE 3 REVIEW: регрессия crm_leads + analyst, UI smoke
 - [ ] `[x]` в чеклисте Ф4 — только после «ок»

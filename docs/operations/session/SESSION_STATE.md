@@ -203,4 +203,4 @@ docs/rules — пакет C tokens/SBR (CoffeeOS+APU): hygiene, slash, ZONE_NOTE
 
 2026-11-14 | Действие: SBR SPEC — агенты по синтезу (F4): todo.md заказ дословно + пункт чеклиста Ф4, F4_AGENT_SYNTHESIS.md создан; стоп до go на RED | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: in_progress | Регрессия_счёт: 0/3
 
-2026-11-14 | Действие: SBR RED — агенты по синтезу: test_agent_synthesis.py 2 FAIL (нет agents/agent_synthesis.py) | Коммит: `этот` | Статус: in_progress | Регрессия_счёт: 0/3
+2026-11-14 | Действие: SBR GREEN — агенты по синтезу: agent_synthesis.py + endpoint /api/agents/synthesis + run_synthesis_from_slots; тесты 2 PASS; регрессия crm_leads 118 PASS + analyst 5 PASS + agent_email_run 8 PASS; npm build OK | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: in_progress | Регрессия_счёт: 1/3

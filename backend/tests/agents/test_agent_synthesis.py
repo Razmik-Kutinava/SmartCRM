@@ -129,6 +129,17 @@ async def test_agent_synthesis_works_with_minimal_context(monkeypatch):
 
     async def fake_analyze(agent_name: str, intent: str, slots: dict):
         captured["agents"].append(agent_name)
+        if agent_name == "strategist":
+            return {
+                "summary": "strategist ok",
+                "next_action": "Позвонить клиенту",
+                "final_reply": "Звони клиенту",
+                "priority": "high",
+                "urgency": "today",
+                "decision": "Позвонить",
+                "rationale": "Минимум данных",
+                "missing_data": ["всё"],
+            }
         return {"summary": f"{agent_name} ok", "missing_data": []}
 
     monkeypatch.setattr(agent_synthesis, "_run_agent", fake_analyze)
@@ -140,7 +151,8 @@ async def test_agent_synthesis_works_with_minimal_context(monkeypatch):
         "context_gaps": ["всё"],
     }
 
-    result = await agent_synthesis.run_synthesis(minimal_slots)
+    # Используем run_synthesis_from_slots для работы с уже готовыми слотами
+    result = await agent_synthesis.run_synthesis_from_slots(minimal_slots)
 
     assert len(captured["agents"]) == 5
     assert result.get("next_action")
