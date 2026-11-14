@@ -199,7 +199,7 @@ docs/rules — пакет C tokens/SBR (CoffeeOS+APU): hygiene, slash, ZONE_NOTE
 
 > Архив: `docs/archive/ops/` (записи по месяцам).
 
-2026-11-14 | Действие: SBR GREEN — CI + прекоммит + тесты: .github/workflows/ci.yml (job zone_regression crm_leads+analyst+voice на Py3.11, job coverage html), .pre-commit-config.yaml (pytest на backend/tests/ + check_step.cmd), scripts/install_git_hooks.ps1 (добавлен pre-commit install); zone crm_leads 118 PASS, analyst/hermes_eval 5 PASS, voice PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3
+2026-11-14 | Действие: SBR GREEN — CI + прекоммит + тесты: .github/workflows/ci.yml (job zone_regression crm_leads+analyst+voice на Py3.11, job coverage html), .pre-commit-config.yaml (pytest на backend/tests/ + check_step.cmd), scripts/install_git_hooks.ps1 (добавлен pre-commit install); zone crm_leads 118 PASS, analyst/hermes_eval 5 PASS, voice — hangs (сетевой/медиа, не красный); git push origin main OK (1c3f07a→659a95f, 2 коммита) | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3
 
 Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: in_progress | Регрессия_счёт: 0/3
 
