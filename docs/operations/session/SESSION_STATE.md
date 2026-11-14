@@ -203,6 +203,8 @@ docs/rules — пакет C tokens/SBR (CoffeeOS+APU): hygiene, slash, ZONE_NOTE
 
 Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: in_progress | Регрессия_счёт: 0/3
 
+2026-11-14 | Действие: SBR RED — F4 «Путь сделки: не 0/0»: test_lead_deal_path_empty.py FAIL (dealPath возвращает 3 группы qualification/pre_kp/won вместо null/[] при пустых полях) | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: in_progress | Регрессия_счёт: 0/3
+
 2026-11-14 | Действие: SBR SPEC — агенты по синтезу (F4): todo.md заказ дословно + пункт чеклиста Ф4, F4_AGENT_SYNTHESIS.md создан; стоп до go на RED | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: in_progress | Регрессия_счёт: 0/3
 
 2026-11-14 | Действие: SBR GREEN+REVIEW — Автоскор в шапке (F4 Лиды): модель lead.py + score_manual (миграция init_db), presenter GET score = score_manual или scoreAdvisory.suggestedScore, crud PATCH score → score_manual, UI иконка «ручное переопределение» в шапке; тест test_lead_auto_score.py 3 PASS; регрессия crm_leads 118 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3
