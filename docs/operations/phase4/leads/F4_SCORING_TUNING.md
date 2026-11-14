@@ -64,6 +64,7 @@
 | Тема | Почему |
 |------|--------|
 | Авто-запись `score` формулой в БД | P1: балл задаёт менеджер |
+| Автоскор в шапке (GET API) | ✅ Ф4 сделано 2026-11-14: `score = score_manual или scoreAdvisory.suggestedScore` в ответе API; `score_manual` — ручное переопределение; в БД `score` не перезаписывается |
 | LLM для скоринга | Вне детерминированной модели |
 | Ещё один формат экспорта | P3 закрыт (`scoring/export`, smoke) |
 | `RecalculateAllLeadsJob` | `scoreAdvisory` считается на лету при GET карточки |

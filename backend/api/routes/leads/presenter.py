@@ -50,6 +50,13 @@ async def lead_api_payload(lead: Lead, db: AsyncSession) -> dict:
             "breakdown": {},
             "disabled": True,
         }
+    # Автоскор в шапке: score = score_manual если задан, иначе scoreAdvisory.suggestedScore.
+    # compute_lead_score_advisory выше читает поле score как manager_score — не перезаписываем до него.
+    advisory = payload.get("scoreAdvisory") or {}
+    suggested = advisory.get("suggestedScore")
+    score_manual = payload.get("scoreManual")
+    if suggested is not None:
+        payload["score"] = score_manual if score_manual is not None else suggested
     entered = await stage_entered_at(db, lead.id, str(lead.stage or "Новый"), lead.created_at)
     last_comm = await last_communication_at(db, lead.id)
     payload["dealPath"] = build_deal_path(payload)

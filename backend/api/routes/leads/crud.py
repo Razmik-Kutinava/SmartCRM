@@ -241,6 +241,10 @@ async def update_lead(
     old_stage = lead.stage
     if "approvals" in data:
         lead.approvals = merge_approvals_payload(lead.approvals, data["approvals"])
+    # Автоскор в шапке: ручное поле score → score_manual (источник истины переопределения),
+    # автоскор считается формулой и не пишется в score.
+    if "score" in data:
+        lead.score_manual = data.pop("score")
     for field, value in data.items():
         if field == "approvals":
             continue

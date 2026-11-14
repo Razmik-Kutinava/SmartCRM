@@ -3,6 +3,16 @@
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.  
 **Агент:** на старте чата **не читать весь CHANGELOG** — только шапка + запись текущего шага при нужде. Архив: `docs/archive/ops/`.
 
+## 2026-11-14 — F4: Автоскор в шапке (лиды) — score = score_manual или scoreAdvisory.suggestedScore
+
+По `go` («ебашь»): автосинхронизация видимого скора с формулой advisory.
+- Модель `backend/db/models/lead.py`: новое поле `score_manual` (nullable).
+- Миграция `backend/db/session.py` (`init_db`): `ALTER TABLE leads ADD COLUMN IF NOT EXISTS score_manual INTEGER`.
+- `backend/api/routes/leads/presenter.py`: GET `score = score_manual if score_manual is not None else scoreAdvisory.suggestedScore`.
+- `backend/api/routes/leads/crud.py`: PATCH `score` пишется в `score_manual`, автоскор не перезаписывается.
+- `frontend/src/routes/leads/[id]/+page.svelte`: иконка «ручное переопределение» (📝) в шапке, если `score_manual` задан.
+Тесты `test_lead_auto_score.py` 3 PASS; регрессия `crm_leads` 118 passed.
+
 ## 2026-11-14 — F4: Агенты по синтезу (контекст+промпты+суфлёр) — `POST /api/agents/synthesis`
 
 По `go` («ебашь»): новый модуль `agent_synthesis.py` — собирает контекст лида (паспорт, 🔍, этап, задачи, переписка) → прогоняет 5 агентов (analyst, economist, marketer, tech_specialist, strategist) параллельно → стратег синтезирует единый совет: 1–3 шага простым языком + блок `missing_data` для суфлёра + задача из `next_action`. Endpoint `POST /api/agents/synthesis`. Тесты `test_agent_synthesis.py` 2 PASS; регрессия `crm_leads` 118 PASS + `analyst` 5 PASS + `agent_email_run` 8 PASS; фронтенд `npm run build` OK.

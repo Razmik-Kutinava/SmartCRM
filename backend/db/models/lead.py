@@ -26,6 +26,7 @@ class Lead(Base):
     phone: Mapped[str] = mapped_column(String(100), default="—")
     stage: Mapped[str] = mapped_column(String(100), default="Новый")
     score: Mapped[int] = mapped_column(Integer, default=50)
+    score_manual: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, default=None)
     source: Mapped[str] = mapped_column(String(100), default="—")
     budget: Mapped[str] = mapped_column(String(100), default="—")
     # Суммы сделки в ₽ (менеджер); для отчётов и подсказок воронки
@@ -134,6 +135,7 @@ class Lead(Base):
             "phone": self.phone,
             "stage": self.stage,
             "score": self.score,
+            "scoreManual": self.score_manual,
             "source": self.source,
             "budget": self.budget,
             "amountRub": _money(self.amount_rub),

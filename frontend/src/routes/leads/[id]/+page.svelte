@@ -999,6 +999,13 @@
 						<span class="text-gray-700" aria-hidden="true">·</span>
 					{/if}
 					<span class="text-green-400 font-semibold">{lead.score}/100</span>
+					{#if lead.scoreManual !== null && lead.scoreManual !== undefined}
+						<span
+							title="Ручное переопределение скора (score_manual = {lead.scoreManual})"
+							class="text-amber-400 cursor-help"
+							aria-label="Ручное переопределение скора"
+						>📝</span>
+					{/if}
 					<span class="px-1.5 py-px rounded text-[10px] font-medium {priorityTierBadgeClass(_tier)}">{_tier.label}</span>
 					<span>{lead.stage}</span>
 					{#if leadManagerLabel(lead)}

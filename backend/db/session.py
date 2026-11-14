@@ -122,6 +122,7 @@ async def init_db():
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS portrait_score INTEGER DEFAULT 0",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS industry_bucket VARCHAR(64)",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS lead_products JSONB",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS score_manual INTEGER",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS bitrix_extra JSONB",
             "ALTER TABLE email_nurture_chains ADD COLUMN IF NOT EXISTS chain_type VARCHAR(32) DEFAULT 'new'",
             "ALTER TABLE email_nurture_chains ADD COLUMN IF NOT EXISTS product_name VARCHAR(255) DEFAULT ''",
