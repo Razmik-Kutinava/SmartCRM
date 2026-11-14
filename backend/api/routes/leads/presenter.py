@@ -59,7 +59,20 @@ async def lead_api_payload(lead: Lead, db: AsyncSession) -> dict:
         payload["score"] = score_manual if score_manual is not None else suggested
     entered = await stage_entered_at(db, lead.id, str(lead.stage or "Новый"), lead.created_at)
     last_comm = await last_communication_at(db, lead.id)
-    payload["dealPath"] = build_deal_path(payload)
+    # Путь сделки не задан: нет контактов/телефона/email и нет выполненных approvals
+    # → dealPath = null, чтобы фронт не показывал «всё пройдено» при 0/0
+    path = build_deal_path(payload)
+    contact_done = bool(str(payload.get("contact") or "").strip()) and str(payload.get("contact")) != "—"
+    phone = str(payload.get("phone") or "").strip()
+    email = str(payload.get("email") or "").strip()
+    phone_email_done = bool(phone and phone != "—") or bool(email and email != "—")
+    has_approvals_done = any(
+        s["done"] for g in path["groups"] for s in g["steps"] if s["kind"] == "approval"
+    )
+    if not contact_done and not phone_email_done and not has_approvals_done:
+        payload["dealPath"] = None
+    else:
+        payload["dealPath"] = path
     payload["stageHints"] = compute_stage_hints(
         payload,
         stage_entered_at=entered,

@@ -69,31 +69,35 @@
 		{/each}
 	</div>
 
-	{#if nextStep}
-		<div
-			class="rounded-lg border border-indigo-800/50 bg-indigo-950/25 px-3 py-2.5 space-y-2"
-			data-testid="lead-deal-path-next"
-		>
-			<div class="text-[10px] uppercase tracking-wide text-indigo-300/90">Следующий шаг</div>
-			<div class="text-sm font-medium text-white leading-snug">{nextStep.label}</div>
-			<div class="text-[10px] text-gray-500">{nextStep.groupTitle}</div>
-			{#if nextStep.kind === 'approval'}
-				<button
-					type="button"
-					disabled={saving}
-					onclick={markNextDone}
-					class="text-xs px-3 py-1.5 rounded-lg bg-indigo-700 hover:bg-indigo-600 text-white disabled:opacity-50"
-				>
-					{saving ? 'Сохранение…' : '✓ Отметить выполненным'}
-				</button>
-			{:else if nextStep.kind === 'derived'}
-				<p class="text-[11px] text-amber-400/90">Добавь контакт с ролью ЛПР справа в карточке.</p>
-			{:else}
-				<p class="text-[11px] text-amber-400/90">Заполни поле в карточке справа.</p>
-			{/if}
-		</div>
+	{#if dealPath && (dealPath.groups || []).length > 0}
+		{#if nextStep}
+			<div
+				class="rounded-lg border border-indigo-800/50 bg-indigo-950/25 px-3 py-2.5 space-y-2"
+				data-testid="lead-deal-path-next"
+			>
+				<div class="text-[10px] uppercase tracking-wide text-indigo-300/90">Следующий шаг</div>
+				<div class="text-sm font-medium text-white leading-snug">{nextStep.label}</div>
+				<div class="text-[10px] text-gray-500">{nextStep.groupTitle}</div>
+				{#if nextStep.kind === 'approval'}
+					<button
+						type="button"
+						disabled={saving}
+						onclick={markNextDone}
+						class="text-xs px-3 py-1.5 rounded-lg bg-indigo-700 hover:bg-indigo-600 text-white disabled:opacity-50"
+					>
+						{saving ? 'Сохранение…' : '✓ Отметить выполненным'}
+					</button>
+				{:else if nextStep.kind === 'derived'}
+					<p class="text-[11px] text-amber-400/90">Добавь контакт с ролью ЛПР справа в карточке.</p>
+				{:else}
+					<p class="text-[11px] text-amber-400/90">Заполни поле в карточке справа.</p>
+				{/if}
+			</div>
+		{:else}
+			<p class="text-xs text-emerald-400" data-testid="lead-deal-path-complete">Все шаги пройдены ✓</p>
+		{/if}
 	{:else}
-		<p class="text-xs text-emerald-400" data-testid="lead-deal-path-complete">Все шаги пройдены ✓</p>
+		<p class="text-xs text-amber-400" data-testid="lead-deal-path-empty">Путь сделки не задан</p>
 	{/if}
 
 	<details class="group text-xs" data-testid="lead-deal-path-accordion">

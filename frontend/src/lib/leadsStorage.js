@@ -473,22 +473,23 @@ export function writeLeadsCache(leads) {
 /** Подставить дефолты для полей карточки, которых может не быть у голосовых лидов */
 export function enrichLeadForCard(raw) {
 	if (!raw) return null;
-	const base = {
-		position: '—',
-		website: '—',
-		employees: '—',
-		industry: '—',
-		city: '—',
-		responsible: 'Я',
-		nextCall: '—',
-		description: '',
-		history: [],
-		tasks: [],
-		amountRub: null,
-		paidAmountRub: null,
-		scoreAdvisory: null,
-		approvals: {},
-	};
+		const base = {
+			position: '—',
+			website: '—',
+			employees: '—',
+			industry: '—',
+			city: '—',
+			responsible: 'Я',
+			nextCall: '—',
+			description: '',
+			history: [],
+			tasks: [],
+			amountRub: null,
+			paidAmountRub: null,
+			scoreAdvisory: null,
+			approvals: {},
+			dealPath: null,
+		};
 	const merged = {
 		...base,
 		...raw,

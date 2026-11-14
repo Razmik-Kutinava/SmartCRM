@@ -101,10 +101,10 @@
 
 - [x] PHASE 0 INTAKE: заказ дословно в todo.md
 - [x] PHASE 1 SPEC: файлы, читать, не ломать
-- [ ] PHASE 2 RED: `test_lead_deal_path_empty.py` падает (нет фикса dealPath empty)
-- [ ] PHASE 2 GREEN: бэкенд + фронт, тест зелёный
-- [ ] PHASE 3 REVIEW: регрессия `crm_leads` + UI smoke + check_step
+- [x] PHASE 2 RED: `test_lead_deal_path_empty.py` падает (нет фикса dealPath empty) — коммит `659a95f [RED]`
+- [x] PHASE 2 GREEN: бэкенд presenter.py (dealPath=null при пустом) + фронт enrichLeadForCard (dealPath=null) + LeadDealPathPanel («путь не задан»), тест зелёный, регрессия crm_leads 118 PASS
+- [ ] PHASE 3 REVIEW: UI smoke + check_step + `[x]` в чеклисте Ф4 после «ок» пользователя
 
 ---
 
-**СТОП — жду `go` / `ебашь` для PHASE 2 RED**
+**PHASE 3 REVIEW — жду `go` / `ебашь` для финиша шага**
