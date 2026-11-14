@@ -1,0 +1,22 @@
+repos:
+  - repo: local
+    hooks:
+      - id: smartcrm-pytest-changed
+        name: SmartCRM: pytest на изменённых тестах
+        description: Запускает pytest только на изменённых/добавленных файлах в backend/tests/. Не пускает коммит с красным тестом.
+        entry: bash -c
+        language: system
+        types: [python]
+        files: '^backend/tests/.*\.py$'
+        args: ['-c', 'cd backend && python -m pytest -q "$@"', '--']
+        pass_filenames: true
+        stages: [commit]
+
+      - id: smartcrm-check-step
+        name: SmartCRM: check_step.cmd (валидация шага)
+        description: Запускает scripts/check_step.cmd — check_agent_step + check_rules_commit_conflict + session_state_validate.
+        entry: scripts/check_step.cmd
+        language: system
+        types: [file]
+        pass_filenames: false
+        stages: [commit]

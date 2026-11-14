@@ -2,92 +2,109 @@
 
 ## Заказ (дословно)
 
-> ебашь
+> ебашь spec
+> **Задача для агента: F4 — «Путь сделки: не 0/0» (мелкий фикс)**
+>
+> ---
+>
+> ### Что закрываем
+> Пункт чеклиста Ф4: **Путь сделки — не показывать «всё пройдено» при пустом dealPath (0/0)**.
+>
+> Проблема: в UI карточки лида отображается «Все шаги пройдены» + индикатор 0/0, когда `dealPath` пустой или не пришёл с бэкенда. Это вводит в заблуждение — как будто всё закрыто, а на деле путь не задан.
+>
+> ---
+>
+> ### Входные артефакты
+> - `docs/operations/phase4/leads/F4_LEADS_DIRECTION.md` — § «Путь сделки»: «Часто в UI: «Все шаги пройдены» + 0/0 → dealPath пустой/не пришёл, не «всё закрыто». Разобрать и починить»
+> - `CHECKLIST_F4.md` — § Лиды: пункт «Путь сделки: не показывать «всё пройдено» при пустом dealPath (0/0)»
+> - `backend/db/models/lead.py` — модель лида, поле `deal_path` / `dealPath`
+> - `frontend/src/routes/leads/[id]/+page.svelte` — карточка лида, отображение пути сделки
+> - `frontend/src/lib/leadsStorage.js` или аналог — где рендерится индикатор прогресса пути
+>
+> ### Что реализовать (SBR)
+>
+> **PHASE 0 INTAKE (в `todo.md`):** дословный заказ + пункт чеклиста Ф4.
+>
+> **PHASE 1 SPEC:**
+> - Тест: `tests/api/test_lead_deal_path_empty.py` (новый) — проверяет:
+>   - GET /api/leads/{id} возвращает `dealPath: null` или `[]` (не отсутствует ключ)
+>   - UI не рендерит «всё пройдено» / 100% при пустом пути
+> - Файлы: `crud.py` (или где возвращается лид), `+page.svelte` карточки
+> - Читать: `F4_LEADS_DIRECTION.md` § «Путь сделки»
+>
+> **PHASE 2 BUILD (RED→GREEN):**
+> 1. RED: тест падает (UI показывает «всё пройдено» при пустом dealPath)
+> 2. GREEN:
+>    - Бэкенд: при пустом/отсутствующем `dealPath` возвращать `null` или `[]` (не опускать поле)
+>    - Фронт: условие — если `dealPath` пуст/отсутствует → не показывать «всё пройдено», показать «путь не задан» или пустой индикатор
+>
+> **PHASE 3 REVIEW:**
+> - Регрессия: `crm_leads` (из `smartcrm-dev-gates.mdc`)
+> - UI smoke: открыть карточку лида без пути сделки → не показывается «всё пройдено»
+>
+> ---
+>
+> ### Команды
+> ```bash
+> cd backend
+> python -m pytest tests/api/test_lead_deal_path_empty.py -q   # RED → GREEN
+> python scripts/run_zone_regression.py crm_leads                # регрессия лидов
+> ```
+>
+> ---
+>
+> ### Зависимость
+> **Независимая** — можно параллелить с «Автоскор в шапке» (каждый свой `go` + свой коммит).
+>
+> ---
+>
+> ### Приёмка
+> - [ ] Тест зелёный
+> - [ ] Регрессия `crm_leads` PASS
+> - [ ] Карточка: при пустом dealPath не показывается «всё пройдено» / 0/0
+> - [ ] `go` пользователя → `[x]` в чеклисте Ф4
+>
+> ---
+>
+> ### Куда писать
+> - `SESSION_STATE.md` / `CHANGELOG.md` / `HANDOFF.md` — в том же коммите
+>
+> ---
+>
+> **Старт:** `/spec` → `todo.md` + SPEC → стоп до `go` на RED.
 
-**Задача для агента: F4 — «Автоскор в шапке»**
+## Как понял
 
-Пункт чеклиста Ф4: **Автоскор в шапке** — видимый `score`/приоритет от формулы (+ полнота), не ручное поле как источник истины.
-
-## Входные артефакты
-- `docs/operations/phase4/leads/F4_LEADS_DIRECTION.md` — § «Скор»: `scoreAdvisory` формула есть, не пишет в `score`, нужна автосинхронизация
-- `backend/core/lead_score_advisory.py` — формула advisory score (этап + сумма + путь сделки − просрочки)
-- `backend/db/models/lead.py` — поле `score` (int, ручное сейчас)
-- `frontend/src/routes/leads/[id]/+page.svelte` — шапка карточки, показывает `score`
-- `backend/api/routes/leads/crud.py` — `GET /api/leads/{id}`, `PATCH` (обновление скора)
-
-## Что реализовать (SBR)
-
-**PHASE 0 INTAKE (в `todo.md`):** дословный заказ из этого сообщения + пункт чеклиста Ф4.
-
-**PHASE 1 SPEC:**
-- Тест: `tests/api/test_lead_auto_score.py` (новый) — проверяет:
-  - `GET /api/leads/{id}` возвращает `score` = `scoreAdvisory.suggestedScore` (если advisory есть)
-  - `score` обновляется при смене этапа/пути/суммы/просрочек
-  - Ручное поле `score_manual` (новое, опционально) — для переопределения
-- Файлы: `lead_score_advisory.py`, `crud.py`, `lead.py` (модель), `+page.svelte` (UI)
-- Читать: `F4_LEADS_DIRECTION.md` § «Скор», `F4_SCORING_TUNING.md`
-
-**PHASE 2 BUILD (RED→GREEN):**
-1. RED: тест падает (нет автоскора в ответе API)
-2. GREEN:
-   - Добавить в модель `score_manual` (nullable) — миграция через `init_db()`
-   - В `GET /api/leads` / `{id}`: `score = score_manual if score_manual is not None else scoreAdvisory.suggestedScore`
-   - В `PATCH`: если приходит `score` — пишем в `score_manual`, иначе не трогаем
-   - UI: шапка показывает автоскор, иконка «ручное переопределение» если `score_manual`
-
-**PHASE 3 REVIEW:**
-- Регрессия: `crm_leads` (из `smartcrm-dev-gates.mdc`)
-- UI smoke: открыть карточку → смена этапа → скор пересчитался без ручного ввода
-
-## Зависимость
-**Независимая** — можно параллелить с «Путь сделки: не 0/0» (каждая свой `go` + свой коммит).
-
-## Приёмка
-- [ ] Тест зелёный
-- [ ] Регрессия `crm_leads` PASS
-- [ ] Карточка: скор обновляется при смене этапа/пути/просрочки
-- [ ] `go` пользователя → `[x]` в чеклисте Ф4
-
-## Куда писать результат
-- `docs/operations/phase4/leads/F4_SCORING_TUNING.md` (обновить статус)
-- `SESSION_STATE.md` / `CHANGELOG.md` / `HANDOFF.md` — в том же коммите
-
-## Чеклист фазы (пункт)
-`CHECKLIST_F4.md` — «Автоскор в шапке — видимый score/приоритет от формулы (+ полнота), не ручное поле как источник истины» — `[ ]` до «ок».
+`LeadDealPathPanel` рендерит «Все шаги пройдены ✓» когда `dealPath.nextStep` = null (в т.ч. при пустых группах). Бэкенд через `presenter.py` всегда вызывает `build_deal_path(payload)` → `dealPath` с 3 группами (qualification/pre_kp/won), так что ключ есть, но UI не различает «путь задан» и «путь пуст/не пришёл». Нужно: бэкенд возвращает `dealPath: null` (или `[]`) когда путь не задан, а фронт показывает «путь не задан» вместо «всё пройдено».
 
 ## Файлы (ожидаемо)
-- `todo.md` — этот файл (заказ + микро-чеклист)
-- `backend/db/models/lead.py` — поле `score_manual`
-- `backend/db/session.py` — миграция колонки `score_manual`
-- `backend/api/routes/leads/crud.py` — PATCH `score` → `score_manual`; GET через presenter
-- `backend/api/routes/leads/presenter.py` — GET `score = score_manual или scoreAdvisory.suggestedScore`
-- `backend/core/lead_score_advisory.py` — без изменений (формула есть)
-- `frontend/src/routes/leads/[id]/+page.svelte` — иконка «ручное переопределение» если `score_manual`
-- `tests/api/test_lead_auto_score.py` — новый тест
-- `docs/operations/phase4/leads/F4_SCORING_TUNING.md` — обновить статус
-- `SESSION_STATE.md` / `CHANGELOG.md` / `HANDOFF.md` — в том же коммите
+
+- `backend/api/routes/leads/presenter.py` — смена `dealPath` на `null` при пустом/отсутствующем пути
+- `frontend/src/lib/leads/enrichLeadForCard` / `+page.svelte` — дефолт `dealPath` и условие показа
+- `frontend/src/components/LeadDealPathPanel.svelte` — условие «путь не задан»
+- `backend/tests/api/test_lead_deal_path_empty.py` — новый тест
 
 ## Читать (узко)
-- `F4_LEADS_DIRECTION.md` § «Скор»
-- `F4_SCORING_TUNING.md`
-- `backend/core/lead_score_advisory.py`
-- `backend/db/models/lead.py`
-- `backend/api/routes/leads/crud.py`
-- `backend/api/routes/leads/presenter.py`
+
+- `F4_LEADS_DIRECTION.md` § «Путь сделки» (уже прочитан)
+- `backend/core/lead_deal_path.py` — `build_deal_path`
+- `backend/api/routes/leads/presenter.py` — `lead_api_payload`
+- `frontend/src/components/LeadDealPathPanel.svelte` — рендер «всё пройдено»
+- `frontend/src/lib/leadsStorage.js` — `enrichLeadForCard`
 
 ## Не ломать
-- `compute_lead_score_advisory` — горячий, не менять сигнатуру
-- `POST /api/agents/email/run` — не в зоне этой задачи
 
-## Проверка
-- `cd backend && python -m pytest tests/api/test_lead_auto_score.py -q` — RED → GREEN
-- `cd backend && python scripts/run_zone_regression.py crm_leads`
-- `cmd /c scripts\check_step.cmd`
+- Существующие тесты `test_lead_deal_path.py`, `test_lead_engagement.py` (dealPath с группами)
+- `lead_deal_path.build_deal_path` сигнатура
 
 ## Чеклист микро
-- [x] PHASE 0 INTAKE: заказ дословно + пункт чеклиста Ф4 в todo.md
+
+- [x] PHASE 0 INTAKE: заказ дословно в todo.md
 - [x] PHASE 1 SPEC: файлы, читать, не ломать
-- [x] PHASE 2 RED: тест падает (нет автоскора в ответе API) — commit `этот`
-- [x] PHASE 2 GREEN: код + зелёный тест (3 passed)
-- [x] PHASE 3 REVIEW: регрессия crm_leads PASS (118 passed); UI — иконка score_manual добавлена, браузер-smoke не гоняли (нет go на запуск фронта)
-- [ ] `[x]` в чеклисте Ф4 — только после «ок»
+- [ ] PHASE 2 RED: `test_lead_deal_path_empty.py` падает (нет фикса dealPath empty)
+- [ ] PHASE 2 GREEN: бэкенд + фронт, тест зелёный
+- [ ] PHASE 3 REVIEW: регрессия `crm_leads` + UI smoke + check_step
+
+---
+
+**СТОП — жду `go` / `ебашь` для PHASE 2 RED**
