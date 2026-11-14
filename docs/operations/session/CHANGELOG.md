@@ -3,6 +3,10 @@
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.  
 **Агент:** на старте чата **не читать весь CHANGELOG** — только шапка + запись текущего шага при нужде. Архив: `docs/archive/ops/`.
 
+## 2026-11-14 — F4: Агенты по синтезу (контекст+промпты+суфлёр) — `POST /api/agents/synthesis`
+
+По `go` («ебашь»): новый модуль `agent_synthesis.py` — собирает контекст лида (паспорт, 🔍, этап, задачи, переписка) → прогоняет 5 агентов (analyst, economist, marketer, tech_specialist, strategist) параллельно → стратег синтезирует единый совет: 1–3 шага простым языком + блок `missing_data` для суфлёра + задача из `next_action`. Endpoint `POST /api/agents/synthesis`. Тесты `test_agent_synthesis.py` 2 PASS; регрессия `crm_leads` 118 PASS + `analyst` 5 PASS + `agent_email_run` 8 PASS; фронтенд `npm run build` OK.
+
 ## 2026-11-14 — F4: Агенты на карточке работают (`POST /api/agents/email/run`)
 
 По `go` («ебашь»): стратег без `ImportError`, аналитик с реальным `lead_id` (не заглушка), дайджест переписки урезан (экономия токенов). Тесты `test_agent_email_run.py` 8 PASS; регрессия crm_leads 39 PASS + analyst 5 PASS.
