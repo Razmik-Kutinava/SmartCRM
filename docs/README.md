@@ -26,7 +26,7 @@
 
 | Ситуация | Документ |
 |----------|----------|
-| Новая сессия агента | `HANDOFF.md` → `SESSION_STATE.md` → `ISSUES.md` 🔴 |
+| Новая сессия агента | шапка `HANDOFF` → шапка `SESSION_STATE` → ISSUES открытые · или `/start` |
 | Что строим | `product/VISION.md` → `product/ROADMAP.md` → `operations/phase4/CHECKLIST_F4.md` |
 | Как устроено технически | `product/ARCHITECTURE.md` |
 | Стек, API, БД | `product/ARCHITECTURE.md#справочник-стека` |

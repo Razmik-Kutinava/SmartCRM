@@ -75,6 +75,24 @@ python scripts/run_zone_regression.py crm_leads   # одна зона
 
 UI затронут → Chrome DevTools MCP или чеклист в отчёте (что кликнули / не кликали).
 
+### Эконом-режим приёмки (дефолт; качество не режем)
+
+**Порядок (дешёвое → дорогое):** 1) узкий pytest задачи → 2) **зона** из таблицы → 3) при FAIL — **стоп**, UI/MCP не стартовать → 4) UI smoke / Chrome DevTools только если дифф трогает фронт → 5) hermes_eval / тяжёлый eval — только если зона hermes/интенты.
+
+| Обязательно | Можно skip (только с причиной в отчёте) |
+|-------------|----------------------------------------|
+| Тест **на изменение** + **зона** при коде backend | UI/MCP — дифф **не** фронт/голос-UI → `skip: не UI` |
+| Hot-path voice/hermes/orchestrator — зона `voice` (+ hermes_eval если менялся parse) | hermes_eval — нет LLM/Ollama → ISSUES 🔴, зону voice не блокировать |
+| `Регрессия_счёт` 3/3 → `all` или p1+p6 | Полный `@codebase` / лишний explore |
+| Короткий лог pytest (2–3 строки в отчёт) | Дамп всего pytest / архивных приёмок в чат |
+| `/crit-audit` на PII/голос/hot-path в REVIEW | crit-audit на docs/rules-only → `skip: не hot-path` |
+
+**Запрещено «для экономии»:** молча пропустить зонную регрессию на GREEN; skip UI на затронутом фронте без `skip+почему`; подменить зону одним unit-тестом без таблицы зон; отменить A/B/C или `check_step.cmd`.
+
+**Токены:** мало скринов/snapshot; не читать `CRITICAL_LEDGER`/archive на старте; после длинного SBR предпочтителен **новый узкий чат** на ручную приёмку (`OWNER_CHECKS`).
+
+В отчёте: **Зона:** PASS/FAIL · **UI/MCP:** PASS / skip+почему · **crit-audit:** CLEAN / skip+почему / BLOCKED
+
 ---
 
 ## Hot-path — не трогать без причины в плане

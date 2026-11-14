@@ -1,8 +1,10 @@
 ﻿# SmartCRM — Cursor Rules (вход)
 
-**Канон процесса:** `.cursor/rules/workflow/` + [`smartcrm-index.mdc`](.cursor/rules/smartcrm-index.mdc) — там индекс всех правил.
+**Канон процесса:** `.cursor/rules/workflow/` + [`smartcrm-index.mdc`](.cursor/rules/smartcrm-index.mdc) — там индекс всех правил.  
+**Slash:** `.cursor/commands/` — `/start` → `/spec` → `/sbr` → `/review`; токены — `/ctx-trim`; PII/голос — `/crit-audit`.
 
-**Жёстко:** [`workflow/smartcrm-commit-ops.mdc`](.cursor/rules/workflow/smartcrm-commit-ops.mdc) — `git commit` **до** ответа пользователю; **`git push`** — только по явному go.
+**Жёстко:** [`workflow/smartcrm-commit-ops.mdc`](.cursor/rules/workflow/smartcrm-commit-ops.mdc) — `git commit` **до** ответа пользователю; **`git push`** — только по явному go.  
+**Старт:** шапка-only HANDOFF/SESSION (не весь журнал). Апрув шага: `go` / `ебашь`.
 
 ## Контекст
 

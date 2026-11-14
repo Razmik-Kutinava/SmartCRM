@@ -7,7 +7,8 @@
 | Слой | Папка | Назначение | Подключение |
 |------|-------|------------|-------------|
 | Индекс | [`.cursor/rules/smartcrm-index.mdc`](../../../.cursor/rules/smartcrm-index.mdc) | карта workflow + project, приоритет | всегда |
-| Workflow | [`.cursor/rules/workflow/`](../../../.cursor/rules/workflow/) | commit-ops, task-workflow, dev-gates, SBR — всегда; repo-layout, file-size-split — по globs | смешанное |
+| Workflow | [`.cursor/rules/workflow/`](../../../.cursor/rules/workflow/) | commit-ops, task-workflow, dev-gates, SBR — всегда; context-hygiene — on-demand; repo-layout, file-size-split — по globs | смешанное |
+| Commands | [`.cursor/commands/`](../../../.cursor/commands/) | slash `/start` `/spec` `/sbr` `/review` `/ctx-trim` `/crit-audit` | по вызову |
 | Project | [`.cursor/rules/project/`](../../../.cursor/rules/project/) | core, tests, http, data, agents (globs); performance (всегда) | по globs |
 
 ## Канон коммита
@@ -42,6 +43,11 @@
 | R13 | Ops-журналы: записи старше текущего месяца → `docs/archive/ops/` | `workflow/smartcrm-commit-ops.mdc` § Ops | дисциплина |
 | R14 | ISSUES: открытые записи старше месяца — «должки», показать пользователю и просить подтвердить закрытие | `workflow/task-workflow` § Старт сессии | дисциплина |
 | R15 | Токены: широкий заказ→варианты; короткие логи; лёгкие доки; зона×3→`all` (`Регрессия_счёт`) | `task-workflow`, `dev-gates`, SBR GREEN | дисциплина + SESSION_STATE |
+| R16 | Старт шапка-only; explore не «на всякий»; `ебашь`/`go` = апрув шага | `task-workflow` § старт/намерение | дисциплина |
+| R17 | `/ctx-trim` + архив ops; поле `ctx_trim` в шапках | `context-hygiene.mdc`, `commands/ctx-trim.md` | дисциплина |
+| R18 | Эконом-режим приёмки: дешёвое→дорогое; зона на GREEN не skip | `dev-gates` § Эконом-режим | дисциплина |
+| R19 | `/crit-audit` K1–K5 (PII/голос); журнал CRITICAL_LEDGER | `commands/crit-audit.md`, `CRITICAL_LEDGER.md` | дисциплина |
+| R20 | ZONE_NOTES по разделу зоны; OWNER_CHECKS ≤12 на пакет | `phase4/ZONE_NOTES.md`, `OWNER_CHECKS.md` | дисциплина |
 
 ## SBR scope (апрув 2026-07-18)
 
@@ -50,13 +56,15 @@
 **Вход (PHASE 0 INTAKE, апрув 2026-07-21):** заказ пользователя дословной цитатой в `todo.md`; пункт чеклиста фазы и доки области создаются до кода.
 **Серая зона:** спросить один раз. Канон: [`spec-build-review.mdc`](../../../.cursor/rules/workflow/spec-build-review.mdc) § Scope.
 
-## Старт сессии
+## Старт сессии (шапка-only)
 
 | Поле | Источник |
 |------|----------|
-| `last_done:` | `HANDOFF.md` |
-| `current_state:` | `SESSION_STATE`, `ISSUES` 🔴 |
+| `last_done:` | `HANDOFF.md` (до `---`, limit ~25–40) |
+| `current_state:` | `SESSION_STATE` шапка + 1–3 строки, `ISSUES` открытые |
 | `next_step:` | `HANDOFF`, чеклист активной фазы ([`Чеклист: Фаза 4 — Тюнинг и MVP`](../phase4/CHECKLIST_F4.md)) — один шаг |
+
+Slash: `/start`. Не читать весь CHANGELOG/archive/ZONE_NOTES/CRITICAL_LEDGER на старте.
 
 ## Финиш шага
 

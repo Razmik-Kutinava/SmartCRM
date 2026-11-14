@@ -12,13 +12,18 @@ alwaysApply: true
 | Файл | За что | Подключение |
 |------|--------|-------------|
 | [`workflow/smartcrm-commit-ops.mdc`](workflow/smartcrm-commit-ops.mdc) | commit + ops до ответа; порядок шага; push по go | всегда |
-| [`workflow/smartcrm-task-workflow.mdc`](workflow/smartcrm-task-workflow.mdc) | чеклист фазы, go, тесты, хвост A/B/C, формат отчёта | всегда |
-| [`workflow/smartcrm-dev-gates.mdc`](workflow/smartcrm-dev-gates.mdc) | DoD, регрессия, миграции, hot-path | всегда |
-| [`workflow/spec-build-review.mdc`](workflow/spec-build-review.mdc) | SBR + scope (MAP+фичи; one-liner без) | всегда |
+| [`workflow/smartcrm-task-workflow.mdc`](workflow/smartcrm-task-workflow.mdc) | чеклист фазы, go/ебашь, шапка-only старт, A/B/C | всегда |
+| [`workflow/smartcrm-dev-gates.mdc`](workflow/smartcrm-dev-gates.mdc) | DoD, регрессия, эконом-режим приёмки, hot-path | всегда |
+| [`workflow/spec-build-review.mdc`](workflow/spec-build-review.mdc) | SBR + scope + slash-цепочка | всегда |
+| [`workflow/smartcrm-context-hygiene.mdc`](workflow/smartcrm-context-hygiene.mdc) | `/ctx-trim` — архив ops, токены | **on-demand** |
 | [`workflow/smartcrm-repo-layout.mdc`](workflow/smartcrm-repo-layout.mdc) | куда класть файлы, Backend README sync | по файлам (globs) |
 | [`workflow/smartcrm-file-size-split.mdc`](workflow/smartcrm-file-size-split.mdc) | лимит файлов, сплит | по файлам (globs) |
 
-Микро-чеклист фичи (SBR PHASE 0–3, вкл. заказ дословно): `docs/operations/session/todo.md`.
+Микро-чеклист фичи (SBR PHASE 0–3, вкл. заказ дословно): `docs/operations/session/todo.md`.  
+Slash: [`.cursor/commands/`](../commands/README.md) — `/start` `/spec` `/sbr` `/review` `/ctx-trim` `/crit-audit`.  
+Ф4: [`ZONE_NOTES`](../../docs/operations/phase4/ZONE_NOTES.md) · [`OWNER_CHECKS`](../../docs/operations/phase4/OWNER_CHECKS.md) · [`CRITICAL_LEDGER`](../../docs/operations/session/CRITICAL_LEDGER.md).
+
+**Не раздувать alwaysApply** без нужды — hygiene/crit-audit только по команде.
 
 ## Project (стек, по globs)
 

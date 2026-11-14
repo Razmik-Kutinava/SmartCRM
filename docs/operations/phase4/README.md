@@ -2,6 +2,8 @@
 
 **Текущая фаза.** Чеклист (управление фазой): [`Чеклист: Фаза 4 — Тюнинг и MVP`](CHECKLIST_F4.md).
 
+**Операционка агента (Ф4):** [`ZONE_NOTES.md`](ZONE_NOTES.md) (читать только `##` зоны) · [`OWNER_CHECKS.md`](OWNER_CHECKS.md) (ручная приёмка владельцем) · ledger: [`../session/CRITICAL_LEDGER.md`](../session/CRITICAL_LEDGER.md).
+
 **Не блокер Ф3.** Сюда — polish, retrieval, автоматизация обновлений, eval там, где базовый функционал уже есть.
 
 | Домен | Документ |

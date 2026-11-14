@@ -9,10 +9,12 @@ alwaysApply: true
 Приоритет: `smartcrm-commit-ops` → `smartcrm-task-workflow` → `smartcrm-dev-gates` → **spec-build-review**.
 
 **Микро:** [`docs/operations/session/todo.md`](../../../docs/operations/session/todo.md)  
-**Макро:** SESSION_STATE / HANDOFF — полный батч только **PHASE 3 REVIEW**
+**Макро:** SESSION_STATE / HANDOFF — полный батч только **PHASE 3 REVIEW**  
+**Slash:** `/start` → `/spec` → `/sbr` → `/review` (`.cursor/commands/`); после команды — `Next: /…`
 
 **Коммиты:** RED (без CHANGELOG/HANDOFF) · GREEN (+ регрессия зоны) · REVIEW = обычный финиш шага  
-**TDD-RED ≠ ISSUES** — намеренный падающий тест не баг.
+**TDD-RED ≠ ISSUES** — намеренный падающий тест не баг.  
+**Апрув шага:** `go` · `ебашь` · `дальше` · `сделай` (см. task-workflow § Намерение).
 
 ## Scope SBR (апрув 2026-07-18)
 
@@ -45,9 +47,10 @@ alwaysApply: true
 ## PHASE 1: SPEC
 
 1. Security + file-size: секреты в `.env`; без raw SQL от LLM; лимиты `smartcrm-file-size-split.mdc`
-2. Обновить **`todo.md`** — чеклист микро-шагов фичи
-3. Краткая строка **`SESSION_STATE`** (без CHANGELOG/HANDOFF)
-4. **СТОП** → показать todo → ждать **`go`**
+2. Обновить **`todo.md`** — чеклист микро-шагов фичи + **«Файлы (ожидаемо)»** (2–7 путей) + **«Читать»** (только нужные §) + при hot-path **«Не ломать»** / **«Проверка»**
+3. ZONE_NOTES — только раздел зоны задачи; docs >150 строк — не целиком
+4. Краткая строка **`SESSION_STATE`** (без CHANGELOG/HANDOFF)
+5. **СТОП** → показать todo → ждать **`go`/`ебашь`** (если в том же сообщении «до конца / сразу sbr» — сразу RED)
 
 ## PHASE 2: BUILD
 
@@ -57,13 +60,13 @@ alwaysApply: true
 - `cd backend && python -m pytest <path> -q` — **падение** на новой логике
 - `git commit` — сообщение `test: … [RED]`
 - **Без** CHANGELOG / HANDOFF; SESSION_STATE — `in_progress`
-- **СТОП** → лог pytest → ждать **`go`**
+- **СТОП** → лог pytest → ждать **`go`/`ебашь`** (кроме «до конца»)
 
 ### GREEN
 
 - Код по домену — **`project/smartcrm-{core,http,data,agents}`** + perf
 - До **3** попыток fix; завис — откат **только** файлов реализации (не тесты / todo / ops)
-- **Регрессия зоны** — таблица `smartcrm-dev-gates.mdc`; каждый **3-й** GREEN → ещё `all` (или p1+p6) — счётчик в SESSION_STATE (`Регрессия_счёт`)
+- **Регрессия зоны** — таблица `smartcrm-dev-gates.mdc`; каждый **3-й** GREEN → ещё `all` (или p1+p6) — счётчик в SESSION_STATE (`Регрессия_счёт`). **Не ослаблять** «ради токенов».
 - `[x]` в `todo.md`
 - `git commit` — `feat: … [GREEN]` или `fix: … [GREEN]`
 
@@ -71,11 +74,12 @@ alwaysApply: true
 
 После всех `[x]` в todo (или явный scope-cut в BACKLOG):
 
-1. Sanity: hot-path, N+1, `pytest`, UI — если затронут
-2. Ops: SESSION_STATE + CHANGELOG + HANDOFF
-3. Отчёт: таблица **Сделано | Не сделано** + **B / C** + **`Коммит: <hash>`** + регрессия PASS/FAIL (A = колонка «Не сделано»)
-4. Очистить или архивировать todo → **стоп до `go`**
-5. `git push` / deploy — **только** по явной просьбе
+1. Sanity: hot-path, N+1, `pytest`, UI — если затронут; эконом-порядок — `smartcrm-dev-gates` § «Эконом-режим»
+2. Hot-path / PII / голос — `/crit-audit` (иначе skip+причина); bugbot/security — не авто, только nudge/просьба
+3. Ops: SESSION_STATE + CHANGELOG + HANDOFF; ZONE_NOTES зоны при новых контрактах; OWNER_CHECKS ≤12 пунктов если UI-пакет
+4. Отчёт: таблица **Сделано | Не сделано** + **B / C** + **`Коммит: <hash>`** + регрессия PASS/FAIL (A = колонка «Не сделано»)
+5. Очистить todo или строка в `docs/archive/ops/todo-index.md` → **стоп до `go`**
+6. `git push` / deploy — **только** по явной просьбе
 
 ## Связь с чеклистом фазы
 
