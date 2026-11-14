@@ -198,3 +198,7 @@ docs/rules — пакет C tokens/SBR (CoffeeOS+APU): hygiene, slash, ZONE_NOTE
 2026-11-14 | Действие: F4 «Агенты на карточке работают»: `POST /api/agents/email/run` — стратег без ImportError, аналитик с lead_id (не заглушка), дайджест переписки урезан (EMAIL_DIGEST_MAX_THREADS/MESSAGES/CHARS); пункты CHECKLIST_F4 → [x]; тесты test_agent_email_run.py 8 PASS; регрессия crm_leads 39 PASS + analyst 5 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (docs+опс, код коммичен ранее)
 
 > Архив: `docs/archive/ops/` (записи по месяцам).
+
+Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: in_progress | Регрессия_счёт: 0/3
+
+2026-11-14 | Действие: SBR SPEC — агенты по синтезу (F4): todo.md заказ дословно + пункт чеклиста Ф4, F4_AGENT_SYNTHESIS.md создан; стоп до go на RED | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: in_progress | Регрессия_счёт: 0/3
