@@ -195,4 +195,6 @@ docs/rules — пакет C tokens/SBR (CoffeeOS+APU): hygiene, slash, ZONE_NOTE
 
 2026-07-01 | Действие: spawn_bitrix_backfill_focused — поля/tasks/products/import; task scope OK; timeline done; FAQ/IMAP выкл; pytest 2 PASS | Коммит: `7d40b32` | Хвост A: дождаться fields+import | Хвост B: нет | Хвост C: requisite.list Access denied (не блокер) | Статус: in_progress
 
+2026-11-14 | Действие: F4 «Агенты на карточке работают»: `POST /api/agents/email/run` — стратег без ImportError, аналитик с lead_id (не заглушка), дайджест переписки урезан (EMAIL_DIGEST_MAX_THREADS/MESSAGES/CHARS); пункты CHECKLIST_F4 → [x]; тесты test_agent_email_run.py 8 PASS; регрессия crm_leads 39 PASS + analyst 5 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (docs+опс, код коммичен ранее)
+
 > Архив: `docs/archive/ops/` (записи по месяцам).
