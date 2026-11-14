@@ -6,6 +6,8 @@
 
 **Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.
 
+2026-11-14 | Действие: SBR RED — нечёткий поиск: test_lead_company_fuzzy FAIL (нет core.lead_company_fuzzy) | Коммит: `этот` | Статус: in_progress | Регрессия_счёт: 2/3
+
 2026-11-14 | Действие: SBR SPEC — нечёткий поиск лидов: todo + CHECKLIST_F4 + F4_LEAD_SEARCH_FUZZY; стоп до go на RED | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: in_progress | Регрессия_счёт: 2/3
 
 2026-11-05 | Действие: SBR GREEN+REVIEW — open_lead overlay: LeadVoiceOverlay blur+iframe embed, rememberFromCache при filter; overlay 4 + open_lead 5 PASS; voice zone PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3 (voice PASS)

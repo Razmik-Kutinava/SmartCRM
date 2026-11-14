@@ -24,8 +24,8 @@
 
 ## Чеклист микро
 
-- [ ] RED: `test_lead_company_fuzzy` — «втф банг» → «ВТБ Банк» в топ-5; exact не размывается
-- [ ] GREEN: `leadCompanyFuzzy.js` + fallback в `filterLeads`/`applyLeadListView`; опц. бейдж «похоже»
+- [x] RED: `test_lead_company_fuzzy` — «втф банг» → «ВТБ Банк» в топ-5; exact не размывается
+- [ ] GREEN: `core/lead_company_fuzzy.py` + `leadCompanyFuzzy.js` + fallback в `filterLeads`; опц. бейдж «похоже»
 - [ ] регрессия `crm_leads` + ops REVIEW
 - [ ] не трогать: Voice Layer / open silent / CRUD / обучение алиасов
 
