@@ -71,7 +71,8 @@ def test_ws_leadgen_generate_lead_navigate_only():
         "module": "leadgen",
         "ui_action": "navigate",
     }
-    with patch("voice.pipeline.transcribe", AsyncMock(return_value=text)), patch(
+    # type=text — без Whisper (на CI патч transcribe+send_bytes давал живой Groq 401 + hang)
+    with patch(
         "voice.pipeline.parse_intent",
         AsyncMock(return_value={**routed, "_model": "mock"}),
     ), patch("voice.pipeline.traces.new_trace", return_value={"id": "lg-v2"}), patch(
@@ -82,8 +83,8 @@ def test_ws_leadgen_generate_lead_navigate_only():
     ) as mock_run:
         with TestClient(app) as tc:
             with tc.websocket_connect("/ws/voice", headers={"X-API-Key": _TEST_KEY}) as ws:
-                ws.send_bytes(b"fake-webm-audio")
-                msgs = [ws.receive_json() for _ in range(4)]
+                ws.send_json({"type": "text", "text": text})
+                msgs = [ws.receive_json() for _ in range(3)]
     mock_run.assert_not_called()
     va = next((m for m in msgs if m.get("type") == "voice_action"), None)
     assert va is not None

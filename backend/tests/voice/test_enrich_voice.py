@@ -71,6 +71,7 @@ async def test_fetch_enrich_preview_mocked():
 
 
 def test_ws_enrich_lead_modal_no_orchestrator():
+    """WS type=text — без Whisper (патч transcribe на CI ломается → живой Groq 401 + hang)."""
     text = "обогати лид Ромашка"
     auth_module._API_KEY = _TEST_KEY
     preview = {
@@ -90,7 +91,7 @@ def test_ws_enrich_lead_modal_no_orchestrator():
         "module": "leads",
         "ui_action": "modal",
     }
-    with patch("voice.pipeline.transcribe", AsyncMock(return_value=text)), patch(
+    with patch(
         "voice.pipeline.parse_intent",
         AsyncMock(return_value={**routed, "_model": "mock"}),
     ), patch("voice.pipeline.traces.new_trace", return_value={"id": "en-v1"}), patch(
@@ -104,8 +105,9 @@ def test_ws_enrich_lead_modal_no_orchestrator():
     ) as mock_run:
         with TestClient(app) as tc:
             with tc.websocket_connect("/ws/voice", headers={"X-API-Key": _TEST_KEY}) as ws:
-                ws.send_bytes(b"fake-webm-audio")
-                msgs = [ws.receive_json() for _ in range(4)]
+                ws.send_json({"type": "text", "text": text})
+                # transcript + intent + voice_action
+                msgs = [ws.receive_json() for _ in range(3)]
     mock_run.assert_not_called()
     va = next((m for m in msgs if m.get("type") == "voice_action"), None)
     assert va is not None

@@ -199,6 +199,8 @@ docs/rules — пакет C tokens/SBR (CoffeeOS+APU): hygiene, slash, ZONE_NOTE
 
 > Архив: `docs/archive/ops/` (записи по месяцам).
 
+2026-11-15 | Действие: fix CI pytest — WS voice тесты: text path вместо send_bytes (enrich/leadgen), mic e2e патч pipeline+whisper.transcribe, voice.py ловит Exception на STT (не только RuntimeError); причина CI FAIL: test_ws_enrich_lead_modal → живой Groq 401 + hang receive_json; 8 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3
+
 2026-11-15 | Действие: fix CI grey/cancelled — hang-фиксы: scenarios patch agents.orchestrator.run_fanout_graph (был agents.graph → живой Tavily/egrul), bitrix x5_like моки requisites/contacts, research_lead resolve_inn+inn, agents_gate mock check_ollama_ready, gate_config delenv TOTAL; pytest-timeout 60s; CI env без провайдеров; coverage в pytest job; scenario 22 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: FAQ local flake при EMAIL_FAQ=0 в .env | Статус: done | Регрессия_счёт: 1/3
 
 2026-11-14 | Действие: SBR GREEN — CI + прекоммит + тесты: .github/workflows/ci.yml (job zone_regression crm_leads+analyst+voice на Py3.11, job coverage html), .pre-commit-config.yaml (pytest на backend/tests/ + check_step.cmd), scripts/install_git_hooks.ps1 (добавлен pre-commit install); FIX — agents/orchestrator.py _result_from_state fallback на analyst_output.summary (smoke test_orchestrator_list_leads_mocked был красный: final_reply брал slots.reply, не analyst summary); zone crm_leads 118 PASS, analyst/hermes_eval 5 PASS, smoke 141 passed 8 skipped; voice — hangs (сетевой/медиа, не красный); git push origin main OK | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3

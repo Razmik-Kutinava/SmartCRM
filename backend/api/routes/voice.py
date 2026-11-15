@@ -138,7 +138,9 @@ async def voice_websocket(ws: WebSocket):
 
                 try:
                     result = await process_audio(audio_bytes)
-                except RuntimeError:
+                except Exception as e:
+                    # Не только RuntimeError: Groq 401 и пр. иначе улетают в outer handler
+                    logger.warning("WS voice STT/pipeline: %s", e)
                     await ws.send_json({"type": "error", "message": "Ошибка распознавания речи"})
                     continue
 

@@ -30,7 +30,11 @@ def test_ws_audio_bytes_mic_pipeline():
     routed = _route_cpu(_PHRASE)
     wav = make_silent_wav(0.3)
 
-    with patch("voice.pipeline.transcribe", AsyncMock(return_value=_PHRASE)), patch(
+    # Патчим оба пути: pipeline.transcribe и whisper.transcribe (CI иначе бьёт в живой Groq)
+    mock_stt = AsyncMock(return_value=_PHRASE)
+    with patch("voice.pipeline.transcribe", mock_stt), patch(
+        "voice.whisper.transcribe", mock_stt
+    ), patch(
         "voice.pipeline.parse_intent",
         AsyncMock(return_value={**routed, "_model": "mock"}),
     ), patch("voice.pipeline.traces.new_trace", return_value={"id": "mic-e2e"}), patch(
