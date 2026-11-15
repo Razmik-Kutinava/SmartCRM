@@ -9,6 +9,7 @@ from voice.whisper import transcribe
 from voice.voice_action import build_voice_action
 from core.hermes import parse_intent
 from core import traces
+from core.agent_memory import set_last_lead, get_last_lead, clear_last_lead
 
 logger = logging.getLogger(__name__)
 
@@ -81,11 +82,53 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         "generate_lead", "find_leads_portrait", "cluster_company",
     })
 
+    # Извлекаем session_id из контекста (если передан в page_context или есть в метаданных)
+    session_id = None
+    if page_context:
+        # page_context может содержать session_id в формате "session_id:xxx"
+        import re
+        m = re.search(r"session[_\s]*id[:\s]*([a-zA-Z0-9\-_]+)", page_context)
+        if m:
+            session_id = m.group(1)
+    # Fallback: используем trace_id как session_id
+    if not session_id:
+        session_id = trace["id"]
+
     # Шаг 3: Агенты / контекстные хэндлеры
     agent_result: dict = {}
     final_reply = base_reply
 
     try:
+        # Обработка голосовой памяти для open_lead
+        if intent == "open_lead":
+            # Если есть selected_index — выбираем из сохранённых кандидатов
+            selected_index = slots.get("selected_index")
+            if selected_index is not None:
+                memory = get_last_lead(session_id, max_age_sec=60)
+                if memory and memory.get("candidates"):
+                    candidates = memory["candidates"]
+                    if 0 <= selected_index < len(candidates):
+                        chosen = candidates[selected_index]
+                        slots = {**slots, "lead_id": chosen["id"], "ref": "last"}
+                        final_reply = f"Открываю лид №{selected_index + 1}: {chosen.get('company', '')}."
+                    else:
+                        final_reply = f"Лид №{selected_index + 1} не найден в списке."
+                else:
+                    final_reply = "Нет сохранённого списка лидов для выбора по номеру."
+
+            # Если нет lead_id и нет selected_index — пробуем взять последний найденный
+            elif not slots.get("lead_id") and slots.get("ref") != "last":
+                memory = get_last_lead(session_id, max_age_sec=60)
+                if memory:
+                    slots = {**slots, "lead_id": memory["lead_id"], "ref": "last"}
+                    final_reply = f"Открываю последний найденный лид: {memory['company']}."
+                else:
+                    final_reply = "Не найден лид для открытия. Сначала скажите «найди лид ...»."
+
+        # Очистка памяти при «найди другой лид» / list_leads с флагом сброса
+        if intent == "list_leads" and slots.get("_clear_voice_memory"):
+            clear_last_lead(session_id)
+
         if intent == "lead_history":
             from voice.lead_context import fetch_lead_history
 
@@ -93,8 +136,30 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
             if agent_result.get("final_reply"):
                 final_reply = agent_result["final_reply"]
             lid = agent_result.get("lead_id")
+            company = agent_result.get("company")
             if lid is not None:
                 slots = {**slots, "lead_id": lid}
+            # Сохраняем в голосовую память (single lead)
+            if lid is not None and company:
+                set_last_lead(session_id, lid, company, [{"id": lid, "company": company}])
+
+        # list_leads: если это поисковый запрос — получаем список лидов и сохраняем кандидатов
+        elif intent == "list_leads":
+            # Если есть query/company — делаем поиск и сохраняем топ-10 кандидатов
+            query = slots.get("query") or slots.get("company")
+            if query:
+                from agents.tools import read_lead_by_company
+                candidates = await read_lead_by_company(query, limit=10)
+                if candidates:
+                    # Сохраняем первый как "последний найденный" и весь список как кандидаты
+                    first = candidates[0]
+                    set_last_lead(session_id, first["lead_id"], first["company"], candidates)
+                    final_reply = f"Найдено {len(candidates)} лид(ов). Первый: {first['company']}. Скажите «открой первый» или номер лида."
+                else:
+                    final_reply = f"По запросу «{query}» лиды не найдены."
+            else:
+                # Просто list_leads без поиска — не меняем память
+                pass
         elif intent == "ask_rag":
             from voice.rag_context import fetch_rag_answer
 

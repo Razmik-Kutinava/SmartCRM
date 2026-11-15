@@ -2,109 +2,80 @@
 
 ## Заказ (дословно)
 
-> ебашь spec
-> **Задача для агента: F4 — «Путь сделки: не 0/0» (мелкий фикс)**
+> «Сейчас голосом говорю найти лид — поиск почти точен. Но следующая команда "открой лид" — если быстро не скажу, агент забывает, что нашёл. Надо: чуть задержать память, чтобы "открой лид" подхватил последний найденный. Если задача в контуре лида — агент помнит и знает, что делать. Если "найди другой лид" — переключается на поиск. Память уходит очень быстро.
 >
-> ---
+> Ещё: иногда находит несколько одинаковых лидов. Надо голосом выбирать: "первый", "второй", "лид № 3" или сказать полное название / город / ИНН / имя контакта / фамилию менеджера — поиск сужается и находит точный.
 >
-> ### Что закрываем
-> Пункт чеклиста Ф4: **Путь сделки — не показывать «всё пройдено» при пустом dealPath (0/0)**.
+> Поиск работает только на кириллице — надо транслитерацию RU↔EN, чтобы "акбарс банк ад аудит" и "akbars bank ad audit" находили один лид.
 >
-> Проблема: в UI карточки лида отображается «Все шаги пройдены» + индикатор 0/0, когда `dealPath` пустой или не пришёл с бэкенда. Это вводит в заблуждение — как будто всё закрыто, а на деле путь не задан.
->
-> ---
->
-> ### Входные артефакты
-> - `docs/operations/phase4/leads/F4_LEADS_DIRECTION.md` — § «Путь сделки»: «Часто в UI: «Все шаги пройдены» + 0/0 → dealPath пустой/не пришёл, не «всё закрыто». Разобрать и починить»
-> - `CHECKLIST_F4.md` — § Лиды: пункт «Путь сделки: не показывать «всё пройдено» при пустом dealPath (0/0)»
-> - `backend/db/models/lead.py` — модель лида, поле `deal_path` / `dealPath`
-> - `frontend/src/routes/leads/[id]/+page.svelte` — карточка лида, отображение пути сделки
-> - `frontend/src/lib/leadsStorage.js` или аналог — где рендерится индикатор прогресса пути
->
-> ### Что реализовать (SBR)
->
-> **PHASE 0 INTAKE (в `todo.md`):** дословный заказ + пункт чеклиста Ф4.
->
-> **PHASE 1 SPEC:**
-> - Тест: `tests/api/test_lead_deal_path_empty.py` (новый) — проверяет:
->   - GET /api/leads/{id} возвращает `dealPath: null` или `[]` (не отсутствует ключ)
->   - UI не рендерит «всё пройдено» / 100% при пустом пути
-> - Файлы: `crud.py` (или где возвращается лид), `+page.svelte` карточки
-> - Читать: `F4_LEADS_DIRECTION.md` § «Путь сделки»
->
-> **PHASE 2 BUILD (RED→GREEN):**
-> 1. RED: тест падает (UI показывает «всё пройдено» при пустом dealPath)
-> 2. GREEN:
->    - Бэкенд: при пустом/отсутствующем `dealPath` возвращать `null` или `[]` (не опускать поле)
->    - Фронт: условие — если `dealPath` пуст/отсутствует → не показывать «всё пройдено», показать «путь не задан» или пустой индикатор
->
-> **PHASE 3 REVIEW:**
-> - Регрессия: `crm_leads` (из `smartcrm-dev-gates.mdc`)
-> - UI smoke: открыть карточку лида без пути сделки → не показывается «всё пройдено»
->
-> ---
->
-> ### Команды
-> ```bash
-> cd backend
-> python -m pytest tests/api/test_lead_deal_path_empty.py -q   # RED → GREEN
-> python scripts/run_zone_regression.py crm_leads                # регрессия лидов
-> ```
->
-> ---
->
-> ### Зависимость
-> **Независимая** — можно параллелить с «Автоскор в шапке» (каждый свой `go` + свой коммит).
->
-> ---
->
-> ### Приёмка
-> - [ ] Тест зелёный
-> - [ ] Регрессия `crm_leads` PASS
-> - [ ] Карточка: при пустом dealPath не показывается «всё пройдено» / 0/0
-> - [ ] `go` пользователя → `[x]` в чеклисте Ф4
->
-> ---
->
-> ### Куда писать
-> - `SESSION_STATE.md` / `CHANGELOG.md` / `HANDOFF.md` — в том же коммите
->
-> ---
->
-> **Старт:** `/spec` → `todo.md` + SPEC → стоп до `go` на RED.
-
-## Как понял
-
-`LeadDealPathPanel` рендерит «Все шаги пройдены ✓» когда `dealPath.nextStep` = null (в т.ч. при пустых группах). Бэкенд через `presenter.py` всегда вызывает `build_deal_path(payload)` → `dealPath` с 3 группами (qualification/pre_kp/won), так что ключ есть, но UI не различает «путь задан» и «путь пуст/не пришёл». Нужно: бэкенд возвращает `dealPath: null` (или `[]`) когда путь не задан, а фронт показывает «путь не задан» вместо «всё пройдено».
-
-## Файлы (ожидаемо)
-
-- `backend/api/routes/leads/presenter.py` — смена `dealPath` на `null` при пустом/отсутствующем пути
-- `frontend/src/lib/leads/enrichLeadForCard` / `+page.svelte` — дефолт `dealPath` и условие показа
-- `frontend/src/components/LeadDealPathPanel.svelte` — условие «путь не задан»
-- `backend/tests/api/test_lead_deal_path_empty.py` — новый тест
-
-## Читать (узко)
-
-- `F4_LEADS_DIRECTION.md` § «Путь сделки» (уже прочитан)
-- `backend/core/lead_deal_path.py` — `build_deal_path`
-- `backend/api/routes/leads/presenter.py` — `lead_api_payload`
-- `frontend/src/components/LeadDealPathPanel.svelte` — рендер «всё пройдено»
-- `frontend/src/lib/leadsStorage.js` — `enrichLeadForCard`
-
-## Не ломать
-
-- Существующие тесты `test_lead_deal_path.py`, `test_lead_engagement.py` (dealPath с группами)
-- `lead_deal_path.build_deal_path` сигнатура
-
-## Чеклист микро
-
-- [x] PHASE 0 INTAKE: заказ дословно в todo.md
-- [x] PHASE 1 SPEC: файлы, читать, не ломать
-- [x] PHASE 2 RED: `test_lead_deal_path_empty.py` падает (нет фикса dealPath empty) — коммит `659a95f [RED]`
-- [x] PHASE 2 GREEN: бэкенд presenter.py (dealPath=null при пустом) + фронт enrichLeadForCard (dealPath=null) + LeadDealPathPanel («путь не задан»), тест зелёный, регрессия crm_leads 118 PASS
-- [ ] PHASE 3 REVIEW: UI smoke + check_step + `[x]` в чеклисте Ф4 после «ок» пользователя
+> Сортировка: самый актуальный (свежая задача/звонок, стадия Переговоры, высокий скор) — первый в списке.»
 
 ---
 
-**PHASE 3 REVIEW — жду `go` / `ебашь` для финиша шага**
+## Как понял (1–2 строки)
+Добавить короткую TTL-память последнего найденного лида в голосовом пайплайне + вернуть список совпадений с сортировкой по актуальности + голосовой выбор по порядковому числителю/номеру + поиск по названию лида и контакту с транслитерацией RU↔EN.
+
+---
+
+## Чеклист микро-шагов (todo.md)
+
+- [x] **agent_memory.py**: таблица `voice_last_lead(session_id, lead_id, company, candidates_json, ts)` + функции `set_last_lead(session_id, lead_id, company, candidates_list)`, `get_last_lead(session_id, max_age_sec=60)`, `clear_last_lead(session_id)` — TTL 60 сек
+- [x] **voice/pipeline.py**: после `resolve_lead`/`fetch_lead_history` → `set_last_lead(session_id, ...)`; при `list_leads` с query → сохраняем топ-10 кандидатов; перед `open_lead` без `lead_id` → `get_last_lead(session_id)` → подставить `lead_id` + `ref=last`; при `list_leads` с `_clear_voice_memory` → `clear_last_lead(session_id)`
+- [x] **agents/tools.py**: `read_lead_by_company(query, limit=10)` → вернуть `list[dict]` (id, company, city, stage, score, next_call, contact_name, manager_name); поиск по `company` ИЛИ `contact` ИЛИ `lead_name`/`name`; транслитерация RU↔EN простая карта — оба варианта в `ILIKE`-like; сортировка: 1) открытая задача due≤сегодня / звонок 24ч (вес 1000), 2) стадия (Переговоры=100, КП=50, Квалифицирован=20, Новый=10), 3) скор (вес 1), 4) updated_at свежесть (вес 0.01)
+- [x] **core/hermes/slot_normalize.py**: извлечение порядкового числительного («первый»..«пятый»), «лид № N» / «номер N» → слот `selected_index` = n-1; в `normalize_parsed_intent` — подставляет `selected_index` для `open_lead`
+- [x] **core/hermes/rescue.py**: детерминированные паттерны для выбора по номеру: `re.search(r"\b(первый|второй|третий|четвёртый|пятый|лид\s*№?\s*\d)\b", t)` → intent `open_lead` со слотом `selected_index`; паттерн «найди другой лид» → `_clear_voice_memory`
+
+---
+
+## Файлы (ожидаемо)
+1. `backend/core/agent_memory.py`
+2. `backend/voice/pipeline.py`
+3. `backend/agents/tools.py`
+4. `backend/core/hermes/slot_normalize.py`
+5. `backend/core/hermes/rescue.py`
+
+---
+
+## Читать (только нужные §)
+- `backend/core/agent_memory.py` — вся (структура observations, TTL-паттерн)
+- `backend/voice/pipeline.py` — `_run_pipeline`, `resolve_lead`, `fetch_lead_history`
+- `backend/agents/tools.py` — `read_lead_by_company`, `normalize_lead_for_agents`
+- `backend/core/hermes/slot_normalize.py` — `_extract_company`, `normalize_parsed_intent`
+- `backend/core/hermes/rescue.py` — `rescue_route`, секции `open_lead`, `list_leads`
+- `docs/operations/phase4/ZONE_NOTES.md` — раздел `## voice`
+- `backend/tests/voice/test_open_lead.py` — существующие кейсы `ref: "last"`
+
+---
+
+## Не ломать (hot-path)
+- `backend/voice/pipeline.py` — WS / process_text (регрессия зоны `voice` обязательна)
+- `backend/core/hermes/parse.py` — не трогать, логика подстановки только в пайплайне
+- `backend/core/hermes/rescue.py` — добавлять паттерны аккуратно, не ломать существующие
+
+---
+
+## Проверка (после GREEN)
+```bash
+cd backend
+python -m pytest tests/test_voice_pipeline.py -q
+python scripts/run_zone_regression.py voice
+```
+Ожидается: зелёные тесты + работающий сценарий:
+1. «Найди акбарс банк» → список 3 лида, первый — самый актуальный
+2. «Открой первый» → открывается лид №1
+3. «Открой лид» (через 20 сек) → открывается тот же последний
+4. «Найди другой лид» → память сбрасывается, новый поиск
+5. «akbars bank ad audit» → находит тот же лид (транслитерация)
+
+---
+
+## BACKLOG / ISSUES (если появятся)
+- Если транслитерация тяжелая — отложить в BACKLOG, сделать простую карту частых слов (решено: простая карта)
+- TTL-память: scope = session_id (решено)
+- Список кандидатов: в agent_memory.py таблица voice_last_lead (решено)
+
+---
+
+## SBR Scope
+**Обязателен** (5 файлов backend + hot-path voice + пункт чеклиста фазы voice).  
+PHASE 0 INTAKE ✅ (этот текст) → PHASE 1 SPEC → `go` → RED → GREEN → REVIEW.

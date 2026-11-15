@@ -5,6 +5,9 @@ Implements progressive disclosure:
 1) search_index()   -> cheap previews + IDs
 2) timeline()       -> chronological neighbors
 3) get_observations -> full records by IDs
+
+Voice lead memory (TTL):
+- voice_last_lead table: session_id, lead_id, company, candidates_json, ts
 """
 from __future__ import annotations
 
@@ -38,6 +41,20 @@ def _conn() -> sqlite3.Connection:
     )
     conn.execute("CREATE INDEX IF NOT EXISTS idx_observations_scope_ts ON observations(scope, ts DESC)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_observations_scope_intent ON observations(scope, intent)")
+
+    # Voice lead memory table
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS voice_last_lead (
+            session_id TEXT PRIMARY KEY,
+            lead_id INTEGER NOT NULL,
+            company TEXT NOT NULL,
+            candidates_json TEXT NOT NULL,
+            ts REAL NOT NULL
+        )
+        """
+    )
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_voice_last_lead_ts ON voice_last_lead(ts DESC)")
     return conn
 
 
@@ -184,6 +201,66 @@ def lookup_recent_similar(scope: str, text: str) -> dict[str, Any] | None:
             return json.loads(row["payload_json"] or "{}")
         except json.JSONDecodeError:
             return None
+    finally:
+        conn.close()
+
+
+# --- Voice lead memory (TTL) ---
+
+def set_last_lead(session_id: str, lead_id: int, company: str, candidates: list[dict[str, Any]]) -> None:
+    """Сохранить последний найденный лид и список кандидатов для сессии."""
+    conn = _conn()
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO voice_last_lead(session_id, lead_id, company, candidates_json, ts)
+            VALUES(?, ?, ?, ?, ?)
+            """,
+            (session_id, lead_id, company, json.dumps(candidates, ensure_ascii=False), time.time()),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def get_last_lead(session_id: str, max_age_sec: int = 60) -> dict[str, Any] | None:
+    """Получить последний найденный лид, если не прошло max_age_sec."""
+    conn = _conn()
+    try:
+        row = conn.execute(
+            """
+            SELECT lead_id, company, candidates_json, ts
+            FROM voice_last_lead
+            WHERE session_id = ?
+            """,
+            (session_id,),
+        ).fetchone()
+        if not row:
+            return None
+        ts = float(row["ts"])
+        if time.time() - ts > max_age_sec:
+            return None
+        candidates = []
+        try:
+            candidates = json.loads(row["candidates_json"] or "[]")
+        except json.JSONDecodeError:
+            candidates = []
+        return {
+            "lead_id": int(row["lead_id"]),
+            "company": row["company"],
+            "candidates": candidates,
+            "ts": ts,
+        }
+    finally:
+        conn.close()
+
+
+def clear_last_lead(session_id: str) -> None:
+    """Очистить память последнего лида для сессии."""
+    conn = _conn()
+    try:
+        conn.execute("DELETE FROM voice_last_lead WHERE session_id = ?", (session_id,))
+        conn.commit()
     finally:
         conn.close()
 

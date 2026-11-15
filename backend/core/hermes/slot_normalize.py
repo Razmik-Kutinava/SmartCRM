@@ -208,6 +208,26 @@ def normalize_parsed_intent(text: str, parsed: dict[str, Any]) -> dict[str, Any]
             )
             if m_ind:
                 slots["industry"] = m_ind.group(1).strip()
+        # Сброс голосовой памяти при «найди другой»
+        if slots.get("_clear_voice_memory"):
+            slots["_clear_voice_memory"] = True
+
+    # Извлечение порядкового числительного / номера лида для open_lead
+    if intent == "open_lead" and not slots.get("lead_id") and slots.get("ref") != "last":
+        ordinal_map = {
+            "первый": 0, "второй": 1, "третий": 2, "четвёртый": 3, "четвертый": 3, "пятый": 4,
+        }
+        t_norm = normalize_text_for_cache(text)
+        # Порядковые: «первый», «второй»...
+        m_ord = re.search(r"\b(первый|второй|третий|четвёртый|четвертый|пятый)\b", t_norm)
+        # Номер: «лид № 3», «номер 2», «№ 1»
+        m_num = re.search(r"\b(?:лид\s*№?|номер\s*|№\s*)(\d)\b", t_norm)
+        if m_ord:
+            slots["selected_index"] = ordinal_map[m_ord.group(1)]
+        elif m_num:
+            idx = int(m_num.group(1)) - 1
+            if idx >= 0:
+                slots["selected_index"] = idx
 
     if intent == "add_communication":
         if not slots.get("content"):
