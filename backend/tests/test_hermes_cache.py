@@ -1,14 +1,11 @@
 """Тесты кэша Hermes и fastpath-роутинга (voice ускорение)."""
+from __future__ import annotations
+
 import os
 import sys
 import types
 
-# Устанавливаем env переменные ДО импорта hermes модулей
-os.environ["HERMES_ENABLE_CACHE"] = "1"
-os.environ["HERMES_ENABLE_FASTPATH"] = "1"
-os.environ["HERMES_ENABLE_OLLAMA_FALLBACK"] = "0"
-os.environ["HERMES_PROVIDER_ORDER"] = "groq_only"
-os.environ["GROQ_API_KEY"] = "test-key"
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
@@ -61,13 +58,17 @@ if "agents.tools" not in sys.modules:
     tools_mock.compute_lead_score = type("compute_lead_score", (), {})
 
 
-# ── Импорт hermes модулей после стабов ──
 from core.hermes import config  # noqa: E402
 from core.hermes.cache import cache_get, cache_set, fastpath_route  # noqa: E402
 
 
-def setup_function():
-    """Очистка кэша перед каждым тестом."""
+@pytest.fixture(autouse=True)
+def _hermes_cache_isolation(monkeypatch):
+    """CI ставит HERMES_ENABLE_*=0; config уже прочитан — форсим флаги на уровне модуля."""
+    monkeypatch.setattr(config, "HERMES_ENABLE_CACHE", True)
+    monkeypatch.setattr(config, "HERMES_ENABLE_FASTPATH", True)
+    config._intent_cache.clear()
+    yield
     config._intent_cache.clear()
 
 
@@ -80,9 +81,9 @@ def test_cache_set_get_roundtrip():
     assert result["_model"] == "fastpath"
 
 
-def test_cache_disabled_returns_none():
+def test_cache_disabled_returns_none(monkeypatch):
     """При HERMES_ENABLE_CACHE=0 cache_get возвращает None."""
-    config.HERMES_ENABLE_CACHE = False
+    monkeypatch.setattr(config, "HERMES_ENABLE_CACHE", False)
     config._intent_cache.clear()
     result = cache_get("любой текст")
     assert result is None
