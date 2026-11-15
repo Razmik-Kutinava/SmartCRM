@@ -7,6 +7,10 @@ from typing import Any
 from .module_contract import enrich_module_ui
 from .text_utils import normalize_text_for_cache
 
+# Импорт памяти последнего поиска — без циклических зависимостей
+# (agent_memory не тянет core.hermes)
+from core.agent_memory import get_last_search_candidates
+
 _LEAD_INTENTS = frozenset({
     "create_lead", "update_lead", "delete_lead", "list_leads", "open_lead", "create_task", "list_tasks",
     "analyze_lead", "lead_history", "add_communication",
@@ -85,6 +89,37 @@ def _extract_company(text: str) -> str:
     if m and ("лид" in t or "компан" in t or "клиент" in t):
         return _clean_company_name(m.group(1))
     return ""
+
+
+def _extract_ordinal_number(text: str) -> int | None:
+    """Извлечь порядковое число n (1-based) из текста: «первый», «второй», «лид № 3», «номер 2».
+
+    Русские порядковые: первый…десятый.
+    Формат «лид № N», «лид N», «номер N», «N-й», «N-я», «N-й лид».
+    """
+    t_norm = normalize_text_for_cache(text)
+
+    word_to_num = {
+        "первый": 1, "второй": 2, "третий": 3, "четвёртый": 4, "четвертый": 4,
+        "пятый": 5, "шестой": 6, "седьмой": 7, "восьмой": 8, "девятый": 9, "десятый": 10,
+    }
+
+    # Порядковые числительные: «первый», «второй» …
+    m_ord = re.search(r"\b(первый|второй|третий|четвёртый|четвертый|пятый|шестой|седьмой|восьмой|девятый|десятый)\b", t_norm)
+    if m_ord:
+        return word_to_num[m_ord.group(1)]
+
+    # «лид № 3», «лид №1», «номер 2», «№ 4»
+    m_num = re.search(r"\b(?:лид\s*№?\s*|номер\s*|№\s*)(\d{1,2})\b", t_norm)
+    if m_num:
+        return int(m_num.group(1))
+
+    # «3-й», «2-я», «10-й лид»
+    m_suffix = re.search(r"\b(\d{1,2})\s*[йя]\b", t_norm)
+    if m_suffix:
+        return int(m_suffix.group(1))
+
+    return None
 
 
 def _extract_update_field_value(text: str) -> tuple[str, str]:
@@ -214,20 +249,15 @@ def normalize_parsed_intent(text: str, parsed: dict[str, Any]) -> dict[str, Any]
 
     # Извлечение порядкового числительного / номера лида для open_lead
     if intent == "open_lead" and not slots.get("lead_id") and slots.get("ref") != "last":
-        ordinal_map = {
-            "первый": 0, "второй": 1, "третий": 2, "четвёртый": 3, "четвертый": 3, "пятый": 4,
-        }
-        t_norm = normalize_text_for_cache(text)
-        # Порядковые: «первый», «второй»...
-        m_ord = re.search(r"\b(первый|второй|третий|четвёртый|четвертый|пятый)\b", t_norm)
-        # Номер: «лид № 3», «номер 2», «№ 1»
-        m_num = re.search(r"\b(?:лид\s*№?|номер\s*|№\s*)(\d)\b", t_norm)
-        if m_ord:
-            slots["selected_index"] = ordinal_map[m_ord.group(1)]
-        elif m_num:
-            idx = int(m_num.group(1)) - 1
-            if idx >= 0:
-                slots["selected_index"] = idx
+        n = _extract_ordinal_number(text)
+        if n is not None:
+            candidates = get_last_search_candidates()
+            if candidates and len(candidates) >= n:
+                slots["lead_id"] = candidates[n - 1]["id"]
+                slots["selected_index"] = n - 1
+            else:
+                slots["_lead_no_candidates"] = True
+                slots["selected_index"] = n - 1
 
     if intent == "add_communication":
         if not slots.get("content"):

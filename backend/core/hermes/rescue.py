@@ -340,18 +340,31 @@ def rescue_route(text: str) -> dict | None:
 
     # Выбор лида по порядковому числителю/номеру: «первый», «второй», «лид № 3», «номер 2»
     # Должно срабатывать ДО общего паттерна «открой её»
-    ordinal_map = {
-        "первый": 0, "второй": 1, "третий": 2, "четвёртый": 3, "четвертый": 3, "пятый": 4,
+    _WORD_TO_NUM = {
+        "первый": 1, "второй": 2, "третий": 3, "четвёртый": 4, "четвертый": 4,
+        "пятый": 5, "шестой": 6, "седьмой": 7, "восьмой": 8, "девятый": 9, "десятый": 10,
     }
-    m_ord = re.search(r"\b(первый|второй|третий|четвёртый|четвертый|пятый)\b", t)
-    # Разрешаем пробел после №: "лид № 1", "лид №1", "номер 1"
-    m_num = re.search(r"\b(?:лид\s*№?\s*|номер\s*)(\d+)\b", t)
-    # Срабатываем если есть порядковое/номер И (глагол действия ИЛИ просто «лид № N» / «номер N»)
-    action_verbs = "открой" in t or "открыть" in t or "покажи" in t or "выбери" in t
-    if (m_ord or m_num) and (action_verbs or m_num):
-        idx = ordinal_map.get(m_ord.group(1)) if m_ord else (int(m_num.group(1)) - 1 if m_num else None)
-        if idx is not None and idx >= 0:
-            return out("open_lead", ["analyst"], f"Открываю лид №{idx + 1}.", {"selected_index": idx})
+
+    def _word_to_num(word: str) -> int:
+        w = word.lower()
+        if w in _WORD_TO_NUM:
+            return _WORD_TO_NUM[w]
+        try:
+            return int(w)
+        except ValueError:
+            return 0
+
+    m_ord = re.search(r"\b(первый|второй|третий|четвёртый|четвертый|пятый|шестой|седьмой|восьмой|девятый|десятый)\b", t)
+    m_num = re.search(r"\b(?:лид\s*№?\s*|номер\s*)(\d{1,2})\b", t)
+    if (m_ord or m_num):
+        n = _word_to_num(m_ord.group(1)) if m_ord else int(m_num.group(1))
+        if n >= 1:
+            from core.agent_memory import get_last_search_candidates
+
+            candidates = get_last_search_candidates()
+            if candidates and len(candidates) >= n:
+                lead_id = candidates[n - 1]["id"]
+                return out("open_lead", ["analyst"], f"Открываю {m_ord.group(1) if m_ord else m_num.group(0)}.", {"lead_id": lead_id})
 
     # «открой её / этот» — без имени → прошлый найденный лид
     if re.search(r"\b(открой|открыть)\b", t) and "почт" not in t and "email" not in t:

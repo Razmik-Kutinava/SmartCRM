@@ -55,3 +55,63 @@ def test_rescue_find_lead_is_list_leads_with_query():
     assert parsed["intent"] == "list_leads"
     q = str(parsed["slots"].get("query") or parsed["slots"].get("company") or "").lower()
     assert "банк" in q or "армен" in q
+
+
+# --- Голосовой выбор лида по порядковому номеру (SBR) ---
+
+from unittest.mock import patch
+
+
+def _mock_candidates(candidates):
+    return patch("core.agent_memory.get_last_search_candidates",
+                 return_value=candidates)
+
+
+def test_rescue_open_lead_ordinal_first():
+    """«открой первый» → open_lead с lead_id из памяти последнего поиска."""
+    with _mock_candidates([{"id": 42, "company": "ВТБ"}, {"id": 43, "company": "Сбер"}]):
+        parsed = rescue_route("открой первый")
+    assert parsed is not None
+    assert parsed["intent"] == "open_lead"
+    assert parsed["slots"].get("lead_id") == 42
+
+
+def test_rescue_open_lead_ordinal_second():
+    """«открой второй» → lead_id второго кандидата."""
+    with _mock_candidates([{"id": 42, "company": "ВТБ"}, {"id": 43, "company": "Сбер"}]):
+        parsed = rescue_route("открой второй")
+    assert parsed is not None
+    assert parsed["intent"] == "open_lead"
+    assert parsed["slots"].get("lead_id") == 43
+
+
+def test_rescue_open_lead_lead_no_3():
+    """«лид № 3» → lead_id третьего кандидата."""
+    with _mock_candidates([{"id": 42, "company": "ВТБ"}, {"id": 43, "company": "Сбер"}, {"id": 44, "company": "Альфа"}]):
+        parsed = rescue_route("лид № 3")
+    assert parsed is not None
+    assert parsed["intent"] == "open_lead"
+    assert parsed["slots"].get("lead_id") == 44
+
+
+def test_rescue_open_lead_number_2():
+    """«номер 2» → lead_id второго кандидата."""
+    with _mock_candidates([{"id": 42, "company": "ВТБ"}, {"id": 43, "company": "Сбер"}]):
+        parsed = rescue_route("номер 2")
+    assert parsed is not None
+    assert parsed["intent"] == "open_lead"
+    assert parsed["slots"].get("lead_id") == 43
+
+
+def test_rescue_open_lead_no_candidates_fallback():
+    """Пустая память → не возвращает open_lead (фолбэк на обычное поведение)."""
+    with _mock_candidates(None):
+        parsed = rescue_route("открой первый")
+    assert parsed is None or parsed["intent"] != "open_lead"
+
+
+def test_rescue_open_lead_n_out_of_range():
+    """n > len(candidates) → не возвращает open_lead."""
+    with _mock_candidates([{"id": 42, "company": "ВТБ"}]):
+        parsed = rescue_route("открой пятый")
+    assert parsed is None or parsed["intent"] != "open_lead"

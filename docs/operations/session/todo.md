@@ -178,3 +178,70 @@ python scripts/run_zone_regression.py voice
 ## SBR Scope
 **Обязателен** (1 файл backend `tools.py` + hot-path voice через `lead_context.py` + поиск — пограничный случай, но затрагивает voice-пайплайн).  
 PHASE 0 INTAKE ✅ → PHASE 1 SPEC → `go` → RED → GREEN → REVIEW.
+
+---
+
+# todo — голосовой выбор лида по порядковому номеру (новая SBR-задача)
+
+## Заказ (дословно)
+
+> «Надо добавить голосовой выбор лида по порядковому номеру: пользователь говорит "первый", "второй", "третий", "лид № 3", "номер 2" — агент должен понять число n, взять n-й лид из сохранённого списка кандидатов последнего поиска и вернуть интент open_lead с этим lead_id. Паттерны должны работать в детерминированном rescue-роутинге без LLM.»
+
+---
+
+## Как понял (1–2 строки)
+
+Добавить в `slot_normalize.py` извлечение порядкового числительного/номера → число `n`. В `rescue.py` — детерминированные паттерны для быстрого роутинга на `open_lead` с `lead_id` из памяти последнего поиска. Память списка кандидатов — в `agent_memory.py` (scope `voice_last_search`).
+
+---
+
+## Чеклист микро-шагов
+
+- [x] **backend/core/agent_memory.py**: `set_last_search_candidates` / `get_last_search_candidates` / `clear_last_search_candidates` (таблица `voice_last_search`, id=1, TTL 60 сек)
+- [x] **backend/core/hermes/slot_normalize.py**: `_extract_ordinal_number` (первый…десятый, «лид № N», «номер N», «N-й», «N-я»); при `intent == "open_lead"` и `lead_id` absent — подставить `lead_id = candidates[n-1]["id"]` из `get_last_search_candidates()`
+- [x] **backend/core/hermes/rescue.py**: паттерн в `rescue_route` до общего `open_lead`; `_word_to_num`; возврат `out("open_lead", ["analyst"], ..., {"lead_id": lead_id})`
+- [x] **backend/voice/pipeline.py**: при `list_leads` с query → `set_last_search_candidates(candidates)`; при `list_leads` с `_clear_voice_memory` → `clear_last_search_candidates()`
+- [x] **backend/tests/voice/test_open_lead.py**: 6 тестов voice выбора по номеру с моком `get_last_search_candidates`
+- [x] Регрессия: `tests/voice/test_open_lead.py` 11 PASS; `test_lead_search_and_select.py::test_slot_normalize_extract_ordinal` PASS
+
+---
+
+## Файлы (ожидаемо)
+
+1. `backend/core/agent_memory.py` — память списка кандидатов (TTL)
+2. `backend/core/hermes/slot_normalize.py` — извлечение порядкового числа
+3. `backend/core/hermes/rescue.py` — детерминированный роутинг по номеру
+4. `backend/voice/pipeline.py` — сохранение/очистка списка кандидатов при поиске
+
+---
+
+## Не ломать (hot-path)
+
+- `backend/core/hermes/parse.py` — **не трогать**, rescue/slot_normalize вызываются до/вместо LLM
+- `backend/voice/pipeline.py` — WS / `process_text` (регрессия зоны `voice` обязательна)
+- Паттерны в `rescue.py` добавлять **раньше** общего `open_lead` блока, чтобы не перехватывали «открой её»
+
+---
+
+## Проверка (после GREEN)
+
+```bash
+cd backend
+python -m pytest tests/voice/test_open_lead.py -q
+python -m pytest tests/voice/test_lead_search_and_select.py::test_slot_normalize_extract_ordinal -q
+python scripts/run_zone_regression.py voice
+```
+
+---
+
+## BACKLOG / ISSUES (если появятся)
+
+- Если список кандидатов не сохраняется (память пуста) — фолбэк на обычное поведение («уточните компанию»)
+- Если `n > len(candidates)` — игнорировать, фолбэк на обычное поведение
+- Поддержка «последний» / «предыдущий» → `n = len(candidates)` — отложить в BACKLOG
+
+---
+
+## SBR Scope
+
+**Обязателен** (4 файла backend + hot-path voice + интеграция с памятью последнего поиска). PHASE 0 INTAKE ✅ → PHASE 1 SPEC → `go` → RED → GREEN → REVIEW.

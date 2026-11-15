@@ -9,7 +9,7 @@ from voice.whisper import transcribe
 from voice.voice_action import build_voice_action
 from core.hermes import parse_intent
 from core import traces
-from core.agent_memory import set_last_lead, get_last_lead, clear_last_lead
+from core.agent_memory import set_last_lead, get_last_lead, clear_last_lead, set_last_search_candidates, clear_last_search_candidates
 
 logger = logging.getLogger(__name__)
 
@@ -128,6 +128,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         # Очистка памяти при «найди другой лид» / list_leads с флагом сброса
         if intent == "list_leads" and slots.get("_clear_voice_memory"):
             clear_last_lead(session_id)
+            clear_last_search_candidates()
 
         if intent == "lead_history":
             from voice.lead_context import fetch_lead_history
@@ -154,6 +155,8 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
                     # Сохраняем первый как "последний найденный" и весь список как кандидаты
                     first = candidates[0]
                     set_last_lead(session_id, first["lead_id"], first["company"], candidates)
+                    # Список кандидатов для голосового выбора по номеру
+                    set_last_search_candidates(candidates)
                     final_reply = f"Найдено {len(candidates)} лид(ов). Первый: {first['company']}. Скажите «открой первый» или номер лида."
                 else:
                     final_reply = f"По запросу «{query}» лиды не найдены."

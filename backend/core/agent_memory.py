@@ -8,6 +8,7 @@ Implements progressive disclosure:
 
 Voice lead memory (TTL):
 - voice_last_lead table: session_id, lead_id, company, candidates_json, ts
+- voice_last_search table: id=1, candidates_json, ts — список кандидатов последнего поиска (scope voice_last_search, TTL 60 сек)
 """
 from __future__ import annotations
 
@@ -260,6 +261,78 @@ def clear_last_lead(session_id: str) -> None:
     conn = _conn()
     try:
         conn.execute("DELETE FROM voice_last_lead WHERE session_id = ?", (session_id,))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+# --- Голосовая память: список кандидатов последнего поиска (scope voice_last_search) ---
+
+def _ensure_voice_last_search_table() -> None:
+    conn = _conn()
+    try:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS voice_last_search (
+                id INTEGER PRIMARY KEY CHECK (id = 1),
+                candidates_json TEXT NOT NULL,
+                ts REAL NOT NULL
+            )
+            """
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def set_last_search_candidates(candidates: list[dict]) -> None:
+    """Сохранить список кандидатов последнего поиска с TTL 60 сек (id=1)."""
+    _ensure_voice_last_search_table()
+    conn = _conn()
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO voice_last_search(id, candidates_json, ts)
+            VALUES(1, ?, ?)
+            """,
+            (json.dumps(candidates, ensure_ascii=False), time.time()),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def get_last_search_candidates(max_age_sec: int = 60) -> list[dict] | None:
+    """Получить список кандидатов последнего поиска, если не старше max_age_sec."""
+    _ensure_voice_last_search_table()
+    conn = _conn()
+    try:
+        row = conn.execute(
+            """
+            SELECT candidates_json, ts
+            FROM voice_last_search
+            WHERE id = 1
+            """
+        ).fetchone()
+        if not row:
+            return None
+        ts = float(row["ts"])
+        if time.time() - ts > max_age_sec:
+            return None
+        try:
+            return json.loads(row["candidates_json"] or "[]")
+        except json.JSONDecodeError:
+            return None
+    finally:
+        conn.close()
+
+
+def clear_last_search_candidates() -> None:
+    """Очистить список кандидатов последнего поиска."""
+    _ensure_voice_last_search_table()
+    conn = _conn()
+    try:
+        conn.execute("DELETE FROM voice_last_search WHERE id = 1")
         conn.commit()
     finally:
         conn.close()
