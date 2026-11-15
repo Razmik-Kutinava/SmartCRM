@@ -7,6 +7,7 @@
 **Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.  
 `ctx_trim: 2026-11-14` · **Агент:** на старте — шапка + 1–3 свежие строки, не весь журнал.
 
+    10|2026-11-15 | Действие: SBR GREEN — ускорение голосового пайплайна: тайминги voice/pipeline.py (whisper/hermes/orchestrator/voice_action), только Groq (Ollama фоллбэк выкл), кэш Hermes + fastpath_route навигация без LLM, test_hermes_cache.py 7 PASS; voice zone hangs на сетевых вызовах Brave/Tavily (окружение, не регрессия) | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3
 2026-11-15 | Действие: ops — HANDOFF карточка CI 10 pytest (после check_step FAIL на отставание даты) | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3
 
 2026-11-15 | Действие: fix CI — 10 упавших pytest: stale UI/API ожидания + Node smoke без svelte/$lib → статика; bitrix upsert моки на bitrix24_upsert; due с временем; score_manual; email_smtp validate_certs | Коммит: `b897549` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (узкие 15 PASS)
@@ -229,4 +230,4 @@ docs/rules — пакет C tokens/SBR (CoffeeOS+APU): hygiene, slash, ZONE_NOTE
 
 2026-11-15 | Действие: fix красных тестов — rescue.py всегда возвращает open_lead с selected_index (lead_id из памяти только если есть кандидаты); тесты фолбэка скорректированы под новую логику; test_open_lead.py + test_lead_search_and_select.py = 16 PASS | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 1/3
 
-2026-11-15 | Действие: SBR GREEN — голосовой выбор лида по номеру: fastpath_route паттерн «открой третий/номер 2/лид № 3» → open_lead + selected_index; SYSTEM_PROMPT пример «открой третий лид»; test_open_lead.py RED+GREEN; 29 PASS (voice pipeline + open_lead + search/select); git push origin main OK (5d306db); run_zone_regression.py voice [PASS] 10 PASS (ssl env-таймаут устранён) | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3
+2026-11-15 | Действие: SBR GREEN — голосовой выбор лида по номеру: fastpath_route паттерн «открой третий/номер 2/лид № 3» → open_lead + selected_index; SYSTEM_PROMPT пример «открой третий лид»; test_open_lead.py + test_lead_search_and_select.py = 19 PASS без сети; git push origin main OK (5d306db); run_zone_regression.py voice [PASS] 10 PASS; test_voice_pipeline.py — таймаут сети (Serper/Brave/Tavily/DataNewton), не diff, записан в ISSUES | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 2/3

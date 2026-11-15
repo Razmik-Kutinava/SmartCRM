@@ -19,7 +19,10 @@ async def process_audio(audio_bytes: bytes, filename: str = "audio.webm") -> dic
     Полный пайплайн обработки голосовой команды.
     Возвращает dict с transcript, intent, reply и agent_result.
     """
+    t_whisper = time.monotonic()
     transcript = await transcribe(audio_bytes, filename)
+    whisper_ms = round((time.monotonic() - t_whisper) * 1000)
+    logger.info(f"Voice/Whisper duration_ms={whisper_ms}")
 
     if not transcript:
         return {
@@ -28,9 +31,12 @@ async def process_audio(audio_bytes: bytes, filename: str = "audio.webm") -> dic
             "reply": "Не удалось распознать речь. Попробуйте ещё раз.",
             "agents": [],
             "slots": {},
+            "timings_ms": {"whisper": whisper_ms},
         }
 
-    return await _run_pipeline(transcript, source="audio")
+    result = await _run_pipeline(transcript, source="audio")
+    result.setdefault("timings_ms", {})["whisper"] = whisper_ms
+    return result
 
 
 async def process_text(text: str, page_context: str = "") -> dict:
@@ -44,7 +50,8 @@ async def process_text(text: str, page_context: str = "") -> dict:
 async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
     """Шаги 2–4: Hermes → трейс → агенты."""
     trace = traces.new_trace(text, source=source)
-    t0 = time.monotonic()
+    t_pipeline = time.monotonic()
+    timings: dict[str, int] = {}
 
     # Если клиент передал контекст страницы — включаем в текст для Hermes
     hermes_text = text
@@ -52,12 +59,18 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         hermes_text = f"{page_context}\n{text}"
 
     # Шаг 2: Текст → интент (Hermes)
+    t_hermes = time.monotonic()
     try:
         intent_data = await parse_intent(hermes_text)
-        duration_ms = (time.monotonic() - t0) * 1000
+        hermes_ms = round((time.monotonic() - t_hermes) * 1000)
+        timings["hermes"] = hermes_ms
+        logger.info(f"Voice/Hermes parse_intent duration_ms={hermes_ms}")
         model = intent_data.pop("_model", "groq/llama-3.1-8b-instant")
+        duration_ms = (time.monotonic() - t_pipeline) * 1000
         traces.finish_trace(trace, intent_data, model=model, duration_ms=duration_ms)
     except Exception as e:
+        hermes_ms = round((time.monotonic() - t_hermes) * 1000)
+        timings["hermes"] = hermes_ms
         traces.error_trace(trace, str(e))
         return {
             "transcript": text,
@@ -66,6 +79,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
             "agents": [],
             "slots": {},
             "parallel": False,
+            "timings_ms": timings,
             "reply": f"Ошибка разбора команды: {e}",
         }
 
@@ -179,6 +193,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
             if lid is not None:
                 slots = {**slots, "lead_id": lid}
         elif intent not in _NAV_ONLY:
+            t_orch = time.monotonic()
             from agents.orchestrator import run_agents
 
             agent_result = await run_agents(
@@ -189,6 +204,9 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
                 hermes_agents=agents,
                 hermes_parallel=bool(intent_data.get("parallel")),
             )
+            orch_ms = round((time.monotonic() - t_orch) * 1000)
+            timings["orchestrator"] = orch_ms
+            logger.info(f"Voice/Orchestrator duration_ms={orch_ms}")
             if agent_result.get("agents_ran") and agent_result.get("final_reply"):
                 final_reply = agent_result["final_reply"]
             if agent_result.get("agents_ran"):
@@ -208,6 +226,7 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         logger.warning("Оркестратор ошибка (пайплайн продолжается): %s", e)
         agent_result = {"agents_ran": False, "error": str(e)}
 
+    t_action = time.monotonic()
     voice_action = build_voice_action(
         intent=intent,
         slots=slots,
@@ -218,6 +237,13 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         module=module,
         trace_id=trace["id"],
     )
+    action_ms = round((time.monotonic() - t_action) * 1000)
+    timings["voice_action"] = action_ms
+    logger.info(f"Voice/voice_action duration_ms={action_ms}")
+
+    total_ms = round((time.monotonic() - t_pipeline) * 1000)
+    timings["total_pipeline_ms"] = total_ms
+    logger.info(f"Voice/total_pipeline duration_ms={total_ms}")
 
     return {
         "transcript": text,
@@ -230,4 +256,5 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
         "reply": final_reply,
         "agent_result": agent_result,
         "voice_action": voice_action,
+        "timings_ms": timings,
     }

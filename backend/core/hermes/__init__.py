@@ -4,6 +4,7 @@ Hermes — центральный роутер интентов.
 Primary: Groq API (быстро). Fallback: Ollama (локально).
 """
 from . import config
+from .cache import FASTPATH_INTENTS, cache_get, cache_set, fastpath_route
 from .config import *  # noqa: F403
 from .json_parse import parse_json
 from .parse import parse_intent

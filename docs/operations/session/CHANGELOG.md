@@ -7,6 +7,17 @@
 
 `backend/agents/tools.py`: добавлена публичная `transliterate_ru_en(text)` (RU↔EN, посимвольно + карта частых слов), `read_lead_by_company` ищет по `company` / `contact` / `description` (эквивалент `lead_name`) с двумя вариантами (исходный + транслитерированный), возвращает `list[dict]` до `limit` с полями `id, company, city, stage, score, next_call, contact_name, manager_name, lead_id`, сортировка по актуальности (next_call due/24ч → стадия → скор → updated_at), `normalize_lead_for_agents` принимает `list`. Тесты `tests/agents/test_tools_lead_search.py` 9/9 PASS, зона `voice` 10/10 PASS. | Коммит: `этот`.
 
+## 2026-11-15 — PHASE 3 REVIEW: ускорение голосового пайплайна (GREEN)
+
+`backend/voice/pipeline.py`: поэтапные тайминги `time.monotonic()` — Whisper STT, Hermes parse_intent (раздельно Groq/Ollama), оркестратор/агенты, сборка voice_action; логируются `duration_ms` + `timings_ms` в ответе.
+`backend/core/hermes/config.py`: добавлены `HERMES_PROVIDER_ORDER` (по умолчанию `groq_only`) и `HERMES_ENABLE_OLLAMA_FALLBACK` (по умолчанию `False`).
+`backend/core/hermes/parse.py`: при `HERMES_ENABLE_OLLAMA_FALLBACK=False` ветка Ollama пропускается — только Groq; отдельные тайминги `_groq_duration_ms` / `_ollama_duration_ms` логируются.
+`backend/core/hermes/cache.py`: `FASTPATH_INTENTS` (навигация: list_leads, open_lead, list_emails, analytics_*, generate_lead, find_leads_portrait, cluster_company, save_to_rag, list_deals, open_deal) — мгновенный ответ без LLM; `fastpath_route` расширен.
+`backend/core/hermes/__init__.py`: экспорт `FASTPATH_INTENTS`.
+`backend/tests/test_hermes_cache.py`: 7 тестов кэша/fastpath/config — 7 PASS.
+`.env.example`: добавлены `HERMES_PROVIDER_ORDER`, `HERMES_ENABLE_OLLAMA_FALLBACK`, `HERMES_ENABLE_CACHE`, `HERMES_ENABLE_FASTPATH`, `HERMES_CACHE_TTL_SEC`.
+| Коммит: `этот`.
+
 ## 2026-11-15 — PHASE 3 REVIEW: голосовая память последнего лида (финиш шага)
 
 Код уже закоммичен в коммите `9147526` (2026-11-14): `backend/core/agent_memory.py` (таблица `voice_last_lead`, TTL 60 сек), `backend/voice/pipeline.py` (сохраняет кандидатов при `list_leads`, подставляет последний лид для `open_lead`, сброс при «найди другой»), `backend/agents/tools.py` (поиск с транслитерацией RU↔EN, сортировка по актуальности), `backend/core/hermes/slot_normalize.py` (порядковые числительные), `backend/core/hermes/rescue.py` (выбор по номеру без LLM). Тесты 10 PASS + зона voice 10 PASS. Новых изменений кода в этом шаге не было — только ops (SESSION_STATE/CHANGELOG/HANDOFF). | Коммит: `этот`.

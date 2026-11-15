@@ -5,6 +5,15 @@ import time
 from . import config
 from .text_utils import normalize_text_for_cache
 
+# Навигационные интенты — мгновенный ответ без LLM
+FASTPATH_INTENTS = frozenset({
+    "list_leads", "open_lead", "list_emails",
+    "analytics_funnel", "analytics_conversion", "analytics_cycle",
+    "analytics_score", "analytics_report",
+    "generate_lead", "find_leads_portrait", "cluster_company",
+    "save_to_rag", "list_deals", "open_deal",
+})
+
 
 def cache_get(text: str) -> dict | None:
     if not config.HERMES_ENABLE_CACHE:

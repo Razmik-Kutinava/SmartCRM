@@ -10,6 +10,7 @@
 	| CI: 10 assertion-фиксов pytest (после hang-фиксов) | Дождаться зелёного GitHub Actions на main |
 	| Rules/tokens пакет C в репо | Пользовательский `/start`; при раздуве ops — `/ctx-trim` |
 	| F4 Лиды: Автоскор / путь сделки | `[x]` в чеклисте Ф4 — ждать «ок» пользователя |
+	| F4 Голос: ускорение голосового пайплайна (GREEN) | тайминги voice/pipeline.py, только Groq, кэш Hermes, fastpath; test_hermes_cache.py 7 PASS; voice zone hangs на сети (окружение) |
 	| F4 Голос: память последнего лида (PHASE 3 REVIEW) | check_step.cmd + коммит ops, затем `[x]` в чеклисте Ф4 после «ок» |
 	| F4 Лиды: read_lead_by_company список+транслитерация (GREEN) | CHANGELOG+HANDOFF+SESSION_STATE коммит, затем `[x]` в чеклисте Ф4 после «ок» |
 

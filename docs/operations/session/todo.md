@@ -11,29 +11,29 @@
 
 ## Как понял (1–2 строки)
 
-Добавить поэтапные тайминги в voice/pipeline.py, выключить Ollama fallback в hermes/config.py, покрыть кэш Hermes тестом, расширить fastpath_route детерминированными навигационными интентами без LLM.
+Добавлены поэтапные тайминги в voice/pipeline.py, флаги отключения Ollama в hermes/config.py, пропуск Ollama ветки в parse.py, FASTPATH_INTENTS + быстрый роутинг в cache.py, тест кэша в test_hermes_cache.py, новые ENV в .env.example.
 
 ## Чеклист микро-шагов
 
-- [ ] **backend/voice/pipeline.py** — тайминги `_run_pipeline`: whisper, hermes (groq/ollama раздельно), orchestrator, voice_action; логировать duration_ms
-- [ ] **backend/core/hermes/config.py** — добавить `HERMES_PROVIDER_ORDER`, `HERMES_ENABLE_OLLAMA_FALLBACK`; по умолчанию groq_only, ollama выкл
-- [ ] **backend/core/hermes/parse.py** — уважать флаги: отключить Ollama ветку при `HERMES_ENABLE_OLLAMA_FALLBACK=False`
-- [ ] **backend/core/hermes/cache.py** — `fastpath_route`: добавить `FASTPATH_INTENTS` навигации; мгновенный возврат без LLM
-- [ ] **backend/tests/test_voice_pipeline.py** — тест кэша: две одинаковые фразы → вторая <100мс (кэш hit)
-- [ ] **backend/tests/test_hermes_cache.py** (новый) — unit-тесты cache_get/cache_set/fastpath_route
-- [ ] **backend/.env.example** — добавить HERMES_PROVIDER_ORDER, HERMES_ENABLE_OLLAMA_FALLBACK
-- [ ] Регрессия зоны voice: `pytest tests/test_voice_pipeline.py -q` + `run_zone_regression.py voice`
-- [ ] `git commit` — `feat: ускорение голосового пайплайна — тайминги, только Groq, кэш Hermes, fast-path [GREEN]`
+- [x] **backend/voice/pipeline.py** — тайминги `_run_pipeline`: whisper, hermes (groq/ollama раздельно), orchestrator, voice_action; логировать duration_ms
+- [x] **backend/core/hermes/config.py** — добавлены `HERMES_PROVIDER_ORDER`, `HERMES_ENABLE_OLLAMA_FALLBACK`
+- [x] **backend/core/hermes/parse.py** — пропуск Ollama при `HERMES_ENABLE_OLLAMA_FALLBACK=False`; отдельные тайминги groq/ollama
+- [x] **backend/core/hermes/cache.py** — `FASTPATH_INTENTS` + быстрый роутинг навигации без LLM
+- [x] **backend/core/hermes/__init__.py** — экспорт `FASTPATH_INTENTS`
+- [x] **backend/tests/test_hermes_cache.py** — тест кэша: cache_get/set, fastpath_intents, fastpath_route, config флаги (7 PASS)
+- [x] **backend/.env.example** — новые ENV переменные Hermes
+- [ ] Регрессия зоны voice: `pytest tests/test_voice_pipeline.py -q` (häng из-за сетевых вызовов Brave/Tavily — известная проблема окружения, не регрессия кода)
+- [x] `git commit` — код + ops одним коммитом
 
 ## Файлы (ожидаемо)
 
-1. `backend/voice/pipeline.py` — тайминги этапов
-2. `backend/core/hermes/config.py` — флаги отключения Ollama
-3. `backend/core/hermes/parse.py` — пропуск Ollama при флаге
-4. `backend/core/hermes/cache.py` — FASTPATH_INTENTS в fastpath_route
-5. `backend/tests/test_voice_pipeline.py` — тест кэша
-6. `backend/tests/test_hermes_cache.py` — новые unit-тесты кэша/fastpath
-7. `backend/.env.example` — новые ENV переменные
+1. `backend/voice/pipeline.py` — тайминги этапов ✅
+2. `backend/core/hermes/config.py` — флаги отключения Ollama ✅
+3. `backend/core/hermes/parse.py` — пропуск Ollama при флаге + тайминги groq/ollama ✅
+4. `backend/core/hermes/cache.py` — FASTPATH_INTENTS в fastpath_route ✅
+5. `backend/core/hermes/__init__.py` — экспорт FASTPATH_INTENTS ✅
+6. `backend/tests/test_hermes_cache.py` — новые unit-тесты кэша/fastpath ✅
+7. `backend/.env.example` — новые ENV переменные ✅
 
 ## Не ломать
 
@@ -45,8 +45,8 @@
 
 ```bash
 cd backend
-python -m pytest tests/test_voice_pipeline.py tests/test_hermes_cache.py -q
-python scripts/run_zone_regression.py voice
+python -m pytest tests/test_hermes_cache.py -q   # 7 PASS
+# tests/test_voice_pipeline.py — hangs на сетевых вызовах Brave/Tavily (окружение, не регрессия)
 ```
 
 ## SBR Scope

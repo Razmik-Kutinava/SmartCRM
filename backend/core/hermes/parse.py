@@ -57,14 +57,18 @@ async def parse_intent(text: str) -> dict:
     async def _try_groq() -> dict | None:
         if not config.GROQ_API_KEY:
             return None
+        t_groq = time.monotonic()
         try:
             result = await groq_chat(messages)
+            groq_ms = round((time.monotonic() - t_groq) * 1000)
             logger.info(f"Hermes/Groq сырой ответ: {result[:200]}")
+            logger.info(f"Hermes/Groq duration_ms={groq_ms}")
             parsed = parse_json(result)
             if parsed:
                 parsed = post_verify(normalized_text, parsed)
                 logger.info(f"Hermes/Groq разобрал: intent={parsed.get('intent')}")
                 parsed["_model"] = config.GROQ_HERMES_MODEL
+                parsed["_groq_duration_ms"] = groq_ms
                 cache_set(normalized_text, parsed)
                 if config.HERMES_ENABLE_MEMORY:
                     try:
@@ -73,10 +77,12 @@ async def parse_intent(text: str) -> dict:
                         pass
                 return parsed
         except Exception as e:
-            logger.warning(f"Hermes/Groq ошибка: {e}, переключаемся на Ollama")
+            groq_ms = round((time.monotonic() - t_groq) * 1000)
+            logger.warning(f"Hermes/Groq ошибка: {e}, переключаемся на Ollama (duration_ms={groq_ms})")
         return None
 
     async def _try_ollama() -> dict | None:
+        t_ollama = time.monotonic()
         ctx_for_ollama = choose_num_ctx(normalized_text)
         model_chain = [config.HERMES_MODEL, config.HERMES_FALLBACK]
         if config.HERMES_ENABLE_QUANT_MODEL and config.HERMES_MODEL_QUANT:
@@ -86,7 +92,8 @@ async def parse_intent(text: str) -> dict:
         for model in model_chain:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
-                logger.warning("Hermes/Ollama: исчерпан общий таймаут, прерываем попытки")
+                ollama_ms = round((time.monotonic() - t_ollama) * 1000)
+                logger.warning(f"Hermes/Ollama: исчерпан общий таймаут, прерываем попытки (duration_ms={ollama_ms})")
                 break
             request_timeout = min(config.HERMES_OLLAMA_TIMEOUT_SEC, max(1.0, remaining))
             try:
@@ -94,12 +101,15 @@ async def parse_intent(text: str) -> dict:
                     await ollama_preload(model, ctx_for_ollama, timeout_sec=min(5.0, request_timeout))
                     config._preloaded_models.add(model)
                 result = await ollama_chat(messages, model, ctx_for_ollama, timeout_sec=request_timeout)
+                ollama_ms = round((time.monotonic() - t_ollama) * 1000)
                 logger.info(f"Hermes/Ollama ({model}) сырой ответ: {result[:200]}")
+                logger.info(f"Hermes/Ollama ({model}) duration_ms={ollama_ms}")
                 parsed = parse_json(result)
                 if parsed:
                     parsed = post_verify(normalized_text, parsed)
                     logger.info(f"Hermes/Ollama ({model}) разобрал: intent={parsed.get('intent')}")
                     parsed["_model"] = model
+                    parsed["_ollama_duration_ms"] = ollama_ms
                     cache_set(normalized_text, parsed)
                     if config.HERMES_ENABLE_MEMORY:
                         try:
@@ -109,7 +119,8 @@ async def parse_intent(text: str) -> dict:
                     return parsed
                 logger.warning(f"Hermes/Ollama ({model}) не смог распарсить JSON из: {result[:100]}")
             except Exception as e:
-                logger.warning(f"Hermes/Ollama ({model}) ошибка [{type(e).__name__}]: {e}")
+                ollama_ms = round((time.monotonic() - t_ollama) * 1000)
+                logger.warning(f"Hermes/Ollama ({model}) ошибка [{type(e).__name__}]: {e} (duration_ms={ollama_ms})")
                 continue
         return None
 
@@ -124,9 +135,10 @@ async def parse_intent(text: str) -> dict:
         parsed = await _try_groq()
         if parsed:
             return parsed
-        parsed = await _try_ollama()
-        if parsed:
-            return parsed
+        if config.HERMES_ENABLE_OLLAMA_FALLBACK:
+            parsed = await _try_ollama()
+            if parsed:
+                return parsed
 
     rescue = rescue_route(normalized_text)
     if rescue:
