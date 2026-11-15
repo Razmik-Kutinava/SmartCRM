@@ -1,4 +1,5 @@
 """Hermes — кэш интентов и fastpath-роутинг."""
+import re
 import time
 
 from . import config
@@ -78,4 +79,24 @@ def fastpath_route(text: str) -> dict | None:
             "reply": "Это не CRM команда.",
             "_model": "fastpath",
         }
+
+    # Голосовой выбор лида по порядковому числителю: «открой первый/третий», «лид № 3», «номер 2»
+    _ORD_MAP = {
+        "первый": 1, "второй": 2, "третий": 3, "четвёртый": 4, "четвертый": 4,
+        "пятый": 5, "шестой": 6, "седьмой": 7, "восьмой": 8, "девятый": 9, "десятый": 10,
+    }
+    m_ord = re.search(r"\b(первый|второй|третий|четвёртый|четвертый|пятый|шестой|седьмой|восьмой|девятый|десятый)\b", t)
+    m_num = re.search(r"\b(?:лид\s*№?\s*|номер\s*)(\d{1,2})\b", t)
+    if m_ord or m_num:
+        n = _ORD_MAP[m_ord.group(1)] if m_ord else int(m_num.group(1))
+        idx = n - 1
+        return {
+            "intent": "open_lead",
+            "agents": ["analyst"],
+            "slots": {"selected_index": idx},
+            "parallel": False,
+            "reply": f"Открываю лид №{n}.",
+            "_model": "fastpath",
+        }
+
     return None

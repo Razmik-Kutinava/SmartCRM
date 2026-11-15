@@ -121,3 +121,31 @@ def test_rescue_open_lead_n_out_of_range():
     assert parsed["intent"] == "open_lead"
     assert parsed["slots"].get("selected_index") == 4
     assert "lead_id" not in parsed["slots"]
+
+
+# --- RED: fastpath_route не знает про порядковые числительные ( голос говорит «такой команды нет») ---
+from core.hermes.cache import fastpath_route  # noqa: E402
+
+
+def test_fastpath_open_lead_ordinal_third():
+    """«открой третий лид» → fastpath open_lead с selected_index=2 (до фикса возвращает None)."""
+    parsed = fastpath_route("открой третий лид")
+    assert parsed is not None, f"fastpath вернул None для 'открой третий лид'"
+    assert parsed["intent"] == "open_lead", f"ожидался open_lead, получил {parsed.get('intent')!r}"
+    assert parsed["slots"].get("selected_index") == 2, f"ожидался selected_index=2, получил {parsed.get('slots')!r}"
+
+
+def test_fastpath_open_lead_number_2():
+    """«номер 2» → fastpath open_lead с selected_index=1."""
+    parsed = fastpath_route("номер 2")
+    assert parsed is not None
+    assert parsed["intent"] == "open_lead"
+    assert parsed["slots"].get("selected_index") == 1
+
+
+def test_fastpath_open_lead_lead_no_3():
+    """«лид № 3» → fastpath open_lead с selected_index=2."""
+    parsed = fastpath_route("лид № 3")
+    assert parsed is not None
+    assert parsed["intent"] == "open_lead"
+    assert parsed["slots"].get("selected_index") == 2

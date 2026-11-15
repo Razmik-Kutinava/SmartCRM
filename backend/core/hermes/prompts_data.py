@@ -116,6 +116,12 @@ Output: {"intent":"open_lead","agents":["analyst"],"slots":{"ref":"last"},"paral
 Input: "открой лид Центральный банк Армении"
 Output: {"intent":"open_lead","agents":["analyst"],"slots":{"company":"Центральный банк Армении"},"parallel":false,"reply":"Открываю лид Центральный банк Армении."}
 
+Input: "открой третий лид"
+Output: {"intent":"open_lead","agents":["analyst"],"slots":{"selected_index":2},"parallel":false,"reply":"Открываю лид №3."}
+
+Input: "лид № 1"
+Output: {"intent":"open_lead","agents":["analyst"],"slots":{"selected_index":0},"parallel":false,"reply":"Открываю лид №1."}
+
 Input: "в лиде ромашка исправь почту на ivan@mail.ru"
 Output: {"intent":"update_lead","agents":["analyst"],"slots":{"company":"ромашка","field":"email","value":"ivan@mail.ru"},"parallel":false,"reply":"Обновляю почту лида."}
 

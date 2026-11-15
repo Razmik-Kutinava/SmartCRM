@@ -203,6 +203,11 @@ PHASE 0 INTAKE ✅ → PHASE 1 SPEC → `go` → RED → GREEN → REVIEW.
 - [x] **backend/voice/pipeline.py**: при `list_leads` с query → `set_last_search_candidates(candidates)`; при `list_leads` с `_clear_voice_memory` → `clear_last_search_candidates()`
 - [x] **backend/tests/voice/test_open_lead.py**: 6 тестов voice выбора по номеру с моком `get_last_search_candidates`
 - [x] Регрессия: `tests/voice/test_open_lead.py` 11 PASS; `test_lead_search_and_select.py::test_slot_normalize_extract_ordinal` PASS
+- [x] **backend/core/hermes/cache.py** `fastpath_route`: добавить паттерн «открой третий лид / лид № 3 / номер 2» → `open_lead` + `selected_index`
+- [x] **backend/core/hermes/prompts_data.py** `SYSTEM_PROMPT`: пример «открой третий лид» → `open_lead`
+- [x] **backend/tests/voice/test_open_lead.py**: RED-тест `fastpath_route("открой третий лид")` → `open_lead` + `selected_index=2`
+- [x] Регрессия: `python -m pytest tests/test_voice_pipeline.py tests/voice/test_open_lead.py tests/voice/test_lead_search_and_select.py -q` = 29 PASS; `run_zone_regression.py voice` = ssl-таймаут env (не diff), voice pipeline узкие тесты PASS
+- [x] git commit + ответ пользователю
 
 ---
 
