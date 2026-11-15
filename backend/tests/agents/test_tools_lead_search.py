@@ -116,12 +116,12 @@ async def test_read_lead_by_company_sorts_by_recency():
     """Сортировка: 1) задача due≤сегодня/звонок 24ч, 2) стадия, 3) скор, 4) updated_at."""
     with patch("agents.tools._api_get", new_callable=AsyncMock) as mock_get:
         mock_get.return_value = [
-            {"id": 1, "company": "А", "contact": "Иван", "stage": "Новый", "score": 90, "city": "Москва", "next_call": "—", "manager": "Петров", "updated_at": "2026-11-01T10:00:00"},
-            {"id": 2, "company": "Б", "contact": "Мария", "stage": "Переговоры", "score": 80, "city": "Казань", "next_call": "2026-11-15", "manager": "Сидоров", "updated_at": "2026-11-10T10:00:00"},
-            {"id": 3, "company": "В", "contact": "Алексей", "stage": "КП", "score": 95, "city": "СПб", "next_call": "—", "manager": "Иванов", "updated_at": "2026-11-12T10:00:00"},
+            {"id": 1, "company": "Тест А", "contact": "Иван", "stage": "Новый", "score": 90, "city": "Москва", "next_call": "—", "manager": "Петров", "updated_at": "2026-11-01T10:00:00"},
+            {"id": 2, "company": "Тест Б", "contact": "Мария", "stage": "Переговоры", "score": 80, "city": "Казань", "next_call": "2026-11-15", "manager": "Сидоров", "updated_at": "2026-11-10T10:00:00"},
+            {"id": 3, "company": "Тест В", "contact": "Алексей", "stage": "КП", "score": 95, "city": "СПб", "next_call": "—", "manager": "Иванов", "updated_at": "2026-11-12T10:00:00"},
         ]
         results = await read_lead_by_company("тест", limit=10)
         assert isinstance(results, list)
         assert len(results) == 3
         # Первый — с next_call сегодня (вес 1000) или стадией Переговоры (вес 100)
-        assert results[0]["company"] in ("Б", "А")
+        assert results[0]["company"] in ("Тест Б", "Тест А")

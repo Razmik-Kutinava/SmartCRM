@@ -149,14 +149,59 @@ def _transliterate_ru_to_en(text: str) -> str:
     return "".join(result)
 
 
+# Обратная карта EN→RU посимвольно (для транслитерации запросов на латинице в кириллицу)
+_TRANSLIT_EN_RU_CHAR = {
+    "a": "а", "b": "б", "v": "в", "g": "г", "d": "д", "e": "е", "yo": "ё", "zh": "ж",
+    "z": "з", "i": "и", "y": "й", "k": "к", "l": "л", "m": "м", "n": "н", "o": "о",
+    "p": "п", "r": "р", "s": "с", "t": "т", "u": "у", "f": "ф", "kh": "х", "ts": "ц",
+    "ch": "ч", "sh": "ш", "shch": "щ", "y": "ы", "e": "э", "yu": "ю", "ya": "я",
+}
+
+
 def _transliterate_en_to_ru(text: str) -> str:
-    """Простая транслитерация EN→RU для поиска (обратная карта)."""
-    # Обратная карта для частых слов
-    en_to_ru = {v: k for k, v in _TRANSLIT_COMMON_WORDS.items()}
-    text = text.lower()
-    for en, ru in en_to_ru.items():
+    """Простая транслитерация EN→RU для поиска (обратная карта).
+
+    Сначала заменяем частые английские слова (bank→банк, audit→аудит и т.д.),
+    затем посимвольно для остального (multi-char комбинации kh, ch, sh, shch, ts, yo, yu, ya приоритетны).
+    """
+    if not text:
+        return ""
+    text = text.strip().lower()
+    # Сначала заменяем частые слова целиком
+    for en, ru in _TRANSLIT_COMMON_WORDS.items():
         text = text.replace(en, ru)
-    return text
+    # Затем посимвольно для остального (multi-char комбинации — приоритет)
+    result = []
+    i = 0
+    while i < len(text):
+        matched = False
+        # Пробуем multi-char комбинации длиной 2
+        if i + 2 <= len(text):
+            two = text[i : i + 2]
+            if two in _TRANSLIT_EN_RU_CHAR:
+                result.append(_TRANSLIT_EN_RU_CHAR[two])
+                i += 2
+                matched = True
+        if not matched:
+            one = text[i]
+            result.append(_TRANSLIT_EN_RU_CHAR.get(one, one))
+            i += 1
+    return "".join(result)
+
+
+def transliterate_ru_en(text: str) -> str:
+    """ПUBLIC: транслитерация RU→EN для поиска.
+
+    Если в тексте есть кириллица — транслитерирует в латиницу (карта + частые слова).
+    Если текст уже латиница — возвращает нормализованный (lowercase, пробелы/дефисы сохраняются).
+    """
+    if not text:
+        return ""
+    text = text.strip()
+    # Если нет кириллицы — текст уже латиница, вернуть нормализованный
+    if not any("\u0400" <= ch <= "\u04FF" for ch in text):
+        return text.lower()
+    return _transliterate_ru_to_en(text).lower()
 
 
 def _generate_search_variants(query: str) -> list[str]:
@@ -234,11 +279,14 @@ def _lead_recency_score(lead: dict) -> float:
 
 async def read_lead_by_company(query: str, limit: int = 10) -> list[dict]:
     """
-    Найти лиды по названию компании ИЛИ контакту с транслитерацией RU↔EN.
-    Возвращает list[dict], отсортированный по актуальности (recency score).
+    Найти лиды по компании / контакту / названию лида (description) с транслитерацией RU↔EN.
+    Возвращает list[dict] длиной до `limit`, отсортированный по актуальности.
+
+    Поля в результате: id, company, city, stage, score, next_call,
+    contact_name (имя контакта), manager_name (ответственный), lead_id (дублирует id).
     """
     try:
-        leads = await read_leads(limit=500)  # берём больше для фильтрации
+        leads = await read_leads(limit=200)  # берём больше для фильтрации, затем обрезаем limit
     except Exception as e:
         logger.warning("tools.read_lead_by_company ошибка чтения: %s", e)
         return []
@@ -246,19 +294,27 @@ async def read_lead_by_company(query: str, limit: int = 10) -> list[dict]:
     if not query or not query.strip():
         return []
 
-    # Генерируем варианты поиска с транслитерацией
-    search_variants = _generate_search_variants(query.strip())
+    # Два варианта: исходный + транслитерация в противоположную сторону
+    q1 = query.strip().lower()
+    if any("\u0400" <= ch <= "\u04FF" for ch in q1):
+        # Есть кириллица — генерируем EN-вариант (RU→EN)
+        q2 = transliterate_ru_en(q1)
+    else:
+        # Уже латиница — генерируем RU-вариант (EN→RU) для поиска по кириллическим полям
+        q2 = _transliterate_en_to_ru(q1)
+    variants = [v for v in (q1, q2) if v]
+    # Убрать дубликаты с сохранением порядка
+    seen = set()
+    variants = [v for v in variants if not (v in seen or seen.add(v))]
 
     matched = []
     for lead in leads:
         company = str(lead.get("company") or "").lower()
         contact = str(lead.get("contact") or "").lower()
-        lead_name = str(lead.get("lead_name") or lead.get("name") or "").lower()
+        description = str(lead.get("description") or "").lower()  # эквивалент lead_name / title
 
-        # Поиск по любому из вариантов
-        for variant in search_variants:
-            v = variant.lower()
-            if v in company or v in contact or v in lead_name:
+        for v in variants:
+            if v in company or v in contact or v in description:
                 normed = normalize_lead_for_agents(lead)
                 normed["_recency_score"] = _lead_recency_score(lead)
                 matched.append(normed)
@@ -267,15 +323,27 @@ async def read_lead_by_company(query: str, limit: int = 10) -> list[dict]:
     # Сортировка по актуальности (убывание)
     matched.sort(key=lambda x: x.get("_recency_score", 0), reverse=True)
 
-    # Убираем служебное поле
-    for m in matched:
+    # Убираем служебное поле и обрезаем лимит
+    result = []
+    for m in matched[:limit]:
         m.pop("_recency_score", None)
+        # Явные поля для агентов
+        m["contact_name"] = m.get("contact") or m.get("contact_name") or ""
+        m["manager_name"] = m.get("responsible") or m.get("manager_name") or ""
+        m["lead_id"] = m.get("id")
+        result.append(m)
 
-    return matched[:limit]
+    return result
 
 
-def normalize_lead_for_agents(raw: dict[str, Any]) -> dict[str, Any]:
-    """Приводит ответ API /api/leads к полям, которые ждут агенты (snake_case, note, lead_id)."""
+def normalize_lead_for_agents(raw: dict[str, Any] | list[dict[str, Any]]) -> dict[str, Any] | list[dict[str, Any]]:
+    """Приводит ответ API /api/leads к полям, которые ждут агенты (snake_case, note, lead_id).
+
+    Принимает один dict или список dict. Для списка возвращает список нормализованных dict.
+    """
+    if isinstance(raw, list):
+        return [normalize_lead_for_agents(item) for item in raw]
+
     if not raw:
         return {}
     from rag.search.research_dossier import extract_web_research_brief
@@ -286,6 +354,10 @@ def normalize_lead_for_agents(raw: dict[str, Any]) -> dict[str, Any]:
     lid = out.get("id")
     if lid is not None:
         out["lead_id"] = lid
+    # contact_name — имя контакта для уточнения поиска
+    out["contact_name"] = out.get("contact") or out.get("contact_name") or ""
+    # manager_name — ответственный менеджер для уточнения поиска
+    out["manager_name"] = out.get("responsible") or out.get("manager") or out.get("manager_name") or ""
     desc = out.get("description") or ""
     out["note"] = desc
     # Досье из 🔍 — в note/description для агентов (без повторного веб-поиска)

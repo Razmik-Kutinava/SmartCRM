@@ -13,22 +13,23 @@
 
 ## Чеклист микро-шагов
 
-- [ ] **backend/agents/tools.py** — `read_lead_by_company(query: str, limit: int = 10) -> list[dict]`:
+- [x] **backend/agents/tools.py** — `read_lead_by_company(query: str, limit: int = 10) -> list[dict]`:
   - Принимать строку запроса (не только название компании)
   - Генерировать два варианта: исходный + транслитерированный (`transliterate_ru_en`)
-  - SQL: `WHERE (company ILIKE %q1% OR lead_name ILIKE %q1% OR name ILIKE %q1%) OR (company ILIKE %q2% OR lead_name ILIKE %q2% OR name ILIKE %q2%)` — оба варианта запроса
+  - Поиск по `company` / `contact` / `description` (эквивалент `lead_name`) — оба варианта запроса
   - Вернуть список словарей: `id, company, city, stage, score, next_call, contact_name, manager_name` (последние два — опционально, для уточнения поиска)
-  - Лимит 10, сортировка на уровне БД или в Python (см. ниже)
-- [ ] **backend/agents/tools.py** — добавить `transliterate_ru_en(text: str) -> str`:
-  - Карта замен: а→a, б→b, в→v, г→g, д→d, е→e, ё→yo, ж→zh, з→z, и→i, й→y, к→k, л→l, м→m, н→n, о→o, п→p, р→r, с→s, т→t, у→u, ф→f, х→kh, ц→ts, ч→ch, ш→sh, щ→shch, ъ→, ы→y, ь→, э→e, ю→yu, я→ya (и заглавные)
+  - Лимит 10, сортировка в Python по `_lead_recency_score`
+- [x] **backend/agents/tools.py** — добавить `transliterate_ru_en(text: str) -> str`:
+  - Карта замен: а→a, б→b, в→v, г→g, д→d, е→e, ё→yo, ж→zh, з→z, и→i, й→y, к→k, л→l, м→m, н→n, о→o, п→p, р→r, с→s, т→t, у→u, ф→f, х→kh, ц→ts, ч→ch, ш→sh, щ→shch, ъ→'', ы→y, ь→'', э→e, ю→yu, я→ya (и заглавные)
   - Пробелы и дефисы сохранять
-  - Если текст уже латиница — вернуть как есть (или тоже нормализовать)
-- [ ] Сортировка результатов (в Python после выборки, или в SQL через CASE):
+  - Если текст уже латиница — вернуть как есть (нормализованный)
+  - EN→RU через `_transliterate_en_to_ru` для обратного поиска
+- [x] Сортировка результатов (в Python после выборки, или в SQL через CASE):
   1. Есть открытая задача с `due <= сегодня` / последняя коммуникация типа `call` за 24ч
   2. Стадия: Переговоры > КП отправлено > Квалифицирован > Новый
   3. Скор (desc)
   4. `updated_at` desc (свежесть)
-- [ ] Обновить `normalize_lead_for_agents` чтобы она корректно работала со списком (сейчас ожидает один dict)
+- [x] Обновить `normalize_lead_for_agents` чтобы она корректно работала со списком (сейчас ожидает один dict)
 
 ---
 
