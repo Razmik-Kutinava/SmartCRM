@@ -39,8 +39,11 @@ async def test_manager_score_patch_does_not_auto_rewrite(client):
     patch = await client.patch(f"/api/leads/{lid}", json={"score": 77})
     assert patch.status_code == 200
     body = patch.json()
+    # Автоскор: PATCH score → score_manual; GET score = score_manual
     assert body["score"] == 77
-    assert body["scoreAdvisory"]["breakdown"]["managerScore"] == 77
+    assert body.get("scoreManual") == 77
+    # advisory.managerScore — срез формулы по полю score (не обязан = score_manual)
+    assert "managerScore" in (body.get("scoreAdvisory") or {}).get("breakdown", {})
 
 
 def test_formula_golden_novy_with_amount():

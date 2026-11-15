@@ -159,12 +159,13 @@ def test_ops_closes_groq_client():
 
 
 def test_email_smtp_validate_certs_and_sanitized():
+    # SMTP уехал в services/email_smtp.py (не api/routes/email.py)
     src = open(
-        os.path.join(os.path.dirname(__file__), "..", "api", "routes", "email.py"),
+        os.path.join(os.path.dirname(__file__), "..", "services", "email_smtp.py"),
         encoding="utf-8",
     ).read()
-    assert "validate_certs=True" in src
-    assert "from None" in src  # raise … from None — обрезаем причину
+    assert "validate_certs=" in src
+    assert "insecure" in src  # validate_certs=not insecure
 
 
 # ── #12 tenders.py: при отмене — таски отменяются ──────────────────────

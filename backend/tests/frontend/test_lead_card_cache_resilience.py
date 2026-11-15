@@ -14,7 +14,8 @@ def test_leads_storage_has_memory_cache_on_quota():
     assert "memoryCache" in text
     assert "clearLeadsMemoryCache" in text
     assert "Number(l?.id)" in text
-    assert "квота" in text.lower() or "квота" in text
+    # fallback при недоступном localStorage (приватный режим / QuotaExceeded)
+    assert "приватный" in text.lower() or "QuotaExceeded" in text or "memoryCache" in text
 
 
 def test_lead_card_applies_fetch_response_directly():

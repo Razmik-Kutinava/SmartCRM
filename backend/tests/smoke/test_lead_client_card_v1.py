@@ -52,8 +52,8 @@ def test_lead_client_card_bitrix_uf_after_contacts():
     contacts = markup.index('data-testid="lead-card-section-contacts"')
     bitrix = markup.index('data-testid="lead-card-section-bitrix-uf"')
     assert bitrix > contacts
-    # LeadBitrixExtraPanel только внутри хвоста bitrix-uf
-    bitrix_block = markup[bitrix : bitrix + 800]
+    # LeadBitrixExtraPanel в хвосте bitrix-uf (после webResearch-блока — не режем по 800 символов)
+    bitrix_block = markup[bitrix:]
     assert "LeadBitrixExtraPanel" in bitrix_block or "lead-bitrix" in bitrix_block.lower()
 
 

@@ -22,8 +22,9 @@ def test_leads_list_unified_header():
 def test_leads_list_import_in_menu_not_inline():
     text = _LIST.read_text(encoding="utf-8")
     assert 'data-testid="leads-bitrix-import"' in text
-    assert 'data-testid="leads-csv-import"' in text
+    assert 'data-testid="leads-import-open"' in text  # Excel/CSV → LeadsImportModal
     assert 'data-testid="leads-csv-export"' in text
+    assert "LeadsImportModal" in text
     idx = text.index('data-testid="leads-list-more-panel"')
     panel = text[idx : idx + 2800]
     assert "Битрикс24" in panel
@@ -60,7 +61,7 @@ def test_leads_list_filters_labeled():
     assert 'data-testid="leads-list-subscription-badge"' in text
     assert "Подписка до" in text
     assert "taskDueBadgeForLead" in text
-    assert "tasks_urgent" in text
+    assert "TASK_DUE_FILTERS" in text
     filters = text.split('data-testid="leads-list-filters"', 1)[1].split("<!-- Table -->", 1)[0]
     assert "Сортировка" in filters
     assert "Тир" in filters

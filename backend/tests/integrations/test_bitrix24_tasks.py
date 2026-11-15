@@ -49,7 +49,7 @@ async def test_sync_tasks_creates_meeting(monkeypatch):
     assert n == 1
     t = db.added[0]
     assert t.title == "Встреча: Демо продукта"
-    assert t.due == "23.06.2026"
+    assert t.due.startswith("23.06.2026")  # с временем: «23.06.2026 10:00»
     assert t.lead_id == 10
     assert t.related_lead == "ООО Тест"
     assert "[b24:act:501]" in t.note

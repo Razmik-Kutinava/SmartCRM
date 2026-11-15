@@ -3,6 +3,10 @@
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.  
 **Агент:** на старте чата **не читать весь CHANGELOG** — только шапка + запись текущего шага при нужде. Архив: `docs/archive/ops/`.
 
+## 2026-11-15 — CI: 10 красных pytest после hang-фиксов
+
+После зелёных smoke/zones оставались assertion-фейлы (run 43694097392). Обновили тесты под текущий код: leadsStorage без «квота»; leadCreate/Mailing UI — статический контракт (без Node/svelte в CI pytest); Bitrix due с временем; upsert-моки на `bitrix24_upsert`; bitrix-uf slice без лимита 800; csv-import → `leads-import-open`; `TASK_DUE_FILTERS`; score_manual vs managerScore; `validate_certs` в `email_smtp.py`. | Коммит: `этот`.
+
 ## 2026-11-14 — F4: Путь сделки не 0/0 при пустом dealPath (лиды)
 
 По `go` («ебашь грин»): бэкенд возвращает `dealPath: null` когда путь не задан (нет контактов/телефона/email/выполненных approvals); фронт показывает «Путь сделки не задан» вместо «Все шаги пройдены ✓» при `dealPath` пустом/отсутствующем.

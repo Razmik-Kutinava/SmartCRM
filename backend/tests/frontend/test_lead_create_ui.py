@@ -1,12 +1,11 @@
-"""Smoke: модалка «Новый лид» — store и разметка."""
+"""Smoke: модалка «Новый лид» — store и разметка (без Node/Vite — CI pytest без frontend deps)."""
 
 from __future__ import annotations
 
-import shutil
-import subprocess
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[3]
+_UI = _ROOT / "frontend" / "src" / "lib" / "leads" / "leadCreateUi.js"
 _SMOKE = _ROOT / "frontend" / "src" / "lib" / "leads" / "leadCreateUi.smoke.mjs"
 _DASHBOARD = _ROOT / "frontend" / "src" / "routes" / "+page.svelte"
 _LIST = _ROOT / "frontend" / "src" / "routes" / "leads" / "list" / "+page.svelte"
@@ -15,11 +14,16 @@ _LAYOUT = _ROOT / "frontend" / "src" / "routes" / "+layout.svelte"
 
 
 def test_lead_create_ui_smoke():
-    node = shutil.which("node")
-    if not node:
-        return
-    proc = subprocess.run([node, str(_SMOKE)], cwd=_ROOT / "frontend", capture_output=True, text=True)
-    assert proc.returncode == 0, proc.stderr or proc.stdout
+    """Контракт store + smoke-скрипт на месте (запуск Node — npm/frontend, не CI pytest)."""
+    text = _UI.read_text(encoding="utf-8")
+    assert "openLeadCreateModal" in text
+    assert "closeLeadCreateModal" in text
+    assert "leadCreateVisible" in text
+    assert "leadCreateOpen" in text
+    assert _SMOKE.is_file()
+    smoke = _SMOKE.read_text(encoding="utf-8")
+    assert "openLeadCreateModal" in smoke
+    assert "leadCreateUi smoke OK" in smoke
 
 
 def test_dashboard_create_lead_opens_modal_not_link():

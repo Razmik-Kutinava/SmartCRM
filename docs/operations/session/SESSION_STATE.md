@@ -7,6 +7,8 @@
 **Регрессия_счёт:** `0/3` — после каждого GREEN +1; на `3/3` → ещё `run_zone_regression.py all` (или p1+p6), сброс в `0/3`. Docs/rules-only не трогает счётчик. Канон: `smartcrm-dev-gates.mdc` § Счётчик.  
 `ctx_trim: 2026-11-14` · **Агент:** на старте — шапка + 1–3 свежие строки, не весь журнал.
 
+2026-11-15 | Действие: fix CI — 10 упавших pytest: stale UI/API ожидания + Node smoke без svelte/$lib → статика; bitrix upsert моки на bitrix24_upsert; due с временем; score_manual; email_smtp validate_certs | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (узкие 15 PASS, зона smoke/voice уже green в CI)
+
 2026-11-14 | Действие: docs — записал 5 шагов до первых продаж в docs/operations/phase4/leads/F4_FIRST_STEPS_TO_SELL.md (шаги 1–5, статус: 1 сделан, 2–5 не сделаны)
 
 docs/rules — пакет C tokens/SBR (CoffeeOS+APU): hygiene, slash, ZONE_NOTES, OWNER_CHECKS, CRITICAL_LEDGER, эконом-gates | Коммит: `этот` | Хвост A: нет | Хвост B: нет | Хвост C: нет | Статус: done | Регрессия_счёт: 0/3 (docs-only)

@@ -38,20 +38,21 @@ async def test_upsert_bitrix_lead_row_imports_new(db_session, monkeypatch):
         "OPPORTUNITY": "0",
         "CURRENCY_ID": "RUB",
     }
-    with patch("integrations.bitrix24._load_status_names", new_callable=AsyncMock, return_value={}), patch(
-        "integrations.bitrix24._load_source_names", new_callable=AsyncMock, return_value={}
+    # Патчим upsert-модуль: имена уже импортированы из bitrix24
+    with patch("integrations.bitrix24_upsert._load_status_names", new_callable=AsyncMock, return_value={}), patch(
+        "integrations.bitrix24_upsert._load_source_names", new_callable=AsyncMock, return_value={}
     ), patch(
-        "integrations.bitrix24._load_user_names", new_callable=AsyncMock, return_value={}
+        "integrations.bitrix24_upsert._load_user_names", new_callable=AsyncMock, return_value={}
     ), patch(
-        "integrations.bitrix24_related.enrich_fields_from_bitrix_row",
+        "integrations.bitrix24_upsert.enrich_fields_from_bitrix_row",
         new_callable=AsyncMock,
         return_value={},
     ), patch(
-        "integrations.bitrix24_timeline.sync_bitrix_timeline",
+        "integrations.bitrix24_upsert.sync_bitrix_timeline",
         new_callable=AsyncMock,
         return_value=0,
     ), patch(
-        "integrations.bitrix24_tasks.sync_bitrix_tasks",
+        "integrations.bitrix24_upsert.sync_bitrix_tasks",
         new_callable=AsyncMock,
         return_value=0,
     ):
