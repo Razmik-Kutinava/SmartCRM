@@ -364,8 +364,16 @@ def rescue_route(text: str) -> dict | None:
             from core.agent_memory import get_last_search_candidates
             candidates = get_last_search_candidates()
             if candidates and len(candidates) >= n:
-                slots["lead_id"] = candidates[idx]["id"]
-                return out("open_lead", ["analyst"], f"Открываю лид №{n}: {candidates[idx].get('company', '')}.", slots)
+                chosen = candidates[idx]
+                lid = chosen.get("id") or chosen.get("lead_id")
+                if lid is not None:
+                    slots["lead_id"] = lid
+                return out(
+                    "open_lead",
+                    ["analyst"],
+                    f"Открываю лид №{n}: {chosen.get('company', '')}.",
+                    slots,
+                )
             return out("open_lead", ["analyst"], f"Открываю {m_ord.group(1) if m_ord else m_num.group(0)}.", slots)
 
     # «открой её / этот» — без имени → прошлый найденный лид

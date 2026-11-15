@@ -130,12 +130,24 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
                     candidates = get_last_search_candidates()
                     if candidates and 0 <= selected_index < len(candidates):
                         chosen = candidates[selected_index]
-                        slots = {**slots, "lead_id": chosen["id"], "ref": "last"}
+                        lid = chosen.get("id") or chosen.get("lead_id")
+                        if lid is not None:
+                            slots = {**slots, "lead_id": lid, "ref": "last"}
+                        else:
+                            slots = {**slots, "_lead_no_candidates": True}
                     else:
                         slots = {**slots, "_lead_no_candidates": True}
 
                 if slots.get("lead_id"):
-                    chosen = next((c for c in (get_last_search_candidates() or []) if c.get("id") == slots["lead_id"]), None)
+                    lid = slots["lead_id"]
+                    chosen = next(
+                        (
+                            c
+                            for c in (get_last_search_candidates() or [])
+                            if (c.get("id") or c.get("lead_id")) == lid
+                        ),
+                        None,
+                    )
                     company = chosen.get("company", "") if chosen else ""
                     final_reply = f"Открываю лид №{selected_index + 1}: {company}."
                 else:

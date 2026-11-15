@@ -152,13 +152,21 @@ export function handleVoiceAction(action, { goto }) {
 		const id = resolveVoiceOpenLeadId(slots, payload);
 		if (id) {
 			const company = companyHint || String(slots.company || '');
-			rememberVoiceLeads([{ id, company }]);
+			// Не затирать весь список поиска одним лидом — иначе «открой второй» после первого сломается
 			openVoiceLeadOverlay(id, company);
 			voiceToast.set(company ? `Открываю: ${company}` : `Открываю лид #${id}`);
 			flashHighlight(action.title || 'Открываю лид');
 			return;
 		}
-		voiceToast.set('Сначала найди лид («найди лид …»), потом скажи «открой её»');
+		const hasOrdinal =
+			slots.selected_index != null ||
+			payload.selected_index != null ||
+			slots._lead_no_candidates;
+		voiceToast.set(
+			hasOrdinal
+				? 'Сначала найди лидов («найди лид …»), потом скажи «открой третий»'
+				: 'Сначала найди лид («найди лид …»), потом скажи «открой её»',
+		);
 		if (action.route) goto(String(action.route));
 		else goto('/leads/list');
 		return;

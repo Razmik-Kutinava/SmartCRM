@@ -274,7 +274,8 @@ def normalize_parsed_intent(text: str, parsed: dict[str, Any]) -> dict[str, Any]
         if n is not None:
             candidates = get_last_search_candidates()
             if candidates and len(candidates) >= n:
-                slots["lead_id"] = candidates[n - 1]["id"]
+                chosen = candidates[n - 1]
+                slots["lead_id"] = chosen.get("id") or chosen.get("lead_id")
                 slots["selected_index"] = n - 1
             else:
                 slots["_lead_no_candidates"] = True

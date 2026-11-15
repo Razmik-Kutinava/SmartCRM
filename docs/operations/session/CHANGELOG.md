@@ -3,6 +3,15 @@
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.  
 **Агент:** на старте чата **не читать весь CHANGELOG** — только шапка + запись текущего шага при нужде. Архив: `docs/archive/ops/`.
 
+## 2026-11-15 — Fix: «открой третий» после «найди лид» → «Лид не найден»
+
+Корень: фронт после поиска помнил список (`voiceLeadFocus`), но `resolveVoiceOpenLeadId` **игнорировал** `selected_index`; плюс успешный open затирал список одним лидом.
+- `voiceLeadFocus.js`: `selected_index` → `focus.leads[idx]` (раньше lead_id с бэка).
+- `voiceAction.js`: не вызывать `rememberVoiceLeads([one])` при open; toast «сначала найди лидов».
+- `leads/list/+page.svelte`: `findLead` + `open_lead` по `selected_index`, сравнение id через `Number()`.
+- `voice_action.py`: `payload.selected_index`; pipeline/slot_normalize/rescue — `id|lead_id`.
+Тесты: `test_voice_open_by_index` + voice 94 PASS; p1+p6. | Коммит: `этот`.
+
 ## 2026-11-15 — PHASE 3 REVIEW: голосовой выбор лида по номеру «открой второй лид» (GREEN)
 
 `backend/voice/pipeline.py`: при `open_lead` с `selected_index` подставляет `lead_id` из `get_last_search_candidates()` (единая память кандидатов последнего поиска) вместо `get_last_lead(session_id)`; если кандидатов нет — понятный ответ «сначала найдите лидов», не `/leads/list`.

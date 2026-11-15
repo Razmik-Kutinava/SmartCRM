@@ -81,6 +81,18 @@ export function closeVoiceLeadOverlay() {
  */
 export function resolveVoiceOpenLeadId(slots = {}, payload = {}) {
 	const merged = { ...payload, ...slots };
+	const focus = get(voiceLeadFocus);
+
+	// «открой третий / лид № 5» — индекс из запомненного списка после «найди лид»
+	// (порядок как на экране; важнее lead_id с бэка, если списки разошлись)
+	const idxRaw = merged.selected_index;
+	if (idxRaw != null && String(idxRaw).trim() !== '') {
+		const idx = Number(idxRaw);
+		if (Number.isInteger(idx) && idx >= 0 && focus.leads?.[idx]?.id) {
+			return Number(focus.leads[idx].id);
+		}
+	}
+
 	const lidRaw = merged.lead_id ?? merged.id;
 	if (lidRaw != null && String(lidRaw).trim() !== '') {
 		const n = Number(lidRaw);
@@ -88,7 +100,6 @@ export function resolveVoiceOpenLeadId(slots = {}, payload = {}) {
 	}
 
 	const ref = String(merged.ref || '').toLowerCase();
-	const focus = get(voiceLeadFocus);
 	if (ref === 'last' || ref === 'prev' || ref === 'previous') {
 		const first = focus.leads?.[0];
 		if (first?.id) return first.id;

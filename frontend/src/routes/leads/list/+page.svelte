@@ -590,6 +590,11 @@
 			const n = Number(slots.number);
 			if (Number.isInteger(n) && n >= 1 && n <= rowList.length) return rowList[n - 1];
 		}
+		// 0-based индекс из Hermes («открой третий» → selected_index=2)
+		if (slots.selected_index != null && slots.selected_index !== '') {
+			const idx = Number(slots.selected_index);
+			if (Number.isInteger(idx) && idx >= 0 && idx < rowList.length) return rowList[idx];
+		}
 		return null;
 	}
 
@@ -774,11 +779,14 @@
 		case 'open_lead': {
 			// Запасной путь: обычно open_lead уже открыл overlay в handleVoiceAction
 			const id = resolveVoiceOpenLeadId(slots || {});
-			const lead = id ? leads.find((l) => l.id === id) : findLead(slots);
+			const lead = id
+				? leads.find((l) => Number(l.id) === Number(id))
+				: findLead(slots);
 			if (lead) {
-				rememberVoiceLeads([lead], lead.company);
 				openVoiceLeadOverlay(lead.id, lead.company);
 				notify(`Открываю: ${lead.company}`);
+			} else if (slots?.selected_index != null) {
+				notify('Лид с таким номером не найден в последнем поиске — скажи «найди лид …»', 'error');
 			} else {
 				notify('Лид не найден — уточни название или сначала найди', 'error');
 			}

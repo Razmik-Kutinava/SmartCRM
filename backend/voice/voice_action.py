@@ -354,6 +354,11 @@ def _open_lead_payload(slots: dict) -> dict[str, Any]:
     lid = slots.get("lead_id") or slots.get("id")
     if lid is not None:
         payload["lead_id"] = lid
+    # Порядковый номер для фронта (voiceLeadFocus.leads[selected_index])
+    if slots.get("selected_index") is not None:
+        payload["selected_index"] = slots["selected_index"]
+    if slots.get("_lead_no_candidates"):
+        payload["_lead_no_candidates"] = True
     return payload
 
 

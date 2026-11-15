@@ -22,6 +22,19 @@ def test_voice_action_open_lead_by_id_navigates_card():
     assert va["route"] == "/leads/42"
 
 
+def test_voice_action_open_lead_passes_selected_index_in_payload():
+    """Фронт резолвит N-й лид из запомненного списка по selected_index."""
+    va = build_voice_action(
+        intent="open_lead",
+        slots={"selected_index": 2, "lead_id": 44},
+        reply="Открываю лид №3.",
+        agents=["analyst"],
+    )
+    assert va is not None
+    assert va["payload"].get("selected_index") == 2
+    assert va["route"] == "/leads/44"
+
+
 def test_voice_action_open_lead_ref_last_payload():
     va = build_voice_action(
         intent="open_lead",
