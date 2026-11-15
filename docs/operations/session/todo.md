@@ -1,252 +1,54 @@
-﻿# todo — микро-чеклист текущей фичи (SBR)
+﻿# todo — микро-чеклист: ускорение голосового пайплайна
 
 ## Заказ (дословно)
 
-> «Сейчас read_lead_by_company возвращает только один лид и ищет только по полю company. Надо: вернуть список до 10 лидов с полями id, company, city, stage, score, next_call. Искать не только по company, но и по названию лида (name / title / lead_name — поле модели Lead). Поддержка транслитерации: кириллица ↔ латиница, чтобы "акбарс банк ад аудит" и "akbars bank ad audit" находили один и тот же лид. Функция transliterate_ru_en(text) + поиск по обоим вариантам (нормализованный текст / SQL ILIKE с обоими формами).»
-
----
+> Сделать голос быстрее кнопок. Оператор не должен ждать >3 сек.
+>
+> 1. Логи таймингов (voice/pipeline.py): в _run_pipeline обернуть каждый этап в time.monotonic() и логировать duration_ms: Whisper STT, Hermes parse_intent (включая Groq/Ollama отдельно), Оркестратор/агенты, Сборка voice_action
+> 2. Отключить Ollama-фоллбэк (конфиг): backend/core/hermes/config.py — HERMES_PROVIDER_ORDER="groq_only", HERMES_ENABLE_OLLAMA_FALLBACK=False
+> 3. Проверить кэш Hermes: cache_get/cache_set в core/hermes/cache.py работают; тест: две одинаковые фразы подряд — вторая мгновенная (<100мс)
+> 4. Fast-path для навигации: core/hermes/fastpath.py (или где fastpath_route) — FASTPATH_INTENTS с частыми командами; любой интент из набора — мгновенный ответ без LLM
 
 ## Как понял (1–2 строки)
-Расширить `read_lead_by_company` до полнотекстового поиска по `company` И `lead_name` с транслитерацией RU↔EN, возвращать список кандидатов до 10 штук с полями для сортировки/отображения.
 
----
+Добавить поэтапные тайминги в voice/pipeline.py, выключить Ollama fallback в hermes/config.py, покрыть кэш Hermes тестом, расширить fastpath_route детерминированными навигационными интентами без LLM.
 
 ## Чеклист микро-шагов
 
-- [x] **backend/agents/tools.py** — `read_lead_by_company(query: str, limit: int = 10) -> list[dict]`:
-  - Принимать строку запроса (не только название компании)
-  - Генерировать два варианта: исходный + транслитерированный (`transliterate_ru_en`)
-  - Поиск по `company` / `contact` / `description` (эквивалент `lead_name`) — оба варианта запроса
-  - Вернуть список словарей: `id, company, city, stage, score, next_call, contact_name, manager_name` (последние два — опционально, для уточнения поиска)
-  - Лимит 10, сортировка в Python по `_lead_recency_score`
-- [x] **backend/agents/tools.py** — добавить `transliterate_ru_en(text: str) -> str`:
-  - Карта замен: а→a, б→b, в→v, г→g, д→d, е→e, ё→yo, ж→zh, з→z, и→i, й→y, к→k, л→l, м→m, н→n, о→o, п→p, р→r, с→s, т→t, у→u, ф→f, х→kh, ц→ts, ч→ch, ш→sh, щ→shch, ъ→'', ы→y, ь→'', э→e, ю→yu, я→ya (и заглавные)
-  - Пробелы и дефисы сохранять
-  - Если текст уже латиница — вернуть как есть (нормализованный)
-  - EN→RU через `_transliterate_en_to_ru` для обратного поиска
-- [x] Сортировка результатов (в Python после выборки, или в SQL через CASE):
-  1. Есть открытая задача с `due <= сегодня` / последняя коммуникация типа `call` за 24ч
-  2. Стадия: Переговоры > КП отправлено > Квалифицирован > Новый
-  3. Скор (desc)
-  4. `updated_at` desc (свежесть)
-- [x] Обновить `normalize_lead_for_agents` чтобы она корректно работала со списком (сейчас ожидает один dict)
-
----
+- [ ] **backend/voice/pipeline.py** — тайминги `_run_pipeline`: whisper, hermes (groq/ollama раздельно), orchestrator, voice_action; логировать duration_ms
+- [ ] **backend/core/hermes/config.py** — добавить `HERMES_PROVIDER_ORDER`, `HERMES_ENABLE_OLLAMA_FALLBACK`; по умолчанию groq_only, ollama выкл
+- [ ] **backend/core/hermes/parse.py** — уважать флаги: отключить Ollama ветку при `HERMES_ENABLE_OLLAMA_FALLBACK=False`
+- [ ] **backend/core/hermes/cache.py** — `fastpath_route`: добавить `FASTPATH_INTENTS` навигации; мгновенный возврат без LLM
+- [ ] **backend/tests/test_voice_pipeline.py** — тест кэша: две одинаковые фразы → вторая <100мс (кэш hit)
+- [ ] **backend/tests/test_hermes_cache.py** (новый) — unit-тесты cache_get/cache_set/fastpath_route
+- [ ] **backend/.env.example** — добавить HERMES_PROVIDER_ORDER, HERMES_ENABLE_OLLAMA_FALLBACK
+- [ ] Регрессия зоны voice: `pytest tests/test_voice_pipeline.py -q` + `run_zone_regression.py voice`
+- [ ] `git commit` — `feat: ускорение голосового пайплайна — тайминги, только Groq, кэш Hermes, fast-path [GREEN]`
 
 ## Файлы (ожидаемо)
-1. `backend/agents/tools.py` — основная правка
-2. `backend/db/models/lead.py` — проверить точные названия полей: `company`, `contact` (имя контакта), `description` (описание лида, эквивалент lead_name), `city`, `stage`, `score`, `next_call`, `responsible` (менеджер)
 
----
-
-## Читать (только нужные §)
-- `backend/agents/tools.py` — `read_lead_by_company`, `normalize_lead_for_agents`, `_api_get`, `_transliterate_ru_to_en`, `_generate_search_variants`, `_lead_recency_score`
-- `backend/db/models/lead.py` — поля модели Lead (уже прочитано)
-- `backend/api/routes/leads/crud.py` — `list_leads` (как делают фильтрацию)
-- `backend/voice/lead_context.py` — `resolve_lead` (точка входа из voice)
-
----
+1. `backend/voice/pipeline.py` — тайминги этапов
+2. `backend/core/hermes/config.py` — флаги отключения Ollama
+3. `backend/core/hermes/parse.py` — пропуск Ollama при флаге
+4. `backend/core/hermes/cache.py` — FASTPATH_INTENTS в fastpath_route
+5. `backend/tests/test_voice_pipeline.py` — тест кэша
+6. `backend/tests/test_hermes_cache.py` — новые unit-тесты кэша/fastpath
+7. `backend/.env.example` — новые ENV переменные
 
 ## Не ломать
-- `read_lead_by_company` используется в `voice/lead_context.py` → `resolve_lead` → `voice/pipeline.py` (hot-path voice). **Регрессия зоны `voice` обязательна.**
-- Не менять сигнатуру публичных API (`/api/leads`), только внутреннюю функцию tools.
-- Тесты `tests/test_voice_pipeline.py` мокают `agents.tools.read_lead_by_company` — поведение мока должно остаться совместимым (возвращать list[dict] или None).
 
----
-
-## Техническая спецификация (PHASE 1 SPEC)
-
-### 1. Публичная функция `transliterate_ru_en(text: str) -> str`
-- На основе существующих `_transliterate_ru_to_en` / `_transliterate_en_to_ru`
-- Карта замен: а→a, б→b, в→v, г→g, д→d, е→e, ё→yo, ж→zh, з→z, и→i, й→y, к→k, л→l, м→m, н→n, о→o, п→p, р→r, с→s, т→t, у→u, ф→f, х→kh, ц→ts, ч→ch, ш→sh, щ→shch, ъ→'', ы→y, ь→'', э→e, ю→yu, я→ya (и заглавные)
-- Пробелы и дефисы сохранять
-- Общие слова (банк→bank, аудит→audit, ад→ad и т.д.) из `_TRANSLIT_COMMON_WORDS`
-- Если текст уже латиница — возвращать нормализованный (lowercase, пробелы)
-
-### 2. `read_lead_by_company(query: str, limit: int = 10) -> list[dict]`
-**Новая логика (SQL-first, не Python-фильтр 500):**
-- Генерировать 2 варианта: `q1 = query.lower().strip()`, `q2 = transliterate_ru_en(query).lower().strip()`
-- Убрать дубликаты вариантов
-- SQL запрос через `_api_get` или прямую сессию (если есть доступ к БД):
-  ```sql
-  SELECT id, company, city, stage, score, next_call, contact, responsible, description, updated_at
-  FROM leads
-  WHERE (
-    company ILIKE %s OR contact ILIKE %s OR description ILIKE %s
-  ) AND (
-    %s = '' OR company ILIKE %s OR contact ILIKE %s OR description ILIKE %s
-  )
-  ORDER BY 
-    CASE WHEN next_call IS NOT NULL AND next_call != '—' AND next_call <= NOW() THEN 1000
-         WHEN next_call IS NOT NULL AND next_call != '—' AND next_call <= NOW() + INTERVAL '24 hours' THEN 500
-         ELSE 0 END DESC,
-    CASE stage WHEN 'Переговоры' THEN 100 WHEN 'КП отправлено' THEN 50 WHEN 'Квалифицирован' THEN 20 WHEN 'Новый' THEN 10 ELSE 0 END DESC,
-    score DESC,
-    updated_at DESC
-  LIMIT %s
-  ```
-  Параметры: `f"%{q1}%", f"%{q1}%", f"%{q1}%", q2, f"%{q2}%", f"%{q2}%", f"%{q2}%", limit`
-  (если q2 == q1 — один набор параметров)
-
-**Альтернатива (через API /api/leads):**
-- Если прямой SQL недоступен — использовать `read_leads(limit=200)` + фильтр/сортировка в Python (как сейчас), но с поиском по `company` И `contact` И `description` + оба варианта транслитерации.
-- **Важно:** оставить fallback на Python-фильтр, если API не поддерживает сложный поиск.
-
-### 3. Возвращаемые поля (snake_case для агентов):
-```python
-{
-  "id": lead["id"],
-  "company": lead["company"],
-  "city": lead["city"],
-  "stage": lead["stage"],
-  "score": lead["score"] if lead["score_manual"] is None else lead["score_manual"],
-  "next_call": lead["next_call"] or "—",
-  "contact_name": lead["contact"],
-  "manager_name": lead["responsible"],
-  "lead_id": lead["id"],  # для совместимости
-}
-```
-
-### 4. `normalize_lead_for_agents(raw: dict | list) -> dict | list`
-- Если вход `list[dict]` — вернуть `list[normalize_lead_for_agents(item)]`
-- Если `dict` — текущая логика + добавить `contact_name`, `manager_name`
-
-### 5. Регрессия зоны voice
-```bash
-cd backend
-python -m pytest tests/test_voice_pipeline.py -q
-python scripts/run_zone_regression.py voice
-```
-
----
-
-## Проверка (после GREEN)
-```bash
-cd backend
-python -c "
-import asyncio
-from agents.tools import read_lead_by_company, transliterate_ru_en
-async def test():
-    print('translit:', transliterate_ru_en('акбарс банк ад аудит'))
-    print('translit:', transliterate_ru_en('akbars bank ad audit'))
-    r1 = await read_lead_by_company('акбарс банк ад аудит')
-    print('RU:', [(x['id'], x['company'], x.get('contact_name')) for x in r1])
-    r2 = await read_lead_by_company('akbars bank ad audit')
-    print('EN:', [(x['id'], x['company'], x.get('contact_name')) for x in r2])
-    r3 = await read_lead_by_company('аудит')
-    print('PART:', [(x['id'], x['company']) for x in r3])
-asyncio.run(test())
-"
-python -m pytest tests/test_voice_pipeline.py -q
-python scripts/run_zone_regression.py voice
-```
-Ожидается: оба запроса возвращают одинаковый лид (или список с ним на первом месте), список до 10 элементов, поля `id, company, city, stage, score, next_call, contact_name, manager_name` присутствуют.
-
----
-
-## Проверка (после GREEN)
-```bash
-cd backend
-python -c "
-import asyncio
-from agents.tools import read_lead_by_company
-async def test():
-    # кириллица
-    r1 = await read_lead_by_company('акбарс банк ад аудит')
-    print('RU:', [(x['id'], x['company']) for x in r1])
-    # латиница
-    r2 = await read_lead_by_company('akbars bank ad audit')
-    print('EN:', [(x['id'], x['company']) for x in r2])
-    # частичное совпадение по названию лида
-    r3 = await read_lead_by_company('аудит')
-    print('PART:', [(x['id'], x['company']) for x in r3])
-asyncio.run(test())
-"
-python -m pytest tests/test_voice_pipeline.py -q
-python scripts/run_zone_regression.py voice
-```
-Ожидается: оба запроса возвращают одинаковый лид (или список с ним на первом месте), список до 10 элементов, поля `id, company, city, stage, score, next_call` присутствуют.
-
----
-
-## BACKLOG / ISSUES (если появятся)
-- Если транслитерация слишком «грязная» — отложить в BACKLOG, сделать упрощённую карту частых слов (банк→bank, аудит→audit, ад→ad и т.д.)
-- Если поиск по `lead_name` не нужен (поле пустое у большинства) — убрать, оставить только `company` + `name`
-
----
-
-## SBR Scope
-**Обязателен** (1 файл backend `tools.py` + hot-path voice через `lead_context.py` + поиск — пограничный случай, но затрагивает voice-пайплайн).  
-PHASE 0 INTAKE ✅ → PHASE 1 SPEC → `go` → RED → GREEN → REVIEW.
-
----
-
-# todo — голосовой выбор лида по порядковому номеру (новая SBR-задача)
-
-## Заказ (дословно)
-
-> «Надо добавить голосовой выбор лида по порядковому номеру: пользователь говорит "первый", "второй", "третий", "лид № 3", "номер 2" — агент должен понять число n, взять n-й лид из сохранённого списка кандидатов последнего поиска и вернуть интент open_lead с этим lead_id. Паттерны должны работать в детерминированном rescue-роутинге без LLM.»
-
----
-
-## Как понял (1–2 строки)
-
-Добавить в `slot_normalize.py` извлечение порядкового числительного/номера → число `n`. В `rescue.py` — детерминированные паттерны для быстрого роутинга на `open_lead` с `lead_id` из памяти последнего поиска. Память списка кандидатов — в `agent_memory.py` (scope `voice_last_search`).
-
----
-
-## Чеклист микро-шагов
-
-- [x] **backend/core/agent_memory.py**: `set_last_search_candidates` / `get_last_search_candidates` / `clear_last_search_candidates` (таблица `voice_last_search`, id=1, TTL 60 сек)
-- [x] **backend/core/hermes/slot_normalize.py**: `_extract_ordinal_number` (первый…десятый, «лид № N», «номер N», «N-й», «N-я»); при `intent == "open_lead"` и `lead_id` absent — подставить `lead_id = candidates[n-1]["id"]` из `get_last_search_candidates()`
-- [x] **backend/core/hermes/rescue.py**: паттерн в `rescue_route` до общего `open_lead`; `_word_to_num`; возврат `out("open_lead", ["analyst"], ..., {"lead_id": lead_id})`
-- [x] **backend/voice/pipeline.py**: при `list_leads` с query → `set_last_search_candidates(candidates)`; при `list_leads` с `_clear_voice_memory` → `clear_last_search_candidates()`
-- [x] **backend/tests/voice/test_open_lead.py**: 6 тестов voice выбора по номеру с моком `get_last_search_candidates`
-- [x] Регрессия: `tests/voice/test_open_lead.py` 11 PASS; `test_lead_search_and_select.py::test_slot_normalize_extract_ordinal` PASS
-- [x] **backend/core/hermes/cache.py** `fastpath_route`: добавить паттерн «открой третий лид / лид № 3 / номер 2» → `open_lead` + `selected_index`
-- [x] **backend/core/hermes/prompts_data.py** `SYSTEM_PROMPT`: пример «открой третий лид» → `open_lead`
-- [x] **backend/tests/voice/test_open_lead.py**: RED-тест `fastpath_route("открой третий лид")` → `open_lead` + `selected_index=2`
-- [x] Регрессия: `python -m pytest tests/test_voice_pipeline.py tests/voice/test_open_lead.py tests/voice/test_lead_search_and_select.py -q` = 29 PASS; `run_zone_regression.py voice` = ssl-таймаут env (не diff), voice pipeline узкие тесты PASS
-- [x] git commit + ответ пользователю
-
----
-
-## Файлы (ожидаемо)
-
-1. `backend/core/agent_memory.py` — память списка кандидатов (TTL)
-2. `backend/core/hermes/slot_normalize.py` — извлечение порядкового числа
-3. `backend/core/hermes/rescue.py` — детерминированный роутинг по номеру
-4. `backend/voice/pipeline.py` — сохранение/очистка списка кандидатов при поиске
-
----
-
-## Не ломать (hot-path)
-
-- `backend/core/hermes/parse.py` — **не трогать**, rescue/slot_normalize вызываются до/вместо LLM
-- `backend/voice/pipeline.py` — WS / `process_text` (регрессия зоны `voice` обязательна)
-- Паттерны в `rescue.py` добавлять **раньше** общего `open_lead` блока, чтобы не перехватывали «открой её»
-
----
+- `backend/voice/pipeline.py` — hot-path voice (WS / process_text), регрессия зоны voice обязательна
+- `backend/core/hermes/parse.py` — контракт интентов не менять
+- Тесты `tests/test_voice_pipeline.py` мокают `agents.tools.read_lead_by_company` — сохранить совместимость
 
 ## Проверка (после GREEN)
 
 ```bash
 cd backend
-python -m pytest tests/voice/test_open_lead.py -q
-python -m pytest tests/voice/test_lead_search_and_select.py::test_slot_normalize_extract_ordinal -q
+python -m pytest tests/test_voice_pipeline.py tests/test_hermes_cache.py -q
 python scripts/run_zone_regression.py voice
 ```
-
----
-
-## BACKLOG / ISSUES (если появятся)
-
-- Если список кандидатов не сохраняется (память пуста) — фолбэк на обычное поведение («уточните компанию»)
-- Если `n > len(candidates)` — игнорировать, фолбэк на обычное поведение
-- Поддержка «последний» / «предыдущий» → `n = len(candidates)` — отложить в BACKLOG
-
----
 
 ## SBR Scope
 
-**Обязателен** (4 файла backend + hot-path voice + интеграция с памятью последнего поиска). PHASE 0 INTAKE ✅ → PHASE 1 SPEC → `go` → RED → GREEN → REVIEW.
+Обязателен (2+ файла backend + hot-path voice). PHASE 0 INTAKE → PHASE 1 SPEC → `go` → RED → GREEN → REVIEW.
