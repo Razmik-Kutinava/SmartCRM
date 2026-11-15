@@ -44,17 +44,71 @@ async def test_read_lead_by_company_returns_list():
         assert results[0]["company"] == "Акбарс Банк"
 
 
+def test_transliterate_ru_en_public():
+    """Публичная функция transliterate_ru_en должна существовать и работать."""
+    from agents.tools import transliterate_ru_en
+    result = transliterate_ru_en("акбарс банк ад аудит")
+    assert "bank" in result.lower()
+    assert "audit" in result.lower()
+
+
+def test_transliterate_ru_en_latin_passthrough():
+    """Если текст уже латиница — возвращает как есть (нормализованный)."""
+    from agents.tools import transliterate_ru_en
+    result = transliterate_ru_en("akbars bank ad audit")
+    assert result == "akbars bank ad audit"
+
+
 @pytest.mark.asyncio
-async def test_read_lead_by_company_transliteration():
-    """Поиск по 'akbars bank ad audit' должен найти 'Акбарс Банк Ад Аудит'."""
+async def test_read_lead_by_company_transliteration_en_finds_ru():
+    """Поиск по 'akbars bank ad audit' должен найти 'Акбарс Банк Ад Аудит' (RU↔EN)."""
     with patch("agents.tools._api_get", new_callable=AsyncMock) as mock_get:
         mock_get.return_value = [
-            {"id": 1, "company": "Акбарс Банк Ад Аудит", "contact": "Иван", "stage": "Переговоры", "score": 85, "city": "Казань", "next_call": "2026-11-15", "manager": "Петров"},
+            {"id": 1, "company": "Акбарс Банк Ад Аудит", "contact": "Иван", "stage": "Переговоры", "score": 85, "city": "Казань", "next_call": "2026-11-15", "manager": "Петров", "description": "Ад Аудит"},
         ]
-        # После реализации транслитерации это должно работать
         results = await read_lead_by_company("akbars bank ad audit", limit=10)
-        # Пока тест падает — ожидаем реализацию
-        assert len(results) >= 0  # Placeholder
+        assert len(results) >= 1
+        assert results[0]["company"] == "Акбарс Банк Ад Аудит"
+
+
+@pytest.mark.asyncio
+async def test_read_lead_by_company_returns_contact_name_and_manager_name():
+    """Возвращаемые поля включают contact_name и manager_name."""
+    with patch("agents.tools._api_get", new_callable=AsyncMock) as mock_get:
+        mock_get.return_value = [
+            {"id": 1, "company": "Тест", "contact": "Иван", "stage": "Новый", "score": 50, "city": "Москва", "next_call": "—", "manager": "Петров", "description": ""},
+        ]
+        results = await read_lead_by_company("тест", limit=10)
+        assert len(results) == 1
+        assert "contact_name" in results[0]
+        assert "manager_name" in results[0]
+        assert results[0]["contact_name"] == "Иван"
+        assert results[0]["manager_name"] == "Петров"
+
+
+@pytest.mark.asyncio
+async def test_read_lead_by_company_searches_description():
+    """Поиск по description (названию лида) находится."""
+    with patch("agents.tools._api_get", new_callable=AsyncMock) as mock_get:
+        mock_get.return_value = [
+            {"id": 1, "company": "ООО Ромашка", "contact": "Иван", "stage": "Новый", "score": 50, "city": "Москва", "next_call": "—", "manager": "Петров", "description": "Ад Аудит консалтинг"},
+        ]
+        results = await read_lead_by_company("аудит консалтинг", limit=10)
+        assert len(results) >= 1
+        assert results[0]["company"] == "ООО Ромашка"
+
+
+@pytest.mark.asyncio
+async def test_read_lead_by_company_returns_list_up_to_10():
+    """read_lead_by_company возвращает list[dict] не более limit элементов."""
+    with patch("agents.tools._api_get", new_callable=AsyncMock) as mock_get:
+        mock_get.return_value = [
+            {"id": i, "company": f"Тест {i}", "contact": "Иван", "stage": "Новый", "score": 50, "city": "Москва", "next_call": "—", "manager": "Петров", "description": ""}
+            for i in range(1, 16)
+        ]
+        results = await read_lead_by_company("тест", limit=10)
+        assert isinstance(results, list)
+        assert len(results) <= 10
 
 
 @pytest.mark.asyncio
@@ -67,5 +121,7 @@ async def test_read_lead_by_company_sorts_by_recency():
             {"id": 3, "company": "В", "contact": "Алексей", "stage": "КП", "score": 95, "city": "СПб", "next_call": "—", "manager": "Иванов", "updated_at": "2026-11-12T10:00:00"},
         ]
         results = await read_lead_by_company("тест", limit=10)
-        # После реализации сортировки первый должен быть с задачей/звонком или стадией Переговоры
         assert isinstance(results, list)
+        assert len(results) == 3
+        # Первый — с next_call сегодня (вес 1000) или стадией Переговоры (вес 100)
+        assert results[0]["company"] in ("Б", "А")

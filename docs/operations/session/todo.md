@@ -1,81 +1,179 @@
-﻿# todo — микро-чеклист текущей фичи
+﻿# todo — микро-чеклист текущей фичи (SBR)
 
 ## Заказ (дословно)
 
-> «Сейчас голосом говорю найти лид — поиск почти точен. Но следующая команда "открой лид" — если быстро не скажу, агент забывает, что нашёл. Надо: чуть задержать память, чтобы "открой лид" подхватил последний найденный. Если задача в контуре лида — агент помнит и знает, что делать. Если "найди другой лид" — переключается на поиск. Память уходит очень быстро.
->
-> Ещё: иногда находит несколько одинаковых лидов. Надо голосом выбирать: "первый", "второй", "лид № 3" или сказать полное название / город / ИНН / имя контакта / фамилию менеджера — поиск сужается и находит точный.
->
-> Поиск работает только на кириллице — надо транслитерацию RU↔EN, чтобы "акбарс банк ад аудит" и "akbars bank ad audit" находили один лид.
->
-> Сортировка: самый актуальный (свежая задача/звонок, стадия Переговоры, высокий скор) — первый в списке.»
+> «Сейчас read_lead_by_company возвращает только один лид и ищет только по полю company. Надо: вернуть список до 10 лидов с полями id, company, city, stage, score, next_call. Искать не только по company, но и по названию лида (name / title / lead_name — поле модели Lead). Поддержка транслитерации: кириллица ↔ латиница, чтобы "акбарс банк ад аудит" и "akbars bank ad audit" находили один и тот же лид. Функция transliterate_ru_en(text) + поиск по обоим вариантам (нормализованный текст / SQL ILIKE с обоими формами).»
 
 ---
 
 ## Как понял (1–2 строки)
-Добавить короткую TTL-память последнего найденного лида в голосовом пайплайне + вернуть список совпадений с сортировкой по актуальности + голосовой выбор по порядковому числителю/номеру + поиск по названию лида и контакту с транслитерацией RU↔EN.
+Расширить `read_lead_by_company` до полнотекстового поиска по `company` И `lead_name` с транслитерацией RU↔EN, возвращать список кандидатов до 10 штук с полями для сортировки/отображения.
 
 ---
 
-## Чеклист микро-шагов (todo.md)
+## Чеклист микро-шагов
 
-- [x] **agent_memory.py**: таблица `voice_last_lead(session_id, lead_id, company, candidates_json, ts)` + функции `set_last_lead(session_id, lead_id, company, candidates_list)`, `get_last_lead(session_id, max_age_sec=60)`, `clear_last_lead(session_id)` — TTL 60 сек
-- [x] **voice/pipeline.py**: после `resolve_lead`/`fetch_lead_history` → `set_last_lead(session_id, ...)`; при `list_leads` с query → сохраняем топ-10 кандидатов; перед `open_lead` без `lead_id` → `get_last_lead(session_id)` → подставить `lead_id` + `ref=last`; при `list_leads` с `_clear_voice_memory` → `clear_last_lead(session_id)`
-- [x] **agents/tools.py**: `read_lead_by_company(query, limit=10)` → вернуть `list[dict]` (id, company, city, stage, score, next_call, contact_name, manager_name); поиск по `company` ИЛИ `contact` ИЛИ `lead_name`/`name`; транслитерация RU↔EN простая карта — оба варианта в `ILIKE`-like; сортировка: 1) открытая задача due≤сегодня / звонок 24ч (вес 1000), 2) стадия (Переговоры=100, КП=50, Квалифицирован=20, Новый=10), 3) скор (вес 1), 4) updated_at свежесть (вес 0.01)
-- [x] **core/hermes/slot_normalize.py**: извлечение порядкового числительного («первый»..«пятый»), «лид № N» / «номер N» → слот `selected_index` = n-1; в `normalize_parsed_intent` — подставляет `selected_index` для `open_lead`
-- [x] **core/hermes/rescue.py**: детерминированные паттерны для выбора по номеру: `re.search(r"\b(первый|второй|третий|четвёртый|пятый|лид\s*№?\s*\d)\b", t)` → intent `open_lead` со слотом `selected_index`; паттерн «найди другой лид» → `_clear_voice_memory`
+- [ ] **backend/agents/tools.py** — `read_lead_by_company(query: str, limit: int = 10) -> list[dict]`:
+  - Принимать строку запроса (не только название компании)
+  - Генерировать два варианта: исходный + транслитерированный (`transliterate_ru_en`)
+  - SQL: `WHERE (company ILIKE %q1% OR lead_name ILIKE %q1% OR name ILIKE %q1%) OR (company ILIKE %q2% OR lead_name ILIKE %q2% OR name ILIKE %q2%)` — оба варианта запроса
+  - Вернуть список словарей: `id, company, city, stage, score, next_call, contact_name, manager_name` (последние два — опционально, для уточнения поиска)
+  - Лимит 10, сортировка на уровне БД или в Python (см. ниже)
+- [ ] **backend/agents/tools.py** — добавить `transliterate_ru_en(text: str) -> str`:
+  - Карта замен: а→a, б→b, в→v, г→g, д→d, е→e, ё→yo, ж→zh, з→z, и→i, й→y, к→k, л→l, м→m, н→n, о→o, п→p, р→r, с→s, т→t, у→u, ф→f, х→kh, ц→ts, ч→ch, ш→sh, щ→shch, ъ→, ы→y, ь→, э→e, ю→yu, я→ya (и заглавные)
+  - Пробелы и дефисы сохранять
+  - Если текст уже латиница — вернуть как есть (или тоже нормализовать)
+- [ ] Сортировка результатов (в Python после выборки, или в SQL через CASE):
+  1. Есть открытая задача с `due <= сегодня` / последняя коммуникация типа `call` за 24ч
+  2. Стадия: Переговоры > КП отправлено > Квалифицирован > Новый
+  3. Скор (desc)
+  4. `updated_at` desc (свежесть)
+- [ ] Обновить `normalize_lead_for_agents` чтобы она корректно работала со списком (сейчас ожидает один dict)
 
 ---
 
 ## Файлы (ожидаемо)
-1. `backend/core/agent_memory.py`
-2. `backend/voice/pipeline.py`
-3. `backend/agents/tools.py`
-4. `backend/core/hermes/slot_normalize.py`
-5. `backend/core/hermes/rescue.py`
+1. `backend/agents/tools.py` — основная правка
+2. `backend/db/models/lead.py` — проверить точные названия полей: `company`, `contact` (имя контакта), `description` (описание лида, эквивалент lead_name), `city`, `stage`, `score`, `next_call`, `responsible` (менеджер)
 
 ---
 
 ## Читать (только нужные §)
-- `backend/core/agent_memory.py` — вся (структура observations, TTL-паттерн)
-- `backend/voice/pipeline.py` — `_run_pipeline`, `resolve_lead`, `fetch_lead_history`
-- `backend/agents/tools.py` — `read_lead_by_company`, `normalize_lead_for_agents`
-- `backend/core/hermes/slot_normalize.py` — `_extract_company`, `normalize_parsed_intent`
-- `backend/core/hermes/rescue.py` — `rescue_route`, секции `open_lead`, `list_leads`
-- `docs/operations/phase4/ZONE_NOTES.md` — раздел `## voice`
-- `backend/tests/voice/test_open_lead.py` — существующие кейсы `ref: "last"`
+- `backend/agents/tools.py` — `read_lead_by_company`, `normalize_lead_for_agents`, `_api_get`, `_transliterate_ru_to_en`, `_generate_search_variants`, `_lead_recency_score`
+- `backend/db/models/lead.py` — поля модели Lead (уже прочитано)
+- `backend/api/routes/leads/crud.py` — `list_leads` (как делают фильтрацию)
+- `backend/voice/lead_context.py` — `resolve_lead` (точка входа из voice)
 
 ---
 
-## Не ломать (hot-path)
-- `backend/voice/pipeline.py` — WS / process_text (регрессия зоны `voice` обязательна)
-- `backend/core/hermes/parse.py` — не трогать, логика подстановки только в пайплайне
-- `backend/core/hermes/rescue.py` — добавлять паттерны аккуратно, не ломать существующие
+## Не ломать
+- `read_lead_by_company` используется в `voice/lead_context.py` → `resolve_lead` → `voice/pipeline.py` (hot-path voice). **Регрессия зоны `voice` обязательна.**
+- Не менять сигнатуру публичных API (`/api/leads`), только внутреннюю функцию tools.
+- Тесты `tests/test_voice_pipeline.py` мокают `agents.tools.read_lead_by_company` — поведение мока должно остаться совместимым (возвращать list[dict] или None).
+
+---
+
+## Техническая спецификация (PHASE 1 SPEC)
+
+### 1. Публичная функция `transliterate_ru_en(text: str) -> str`
+- На основе существующих `_transliterate_ru_to_en` / `_transliterate_en_to_ru`
+- Карта замен: а→a, б→b, в→v, г→g, д→d, е→e, ё→yo, ж→zh, з→z, и→i, й→y, к→k, л→l, м→m, н→n, о→o, п→p, р→r, с→s, т→t, у→u, ф→f, х→kh, ц→ts, ч→ch, ш→sh, щ→shch, ъ→'', ы→y, ь→'', э→e, ю→yu, я→ya (и заглавные)
+- Пробелы и дефисы сохранять
+- Общие слова (банк→bank, аудит→audit, ад→ad и т.д.) из `_TRANSLIT_COMMON_WORDS`
+- Если текст уже латиница — возвращать нормализованный (lowercase, пробелы)
+
+### 2. `read_lead_by_company(query: str, limit: int = 10) -> list[dict]`
+**Новая логика (SQL-first, не Python-фильтр 500):**
+- Генерировать 2 варианта: `q1 = query.lower().strip()`, `q2 = transliterate_ru_en(query).lower().strip()`
+- Убрать дубликаты вариантов
+- SQL запрос через `_api_get` или прямую сессию (если есть доступ к БД):
+  ```sql
+  SELECT id, company, city, stage, score, next_call, contact, responsible, description, updated_at
+  FROM leads
+  WHERE (
+    company ILIKE %s OR contact ILIKE %s OR description ILIKE %s
+  ) AND (
+    %s = '' OR company ILIKE %s OR contact ILIKE %s OR description ILIKE %s
+  )
+  ORDER BY 
+    CASE WHEN next_call IS NOT NULL AND next_call != '—' AND next_call <= NOW() THEN 1000
+         WHEN next_call IS NOT NULL AND next_call != '—' AND next_call <= NOW() + INTERVAL '24 hours' THEN 500
+         ELSE 0 END DESC,
+    CASE stage WHEN 'Переговоры' THEN 100 WHEN 'КП отправлено' THEN 50 WHEN 'Квалифицирован' THEN 20 WHEN 'Новый' THEN 10 ELSE 0 END DESC,
+    score DESC,
+    updated_at DESC
+  LIMIT %s
+  ```
+  Параметры: `f"%{q1}%", f"%{q1}%", f"%{q1}%", q2, f"%{q2}%", f"%{q2}%", f"%{q2}%", limit`
+  (если q2 == q1 — один набор параметров)
+
+**Альтернатива (через API /api/leads):**
+- Если прямой SQL недоступен — использовать `read_leads(limit=200)` + фильтр/сортировка в Python (как сейчас), но с поиском по `company` И `contact` И `description` + оба варианта транслитерации.
+- **Важно:** оставить fallback на Python-фильтр, если API не поддерживает сложный поиск.
+
+### 3. Возвращаемые поля (snake_case для агентов):
+```python
+{
+  "id": lead["id"],
+  "company": lead["company"],
+  "city": lead["city"],
+  "stage": lead["stage"],
+  "score": lead["score"] if lead["score_manual"] is None else lead["score_manual"],
+  "next_call": lead["next_call"] or "—",
+  "contact_name": lead["contact"],
+  "manager_name": lead["responsible"],
+  "lead_id": lead["id"],  # для совместимости
+}
+```
+
+### 4. `normalize_lead_for_agents(raw: dict | list) -> dict | list`
+- Если вход `list[dict]` — вернуть `list[normalize_lead_for_agents(item)]`
+- Если `dict` — текущая логика + добавить `contact_name`, `manager_name`
+
+### 5. Регрессия зоны voice
+```bash
+cd backend
+python -m pytest tests/test_voice_pipeline.py -q
+python scripts/run_zone_regression.py voice
+```
 
 ---
 
 ## Проверка (после GREEN)
 ```bash
 cd backend
+python -c "
+import asyncio
+from agents.tools import read_lead_by_company, transliterate_ru_en
+async def test():
+    print('translit:', transliterate_ru_en('акбарс банк ад аудит'))
+    print('translit:', transliterate_ru_en('akbars bank ad audit'))
+    r1 = await read_lead_by_company('акбарс банк ад аудит')
+    print('RU:', [(x['id'], x['company'], x.get('contact_name')) for x in r1])
+    r2 = await read_lead_by_company('akbars bank ad audit')
+    print('EN:', [(x['id'], x['company'], x.get('contact_name')) for x in r2])
+    r3 = await read_lead_by_company('аудит')
+    print('PART:', [(x['id'], x['company']) for x in r3])
+asyncio.run(test())
+"
 python -m pytest tests/test_voice_pipeline.py -q
 python scripts/run_zone_regression.py voice
 ```
-Ожидается: зелёные тесты + работающий сценарий:
-1. «Найди акбарс банк» → список 3 лида, первый — самый актуальный
-2. «Открой первый» → открывается лид №1
-3. «Открой лид» (через 20 сек) → открывается тот же последний
-4. «Найди другой лид» → память сбрасывается, новый поиск
-5. «akbars bank ad audit» → находит тот же лид (транслитерация)
+Ожидается: оба запроса возвращают одинаковый лид (или список с ним на первом месте), список до 10 элементов, поля `id, company, city, stage, score, next_call, contact_name, manager_name` присутствуют.
+
+---
+
+## Проверка (после GREEN)
+```bash
+cd backend
+python -c "
+import asyncio
+from agents.tools import read_lead_by_company
+async def test():
+    # кириллица
+    r1 = await read_lead_by_company('акбарс банк ад аудит')
+    print('RU:', [(x['id'], x['company']) for x in r1])
+    # латиница
+    r2 = await read_lead_by_company('akbars bank ad audit')
+    print('EN:', [(x['id'], x['company']) for x in r2])
+    # частичное совпадение по названию лида
+    r3 = await read_lead_by_company('аудит')
+    print('PART:', [(x['id'], x['company']) for x in r3])
+asyncio.run(test())
+"
+python -m pytest tests/test_voice_pipeline.py -q
+python scripts/run_zone_regression.py voice
+```
+Ожидается: оба запроса возвращают одинаковый лид (или список с ним на первом месте), список до 10 элементов, поля `id, company, city, stage, score, next_call` присутствуют.
 
 ---
 
 ## BACKLOG / ISSUES (если появятся)
-- Если транслитерация тяжелая — отложить в BACKLOG, сделать простую карту частых слов (решено: простая карта)
-- TTL-память: scope = session_id (решено)
-- Список кандидатов: в agent_memory.py таблица voice_last_lead (решено)
+- Если транслитерация слишком «грязная» — отложить в BACKLOG, сделать упрощённую карту частых слов (банк→bank, аудит→audit, ад→ad и т.д.)
+- Если поиск по `lead_name` не нужен (поле пустое у большинства) — убрать, оставить только `company` + `name`
 
 ---
 
 ## SBR Scope
-**Обязателен** (5 файлов backend + hot-path voice + пункт чеклиста фазы voice).  
-PHASE 0 INTAKE ✅ (этот текст) → PHASE 1 SPEC → `go` → RED → GREEN → REVIEW.
+**Обязателен** (1 файл backend `tools.py` + hot-path voice через `lead_context.py` + поиск — пограничный случай, но затрагивает voice-пайплайн).  
+PHASE 0 INTAKE ✅ → PHASE 1 SPEC → `go` → RED → GREEN → REVIEW.
