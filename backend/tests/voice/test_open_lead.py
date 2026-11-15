@@ -104,14 +104,20 @@ def test_rescue_open_lead_number_2():
 
 
 def test_rescue_open_lead_no_candidates_fallback():
-    """Пустая память → не возвращает open_lead (фолбэк на обычное поведение)."""
+    """Пустая память → open_lead с selected_index, без lead_id (фолбэк на обычное поведение)."""
     with _mock_candidates(None):
         parsed = rescue_route("открой первый")
-    assert parsed is None or parsed["intent"] != "open_lead"
+    assert parsed is not None
+    assert parsed["intent"] == "open_lead"
+    assert parsed["slots"].get("selected_index") == 0
+    assert "lead_id" not in parsed["slots"]
 
 
 def test_rescue_open_lead_n_out_of_range():
-    """n > len(candidates) → не возвращает open_lead."""
+    """n > len(candidates) → open_lead с selected_index, без lead_id."""
     with _mock_candidates([{"id": 42, "company": "ВТБ"}]):
         parsed = rescue_route("открой пятый")
-    assert parsed is None or parsed["intent"] != "open_lead"
+    assert parsed is not None
+    assert parsed["intent"] == "open_lead"
+    assert parsed["slots"].get("selected_index") == 4
+    assert "lead_id" not in parsed["slots"]

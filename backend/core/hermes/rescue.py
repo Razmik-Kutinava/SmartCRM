@@ -359,12 +359,14 @@ def rescue_route(text: str) -> dict | None:
     if (m_ord or m_num):
         n = _word_to_num(m_ord.group(1)) if m_ord else int(m_num.group(1))
         if n >= 1:
+            idx = n - 1
+            slots = {"selected_index": idx}
             from core.agent_memory import get_last_search_candidates
-
             candidates = get_last_search_candidates()
             if candidates and len(candidates) >= n:
-                lead_id = candidates[n - 1]["id"]
-                return out("open_lead", ["analyst"], f"Открываю {m_ord.group(1) if m_ord else m_num.group(0)}.", {"lead_id": lead_id})
+                slots["lead_id"] = candidates[idx]["id"]
+                return out("open_lead", ["analyst"], f"Открываю лид №{n}: {candidates[idx].get('company', '')}.", slots)
+            return out("open_lead", ["analyst"], f"Открываю {m_ord.group(1) if m_ord else m_num.group(0)}.", slots)
 
     # «открой её / этот» — без имени → прошлый найденный лид
     if re.search(r"\b(открой|открыть)\b", t) and "почт" not in t and "email" not in t:
