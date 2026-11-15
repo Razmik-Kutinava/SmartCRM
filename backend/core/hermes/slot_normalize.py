@@ -122,6 +122,19 @@ def _extract_ordinal_number(text: str) -> int | None:
     return None
 
 
+def _is_open_lead_ordinal_cue(text: str) -> bool:
+    """Текст похож на выбор лида по номеру: «открой третий», «лид № 3», «номер 2»."""
+    t = normalize_text_for_cache(text)
+    if re.search(r"\b(?:лид\s*№?\s*|номер\s*|№\s*)\d{1,2}\b", t):
+        return True
+    if re.search(
+        r"\b(первый|второй|третий|четвёртый|четвертый|пятый|шестой|седьмой|восьмой|девятый|десятый)\b",
+        t,
+    ) and ("открой" in t or "открыть" in t or "лид" in t):
+        return True
+    return False
+
+
 def _extract_update_field_value(text: str) -> tuple[str, str]:
     t = normalize_text_for_cache(text)
     m = re.search(
@@ -246,6 +259,14 @@ def normalize_parsed_intent(text: str, parsed: dict[str, Any]) -> dict[str, Any]
         # Сброс голосовой памяти при «найди другой»
         if slots.get("_clear_voice_memory"):
             slots["_clear_voice_memory"] = True
+
+    # LLM часто отдаёт noop на «открой третий» (нет примера / fastpath выкл) —
+    # апгрейд до open_lead, чтобы голос не говорил «такой команды нет».
+    if intent == "noop" and _is_open_lead_ordinal_cue(text) and _extract_ordinal_number(text) is not None:
+        intent = "open_lead"
+        out["intent"] = "open_lead"
+        if not out.get("reply") or "не crm" in str(out.get("reply") or "").lower() or "команд" in str(out.get("reply") or "").lower():
+            out["reply"] = "Открываю лид по номеру."
 
     # Извлечение порядкового числительного / номера лида для open_lead
     if intent == "open_lead" and not slots.get("lead_id") and slots.get("ref") != "last":

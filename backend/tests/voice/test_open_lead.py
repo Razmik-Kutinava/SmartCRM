@@ -123,29 +123,54 @@ def test_rescue_open_lead_n_out_of_range():
     assert "lead_id" not in parsed["slots"]
 
 
-# --- RED: fastpath_route не знает про порядковые числительные ( голос говорит «такой команды нет») ---
+# --- fastpath + normalize: выбор лида по номеру (CI: HERMES_ENABLE_FASTPATH=0) ---
+from core.hermes import config as hermes_config  # noqa: E402
 from core.hermes.cache import fastpath_route  # noqa: E402
+from core.hermes.slot_normalize import normalize_parsed_intent  # noqa: E402
 
 
-def test_fastpath_open_lead_ordinal_third():
-    """«открой третий лид» → fastpath open_lead с selected_index=2 (до фикса возвращает None)."""
+def test_fastpath_open_lead_ordinal_third(monkeypatch):
+    """«открой третий лид» → fastpath open_lead с selected_index=2 (при включённом fastpath)."""
+    monkeypatch.setattr(hermes_config, "HERMES_ENABLE_FASTPATH", True)
     parsed = fastpath_route("открой третий лид")
-    assert parsed is not None, f"fastpath вернул None для 'открой третий лид'"
-    assert parsed["intent"] == "open_lead", f"ожидался open_lead, получил {parsed.get('intent')!r}"
-    assert parsed["slots"].get("selected_index") == 2, f"ожидался selected_index=2, получил {parsed.get('slots')!r}"
+    assert parsed is not None, "fastpath вернул None для 'открой третий лид'"
+    assert parsed["intent"] == "open_lead"
+    assert parsed["slots"].get("selected_index") == 2
 
 
-def test_fastpath_open_lead_number_2():
+def test_fastpath_open_lead_number_2(monkeypatch):
     """«номер 2» → fastpath open_lead с selected_index=1."""
+    monkeypatch.setattr(hermes_config, "HERMES_ENABLE_FASTPATH", True)
     parsed = fastpath_route("номер 2")
     assert parsed is not None
     assert parsed["intent"] == "open_lead"
     assert parsed["slots"].get("selected_index") == 1
 
 
-def test_fastpath_open_lead_lead_no_3():
+def test_fastpath_open_lead_lead_no_3(monkeypatch):
     """«лид № 3» → fastpath open_lead с selected_index=2."""
+    monkeypatch.setattr(hermes_config, "HERMES_ENABLE_FASTPATH", True)
     parsed = fastpath_route("лид № 3")
     assert parsed is not None
     assert parsed["intent"] == "open_lead"
     assert parsed["slots"].get("selected_index") == 2
+
+
+def test_normalize_noop_to_open_lead_ordinal():
+    """При FASTPATH=0 LLM часто отдаёт noop — normalize апгрейдит до open_lead."""
+    out = normalize_parsed_intent(
+        "открой третий лид",
+        {"intent": "noop", "agents": [], "slots": {}, "reply": "Это не CRM команда."},
+    )
+    assert out["intent"] == "open_lead"
+    assert out["slots"].get("selected_index") == 2
+
+
+def test_normalize_noop_to_open_lead_number():
+    """«номер 2» при noop → open_lead selected_index=1."""
+    out = normalize_parsed_intent(
+        "номер 2",
+        {"intent": "noop", "agents": [], "slots": {}, "reply": "ok"},
+    )
+    assert out["intent"] == "open_lead"
+    assert out["slots"].get("selected_index") == 1
