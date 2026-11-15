@@ -9,7 +9,14 @@ from voice.whisper import transcribe
 from voice.voice_action import build_voice_action
 from core.hermes import parse_intent
 from core import traces
-from core.agent_memory import set_last_lead, get_last_lead, clear_last_lead, set_last_search_candidates, clear_last_search_candidates
+from core.agent_memory import (
+    set_last_lead,
+    get_last_lead,
+    clear_last_lead,
+    set_last_search_candidates,
+    clear_last_search_candidates,
+    get_last_search_candidates,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -115,20 +122,24 @@ async def _run_pipeline(text: str, source: str, page_context: str = "") -> dict:
     try:
         # Обработка голосовой памяти для open_lead
         if intent == "open_lead":
-            # Если есть selected_index — выбираем из сохранённых кандидатов
+            # Если есть selected_index — выбираем из кандидатов последнего поиска
             selected_index = slots.get("selected_index")
             if selected_index is not None:
-                memory = get_last_lead(session_id, max_age_sec=60)
-                if memory and memory.get("candidates"):
-                    candidates = memory["candidates"]
-                    if 0 <= selected_index < len(candidates):
+                # lead_id уже мог быть подставлен normalize_parsed_intent из get_last_search_candidates()
+                if not slots.get("lead_id"):
+                    candidates = get_last_search_candidates()
+                    if candidates and 0 <= selected_index < len(candidates):
                         chosen = candidates[selected_index]
                         slots = {**slots, "lead_id": chosen["id"], "ref": "last"}
-                        final_reply = f"Открываю лид №{selected_index + 1}: {chosen.get('company', '')}."
                     else:
-                        final_reply = f"Лид №{selected_index + 1} не найден в списке."
+                        slots = {**slots, "_lead_no_candidates": True}
+
+                if slots.get("lead_id"):
+                    chosen = next((c for c in (get_last_search_candidates() or []) if c.get("id") == slots["lead_id"]), None)
+                    company = chosen.get("company", "") if chosen else ""
+                    final_reply = f"Открываю лид №{selected_index + 1}: {company}."
                 else:
-                    final_reply = "Нет сохранённого списка лидов для выбора по номеру."
+                    final_reply = "Сначала найдите лидов — скажите «найди лид …», затем выберите по номеру."
 
             # Если нет lead_id и нет selected_index — пробуем взять последний найденный
             elif not slots.get("lead_id") and slots.get("ref") != "last":

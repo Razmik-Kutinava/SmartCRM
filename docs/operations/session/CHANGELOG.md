@@ -3,7 +3,14 @@
 **Роль:** источник правды по истории — что сделано, когда, почему и при каким `go`. Записи старше текущего месяца → `docs/archive/ops/`.  
 **Агент:** на старте чата **не читать весь CHANGELOG** — только шапка + запись текущего шага при нужде. Архив: `docs/archive/ops/`.
 
-## 2026-11-15 — PHASE 3 REVIEW: read_lead_by_company список+транслитерация RU↔EN (GREEN)
+## 2026-11-15 — PHASE 3 REVIEW: голосовой выбор лида по номеру «открой второй лид» (GREEN)
+
+`backend/voice/pipeline.py`: при `open_lead` с `selected_index` подставляет `lead_id` из `get_last_search_candidates()` (единая память кандидатов последнего поиска) вместо `get_last_lead(session_id)`; если кандидатов нет — понятный ответ «сначала найдите лидов», не `/leads/list`.
+`backend/tests/voice/test_voice_open_lead_by_number.py`: 7 тестов RED/GREEN — 7 PASS.
+Зона `voice`: 86 PASS. `test_voice_pipeline.py` — hangs на сетевых вызовах (известно, ISSUES, не регрессия).
+| Коммит: `этот`.
+
+    10|## 2026-11-15 — PHASE 3 REVIEW: read_lead_by_company список+транслитерация RU↔EN (GREEN)
 
 `backend/agents/tools.py`: добавлена публичная `transliterate_ru_en(text)` (RU↔EN, посимвольно + карта частых слов), `read_lead_by_company` ищет по `company` / `contact` / `description` (эквивалент `lead_name`) с двумя вариантами (исходный + транслитерированный), возвращает `list[dict]` до `limit` с полями `id, company, city, stage, score, next_call, contact_name, manager_name, lead_id`, сортировка по актуальности (next_call due/24ч → стадия → скор → updated_at), `normalize_lead_for_agents` принимает `list`. Тесты `tests/agents/test_tools_lead_search.py` 9/9 PASS, зона `voice` 10/10 PASS. | Коммит: `этот`.
 

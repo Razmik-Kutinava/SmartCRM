@@ -1,52 +1,46 @@
-﻿# todo — микро-чеклист: ускорение голосового пайплайна
+﻿# todo — микро-чеклист: баг голосового выбора лида по порядковому номеру
 
 ## Заказ (дословно)
 
-> Сделать голос быстрее кнопок. Оператор не должен ждать >3 сек.
+> Когда пользователь говорит голосовую команду вида «открой второй лид», «открой третий», «лид № 3», система открывает не тот лид, который указан, либо открывает общий список лидов вместо карточки конкретного лида.
 >
-> 1. Логи таймингов (voice/pipeline.py): в _run_pipeline обернуть каждый этап в time.monotonic() и логировать duration_ms: Whisper STT, Hermes parse_intent (включая Groq/Ollama отдельно), Оркестратор/агенты, Сборка voice_action
-> 2. Отключить Ollama-фоллбэк (конфиг): backend/core/hermes/config.py — HERMES_PROVIDER_ORDER="groq_only", HERMES_ENABLE_OLLAMA_FALLBACK=False
-> 3. Проверить кэш Hermes: cache_get/cache_set в core/hermes/cache.py работают; тест: две одинаковые фразы подряд — вторая мгновенная (<100мс)
-> 4. Fast-path для навигации: core/hermes/fastpath.py (или где fastpath_route) — FASTPATH_INTENTS с частыми командами; любой интент из набора — мгновенный ответ без LLM
+> 1. При получении команды «открой N-й лид» система должна проверять голосовую память последнего поиска и брать лид по реальному индексу из этого списка.
+> 2. Если в памяти нет кандидатов (пользователь не делал поиск перед командой) — система должна дать понятную обратную связь («сначала найдите лидов»), а не открывать пустой список.
+> 3. При успешном выборе по номеру должна открываться карточка конкретного лида (`/leads/{lead_id}`), а не общий список.
+> 4. Индекс должен быть 1-based для пользователя («первый» = 1, «второй» = 2) и корректно маппиться на внутренний 0-based индекс списка кандидатов.
 
 ## Как понял (1–2 строки)
 
-Добавлены поэтапные тайминги в voice/pipeline.py, флаги отключения Ollama в hermes/config.py, пропуск Ollama ветки в parse.py, FASTPATH_INTENTS + быстрый роутинг в cache.py, тест кэша в test_hermes_cache.py, новые ENV в .env.example.
+`fastpath_route` возвращает `open_lead` с `selected_index`, но не подставляет `lead_id` из памяти. `normalize_parsed_intent` подставляет `lead_id` из `get_last_search_candidates()` (единая память), а `voice/pipeline.py` при `selected_index` смотрел в `get_last_lead(session_id)` (per-session таблица) — разные источники памяти. Исправлено: pipeline при `selected_index` использует `get_last_search_candidates()` (единый источник), при отсутствии кандидатов — понятный ответ «сначала найдите лидов».
 
 ## Чеклист микро-шагов
 
-- [x] **backend/voice/pipeline.py** — тайминги `_run_pipeline`: whisper, hermes (groq/ollama раздельно), orchestrator, voice_action; логировать duration_ms
-- [x] **backend/core/hermes/config.py** — добавлены `HERMES_PROVIDER_ORDER`, `HERMES_ENABLE_OLLAMA_FALLBACK`
-- [x] **backend/core/hermes/parse.py** — пропуск Ollama при `HERMES_ENABLE_OLLAMA_FALLBACK=False`; отдельные тайминги groq/ollama
-- [x] **backend/core/hermes/cache.py** — `FASTPATH_INTENTS` + быстрый роутинг навигации без LLM
-- [x] **backend/core/hermes/__init__.py** — экспорт `FASTPATH_INTENTS`
-- [x] **backend/tests/test_hermes_cache.py** — тест кэша: cache_get/set, fastpath_intents, fastpath_route, config флаги (7 PASS)
-- [x] **backend/.env.example** — новые ENV переменные Hermes
-- [ ] Регрессия зоны voice: `pytest tests/test_voice_pipeline.py -q` (häng из-за сетевых вызовов Brave/Tavily — известная проблема окружения, не регрессия кода)
-- [x] `git commit` — код + ops одним коммитом
+- [x] **backend/voice/pipeline.py** — при `open_lead` с `selected_index`: подставляет `lead_id` из `get_last_search_candidates()` (единый источник с `slot_normalize`); без кандидатов — ответ «сначала найдите лидов»
+- [x] **backend/core/hermes/slot_normalize.py** — уже подставляет `lead_id` из `get_last_search_candidates()` для `open_lead` с `selected_index` (проверено, без изменений)
+- [x] **backend/tests/voice/test_voice_open_lead_by_number.py** — RED тесты (7 шт), все PASS после фикса
+- [x] Регрессия зоны voice: `python -m pytest tests/voice/ -q` — 86 PASS
+- [x] `test_voice_pipeline.py` — hangs на сетевых вызовах (известно, в ISSUES, не регрессия)
+- [ ] `git commit` — код + ops одним коммитом
 
 ## Файлы (ожидаемо)
 
-1. `backend/voice/pipeline.py` — тайминги этапов ✅
-2. `backend/core/hermes/config.py` — флаги отключения Ollama ✅
-3. `backend/core/hermes/parse.py` — пропуск Ollama при флаге + тайминги groq/ollama ✅
-4. `backend/core/hermes/cache.py` — FASTPATH_INTENTS в fastpath_route ✅
-5. `backend/core/hermes/__init__.py` — экспорт FASTPATH_INTENTS ✅
-6. `backend/tests/test_hermes_cache.py` — новые unit-тесты кэша/fastpath ✅
-7. `backend/.env.example` — новые ENV переменные ✅
+1. `backend/voice/pipeline.py` — обработка `open_lead` с `selected_index` (исправлено)
+2. `backend/core/hermes/slot_normalize.py` — подстановка `lead_id` из памяти (без изменений, уже верно)
+3. `backend/tests/voice/test_voice_open_lead_by_number.py` — новые тесты (7 PASS)
 
 ## Не ломать
 
 - `backend/voice/pipeline.py` — hot-path voice (WS / process_text), регрессия зоны voice обязательна
-- `backend/core/hermes/parse.py` — контракт интентов не менять
-- Тесты `tests/test_voice_pipeline.py` мокают `agents.tools.read_lead_by_company` — сохранить совместимость
+- `backend/core/hermes/slot_normalize.py` — контракт интентов не менять
+- `get_last_search_candidates` / `set_last_search_candidates` — сигнатуры не менять
 
 ## Проверка (после GREEN)
 
 ```bash
 cd backend
-python -m pytest tests/test_hermes_cache.py -q   # 7 PASS
-# tests/test_voice_pipeline.py — hangs на сетевых вызовах Brave/Tavily (окружение, не регрессия)
+python -m pytest tests/voice/test_voice_open_lead_by_number.py -q   # 7 PASS
+python -m pytest tests/voice/ -q   # зона voice, 86 PASS
+# tests/test_voice_pipeline.py — hangs на сетевых вызовах (окружение, не регрессия)
 ```
 
 ## SBR Scope
