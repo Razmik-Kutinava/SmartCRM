@@ -167,6 +167,15 @@ async def test_enrich_fields_x5_like(monkeypatch):
         "UF_CRM_MANAGER": "Иванов",
     }
 
+    # Без моков _fetch_* уходит в живой Bitrix (requisites/contacts) → hang в CI
+    monkeypatch.setattr(
+        "integrations.bitrix24_related._fetch_requisites",
+        AsyncMock(return_value=[]),
+    )
+    monkeypatch.setattr(
+        "integrations.bitrix24_related._fetch_lead_contact_items",
+        AsyncMock(return_value=[]),
+    )
     monkeypatch.setattr(
         "integrations.bitrix24_products.fetch_bitrix_lead_products",
         AsyncMock(return_value=[]),

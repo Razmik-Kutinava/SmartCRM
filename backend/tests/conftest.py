@@ -20,13 +20,25 @@ os.environ.setdefault("GROQ_API_KEY", "test")
 
 import db.models  # noqa: F401 — регистрация всех таблиц в metadata
 from db.session import Base, get_db
-from main import app
+from main import app  # load_dotenv(override=True) — ниже снова чистим CI-ключи
 
 import core.auth as auth_module
 
 _TEST_API_KEY = "pytest-smartcrm-key"
 # .env может включить auth после import main — фиксируем ключ для тестов
 auth_module._API_KEY = _TEST_API_KEY
+
+# После dotenv: в CI не пускать живые HTTP (egrul/Brave/Bitrix) из кривых моков
+if os.environ.get("CI") == "1":
+    for _k in (
+        "BITRIX24_WEBHOOK_URL",
+        "BRAVE_API_KEY",
+        "TAVILY_API_KEY",
+        "SERPER_API_KEY",
+        "CHECKO_API_KEY",
+    ):
+        os.environ[_k] = ""
+    os.environ.setdefault("EMAIL_FAQ_AUTOREPLY", "1")
 
 
 @pytest_asyncio.fixture

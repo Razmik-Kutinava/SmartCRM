@@ -112,7 +112,7 @@ async def test_run_agents_similar_clients_fanout_metadata():
         "marketer_output": {"summary": "ok"},
         "strategist_output": {"decision": "OK", "final_reply": "Нашёл похожих клиентов."},
     }
-    with patch("agents.graph.run_fanout_graph", new=AsyncMock(return_value=state_out)), patch(
+    with patch("agents.orchestrator.run_fanout_graph", new=AsyncMock(return_value=state_out)), patch(
         "rag.retrieve.attach_rag_to_slots",
         new=AsyncMock(side_effect=lambda s, _t: s),
     ):

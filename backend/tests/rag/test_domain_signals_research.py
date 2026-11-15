@@ -115,13 +115,17 @@ async def test_research_lead_attaches_tech_and_dns(monkeypatch):
 
     monkeypatch.setattr(rl, "enrich_lead", fake_enrich)
     monkeypatch.setattr(rl, "_narrative_web_research", fake_narr)
+    # Без ИНН research_lead зовёт resolve_inn → живой HTTP (Brave/egrul) → hang в CI
+    monkeypatch.setattr(
+        rl,
+        "resolve_inn",
+        AsyncMock(return_value={"inn": "7707083893", "source": "mock"}),
+    )
     monkeypatch.setattr(
         rl,
         "extract_passport_from_research_sources",
         AsyncMock(return_value={}),
     )
-    # Модуль domain_enrich появится в GREEN; пока ImportError = RED ок,
-    # после GREEN этот путь должен мержить tech в passport.
     async def _fake_domain(website: str = "", **_kw):
         return {
             "tech": {
@@ -141,14 +145,14 @@ async def test_research_lead_attaches_tech_and_dns(monkeypatch):
             "raw_results": [],
         }
 
-    try:
-        import rag.search.domain_enrich as de
+    import rag.search.domain_enrich as de
 
-        monkeypatch.setattr(de, "enrich_domain_signals", _fake_domain)
-    except ImportError:
-        pass
+    monkeypatch.setattr(de, "enrich_domain_signals", _fake_domain)
 
-    out = await rl.research_lead(lead={"company": "ООО АКМЕ", "website": "https://acme.ru"})
+    # inn задан — resolve_inn не должен ходить в сеть (даже если мок сорвётся)
+    out = await rl.research_lead(
+        lead={"company": "ООО АКМЕ", "website": "https://acme.ru", "inn": "7707083893"}
+    )
     passport = out.get("passport") or {}
     tech = passport.get("tech") or (passport.get("checko") or {}).get("tech") or {}
     assert tech.get("cms") == ["Bitrix"] or "Bitrix" in (tech.get("all_technologies") or [])

@@ -8,6 +8,8 @@ def test_gate_cpu_profile_sets_fast_defaults(monkeypatch):
     monkeypatch.delenv("GATE_CPU_PROFILE", raising=False)
     monkeypatch.delenv("GATE_AGENT_MODEL", raising=False)
     monkeypatch.delenv("HERMES_OLLAMA_TIMEOUT_SEC", raising=False)
+    # setdefault не перебивает уже заданный TOTAL — чистим оба ключа
+    monkeypatch.delenv("HERMES_OLLAMA_TOTAL_TIMEOUT_SEC", raising=False)
     _apply_gate_cpu_profile()
     assert os.environ["GATE_AGENT_MODEL"] == "qwen2.5:3b"
     assert os.environ["HERMES_OLLAMA_TOTAL_TIMEOUT_SEC"] == "6"

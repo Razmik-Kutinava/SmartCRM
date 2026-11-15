@@ -96,7 +96,7 @@ async def test_run_agents_evaluate_tender_fanout_metadata():
         "economist_output": {"summary": "ok"},
         "strategist_output": {"decision": "Участвовать", "final_reply": "Участвовать с оговорками."},
     }
-    with patch("agents.graph.run_fanout_graph", new=AsyncMock(return_value=state_out)), patch(
+    with patch("agents.orchestrator.run_fanout_graph", new=AsyncMock(return_value=state_out)), patch(
         "rag.retrieve.attach_rag_to_slots",
         new=AsyncMock(side_effect=lambda s, _t: s),
     ):

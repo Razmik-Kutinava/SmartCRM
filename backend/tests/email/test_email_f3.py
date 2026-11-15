@@ -211,9 +211,12 @@ async def test_relink_orphans_api(client, db_session):
 
 
 @pytest.mark.asyncio
-async def test_faq_autoreply_mocked(db_session):
+async def test_faq_autoreply_mocked(db_session, monkeypatch):
     from db.models import EmailAccount
     from services.email_faq_autoreply import try_faq_autoreply
+
+    # .env может выключить FAQ (EMAIL_FAQ_AUTOREPLY=0) — для юнит-теста включаем
+    monkeypatch.setenv("EMAIL_FAQ_AUTOREPLY", "1")
 
     acc = EmailAccount(
         name="t", username="me@corp.ru", password="x", imap_server="i", smtp_server="s"

@@ -26,6 +26,13 @@ jobs:
       SMARTCRM_API_KEY: pytest-smartcrm-key
       HERMES_ENABLE_FASTPATH: "0"
       CI: "1"
+      # без живых провайдеров/Битрикс — иначе тесты без моков висят до timeout job
+      BITRIX24_WEBHOOK_URL: ""
+      BRAVE_API_KEY: ""
+      TAVILY_API_KEY: ""
+      SERPER_API_KEY: ""
+      CHECKO_API_KEY: ""
+      EMAIL_FAQ_AUTOREPLY: "1"
 
     steps:
       - name: Checkout
@@ -70,6 +77,12 @@ jobs:
       SMARTCRM_API_KEY: pytest-smartcrm-key
       HERMES_ENABLE_FASTPATH: "0"
       CI: "1"
+      BITRIX24_WEBHOOK_URL: ""
+      BRAVE_API_KEY: ""
+      TAVILY_API_KEY: ""
+      SERPER_API_KEY: ""
+      CHECKO_API_KEY: ""
+      EMAIL_FAQ_AUTOREPLY: "1"
 
     steps:
       - name: Checkout
@@ -104,6 +117,12 @@ jobs:
       SMARTCRM_API_KEY: pytest-smartcrm-key
       HERMES_ENABLE_FASTPATH: "0"
       CI: "1"
+      BITRIX24_WEBHOOK_URL: ""
+      BRAVE_API_KEY: ""
+      TAVILY_API_KEY: ""
+      SERPER_API_KEY: ""
+      CHECKO_API_KEY: ""
+      EMAIL_FAQ_AUTOREPLY: "1"
 
     steps:
       - name: Checkout
