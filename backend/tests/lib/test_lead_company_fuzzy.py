@@ -66,6 +66,19 @@ def test_no_exact_returns_fuzzy_top_even_if_weak():
     assert all("company" in x for x in out)
 
 
+def test_company_match_above_description_long_query():
+    """При длинном запросе (>5)company-матч идёт выше description-матча."""
+    leads = [
+        {"id": 1, "company": "АО СИТРОНИКС", "contact": "", "description": "арман холдинг оборудование", "city": "", "industry": "", "email": "", "phone": ""},
+        {"id": 2, "company": "Арман Холдинг", "contact": "", "description": "", "city": "", "industry": "", "email": "", "phone": ""},
+    ]
+    out = filter_leads_search(leads, "арман холдинг")
+    assert out[0]["id"] == 2, f"Ожидался Арман Холдинг первым, получил {out[0]['company']}"
+    citro_idx = next(i for i, x in enumerate(out) if x["id"] == 1)
+    arman_idx = next(i for i, x in enumerate(out) if x["id"] == 2)
+    assert citro_idx > arman_idx, "Ситроникс не должен быть выше Арман Холдинг"
+
+
 def test_empty_query_keeps_all():
     leads = [{"id": 1, "company": "A"}, {"id": 2, "company": "B"}]
     assert filter_leads_search(leads, "") == leads
@@ -79,3 +92,23 @@ def test_no_spaces_variant():
     ]
     ranked = rank_leads_by_company_fuzzy(leads, "эдуардстрой", limit=5)
     assert ranked[0]["id"] == 1
+
+
+def test_arman_company_first_over_description_noise():
+    """При поиске 'arman' сначала компания с arman в названии, не шум в description."""
+    leads = [
+        {
+            "id": 1, "company": "АО СИТРОНИКС", "contact": "",
+            "description": "arman поставщик оборудования и услуг", "city": "",
+            "industry": "", "email": "", "phone": "",
+        },
+        {
+            "id": 2, "company": "Арман Холдинг", "contact": "",
+            "description": "", "city": "", "industry": "",
+            "email": "arman-holding.com", "phone": "",
+        },
+    ]
+    out = filter_leads_search(leads, "arman")
+    assert out[0]["id"] == 2, f"Ожидался Арман Холдинг первым, получил {out[0]['company']}"
+    ids = [x["id"] for x in out]
+    assert 1 not in ids, "Ситроникс не должен попадать в выдачу по шумному description при коротком запросе"

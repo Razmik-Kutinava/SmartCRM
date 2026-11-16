@@ -6,6 +6,7 @@ import { leadMatchesBaseFilter } from '$lib/leads/leadBaseFilter.js';
 import {
 	filterLeadsSearch,
 	leadMatchesSearchExact,
+	searchMatchPriority,
 } from '$lib/leads/leadCompanyFuzzy.js';
 import {
 	deliveryTypeFromLead,
@@ -470,11 +471,40 @@ export function sortLeads(leads, sortBy = 'score_desc', config = null) {
 	}
 }
 
+/** Привести приоритет матча к числу для сортировки (чем меньше — выше relevance). */
+function matchPrioNum(lead) {
+	const p = Number(lead._matchPrio);
+	return Number.isFinite(p) ? p : 1e9;
+}
+
+/** Добавить на каждый лид _matchPrio (приоритет поля, где есть substring запрос). */
+function annotateMatchPrio(leads, query) {
+	if (!query) return leads;
+	return leads.map((l) => ({ ...l, _matchPrio: searchMatchPriority(l, query) }));
+}
+
 export function applyLeadListView(leads, opts, config = null) {
 	const filtered = filterLeads(leads, opts, config);
 	// Fuzzy-выдача уже ранжирована по похожести названия — не перебивать score_desc.
 	if (filtered.length && filtered[0]?._searchMatch === 'fuzzy') {
 		return filtered;
+	}
+	// При непустом search: релевантность (приоритет поля матча) — первый критерий,
+	// выбранная сортировка (Балл ↑/↓ и т.п.) — только secondary.
+	const q = String(opts.search || '').trim();
+	if (q && opts.sortBy) {
+		const annotated = annotateMatchPrio(filtered, q);
+		const byScoreDesc = (a, b) => Number(b.score || 0) - Number(a.score || 0);
+		const byScoreAsc = (a, b) => Number(a.score || 0) - Number(b.score || 0);
+		let secondary;
+		switch (opts.sortBy) {
+			case 'score_asc': secondary = byScoreAsc; break;
+			case 'company_asc': secondary = (a, b) => String(a.company || '').localeCompare(String(b.company || ''), 'ru'); break;
+			case 'priority_desc': secondary = (a, b) => priorityRank(b.priority || 'all') - priorityRank(a.priority || 'all'); break;
+			case 'score_desc':
+			default: secondary = byScoreDesc; break;
+		}
+		return annotated.sort((a, b) => matchPrioNum(a) - matchPrioNum(b) || secondary(a, b));
 	}
 	return sortLeads(filtered, opts.sortBy || 'score_desc', config);
 }

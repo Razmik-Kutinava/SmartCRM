@@ -1,19 +1,44 @@
-﻿# todo — микро-чеклист: «открой третий» после «найди лид» → «Лид не найден»
+﻿# todo — микро-чеклист: баг поиска «arman» в /leads/list
 
 ## Заказ (дословно)
 
-> когда я говорю найди лид вроде все норм но потом когда выпадает список я даю еще команду открой лид третий пятый и тд и это не срабатывает … пишет лид не найден … надо устранить этот баг
+> Баг: поиск «arman» в /leads/list показывает «АО СИТРОНИКС» первым, хотя в запросе Арман
 
-## Как понял (1–2 строки)
+## Как понял
 
-После поиска список на экране запоминается во фронте (`voiceLeadFocus`), но `resolveVoiceOpenLeadId` игнорировал `selected_index` — «открой третий» не брал 3-й из этого списка. Плюс open_lead затирал список одним лидом.
+Поиск по полю ПОИСК в /leads/list использует `leadMatchesSearchExact` с `hay.includes(q)` по всем полям (company|contact|description|city|industry|email|phone). Короткий запрос `arman` может попасть в description/контакт/email у «АО СИТРОНИКС» — и лид попадает в выдачу без «arman» в названии. После exact-фильтра `applyLeadListView` сортирует по баллу (Балл ↑), игнорируя релевантность, поэтому Ситроникс встаёт выше Арман Холдинг.
 
 ## Чеклист микро-шагов
 
-- [x] `frontend/src/lib/voice/voiceLeadFocus.js` — `selected_index` → `focus.leads[idx]` (раньше lead_id)
-- [x] `frontend/src/lib/voice/voiceAction.js` — не затирать список при open; понятный toast
-- [x] `frontend/src/routes/leads/list/+page.svelte` — findLead + open_lead по selected_index
-- [x] `backend/voice/voice_action.py` — payload.selected_index
-- [x] бэк: id|lead_id в pipeline/slot_normalize/rescue
-- [x] тесты 94 PASS (voice+frontend)
-- [ ] git commit + ops
+- [x] Диагностика (до кода): зафиксировать, какое поле даёт ложный матч Ситроникс по `arman` (в отчёте)
+- [x] `frontend/src/lib/leads/leadCompanyFuzzy.js`: взвешенный рейтинг при непустом search — компания ≫ контакт ≫ остальные поля
+- [x] `frontend/src/lib/leads/leadCompanyFuzzy.js`: для коротких запросов (≤5 символов) не матчить `description` (и `phone`)
+- [x] `frontend/src/lib/leads/leadListFilter.js`: `applyLeadListView` не давать score-сортировке убивать релевантность при непустом search (secondary sort = выбранная сортировка)
+- [x] `backend/core/lead_company_fuzzy.py`: зеркало изменений алгоритма
+- [x] `backend/tests/lib/test_lead_company_fuzzy.py`: RED→GREEN фикстура [Ситроникс без arman в company + шум в description; Арман Холдинг (arman-holding.com)] + query `arman` → первым Арман, Ситроникс не выше
+- [x] Регрессия зоны `crm_leads` (pytest) — 39 PASS
+- [ ] git commit + ops (код + ops одним коммитом) + ответ с хешем
+
+## Файлы (ожидаемо)
+
+- `frontend/src/lib/leads/leadCompanyFuzzy.js`
+- `frontend/src/lib/leads/leadListFilter.js`
+- `backend/core/lead_company_fuzzy.py`
+- `backend/tests/lib/test_lead_company_fuzzy.py`
+
+## Читать (только нужное)
+
+- `frontend/src/lib/leads/leadCompanyFuzzy.js` — SEARCH_FIELDS, leadMatchesSearchExact, filterLeadsSearch
+- `frontend/src/lib/leads/leadListFilter.js` — applyLeadListView, filterLeadsSearch, sortLeads
+- `backend/core/lead_company_fuzzy.py` — зеркало алгоритма
+- `docs/operations/phase4/leads/F4_LEAD_SEARCH_FUZZY.md` — спека exact/fuzzy
+
+## Не ломать
+
+- fuzzy целиком не отключать
+- Hermes/voice pipeline не трогать (баг в фильтре списка)
+- не «лечить» только сортировкой — убрать/ослабить ложный exact
+
+## Статус
+
+PHASE 2 GREEN. Ожидается коммит + ops.

@@ -7,7 +7,19 @@ from typing import Any
 
 FUZZY_TOP_N = 5
 
+SHORT_QUERY_LEN = 5
+
 _SEARCH_FIELDS = ("company", "contact", "description", "city", "industry", "email", "phone")
+
+MATCH_PRIORITY = {
+    "company": 0,
+    "contact": 1,
+    "city": 2,
+    "industry": 3,
+    "email": 4,
+    "phone": 5,
+    "description": 6,
+}
 
 
 def normalize_company_query(raw: str) -> str:
@@ -80,12 +92,25 @@ def rank_leads_by_company_fuzzy(
     return [t[2] for t in scored[:n]]
 
 
-def lead_matches_search_exact(lead: dict[str, Any], query: str) -> bool:
+def search_match_priority(lead: dict[str, Any], query: str) -> int:
+    """Вернуть наивысший приоритет поля, где q есть подстрокой; INF — нет матча."""
     q = normalize_company_query(query)
     if not q:
-        return True
-    hay = " ".join(str(lead.get(k) or "").lower().replace("ё", "е") for k in _SEARCH_FIELDS)
-    return q in hay
+        return float("inf")
+    short = len(q) <= SHORT_QUERY_LEN
+    best = float("inf")
+    for field in _SEARCH_FIELDS:
+        prio = MATCH_PRIORITY[field]
+        if short and field in ("description", "phone"):
+            continue
+        val = str(lead.get(field) or "").lower().replace("ё", "е")
+        if q in val:
+            best = min(best, prio)
+    return best
+
+
+def lead_matches_search_exact(lead: dict[str, Any], query: str) -> bool:
+    return search_match_priority(lead, query) != float("inf")
 
 
 def filter_leads_search(
@@ -100,6 +125,8 @@ def filter_leads_search(
         return list(leads)
     exact = [l for l in leads if lead_matches_search_exact(l, q)]
     if exact:
+        # Релевантность पहले: матч в company ≫ description и т.п.
+        exact.sort(key=lambda l: search_match_priority(l, q))
         return exact
     ranked = rank_leads_by_company_fuzzy(leads, q, limit=fuzzy_limit)
     out: list[dict[str, Any]] = []

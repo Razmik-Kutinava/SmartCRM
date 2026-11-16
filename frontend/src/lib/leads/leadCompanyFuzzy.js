@@ -2,6 +2,9 @@
 
 export const FUZZY_TOP_N = 5;
 
+/** Запросы короче этого не матчат шумные поля (description/phone) — иначе «арман» бьёт в описание чужих компаний. */
+export const SHORT_QUERY_LEN = 5;
+
 const SEARCH_FIELDS = ['company', 'contact', 'description', 'city', 'industry', 'email', 'phone'];
 
 export function normalizeCompanyQuery(raw) {
@@ -83,11 +86,36 @@ export function rankLeadsByCompanyFuzzy(leads, query, { limit = FUZZY_TOP_N } = 
 	return scored.slice(0, n).map((x) => x.lead);
 }
 
-export function leadMatchesSearchExact(lead, query) {
+/** Приоритет полей при exact-матче: чем меньше — тем релевантнее (чемпион — компания). */
+export const MATCH_PRIORITY = {
+	company: 0,
+	contact: 1,
+	city: 2,
+	industry: 3,
+	email: 4,
+	phone: 5,
+	description: 6,
+};
+
+/** Вернуть наивысший приоритет поля, где q есть подстрокой; Infinity — нет матча. */
+export function searchMatchPriority(lead, query) {
 	const q = normalizeCompanyQuery(query);
-	if (!q) return true;
-	const hay = SEARCH_FIELDS.map((k) => String(lead?.[k] || '').toLowerCase().replace(/ё/g, 'е')).join(' ');
-	return hay.includes(q);
+	if (!q) return Infinity;
+	const short = q.length <= SHORT_QUERY_LEN;
+	let best = Infinity;
+	for (const field of SEARCH_FIELDS) {
+		const prio = MATCH_PRIORITY[field];
+		if (short && (field === 'description' || field === 'phone')) continue;
+		const val = String(lead?.[field] || '').toLowerCase().replace(/ё/g, 'е');
+		if (val.includes(q)) {
+			best = Math.min(best, prio);
+		}
+	}
+	return best;
+}
+
+export function leadMatchesSearchExact(lead, query) {
+	return searchMatchPriority(lead, query) !== Infinity;
 }
 
 /** Exact/includes сначала; иначе топ-N fuzzy по company. */
